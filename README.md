@@ -4,16 +4,16 @@ Le mémo de poche de l’agent de sécurité incendie (SSIAP 1, 2 et 3) et de l�
 
 ## Ce que contient l’appli
 
-- **61 fiches** (onglets Rappel et Règles) et **23 schémas** : le feu, les extincteurs (vues en coupe, mode d’emploi, étiquette), RIA, colonnes sèches, sprinkleurs, SSI, détecteurs, alarme, DAS, dégagements et unités de passage, éclairage de sécurité, désenfumage, portes coupe-feu, panneaux, évacuation, missions de terrain, secourisme, métier SSIAP, ERP et IGH, commission de sécurité, registre, vérifications, Code du travail, APSAD, agent de sécurité privée, nouveautés 2025-2026.
+- **64 fiches** (onglets Rappel et Règles) et **23 schémas** : le feu, les extincteurs (vues en coupe, mode d’emploi, étiquette), RIA, colonnes sèches, sprinkleurs, SSI, détecteurs, alarme, DAS, dégagements et unités de passage, éclairage de sécurité, désenfumage, portes coupe-feu, panneaux, évacuation, missions de terrain, secourisme, métier SSIAP, ERP et IGH, commission de sécurité, registre, vérifications, Code du travail, APSAD, agent de sécurité privée (devenir agent, carte professionnelle et MAC, pouvoirs, déontologie), nouveautés 2025-2026.
 - **16 conduites à tenir** (feu, levée de doute, évacuation, arrêt cardiaque, gaz, colis suspect, attaque…) avec des boutons d’appel direct : 18, 112, 15, 17, 114, urgence gaz. Chacune peut se suivre **pas à pas, à voix haute**, une étape à la fois en grand.
 - **Lecture à voix haute** de toutes les pages avec la voix du téléphone : rien à télécharger, marche sans internet. Le passage lu est surligné ; pause, retour, vitesse, arrêt. Les sigles sont bien prononcés.
 - **Rapports d’incident** : on raconte l’incident **à la voix** (ou on l’écrit) et l’appli remplit le rapport (type, date, heures, lieu, chronologie, secours appelés), puis pose les questions sur ce qui manque, à l’écrit ou à voix haute. Ou bien assistant guidé étape par étape selon 14 types d’incident. Contrôle de qualité, ligne de main courante, copie, partage, impression ou PDF, signature au doigt. Les rapports restent sur le téléphone.
 - **Mon planning** : les heures de la semaine avec le lieu, le motif et l’affaire. Ajout au clavier (horaires fréquents en un geste), **à la voix** (« hier de 18 h à 20 h 30, heures sup au tribunal, salle 4, affaire 24/1234 ») ou par **photo du planning imprimé** (lue par Gemini, puis vérifiée par vous). Totaux par jour et par semaine, heures supplémentaires, relevé du mois à copier ou à ouvrir dans un tableur.
-- **Entraînement** : 213 questions corrigées et expliquées, chacune reliée à sa fiche. Quiz rapide, par thème et par niveau, examen blanc SSIAP 1 (30 questions, note sur 20), révision des erreurs, suivi des progrès. Les questions peuvent être lues à voix haute.
+- **Entraînement** : 221 questions corrigées et expliquées, chacune reliée à sa fiche. Quiz rapide, par thème et par niveau, examen blanc SSIAP 1 (30 questions, note sur 20), révision des erreurs, suivi des progrès. Les questions peuvent être lues à voix haute.
 - **8 outils de calcul** : quel extincteur sur quel feu, catégorie d’un ERP, calcul de l’effectif, dégagements et UP, nombre d’extincteurs, visites de la commission de sécurité, recyclage SSIAP, carte professionnelle APS.
 - **Veille réglementaire** : chaque lundi, un robot sur GitHub vérifie si les textes officiels cités par l’appli ont changé et l’indique dans l’appli (« vérification en cours »). Il ne modifie jamais l’appli tout seul.
-- Recherche instantanée, 54 sigles expliqués, favoris, « Mes numéros du site », thème clair ou sombre, texte agrandi, page **Réglages** (voix, vitesse, Gemini, données).
-- Chaque fiche cite ses sources (67 au total) avec la date de vérification.
+- Recherche instantanée, 55 sigles expliqués, favoris, « Mes numéros du site », thème clair ou sombre, texte agrandi, page **Réglages** (voix, vitesse, Gemini, données).
+- Chaque fiche cite ses sources (74 au total) avec la date de vérification.
 
 ## Mettre l’appli en ligne avec GitHub Pages (gratuit, une seule fois)
 

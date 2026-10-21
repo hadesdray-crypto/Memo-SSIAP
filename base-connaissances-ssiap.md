@@ -1,6 +1,6 @@
 # Mémo SSIAP : base de connaissances
 
-Contenu vérifié le 21 octobre 2026 (version 1.3.0). Sécurité incendie en France : SSIAP 1, 2 et 3, ERP et IGH, agent de sécurité privée (APS).
+Contenu vérifié le 21 octobre 2026 (version 1.4.0). Sécurité incendie en France : SSIAP 1, 2 et 3, ERP et IGH, agent de sécurité privée (APS).
 
 **Règles d’utilisation :** chaque fiche indique ses sources. En cas de doute, le texte officiel en vigueur et les consignes du site font foi. Ce document ne remplace ni la formation, ni les consignes de l’établissement, ni les ordres des secours. Les normes AFNOR et les référentiels APSAD sont payants : ils sont seulement résumés.
 
@@ -1669,61 +1669,123 @@ Les rapports sont rangés au registre de sécurité (MS 75).
 
 ## Agent de sécurité privée
 
-Carte professionnelle, droits et limites, palpation, article 73.
+Devenir agent, carte et MAC, droits et limites, déontologie, article 73.
 
-### Carte professionnelle, TFP APS et MAC
+### Devenir agent de sécurité (APS)
 
 *Niveaux : APS.*
 
-**En clair :** Pour faire de la surveillance ou du gardiennage, il faut une carte professionnelle délivrée par le CNAPS. Elle dure 5 ans. Pour la renouveler, il faut suivre une formation de mise à jour, le MAC.
+**En clair :** Pour faire de la surveillance ou du gardiennage, il faut suivre une formation d’environ 175 heures, puis obtenir une carte professionnelle du CNAPS. Avant de la délivrer, le CNAPS vérifie le passé du candidat.
 
-- **Le cadre** : Les activités privées de sécurité sont régies par le livre VI du Code de la sécurité intérieure. Le CNAPS (Conseil national des activités privées de sécurité), établissement public placé sous l’autorité du ministère de l’Intérieur, délivre, suspend ou retire les autorisations, agréments et cartes professionnelles.
-- **Carte professionnelle** : Obligatoire pour exercer. Délivrée par le CNAPS, valable 5 ans, dématérialisée.
-- **Qualification** : Le TFP APS (titre à finalité professionnelle Agent de prévention et de sécurité, ex-CQP APS) est la formation de base, d’environ 175 heures.
-- **Renouvellement** : Il faut avoir suivi le stage MAC (maintien et actualisation des compétences) dans les **24 mois** qui précèdent la fin de validité de la carte, et avoir un secourisme en cours de validité.
+- **Le cadre** : Les activités privées de sécurité sont régies par le livre VI du Code de la sécurité intérieure. Le CNAPS (Conseil national des activités privées de sécurité), établissement public du ministère de l’Intérieur, délivre les autorisations et les cartes professionnelles, contrôle la profession et sanctionne les manquements.
+- **1. Entrer en formation** : Il faut une **autorisation préalable** du CNAPS, valable **6 mois**. Un agent qui a déjà une carte n’en a pas besoin, sauf pour une formation au port d’arme ou à la sûreté aéroportuaire.
+- **2. Se former** : Environ **175 heures** pour la surveillance humaine ou le gardiennage (arrêté du 1er septembre 2025, en vigueur depuis le 1er octobre 2025). Au programme notamment : cadre juridique, principes de la République (3 h), premiers secours (14 h), gestion des conflits, prévention des risques terroristes (13 h), rondes et contrôle d’accès. Certains modules théoriques peuvent se suivre à distance.
+- **3. Être certifié** : La formation mène à une certification reconnue : certificat de qualification professionnelle ou titre inscrit au RNCP, comme le TFP APS (titre à finalité professionnelle Agent de prévention et de sécurité).
+- **4. Demander la carte** : En ligne, sur l’espace particulier du CNAPS. Le CNAPS mène une **enquête administrative** : fichiers de police (TAJ, FPR) et casier judiciaire (bulletin n° 2). Certaines condamnations, ou un comportement incompatible avec la fonction, empêchent d’obtenir la carte (article L612-20).
+- **Candidats étrangers** : Hors Union européenne : être titulaire d’un titre de séjour depuis au moins **5 ans** (depuis le 27 mai 2021). Tout candidat étranger, même européen : niveau de français **B1** (depuis le 1er mai 2022).
 
-#### Le MAC APS (arrêté du 15 juin 2024)
+#### Une carte par activité
 
-| Module | Durée |
-| --- | --- |
-| Premiers secours | 7 h |
-| Cadre juridique d’intervention de l’agent privé de sécurité | 4 h |
-| Principes de la République | 3 h |
-| Compétences opérationnelles générales (gestion des conflits, inspection-filtrage) | 7 h |
-| Prévention des risques terroristes | 13 h |
+Chaque activité fait l’objet d’une demande et d’une carte distinctes, et se renouvelle séparément. Exemples : surveillance humaine ou gardiennage, surveillance de grands événements, surveillance avec chien, surveillance armée, vidéoprotection, sûreté aéroportuaire, protection physique des personnes.
 
-Soit **34 heures au maximum**, la durée réelle pouvant être réduite selon les modules déjà validés.
+> **Bon à savoir :** **Carte « surveillance de grands événements » (SGE)** : délivrée après une formation de 106 heures, elle est limitée à la surveillance d’événements de plus de 300 personnes. Elle est valable 5 ans (décret du 29 décembre 2023).
 
-Voir aussi : SSIAP et agent de sécurité (APS) : le cumul, Ce que l’agent peut faire, et ce qu’il ne peut pas faire.
+Voir aussi : Carte professionnelle : validité et renouvellement, Le MAC : la formation pour renouveler la carte, SSIAP et agent de sécurité (APS) : le cumul.
 
 **Sources :**
 - [Code de la sécurité intérieure (livre VI : activités privées de sécurité)](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000025503132/) (Légifrance, source officielle)
-- [TFP APS : titre à finalité professionnelle Agent de prévention et de sécurité (ex-CQP APS)](https://www.intercariforef.org/formations/02_20220110719202_00691415/printable/customprint) (Carif-Oref Nouvelle-Aquitaine, source officielle)
-- [MAC APS selon l’arrêté du 15 juin 2024 (modules et durées)](https://www.intercariforef.org/formations/03_261315124F03_2572324S/printable/customprint) (Carif-Oref Auvergne-Rhône-Alpes (offre GRETA), source officielle)
-- [MAC Agent de prévention et de sécurité : prérequis et délai avant l’échéance de la carte](https://formaction.u-bordeaux.fr/training/pdf/3527) (Université de Bordeaux, source officielle)
+- [Exercer le métier d’agent de sécurité privée : carte professionnelle, conditions, activités, validité](https://www.cnaps.interieur.gouv.fr/Vos-demarches/Vous-etes-un-particulier/Exercer-le-metier-d-agent-de-securite-privee/Exercer-le-metier-d-agent-de-securite-privee) (CNAPS, source officielle)
+- [Arrêté du 1er septembre 2025 portant cahier des charges applicable à la formation initiale aux activités privées de sécurité (en vigueur le 1er octobre 2025)](https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052197461) (Légifrance, source officielle)
+- [Réponse ministérielle n° 7802 (JO du 17 décembre 2019) : encadrement des agents de sécurité privée (L613-1, L612-20, L612-20-1, R631-10)](https://questions.assemblee-nationale.fr/q15/15-7802QE.htm) (Assemblée nationale, source officielle)
+- [Loi sécurité globale (25 mai 2021) : ce qui change pour les activités privées de sécurité](https://www.cnaps.interieur.gouv.fr/Actualites/Loi-securite-globale-ce-qui-change-pour-les-activites-privees-de-securite) (CNAPS, source officielle)
+- [Nouvelles obligations pour les demandes de titres : niveau de français B1](https://www.cnaps.interieur.gouv.fr/Actualites/Nouvelles-obligations-pour-les-demandes-de-titres) (CNAPS, source officielle)
+- [La carte professionnelle « Surveillance grands évènements » est désormais valable 5 ans](https://www.cnaps.interieur.gouv.fr/Actualites/La-carte-professionnelle-Surveillance-grands-evenements-est-desormais-valable-5-ans) (CNAPS, source officielle)
+
+### Carte professionnelle : validité et renouvellement
+
+*Niveaux : APS.*
+
+**En clair :** La carte professionnelle vaut 5 ans. On demande son renouvellement au moins 3 mois avant la fin, avec l’attestation de MAC suivi dans les 24 mois qui précèdent. Sans carte valide ni récépissé, on ne peut plus travailler.
+
+- **Validité** : **5 ans**, sur tout le territoire national. La carte est délivrée par le CNAPS.
+- **Quand demander le renouvellement** : **Au moins 3 mois** avant la date d’expiration. Le CNAPS n’accepte pas les demandes faites plus de **6 mois** avant.
+- **Condition** : Avoir suivi le MAC (maintien et actualisation des compétences) dans les **24 mois** qui précèdent l’échéance, pour chaque activité de la carte (Code de la sécurité intérieure, article L612-20-1).
+- **Récépissé** : Si la demande complète est déposée dans les délais, le CNAPS peut délivrer un **récépissé** de 3 mois, renouvelable, qui permet de continuer à travailler. Il n’est pas automatique.
+- **Carte expirée** : On ne peut plus exercer. Pour une nouvelle demande, il faut une autorisation préalable du CNAPS pour entrer en formation, et un MAC suivi dans les **12 mois** qui précèdent la demande.
+- **Plusieurs activités** : Chaque activité se renouvelle séparément, avec son propre MAC.
+
+> **Attention :** Travailler sans carte ni récépissé valide expose l’agent et son employeur à des sanctions.
+
+Voir aussi : outil de l’appli, Le MAC : la formation pour renouveler la carte, Devenir agent de sécurité (APS).
+
+**Sources :**
+- [Renouveler votre carte professionnelle : délais, MAC, récépissé (mis à jour le 21/07/2026)](https://www.cnaps.interieur.gouv.fr/Demarches-en-ligne/Vous-etes-un-particulier/Renouveler-votre-carte-professionnelle2/Renouveler-votre-carte-professionnelle) (CNAPS, source officielle)
+- [Informations relatives au maintien et à l’actualisation des compétences (MAC)](https://cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Informations-relatives-au-maintien-et-a-l-actualisation-des-competences-MAC) (CNAPS, source officielle)
+- [Réponse ministérielle n° 7802 (JO du 17 décembre 2019) : encadrement des agents de sécurité privée (L613-1, L612-20, L612-20-1, R631-10)](https://questions.assemblee-nationale.fr/q15/15-7802QE.htm) (Assemblée nationale, source officielle)
+- [Code de la sécurité intérieure (livre VI : activités privées de sécurité)](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000025503132/) (Légifrance, source officielle)
+
+### Le MAC : la formation pour renouveler la carte
+
+*Niveaux : APS.*
+
+**En clair :** Le MAC est une formation de remise à jour, à suivre dans les 24 mois avant la fin de la carte. Elle dure 34 heures, ou 27 heures si l’on a un secourisme de moins de 2 ans. Sans attestation de MAC, la carte n’est pas renouvelée.
+
+| Module | Durée |
+| --- | --- |
+| Gestes élémentaires de premiers secours | 7 h (dispense avec un secourisme de moins de 2 ans : SST, PSC1, PSE1 ou PSE2) |
+| Cadre juridique d’intervention de l’agent privé de sécurité | 4 h |
+| Principes de la République | 3 h |
+| Compétences opérationnelles générales : gestion des conflits et inspection-filtrage | 7 h |
+| Prévention des risques terroristes | 13 h |
+
+Soit **34 heures** de modules, ou **27 heures** avec la dispense de premiers secours. Le temps d’accueil et d’évaluation s’y ajoute.
+
+- **Texte de référence** : Arrêté du 27 février 2017 relatif à la formation continue des agents privés de sécurité, modifié.
+- **Quand le suivre** : Dans les **24 mois** qui précèdent la fin de validité de la carte (36 mois pour la télésurveillance et certaines activités de transport de fonds).
+- **Avec une carte expirée** : Une autorisation préalable du CNAPS est nécessaire pour entrer en formation.
+- **Attestation** : L’organisme de formation, autorisé par le CNAPS, remet une attestation par activité, à joindre à la demande de renouvellement.
+
+> **Bon à savoir :** Le secourisme n’est pas une condition à part du renouvellement : il fait partie du MAC. Un certificat de moins de 2 ans dispense seulement du module de premiers secours.
+
+Voir aussi : Carte professionnelle : validité et renouvellement, outil de l’appli.
+
+**Sources :**
+- [Informations relatives au maintien et à l’actualisation des compétences (MAC)](https://cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Informations-relatives-au-maintien-et-a-l-actualisation-des-competences-MAC) (CNAPS, source officielle)
+- [Renouveler votre carte professionnelle : délais, MAC, récépissé (mis à jour le 21/07/2026)](https://www.cnaps.interieur.gouv.fr/Demarches-en-ligne/Vous-etes-un-particulier/Renouveler-votre-carte-professionnelle2/Renouveler-votre-carte-professionnelle) (CNAPS, source officielle)
+- [Arrêté du 27 février 2017 relatif à la formation continue des agents privés de sécurité](https://www.legifrance.gouv.fr/loda/id/JORFTEXT000034104578) (Légifrance, source officielle)
+- [Fiche technique MAC APS : modules, durées et dispense de premiers secours (juillet 2026)](https://inforisque.fr/documentations-securite/4262-fiche-technique-mac-agent-de-prevention-et-de-securite-mac-aps-.pdf) (Inforisque (formation en sécurité), source secondaire recoupée)
 
 ### Ce que l’agent peut faire, et ce qu’il ne peut pas faire
 
 *Niveaux : APS.*
 
-**En clair :** L’agent de sécurité n’est pas un policier. Il peut regarder dans un sac, le fouiller si la personne est d’accord, et faire une palpation seulement dans des cas précis. Il ne peut jamais forcer quelqu’un, ni contrôler son identité. Si la personne refuse, on peut lui refuser l’entrée, et appeler la police si besoin.
+**En clair :** L’agent de sécurité n’est pas un policier. Il agit seulement dans les lieux qu’il garde. Il peut regarder dans un sac, le fouiller si la personne est d’accord, et faire une palpation seulement dans des cas précis. Il ne peut jamais forcer quelqu’un, ni contrôler son identité. Si la personne refuse, on peut lui refuser l’entrée, et appeler la police si besoin.
+
+#### Où il peut agir
+
+Seulement à l’intérieur des bâtiments ou dans la limite des lieux dont il a la garde. Sur la voie publique, uniquement avec une **autorisation exceptionnelle du préfet** : surveillance contre les vols, dégradations et effractions visant les biens gardés et, depuis 2021, contre les actes de terrorisme (article L613-1).
+
+#### Les contrôles
 
 | Contrôle | Condition | Accord de la personne | Texte |
 | --- | --- | --- | --- |
-| Inspection visuelle des bagages | Activité de surveillance et gardiennage | La personne présente son sac | L613-2 |
+| Inspection visuelle des bagages | Dans le cadre de la mission de surveillance | La personne présente elle-même son sac | L613-2 |
 | Fouille des bagages | Idem | Accord du propriétaire | L613-2 |
-| Palpation de sécurité | Menaces graves pour la sécurité publique constatées par arrêté du préfet, ou périmètre de protection (L226-1). Faite par une personne **du même sexe** | Accord **exprès** | L613-2 |
-| Palpation à l’entrée d’une manifestation de plus de 300 spectateurs | Sous le contrôle d’un officier de police judiciaire, par des agents agréés, du même sexe | Accord exprès | L613-3 |
-| Inspection visuelle des véhicules et coffres | À la demande du gestionnaire, avant l’accès à un grand événement ou rassemblement, à certaines enceintes et sites listés, ou sur autorisation du préfet en cas de menaces graves. Pas les véhicules aménagés pour l’habitation | Accord exprès du conducteur | L613-2-1 |
+| Palpation de sécurité | Menaces graves pour la sécurité publique constatées par un arrêté du préfet, qui fixe la durée et les lieux, ou périmètre de protection (L226-1). Faite par une personne **du même sexe** | Accord **exprès** | L613-2 |
+| Palpation à l’entrée d’une manifestation sportive, récréative ou culturelle de plus de 300 spectateurs | Sous le contrôle d’un officier de police judiciaire. Faite par une personne **du même sexe** | Accord **exprès** | L613-3 |
+| Inspection visuelle d’un véhicule et de son coffre | À la demande du gestionnaire du lieu gardé, pour l’accès à un grand événement, à une enceinte de plus de 300 spectateurs ou à certains sites sensibles ; ailleurs, seulement sur autorisation du préfet en cas de menaces graves. Jamais de fouille du véhicule ni de palpation. Pas les véhicules aménagés pour l’habitation | Accord **exprès** du conducteur | L613-2-1 |
 
-En cas de refus d’inspection d’un véhicule, l’accès au site est interdit, mais le conducteur et les passagers peuvent entrer à pied.
+> **Bon à savoir :** Depuis la loi du 25 mai 2021 (sécurité globale), l’agent qui a la carte professionnelle et la formation n’a plus besoin d’agrément pour faire des palpations. L’agrément du CNAPS (3 ans) ne concerne plus que les membres du service d’ordre de l’organisateur d’une manifestation de plus de 300 spectateurs.
+
+Si le conducteur refuse l’inspection, le véhicule n’entre pas, mais le conducteur et les passagers peuvent entrer à pied, comme les autres visiteurs.
 
 #### Jamais
 
 - Fouiller ou palper sans l’accord de la personne.
 - Faire palper une personne par un agent de l’autre sexe.
 - Contrôler l’identité : c’est réservé aux officiers et agents de police judiciaire (Code de procédure pénale, art. 78-2). L’agent peut demander un badge ou un titre d’accès prévu par les consignes.
-- Fouille corporelle, retenue d’objets ou contrainte par la force.
+- Fouille à corps, retenue d’objets ou contrainte par la force.
+- User de violence, même légère, sauf en légitime défense (code de déontologie, R631-10).
 - S’immiscer dans un conflit du travail ou surveiller les opinions politiques, philosophiques, religieuses ou syndicales des personnes (CSI, L612-4).
 
 #### Face à un refus
@@ -1731,17 +1793,44 @@ En cas de refus d’inspection d’un véhicule, l’accès au site est interdit
 1. Expliquer calmement ce qui est demandé et pourquoi (consigne du site, arrêté).
 2. Ne jamais forcer.
 3. Refuser l’accès si le contrôle conditionne l’entrée, selon la consigne.
-4. Appeler la police ou la gendarmerie si la personne insiste ou si la situation se tend, puis rendre compte à sa hiérarchie.
+4. Si le différend ne se règle pas à l’amiable, appeler la police ou la gendarmerie (R631-10), puis rendre compte à sa hiérarchie.
 
-> **Bon à savoir :** Ces règles ont été modifiées en 2026 : la loi du 20 mars 2026 a ouvert l’inspection des véhicules pour les grands événements, puis la loi n° 2026-798 du 18 août 2026 a réécrit l’article L613-2 et créé l’article L613-2-1.
+> **Bon à savoir :** Nouveautés 2026 : la loi du 20 mars 2026 a permis l’inspection visuelle des véhicules pour les grands événements. La loi n° 2026-798 du 18 août 2026 a placé ce pouvoir dans le nouvel article L613-2-1 et l’a étendu à d’autres lieux.
+
+Voir aussi : Déontologie, contrôles et sanctions, Flagrant délit : l’article 73.
 
 **Sources :**
-- [Code de la sécurité intérieure, article L613-2](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000025506272) (Légifrance, source officielle)
-- [Grands événements : l’inspection visuelle des véhicules rendue possible (31/03/2026)](https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Grands-evenements-designes-par-decret-l-inspection-visuelle-des-vehicules-rendue-possible) (CNAPS, source officielle)
-- [Pouvoirs de l’agent : bagages, palpation, véhicules (L613-2, L613-2-1, L613-3, R631-10, CPP 78-2)](https://travail-industrie.com/nos-formations/formation-agent-securite-privee-cqp-tfp-aps/module/2/chapitre/1) (Travail-Industrie (formation, texte annoté), source secondaire recoupée)
-- [Contrôle des véhicules par les agents de sécurité privée : lois du 20 mars et du 18 août 2026](https://www.acte1formation.fr/blog/controle-des-vehicules-par-les-agents-de-securite-privee-ce-qui-a-change-depuis-la-loi-securite-globale/) (Acte 1 Formation, source secondaire recoupée)
 - [Code de la sécurité intérieure (livre VI : activités privées de sécurité)](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000025503132/) (Légifrance, source officielle)
+- [Réponse ministérielle n° 7802 (JO du 17 décembre 2019) : encadrement des agents de sécurité privée (L613-1, L612-20, L612-20-1, R631-10)](https://questions.assemblee-nationale.fr/q15/15-7802QE.htm) (Assemblée nationale, source officielle)
+- [La réglementation sur les palpations de sécurité et les fouilles de bagages à main](https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/La-reglementation-sur-les-palpations-de-securite-et-les-fouilles-de-bagages-a-main) (CNAPS, source officielle)
+- [Les agréments à la palpation évoluent (loi du 25 mai 2021)](https://www.cnaps.interieur.gouv.fr/Actualites/Les-agrements-a-la-palpation-evoluent) (CNAPS, source officielle)
+- [Loi sécurité globale (25 mai 2021) : ce qui change pour les activités privées de sécurité](https://www.cnaps.interieur.gouv.fr/Actualites/Loi-securite-globale-ce-qui-change-pour-les-activites-privees-de-securite) (CNAPS, source officielle)
+- [Grands événements : l’inspection visuelle des véhicules rendue possible (31/03/2026)](https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Grands-evenements-designes-par-decret-l-inspection-visuelle-des-vehicules-rendue-possible) (CNAPS, source officielle)
+- [Loi n° 2026-798 du 18 août 2026 visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public, la sécurité et la tranquillité de nos concitoyens (JO du 19 août 2026)](https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054707332) (Légifrance, source officielle)
+- [Décision n° 2026-915 DC du 14 août 2026 sur la loi visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public](https://www.conseil-constitutionnel.fr/sites/default/files/as/root/bank_mm/decisions/2026915dc/2026915dc.pdf) (Conseil constitutionnel, source officielle)
 - [Code de procédure pénale](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006071154/) (Légifrance, source officielle)
+
+### Déontologie, contrôles et sanctions
+
+*Niveaux : APS.*
+
+**En clair :** L’agent doit respecter le code de déontologie de la sécurité privée : jamais de violence, sauf en légitime défense, et appel aux forces de l’ordre quand un différend ne se règle pas à l’amiable. Le CNAPS contrôle la profession et peut sanctionner, jusqu’à une interdiction d’exercer de 7 ans.
+
+- **Le code de déontologie** : Articles R631-1 et suivants du Code de la sécurité intérieure. Il s’impose aux entreprises de sécurité privée et à leurs agents.
+- **Pas de violence** : Jamais de violence, même légère, sauf en légitime défense (Code pénal, articles 122-5 et 122-6). Si un différend avec une personne qui refuse un contrôle ne peut pas se régler à l’amiable, l’agent fait appel à la police ou à la gendarmerie (article R631-10).
+- **Contrôles** : Le CNAPS contrôle les entreprises et les agents, et sanctionne les manquements.
+- **Sanctions** : Interdiction temporaire d’exercer jusqu’à **7 ans**. Pour un salarié, pénalité financière jusqu’à **7 500 €**. Les sanctions peuvent être publiées sur le site du CNAPS (loi du 25 mai 2021).
+- **Violences** : Être agent de sécurité privée en service est une circonstance aggravante, que l’agent soit victime ou auteur de violences (loi du 25 mai 2021).
+- **Exercer sans carte** : Interdit. Sans carte ni récépissé valide, l’agent et son employeur s’exposent à des sanctions.
+
+Voir aussi : Ce que l’agent peut faire, et ce qu’il ne peut pas faire, Légitime défense et non-assistance, Carte professionnelle : validité et renouvellement.
+
+**Sources :**
+- [Réponse ministérielle n° 7802 (JO du 17 décembre 2019) : encadrement des agents de sécurité privée (L613-1, L612-20, L612-20-1, R631-10)](https://questions.assemblee-nationale.fr/q15/15-7802QE.htm) (Assemblée nationale, source officielle)
+- [Loi sécurité globale (25 mai 2021) : ce qui change pour les activités privées de sécurité](https://www.cnaps.interieur.gouv.fr/Actualites/Loi-securite-globale-ce-qui-change-pour-les-activites-privees-de-securite) (CNAPS, source officielle)
+- [Renouveler votre carte professionnelle : délais, MAC, récépissé (mis à jour le 21/07/2026)](https://www.cnaps.interieur.gouv.fr/Demarches-en-ligne/Vous-etes-un-particulier/Renouveler-votre-carte-professionnelle2/Renouveler-votre-carte-professionnelle) (CNAPS, source officielle)
+- [Code de la sécurité intérieure (livre VI : activités privées de sécurité)](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000025503132/) (Légifrance, source officielle)
+- [Code pénal](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070719/) (Légifrance, source officielle)
 
 ### Flagrant délit : l’article 73
 
@@ -1761,7 +1850,6 @@ Numéros : 17 (Police, gendarmerie), 112 (Numéro d’urgence européen).
 
 **Sources :**
 - [Code de procédure pénale](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006071154/) (Légifrance, source officielle)
-- [Pouvoirs de l’agent : bagages, palpation, véhicules (L613-2, L613-2-1, L613-3, R631-10, CPP 78-2)](https://travail-industrie.com/nos-formations/formation-agent-securite-privee-cqp-tfp-aps/module/2/chapitre/1) (Travail-Industrie (formation, texte annoté), source secondaire recoupée)
 
 ### Légitime défense et non-assistance
 
@@ -1790,14 +1878,14 @@ Les textes qui ont changé récemment.
 
 **En clair :** Les règles bougent. Voici, par date, les changements récents qui concernent les agents de sécurité incendie et les agents de sécurité privée.
 
-- **Août 2026 : Sécurité privée : loi n° 2026-798 du 18 août 2026.** L’article L613-2 du Code de la sécurité intérieure est réécrit : palpation possible en cas de menaces graves (arrêté du préfet) ou dans un périmètre de protection, avec accord exprès et par une personne du même sexe. L’inspection visuelle des véhicules passe dans un nouvel article L613-2-1, avec deux régimes (grands événements et sites listés, ou autorisation du préfet en cas de menaces graves). L’article 53 prévoit une expérimentation de caméras individuelles pour les agents de surveillance : formation spécifique, registre d’utilisation tenu pour le CNAPS, et l’agent ne peut pas visionner ni modifier ses enregistrements. (sources : Travail-Industrie (formation, texte annoté), Acte 1 Formation, L’Officiel des métiers, Le Mag juridique (veille))
+- **Août 2026 : Sécurité privée : loi n° 2026-798 du 18 août 2026 (loi RIPOST).** L’inspection visuelle des véhicules et de leurs coffres passe dans un nouvel article L613-2-1 du Code de la sécurité intérieure et s’étend à d’autres lieux : à la demande du gestionnaire (grands événements, enceintes de plus de 300 spectateurs, certains sites sensibles) ou sur autorisation du préfet en cas de menaces graves, toujours avec l’accord exprès du conducteur, sans fouille ni palpation. La loi prévoit aussi une expérimentation de 3 ans des caméras individuelles pour les agents privés de sécurité : elle ne pourra commencer qu’après la publication d’un décret en Conseil d’État, qui n’était pas encore paru lors de la vérification de l’appli. Le Conseil constitutionnel a jugé ces deux mesures conformes à la Constitution (décision n° 2026-915 DC du 14 août 2026). (sources : Légifrance, Conseil constitutionnel, CNAPS, CNAPS)
 - **Juillet 2026 : ERP de 5e catégorie : vérifications des installations.** Depuis le 1er juillet 2026, les installations de gaz et d’électricité en exploitation des ERP de 5e catégorie doivent être vérifiées au moins tous les 3 ans, et toute installation de gaz neuve ou modifiée est vérifiée à la réception des travaux, dans tous les ERP (arrêté du 1er décembre 2025, articles PE 4 et PE 10). (sources : AP-HP, veille juridique, L’Officiel des métiers)
 - **Juin 2026 : Réponse du ministère de l’Intérieur sur le décret n° 2025-1100.** Le ministère précise que le décret n’a pas supprimé de contrôle : les ERP de 5e catégorie sans locaux d’hébergement étaient déjà dispensés d’autorisation de travaux au titre de l’incendie. Ils doivent désormais informer l’autorité de police des travaux par une description succincte. Après l’incendie mortel de Crans-Montana (Suisse, 1er janvier 2026), les préfets ont été invités à multiplier les visites inopinées, notamment dans les établissements de nuit disposant d’un sous-sol où le public danse. (sources : Assemblée nationale)
-- **Mars 2026 : Loi n° 2026-201 du 20 mars 2026 (Jeux olympiques 2030).** Son article 43 a autorisé pour la première fois l’inspection visuelle des véhicules et de leurs coffres par les agents de sécurité privée, pour certains grands événements, avec l’accord du conducteur. Ce dispositif a été repris et élargi en août 2026. (sources : CNAPS, Acte 1 Formation)
+- **Mars 2026 : Loi n° 2026-201 du 20 mars 2026 (Jeux olympiques 2030).** Son article 43 a autorisé pour la première fois l’inspection visuelle des véhicules et de leurs coffres par les agents de sécurité privée, pour certains grands événements, avec l’accord du conducteur. Ce dispositif a été repris et élargi en août 2026. (sources : CNAPS)
 - **Janvier 2026 : Nouvelle réglementation du gaz dans les ERP.** L’arrêté du 23 février 2025 s’applique depuis le 1er janvier 2026 : exigences de sécurité recentrées sur des objectifs, solutions techniques décrites dans des guides approuvés. Les opérations d’entretien et de vérification suivent les articles GZ 14 et GZ 15 (1re à 4e catégorie) et PE 4 (5e catégorie) à partir du 1er juillet 2026. (sources : Fédération française du bâtiment)
 - **Novembre 2025 : Décret n° 2025-1100 du 19 novembre 2025.** Il encadre les « solutions d’effet équivalent » en sécurité incendie (études d’ingénierie accompagnées par des organismes reconnus), transfère des règles incendie des bâtiments à usage professionnel du Code du travail vers le Code de la construction, et modifie certaines procédures (en vigueur depuis le 21 novembre 2025). (sources : Assemblée nationale)
+- **Octobre 2025 : Nouvelle formation initiale des agents de sécurité privée.** L’arrêté du 1er septembre 2025 fixe le cahier des charges de la formation initiale (en vigueur le 1er octobre 2025) et remplace celui du 27 juin 2017 : environ 175 heures pour la surveillance humaine, avec les principes de la République, et certains modules théoriques peuvent se suivre à distance. (sources : Légifrance)
 - **Août 2025 : Traitement d’air et ventilation.** L’arrêté du 29 juillet 2025 modifie les dispositions du règlement ERP sur le traitement d’air et la ventilation, en vigueur depuis le 1er août 2025. (sources : CAPEB)
-- **Juin 2024 : Nouveau contenu du MAC APS.** L’arrêté du 15 juin 2024 sur la formation continue des agents de sécurité privée fixe le programme du MAC : premiers secours, cadre juridique, principes de la République, compétences opérationnelles et prévention des risques terroristes. (sources : Carif-Oref Auvergne-Rhône-Alpes (offre GRETA))
 
 > **Bon à savoir :** Pour les SSIAP, le texte de référence reste l’arrêté du 2 mai 2005 modifié. Lors de la vérification de l’appli (octobre 2026), aucune réforme du diplôme n’a été trouvée.
 
@@ -1807,11 +1895,11 @@ Les textes qui ont changé récemment.
 - [ERP de 5e catégorie : nouvelles obligations au 1er janvier et au 1er juillet 2026 (PE 4, PE 10, PE 21)](https://www.lofficieldesmetiers.fr/chauffagistes-erp-de-nouvelles-obligations-au-1er-janvier-2026-pour-la-securite-incendie/) (L’Officiel des métiers, source secondaire recoupée)
 - [Réglementation des installations de gaz dans les ERP (arrêté du 23 février 2025)](https://www.ffbatiment.fr/techniques-batiment/equipements-techniques/chauffage-ventilation-climatisation/dossier/reglementation-installations-gaz-erp) (Fédération française du bâtiment, organisme de référence)
 - [Traitement d’air et ventilation dans les ERP : arrêté du 29 juillet 2025](https://www.capeb.fr/actualites/chauffagiste-ndash-electricien-traitement-de-lair-et-ventilation-pour-les-erp) (CAPEB, organisme de référence)
+- [Loi n° 2026-798 du 18 août 2026 visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public, la sécurité et la tranquillité de nos concitoyens (JO du 19 août 2026)](https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054707332) (Légifrance, source officielle)
+- [Décision n° 2026-915 DC du 14 août 2026 sur la loi visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public](https://www.conseil-constitutionnel.fr/sites/default/files/as/root/bank_mm/decisions/2026915dc/2026915dc.pdf) (Conseil constitutionnel, source officielle)
+- [Caméras individuelles et agents privés de sécurité (mis à jour le 16/09/2026)](https://www.cnaps.interieur.gouv.fr/Fiches-thematiques/Cameras-individuelles-et-agents-prives-de-securite) (CNAPS, source officielle)
 - [Grands événements : l’inspection visuelle des véhicules rendue possible (31/03/2026)](https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Grands-evenements-designes-par-decret-l-inspection-visuelle-des-vehicules-rendue-possible) (CNAPS, source officielle)
-- [Pouvoirs de l’agent : bagages, palpation, véhicules (L613-2, L613-2-1, L613-3, R631-10, CPP 78-2)](https://travail-industrie.com/nos-formations/formation-agent-securite-privee-cqp-tfp-aps/module/2/chapitre/1) (Travail-Industrie (formation, texte annoté), source secondaire recoupée)
-- [Contrôle des véhicules par les agents de sécurité privée : lois du 20 mars et du 18 août 2026](https://www.acte1formation.fr/blog/controle-des-vehicules-par-les-agents-de-securite-privee-ce-qui-a-change-depuis-la-loi-securite-globale/) (Acte 1 Formation, source secondaire recoupée)
-- [Sécurité privée : expérimentation des caméras individuelles (articles 51 et 53 de la loi n° 2026-798)](https://www.lofficieldesmetiers.fr/securite-privee-test-des-cameras-pietons-pour-les-agents-2026/) (L’Officiel des métiers, source secondaire recoupée)
-- [MAC APS selon l’arrêté du 15 juin 2024 (modules et durées)](https://www.intercariforef.org/formations/03_261315124F03_2572324S/printable/customprint) (Carif-Oref Auvergne-Rhône-Alpes (offre GRETA), source officielle)
+- [Arrêté du 1er septembre 2025 portant cahier des charges applicable à la formation initiale aux activités privées de sécurité (en vigueur le 1er octobre 2025)](https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052197461) (Légifrance, source officielle)
 
 # Conduites à tenir
 
@@ -2202,14 +2290,14 @@ Les textes qui ont changé récemment.
 
 - **AG** (Alarme générale) : Signal sonore qui ordonne l’évacuation.
 - **AGS** (Alarme générale sélective) : Alarme destinée au seul personnel désigné, quand l’évacuation demande des précautions.
-- **APS** (Agent de prévention et de sécurité) : Agent de sécurité privée (surveillance, gardiennage), titulaire d’une carte professionnelle du CNAPS.
+- **APS** (Agent de prévention et de sécurité) : Agent de sécurité privée (surveillance humaine, gardiennage), titulaire d’une carte professionnelle du CNAPS.
 - **APSAD** (Référentiels d’assurance du CNPP) : Règles techniques demandées par les assureurs (R1 sprinkleurs, R4 extincteurs, R7 détection…). Ce ne sont pas des lois.
 - **BAAS** (Bloc autonome d’alarme sonore) : Sirène avec sa propre batterie. Type Ma (manuel), Pr (principal), Sa (satellite).
 - **BAES** (Bloc autonome d’éclairage de sécurité) : Bloc lumineux qui s’allume tout seul en cas de coupure pour baliser les sorties. Autonomie d’au moins 1 heure.
 - **CCDSA** (Commission consultative départementale de sécurité et d’accessibilité) : La commission (et ses sous-commissions) qui donne les avis de sécurité sur les ERP.
 - **CCH** (Code de la construction et de l’habitation) : Contient les règles de base des ERP (R.143-1 et suivants) et des IGH (R.146-3 et suivants).
 - **CMSI** (Centralisateur de mise en sécurité incendie) : Partie du SSI qui commande les DAS et l’alarme générale.
-- **CNAPS** (Conseil national des activités privées de sécurité) : Établissement public qui délivre et contrôle les cartes professionnelles de la sécurité privée.
+- **CNAPS** (Conseil national des activités privées de sécurité) : Établissement public du ministère de l’Intérieur qui délivre les cartes professionnelles de la sécurité privée, contrôle la profession et sanctionne les manquements.
 - **CO2** (Dioxyde de carbone) : Gaz extincteur propre, utilisable sur électricité, très froid à la sortie.
 - **Colonne sèche** () : Tuyau vide qui monte dans les étages, alimenté par les pompiers depuis la façade.
 - **Compartiment** () : Partie d’un bâtiment fermée par des parois résistant au feu.
@@ -2228,7 +2316,7 @@ Les textes qui ont changé récemment.
 - **IMH** (Immeuble de moyenne hauteur) : Habitation dont le logement le plus haut est entre 28 et 50 m.
 - **ITGH** (Immeuble de très grande hauteur) : Plus de 200 m.
 - **Levée de doute** () : Vérification sur place d’une alarme : vrai feu ou fausse alarme ?
-- **MAC** (Maintien et actualisation des compétences) : Formation obligatoire pour renouveler la carte professionnelle d’agent de sécurité privée.
+- **MAC** (Maintien et actualisation des compétences) : Formation à suivre dans les 24 mois avant la fin de validité de la carte professionnelle, obligatoire pour la renouveler.
 - **Main courante** () : Journal de bord du service de sécurité.
 - **MS** (Articles « moyens de secours » du règlement ERP) : Extincteurs, RIA, SSI, alarme, alerte, service de sécurité…
 - **OA** (Organisme agréé) : Bureau de contrôle agréé par le ministère de l’Intérieur pour certaines vérifications.
@@ -2243,6 +2331,7 @@ Les textes qui ont changé récemment.
 - **RIA** (Robinet d’incendie armé) : Tuyau sur dévidoir, toujours en eau sous pression.
 - **SATI** (Système automatique de test intégré) : BAES qui font leurs essais tout seuls.
 - **SDI** (Système de détection incendie) : Détecteurs, déclencheurs manuels et tableau de signalisation.
+- **SGE** (Surveillance de grands événements) : Carte professionnelle limitée à la surveillance d’événements de plus de 300 personnes, obtenue après une formation de 106 heures.
 - **SMSI** (Système de mise en sécurité incendie) : Centralisateur, DAS et alarme.
 - **Sprinkleur** () : Tête d’extinction automatique à eau qui s’ouvre avec la chaleur.
 - **SSI** (Système de sécurité incendie) : L’ensemble qui détecte le feu et met le bâtiment en sécurité.
@@ -2250,7 +2339,7 @@ Les textes qui ont changé récemment.
 - **SST** (Sauveteur secouriste du travail) : Formation de secourisme en entreprise.
 - **TC** (Technicien compétent) : Personne qualifiée pour les vérifications annuelles.
 - **Temporisation** () : Délai (5 minutes au maximum) entre l’alarme restreinte et l’alarme générale.
-- **TFP APS** (Titre à finalité professionnelle Agent de prévention et de sécurité) : Formation de base de l’agent de sécurité privée (ex-CQP APS).
+- **TFP APS** (Titre à finalité professionnelle Agent de prévention et de sécurité) : Une des certifications qui permettent d’obtenir la carte professionnelle d’agent de sécurité privée.
 - **UGA** (Unité de gestion d’alarme) : Partie du système qui gère et diffuse l’alarme générale.
 - **UP** (Unité de passage) : Largeur de base des dégagements : 0,60 m.
 - **Ventouse** () : Électroaimant qui tient une porte coupe-feu ouverte et la lâche en cas d’alarme.
@@ -2298,15 +2387,22 @@ Les textes qui ont changé récemment.
 - [Réglementation des installations de gaz dans les ERP (arrêté du 23 février 2025)](https://www.ffbatiment.fr/techniques-batiment/equipements-techniques/chauffage-ventilation-climatisation/dossier/reglementation-installations-gaz-erp) (Fédération française du bâtiment, organisme de référence)
 - [Traitement d’air et ventilation dans les ERP : arrêté du 29 juillet 2025](https://www.capeb.fr/actualites/chauffagiste-ndash-electricien-traitement-de-lair-et-ventilation-pour-les-erp) (CAPEB, organisme de référence)
 - [Code de la sécurité intérieure (livre VI : activités privées de sécurité)](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000025503132/) (Légifrance, source officielle)
-- [Code de la sécurité intérieure, article L613-2](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000025506272) (Légifrance, source officielle)
+- [Exercer le métier d’agent de sécurité privée : carte professionnelle, conditions, activités, validité](https://www.cnaps.interieur.gouv.fr/Vos-demarches/Vous-etes-un-particulier/Exercer-le-metier-d-agent-de-securite-privee/Exercer-le-metier-d-agent-de-securite-privee) (CNAPS, source officielle)
+- [Renouveler votre carte professionnelle : délais, MAC, récépissé (mis à jour le 21/07/2026)](https://www.cnaps.interieur.gouv.fr/Demarches-en-ligne/Vous-etes-un-particulier/Renouveler-votre-carte-professionnelle2/Renouveler-votre-carte-professionnelle) (CNAPS, source officielle)
+- [Informations relatives au maintien et à l’actualisation des compétences (MAC)](https://cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Informations-relatives-au-maintien-et-a-l-actualisation-des-competences-MAC) (CNAPS, source officielle)
+- [Arrêté du 27 février 2017 relatif à la formation continue des agents privés de sécurité](https://www.legifrance.gouv.fr/loda/id/JORFTEXT000034104578) (Légifrance, source officielle)
+- [Fiche technique MAC APS : modules, durées et dispense de premiers secours (juillet 2026)](https://inforisque.fr/documentations-securite/4262-fiche-technique-mac-agent-de-prevention-et-de-securite-mac-aps-.pdf) (Inforisque (formation en sécurité), source secondaire recoupée)
+- [Arrêté du 1er septembre 2025 portant cahier des charges applicable à la formation initiale aux activités privées de sécurité (en vigueur le 1er octobre 2025)](https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052197461) (Légifrance, source officielle)
+- [Nouvelles obligations pour les demandes de titres : niveau de français B1](https://www.cnaps.interieur.gouv.fr/Actualites/Nouvelles-obligations-pour-les-demandes-de-titres) (CNAPS, source officielle)
+- [Loi sécurité globale (25 mai 2021) : ce qui change pour les activités privées de sécurité](https://www.cnaps.interieur.gouv.fr/Actualites/Loi-securite-globale-ce-qui-change-pour-les-activites-privees-de-securite) (CNAPS, source officielle)
+- [La carte professionnelle « Surveillance grands évènements » est désormais valable 5 ans](https://www.cnaps.interieur.gouv.fr/Actualites/La-carte-professionnelle-Surveillance-grands-evenements-est-desormais-valable-5-ans) (CNAPS, source officielle)
+- [Réponse ministérielle n° 7802 (JO du 17 décembre 2019) : encadrement des agents de sécurité privée (L613-1, L612-20, L612-20-1, R631-10)](https://questions.assemblee-nationale.fr/q15/15-7802QE.htm) (Assemblée nationale, source officielle)
+- [La réglementation sur les palpations de sécurité et les fouilles de bagages à main](https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/La-reglementation-sur-les-palpations-de-securite-et-les-fouilles-de-bagages-a-main) (CNAPS, source officielle)
+- [Les agréments à la palpation évoluent (loi du 25 mai 2021)](https://www.cnaps.interieur.gouv.fr/Actualites/Les-agrements-a-la-palpation-evoluent) (CNAPS, source officielle)
 - [Grands événements : l’inspection visuelle des véhicules rendue possible (31/03/2026)](https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Grands-evenements-designes-par-decret-l-inspection-visuelle-des-vehicules-rendue-possible) (CNAPS, source officielle)
-- [Pouvoirs de l’agent : bagages, palpation, véhicules (L613-2, L613-2-1, L613-3, R631-10, CPP 78-2)](https://travail-industrie.com/nos-formations/formation-agent-securite-privee-cqp-tfp-aps/module/2/chapitre/1) (Travail-Industrie (formation, texte annoté), source secondaire recoupée)
-- [Contrôle des véhicules par les agents de sécurité privée : lois du 20 mars et du 18 août 2026](https://www.acte1formation.fr/blog/controle-des-vehicules-par-les-agents-de-securite-privee-ce-qui-a-change-depuis-la-loi-securite-globale/) (Acte 1 Formation, source secondaire recoupée)
-- [Sécurité privée : expérimentation des caméras individuelles (articles 51 et 53 de la loi n° 2026-798)](https://www.lofficieldesmetiers.fr/securite-privee-test-des-cameras-pietons-pour-les-agents-2026/) (L’Officiel des métiers, source secondaire recoupée)
-- [Loi n° 2026-798 du 18 août 2026 (JO du 19 août 2026)](https://www.lemag-juridique.com/veille/articles/penal-securite-ordre-public-ce-que-change-loi-18-aout-2026-11913.htm) (Le Mag juridique (veille), source secondaire recoupée)
-- [MAC APS selon l’arrêté du 15 juin 2024 (modules et durées)](https://www.intercariforef.org/formations/03_261315124F03_2572324S/printable/customprint) (Carif-Oref Auvergne-Rhône-Alpes (offre GRETA), source officielle)
-- [MAC Agent de prévention et de sécurité : prérequis et délai avant l’échéance de la carte](https://formaction.u-bordeaux.fr/training/pdf/3527) (Université de Bordeaux, source officielle)
-- [TFP APS : titre à finalité professionnelle Agent de prévention et de sécurité (ex-CQP APS)](https://www.intercariforef.org/formations/02_20220110719202_00691415/printable/customprint) (Carif-Oref Nouvelle-Aquitaine, source officielle)
+- [Loi n° 2026-798 du 18 août 2026 visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public, la sécurité et la tranquillité de nos concitoyens (JO du 19 août 2026)](https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054707332) (Légifrance, source officielle)
+- [Décision n° 2026-915 DC du 14 août 2026 sur la loi visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public](https://www.conseil-constitutionnel.fr/sites/default/files/as/root/bank_mm/decisions/2026915dc/2026915dc.pdf) (Conseil constitutionnel, source officielle)
+- [Caméras individuelles et agents privés de sécurité (mis à jour le 16/09/2026)](https://www.cnaps.interieur.gouv.fr/Fiches-thematiques/Cameras-individuelles-et-agents-prives-de-securite) (CNAPS, source officielle)
 - [Code pénal](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070719/) (Légifrance, source officielle)
 - [Code de procédure pénale](https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006071154/) (Légifrance, source officielle)
 - [Carte de poche « Arrêt cardiaque »](https://www.fedecardio.org/wp-content/uploads/2022/09/Carte-de-poche-ARRET-CARDIAQUE.pdf) (Fédération française de cardiologie, organisme de référence)

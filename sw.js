@@ -1,8 +1,9 @@
 /* Service worker du Mémo SSIAP : met l'appli en cache pour l'utiliser sans connexion. */
-const CACHE = "memo-ssiap-1.3.0-2e3b06ccaf";
+const CACHE = "memo-ssiap-1.4.0-733af1ec45";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./maskable-512.png", "./apple-touch-icon.png", "./favicon-32.png"];
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));
+  // cache: "reload" : toujours la version en ligne, jamais une copie du navigateur (sinon une mise à jour pourrait garder l'ancienne page).
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((u) => new Request(u, { cache: "reload" })))));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(

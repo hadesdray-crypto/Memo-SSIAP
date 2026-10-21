@@ -993,7 +993,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "1.3.0",
+    version: "1.4.0",
     verifie: "21 octobre 2026",
     verifieCourt: "21/10/2026",
   },
@@ -1007,7 +1007,7 @@ const D = {
     { id: "metier", tab: "regles", titre: "Mon métier SSIAP", ic: "badge", co: "blue", desc: "SSIAP 1, 2 et 3 : missions, accès, formation, recyclage, examen" },
     { id: "erp", tab: "regles", titre: "ERP et IGH", ic: "immeuble", co: "blue", desc: "Types, catégories, effectif, service de sécurité, IGH" },
     { id: "controles", tab: "regles", titre: "Contrôles et obligations", ic: "registre", co: "blue", desc: "Commission de sécurité, registre, vérifications, Code du travail, APSAD" },
-    { id: "aps", tab: "regles", titre: "Agent de sécurité privée", ic: "bouclier", co: "blue", desc: "Carte professionnelle, droits et limites, palpation, article 73" },
+    { id: "aps", tab: "regles", titre: "Agent de sécurité privée", ic: "bouclier", co: "blue", desc: "Devenir agent, carte et MAC, droits et limites, déontologie, article 73" },
     { id: "actu", tab: "regles", titre: "Nouveautés 2025-2026", ic: "nouveau", co: "amber", desc: "Les textes qui ont changé récemment" },
   ],
   /* k : "officiel" (texte ou organisme public), "reference" (organisme technique ou professionnel reconnu), "secondaire" (synthèse publiée par un tiers, recoupée) */
@@ -1053,15 +1053,22 @@ const D = {
     gaz2025: { t: "Réglementation des installations de gaz dans les ERP (arrêté du 23 février 2025)", o: "Fédération française du bâtiment", u: "https://www.ffbatiment.fr/techniques-batiment/equipements-techniques/chauffage-ventilation-climatisation/dossier/reglementation-installations-gaz-erp", k: "reference" },
     ch2025: { t: "Traitement d’air et ventilation dans les ERP : arrêté du 29 juillet 2025", o: "CAPEB", u: "https://www.capeb.fr/actualites/chauffagiste-ndash-electricien-traitement-de-lair-et-ventilation-pour-les-erp", k: "reference" },
     csi: { t: "Code de la sécurité intérieure (livre VI : activités privées de sécurité)", o: "Légifrance", u: "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000025503132/", k: "officiel" },
-    l6132: { t: "Code de la sécurité intérieure, article L613-2", o: "Légifrance", u: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000025506272", k: "officiel" },
+    cnapsMetier: { t: "Exercer le métier d’agent de sécurité privée : carte professionnelle, conditions, activités, validité", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Vos-demarches/Vous-etes-un-particulier/Exercer-le-metier-d-agent-de-securite-privee/Exercer-le-metier-d-agent-de-securite-privee", k: "officiel" },
+    cnapsRenouv: { t: "Renouveler votre carte professionnelle : délais, MAC, récépissé (mis à jour le 21/07/2026)", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Demarches-en-ligne/Vous-etes-un-particulier/Renouveler-votre-carte-professionnelle2/Renouveler-votre-carte-professionnelle", k: "officiel" },
+    cnapsMac: { t: "Informations relatives au maintien et à l’actualisation des compétences (MAC)", o: "CNAPS", u: "https://cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Informations-relatives-au-maintien-et-a-l-actualisation-des-competences-MAC", k: "officiel" },
+    arr2017mac: { t: "Arrêté du 27 février 2017 relatif à la formation continue des agents privés de sécurité", o: "Légifrance", u: "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000034104578", k: "officiel" },
+    macFiche: { t: "Fiche technique MAC APS : modules, durées et dispense de premiers secours (juillet 2026)", o: "Inforisque (formation en sécurité)", u: "https://inforisque.fr/documentations-securite/4262-fiche-technique-mac-agent-de-prevention-et-de-securite-mac-aps-.pdf", k: "secondaire" },
+    arr2025: { t: "Arrêté du 1er septembre 2025 portant cahier des charges applicable à la formation initiale aux activités privées de sécurité (en vigueur le 1er octobre 2025)", o: "Légifrance", u: "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052197461", k: "officiel" },
+    cnapsTitres: { t: "Nouvelles obligations pour les demandes de titres : niveau de français B1", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Actualites/Nouvelles-obligations-pour-les-demandes-de-titres", k: "officiel" },
+    cnapsSG: { t: "Loi sécurité globale (25 mai 2021) : ce qui change pour les activités privées de sécurité", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Actualites/Loi-securite-globale-ce-qui-change-pour-les-activites-privees-de-securite", k: "officiel" },
+    cnapsSGE: { t: "La carte professionnelle « Surveillance grands évènements » est désormais valable 5 ans", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Actualites/La-carte-professionnelle-Surveillance-grands-evenements-est-desormais-valable-5-ans", k: "officiel" },
+    qe7802: { t: "Réponse ministérielle n° 7802 (JO du 17 décembre 2019) : encadrement des agents de sécurité privée (L613-1, L612-20, L612-20-1, R631-10)", o: "Assemblée nationale", u: "https://questions.assemblee-nationale.fr/q15/15-7802QE.htm", k: "officiel" },
+    cnapsPalp: { t: "La réglementation sur les palpations de sécurité et les fouilles de bagages à main", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/La-reglementation-sur-les-palpations-de-securite-et-les-fouilles-de-bagages-a-main", k: "officiel" },
+    cnapsAgrPalp: { t: "Les agréments à la palpation évoluent (loi du 25 mai 2021)", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Actualites/Les-agrements-a-la-palpation-evoluent", k: "officiel" },
     cnapsVeh: { t: "Grands événements : l’inspection visuelle des véhicules rendue possible (31/03/2026)", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Publications/Fiches-thematiques/Grands-evenements-designes-par-decret-l-inspection-visuelle-des-vehicules-rendue-possible", k: "officiel" },
-    tiAps: { t: "Pouvoirs de l’agent : bagages, palpation, véhicules (L613-2, L613-2-1, L613-3, R631-10, CPP 78-2)", o: "Travail-Industrie (formation, texte annoté)", u: "https://travail-industrie.com/nos-formations/formation-agent-securite-privee-cqp-tfp-aps/module/2/chapitre/1", k: "secondaire" },
-    acte1: { t: "Contrôle des véhicules par les agents de sécurité privée : lois du 20 mars et du 18 août 2026", o: "Acte 1 Formation", u: "https://www.acte1formation.fr/blog/controle-des-vehicules-par-les-agents-de-securite-privee-ce-qui-a-change-depuis-la-loi-securite-globale/", k: "secondaire" },
-    cam2026: { t: "Sécurité privée : expérimentation des caméras individuelles (articles 51 et 53 de la loi n° 2026-798)", o: "L’Officiel des métiers", u: "https://www.lofficieldesmetiers.fr/securite-privee-test-des-cameras-pietons-pour-les-agents-2026/", k: "secondaire" },
-    loi798: { t: "Loi n° 2026-798 du 18 août 2026 (JO du 19 août 2026)", o: "Le Mag juridique (veille)", u: "https://www.lemag-juridique.com/veille/articles/penal-securite-ordre-public-ce-que-change-loi-18-aout-2026-11913.htm", k: "secondaire" },
-    mac2024: { t: "MAC APS selon l’arrêté du 15 juin 2024 (modules et durées)", o: "Carif-Oref Auvergne-Rhône-Alpes (offre GRETA)", u: "https://www.intercariforef.org/formations/03_261315124F03_2572324S/printable/customprint", k: "officiel" },
-    macBdx: { t: "MAC Agent de prévention et de sécurité : prérequis et délai avant l’échéance de la carte", o: "Université de Bordeaux", u: "https://formaction.u-bordeaux.fr/training/pdf/3527", k: "officiel" },
-    tfp: { t: "TFP APS : titre à finalité professionnelle Agent de prévention et de sécurité (ex-CQP APS)", o: "Carif-Oref Nouvelle-Aquitaine", u: "https://www.intercariforef.org/formations/02_20220110719202_00691415/printable/customprint", k: "officiel" },
+    loi798: { t: "Loi n° 2026-798 du 18 août 2026 visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public, la sécurité et la tranquillité de nos concitoyens (JO du 19 août 2026)", o: "Légifrance", u: "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054707332", k: "officiel" },
+    ccRipost: { t: "Décision n° 2026-915 DC du 14 août 2026 sur la loi visant à offrir des réponses immédiates aux phénomènes troublant l’ordre public", o: "Conseil constitutionnel", u: "https://www.conseil-constitutionnel.fr/sites/default/files/as/root/bank_mm/decisions/2026915dc/2026915dc.pdf", k: "officiel" },
+    cnapsCam: { t: "Caméras individuelles et agents privés de sécurité (mis à jour le 16/09/2026)", o: "CNAPS", u: "https://www.cnaps.interieur.gouv.fr/Fiches-thematiques/Cameras-individuelles-et-agents-prives-de-securite", k: "officiel" },
     cp: { t: "Code pénal", o: "Légifrance", u: "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070719/", k: "officiel" },
     cpp: { t: "Code de procédure pénale", o: "Légifrance", u: "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006071154/", k: "officiel" },
     fedecardio: { t: "Carte de poche « Arrêt cardiaque »", o: "Fédération française de cardiologie", u: "https://www.fedecardio.org/wp-content/uploads/2022/09/Carte-de-poche-ARRET-CARDIAQUE.pdf", k: "reference" },
@@ -2475,48 +2482,91 @@ D.fiches.push(
 /* data/95-aps.js */
 D.fiches.push(
 {
-  id: "aps-carte", r: "aps", titre: "Carte professionnelle, TFP APS et MAC", niv: ["APS"],
-  mc: "agent de prevention et de securite APS carte professionnelle CNAPS 5 ans renouvellement MAC maintien et actualisation des competences 34 heures arrete 15 juin 2024 TFP APS CQP APS 175 heures livre VI code de la securite interieure",
-  clair: "Pour faire de la surveillance ou du gardiennage, il faut une carte professionnelle délivrée par le CNAPS. Elle dure 5 ans. Pour la renouveler, il faut suivre une formation de mise à jour, le MAC.",
+  id: "aps-devenir", r: "aps", titre: "Devenir agent de sécurité (APS)", niv: ["APS"],
+  mc: "devenir agent de securite APS agent de prevention et de securite conditions carte professionnelle CNAPS autorisation prealable formation initiale 175 heures arrete 1er septembre 2025 TFP APS RNCP certification enquete administrative TAJ FPR casier judiciaire bulletin n 2 L612-20 titre de sejour 5 ans etranger francais B1 activites surveillance grands evenements SGE 106 heures cynophile armee videoprotection",
+  clair: "Pour faire de la surveillance ou du gardiennage, il faut suivre une formation d’environ 175 heures, puis obtenir une carte professionnelle du CNAPS. Avant de la délivrer, le CNAPS vérifie le passé du candidat.",
   b: [
     { t: "kv", x: [
-      ["Le cadre", "Les activités privées de sécurité sont régies par le livre VI du Code de la sécurité intérieure. Le CNAPS (Conseil national des activités privées de sécurité), établissement public placé sous l’autorité du ministère de l’Intérieur, délivre, suspend ou retire les autorisations, agréments et cartes professionnelles."],
-      ["Carte professionnelle", "Obligatoire pour exercer. Délivrée par le CNAPS, valable 5 ans, dématérialisée."],
-      ["Qualification", "Le TFP APS (titre à finalité professionnelle Agent de prévention et de sécurité, ex-CQP APS) est la formation de base, d’environ 175 heures."],
-      ["Renouvellement", "Il faut avoir suivi le stage MAC (maintien et actualisation des compétences) dans les **24 mois** qui précèdent la fin de validité de la carte, et avoir un secourisme en cours de validité."],
+      ["Le cadre", "Les activités privées de sécurité sont régies par le livre VI du Code de la sécurité intérieure. Le CNAPS (Conseil national des activités privées de sécurité), établissement public du ministère de l’Intérieur, délivre les autorisations et les cartes professionnelles, contrôle la profession et sanctionne les manquements."],
+      ["1. Entrer en formation", "Il faut une **autorisation préalable** du CNAPS, valable **6 mois**. Un agent qui a déjà une carte n’en a pas besoin, sauf pour une formation au port d’arme ou à la sûreté aéroportuaire."],
+      ["2. Se former", "Environ **175 heures** pour la surveillance humaine ou le gardiennage (arrêté du 1er septembre 2025, en vigueur depuis le 1er octobre 2025). Au programme notamment : cadre juridique, principes de la République (3 h), premiers secours (14 h), gestion des conflits, prévention des risques terroristes (13 h), rondes et contrôle d’accès. Certains modules théoriques peuvent se suivre à distance."],
+      ["3. Être certifié", "La formation mène à une certification reconnue : certificat de qualification professionnelle ou titre inscrit au RNCP, comme le TFP APS (titre à finalité professionnelle Agent de prévention et de sécurité)."],
+      ["4. Demander la carte", "En ligne, sur l’espace particulier du CNAPS. Le CNAPS mène une **enquête administrative** : fichiers de police (TAJ, FPR) et casier judiciaire (bulletin n° 2). Certaines condamnations, ou un comportement incompatible avec la fonction, empêchent d’obtenir la carte (article L612-20)."],
+      ["Candidats étrangers", "Hors Union européenne : être titulaire d’un titre de séjour depuis au moins **5 ans** (depuis le 27 mai 2021). Tout candidat étranger, même européen : niveau de français **B1** (depuis le 1er mai 2022)."],
     ] },
-    { t: "h", x: "Le MAC APS (arrêté du 15 juin 2024)" },
+    { t: "h", x: "Une carte par activité" },
+    { t: "p", x: "Chaque activité fait l’objet d’une demande et d’une carte distinctes, et se renouvelle séparément. Exemples : surveillance humaine ou gardiennage, surveillance de grands événements, surveillance avec chien, surveillance armée, vidéoprotection, sûreté aéroportuaire, protection physique des personnes." },
+    { t: "info", x: "**Carte « surveillance de grands événements » (SGE)** : délivrée après une formation de 106 heures, elle est limitée à la surveillance d’événements de plus de 300 personnes. Elle est valable 5 ans (décret du 29 décembre 2023)." },
+    { t: "links", x: ["aps-carte", "aps-mac", "cumul-ssiap-aps"] },
+  ],
+  src: ["csi", "cnapsMetier", "arr2025", "qe7802", "cnapsSG", "cnapsTitres", "cnapsSGE"],
+},
+{
+  id: "aps-carte", r: "aps", titre: "Carte professionnelle : validité et renouvellement", niv: ["APS"],
+  mc: "carte professionnelle CNAPS validite 5 ans renouvellement renouveler 3 mois 6 mois avant expiration recepisse MAC 24 mois carte expiree 12 mois L612-20-1 activite separee",
+  clair: "La carte professionnelle vaut 5 ans. On demande son renouvellement au moins 3 mois avant la fin, avec l’attestation de MAC suivi dans les 24 mois qui précèdent. Sans carte valide ni récépissé, on ne peut plus travailler.",
+  b: [
+    { t: "kv", x: [
+      ["Validité", "**5 ans**, sur tout le territoire national. La carte est délivrée par le CNAPS."],
+      ["Quand demander le renouvellement", "**Au moins 3 mois** avant la date d’expiration. Le CNAPS n’accepte pas les demandes faites plus de **6 mois** avant."],
+      ["Condition", "Avoir suivi le [[aps-mac|MAC]] (maintien et actualisation des compétences) dans les **24 mois** qui précèdent l’échéance, pour chaque activité de la carte (Code de la sécurité intérieure, article L612-20-1)."],
+      ["Récépissé", "Si la demande complète est déposée dans les délais, le CNAPS peut délivrer un **récépissé** de 3 mois, renouvelable, qui permet de continuer à travailler. Il n’est pas automatique."],
+      ["Carte expirée", "On ne peut plus exercer. Pour une nouvelle demande, il faut une autorisation préalable du CNAPS pour entrer en formation, et un MAC suivi dans les **12 mois** qui précèdent la demande."],
+      ["Plusieurs activités", "Chaque activité se renouvelle séparément, avec son propre MAC."],
+    ] },
+    { t: "warn", x: "Travailler sans carte ni récépissé valide expose l’agent et son employeur à des sanctions." },
+    { t: "links", x: ["o-carte", "aps-mac", "aps-devenir"] },
+  ],
+  src: ["cnapsRenouv", "cnapsMac", "qe7802", "csi"],
+},
+{
+  id: "aps-mac", r: "aps", titre: "Le MAC : la formation pour renouveler la carte", niv: ["APS"],
+  mc: "MAC maintien et actualisation des competences formation continue recyclage APS 34 heures 27 heures premiers secours dispense SST PSC1 PSE1 PSE2 principes de la republique risques terroristes inspection filtrage gestion des conflits cadre juridique arrete 27 fevrier 2017 attestation 24 mois 36 mois",
+  clair: "Le MAC est une formation de remise à jour, à suivre dans les 24 mois avant la fin de la carte. Elle dure 34 heures, ou 27 heures si l’on a un secourisme de moins de 2 ans. Sans attestation de MAC, la carte n’est pas renouvelée.",
+  b: [
     { t: "tab", h: ["Module", "Durée"], r: [
-      ["Premiers secours", "7 h"],
+      ["Gestes élémentaires de premiers secours", "7 h (dispense avec un secourisme de moins de 2 ans : SST, PSC1, PSE1 ou PSE2)"],
       ["Cadre juridique d’intervention de l’agent privé de sécurité", "4 h"],
       ["Principes de la République", "3 h"],
-      ["Compétences opérationnelles générales (gestion des conflits, inspection-filtrage)", "7 h"],
+      ["Compétences opérationnelles générales : gestion des conflits et inspection-filtrage", "7 h"],
       ["Prévention des risques terroristes", "13 h"],
     ] },
-    { t: "p", x: "Soit **34 heures au maximum**, la durée réelle pouvant être réduite selon les modules déjà validés." },
-    { t: "links", x: ["cumul-ssiap-aps", "aps-pouvoirs"] },
+    { t: "p", x: "Soit **34 heures** de modules, ou **27 heures** avec la dispense de premiers secours. Le temps d’accueil et d’évaluation s’y ajoute." },
+    { t: "kv", x: [
+      ["Texte de référence", "Arrêté du 27 février 2017 relatif à la formation continue des agents privés de sécurité, modifié."],
+      ["Quand le suivre", "Dans les **24 mois** qui précèdent la fin de validité de la carte (36 mois pour la télésurveillance et certaines activités de transport de fonds)."],
+      ["Avec une carte expirée", "Une autorisation préalable du CNAPS est nécessaire pour entrer en formation."],
+      ["Attestation", "L’organisme de formation, autorisé par le CNAPS, remet une attestation par activité, à joindre à la demande de renouvellement."],
+    ] },
+    { t: "info", x: "Le secourisme n’est pas une condition à part du renouvellement : il fait partie du MAC. Un certificat de moins de 2 ans dispense seulement du module de premiers secours." },
+    { t: "links", x: ["aps-carte", "o-carte"] },
   ],
-  src: ["csi", "tfp", "mac2024", "macBdx"],
+  src: ["cnapsMac", "cnapsRenouv", "arr2017mac", "macFiche"],
 },
 {
   id: "aps-pouvoirs", r: "aps", titre: "Ce que l’agent peut faire, et ce qu’il ne peut pas faire", niv: ["APS"],
-  mc: "inspection visuelle des bagages fouille consentement palpation de securite meme sexe perimetre de protection menace grave arrete prefectoral 300 spectateurs OPJ vehicule coffre L613-2 L613-2-1 L613-3 controle d identite 78-2 refus d acces",
-  clair: "L’agent de sécurité n’est pas un policier. Il peut regarder dans un sac, le fouiller si la personne est d’accord, et faire une palpation seulement dans des cas précis. Il ne peut jamais forcer quelqu’un, ni contrôler son identité. Si la personne refuse, on peut lui refuser l’entrée, et appeler la police si besoin.",
+  mc: "inspection visuelle des bagages fouille consentement palpation de securite meme sexe perimetre de protection menace grave arrete prefectoral 300 spectateurs OPJ agrement service d ordre vehicule coffre L613-1 L613-2 L613-2-1 L613-3 voie publique autorisation prefet terrorisme controle d identite 78-2 refus d acces violence R631-10 conflit du travail L612-4",
+  clair: "L’agent de sécurité n’est pas un policier. Il agit seulement dans les lieux qu’il garde. Il peut regarder dans un sac, le fouiller si la personne est d’accord, et faire une palpation seulement dans des cas précis. Il ne peut jamais forcer quelqu’un, ni contrôler son identité. Si la personne refuse, on peut lui refuser l’entrée, et appeler la police si besoin.",
   b: [
+    { t: "h", x: "Où il peut agir" },
+    { t: "p", x: "Seulement à l’intérieur des bâtiments ou dans la limite des lieux dont il a la garde. Sur la voie publique, uniquement avec une **autorisation exceptionnelle du préfet** : surveillance contre les vols, dégradations et effractions visant les biens gardés et, depuis 2021, contre les actes de terrorisme (article L613-1)." },
+    { t: "h", x: "Les contrôles" },
     { t: "tab", h: ["Contrôle", "Condition", "Accord de la personne", "Texte"], r: [
-      ["Inspection visuelle des bagages", "Activité de surveillance et gardiennage", "La personne présente son sac", "L613-2"],
+      ["Inspection visuelle des bagages", "Dans le cadre de la mission de surveillance", "La personne présente elle-même son sac", "L613-2"],
       ["Fouille des bagages", "Idem", "Accord du propriétaire", "L613-2"],
-      ["Palpation de sécurité", "Menaces graves pour la sécurité publique constatées par arrêté du préfet, ou périmètre de protection (L226-1). Faite par une personne **du même sexe**", "Accord **exprès**", "L613-2"],
-      ["Palpation à l’entrée d’une manifestation de plus de 300 spectateurs", "Sous le contrôle d’un officier de police judiciaire, par des agents agréés, du même sexe", "Accord exprès", "L613-3"],
-      ["Inspection visuelle des véhicules et coffres", "À la demande du gestionnaire, avant l’accès à un grand événement ou rassemblement, à certaines enceintes et sites listés, ou sur autorisation du préfet en cas de menaces graves. Pas les véhicules aménagés pour l’habitation", "Accord exprès du conducteur", "L613-2-1"],
+      ["Palpation de sécurité", "Menaces graves pour la sécurité publique constatées par un arrêté du préfet, qui fixe la durée et les lieux, ou périmètre de protection (L226-1). Faite par une personne **du même sexe**", "Accord **exprès**", "L613-2"],
+      ["Palpation à l’entrée d’une manifestation sportive, récréative ou culturelle de plus de 300 spectateurs", "Sous le contrôle d’un officier de police judiciaire. Faite par une personne **du même sexe**", "Accord **exprès**", "L613-3"],
+      ["Inspection visuelle d’un véhicule et de son coffre", "À la demande du gestionnaire du lieu gardé, pour l’accès à un grand événement, à une enceinte de plus de 300 spectateurs ou à certains sites sensibles ; ailleurs, seulement sur autorisation du préfet en cas de menaces graves. Jamais de fouille du véhicule ni de palpation. Pas les véhicules aménagés pour l’habitation", "Accord **exprès** du conducteur", "L613-2-1"],
     ] },
-    { t: "p", x: "En cas de refus d’inspection d’un véhicule, l’accès au site est interdit, mais le conducteur et les passagers peuvent entrer à pied." },
+    { t: "info", x: "Depuis la loi du 25 mai 2021 (sécurité globale), l’agent qui a la carte professionnelle et la formation n’a plus besoin d’agrément pour faire des palpations. L’agrément du CNAPS (3 ans) ne concerne plus que les membres du service d’ordre de l’organisateur d’une manifestation de plus de 300 spectateurs." },
+    { t: "p", x: "Si le conducteur refuse l’inspection, le véhicule n’entre pas, mais le conducteur et les passagers peuvent entrer à pied, comme les autres visiteurs." },
     { t: "h", x: "Jamais" },
     { t: "ul", x: [
       "Fouiller ou palper sans l’accord de la personne.",
       "Faire palper une personne par un agent de l’autre sexe.",
       "Contrôler l’identité : c’est réservé aux officiers et agents de police judiciaire (Code de procédure pénale, art. 78-2). L’agent peut demander un badge ou un titre d’accès prévu par les consignes.",
-      "Fouille corporelle, retenue d’objets ou contrainte par la force.",
+      "Fouille à corps, retenue d’objets ou contrainte par la force.",
+      "User de violence, même légère, sauf en [[aps-legitime-defense|légitime défense]] (code de déontologie, R631-10).",
       "S’immiscer dans un conflit du travail ou surveiller les opinions politiques, philosophiques, religieuses ou syndicales des personnes (CSI, L612-4).",
     ] },
     { t: "h", x: "Face à un refus" },
@@ -2524,11 +2574,29 @@ D.fiches.push(
       "Expliquer calmement ce qui est demandé et pourquoi (consigne du site, arrêté).",
       "Ne jamais forcer.",
       "Refuser l’accès si le contrôle conditionne l’entrée, selon la consigne.",
-      "Appeler la police ou la gendarmerie si la personne insiste ou si la situation se tend, puis rendre compte à sa hiérarchie.",
+      "Si le différend ne se règle pas à l’amiable, appeler la police ou la gendarmerie (R631-10), puis rendre compte à sa hiérarchie.",
     ] },
-    { t: "info", x: "Ces règles ont été modifiées en 2026 : la loi du 20 mars 2026 a ouvert l’inspection des véhicules pour les grands événements, puis la loi n° 2026-798 du 18 août 2026 a réécrit l’article L613-2 et créé l’article L613-2-1." },
+    { t: "info", x: "Nouveautés 2026 : la loi du 20 mars 2026 a permis l’inspection visuelle des véhicules pour les grands événements. La loi n° 2026-798 du 18 août 2026 a placé ce pouvoir dans le nouvel article L613-2-1 et l’a étendu à d’autres lieux." },
+    { t: "links", x: ["aps-deontologie", "aps-article-73"] },
   ],
-  src: ["l6132", "cnapsVeh", "tiAps", "acte1", "csi", "cpp"],
+  src: ["csi", "qe7802", "cnapsPalp", "cnapsAgrPalp", "cnapsSG", "cnapsVeh", "loi798", "ccRipost", "cpp"],
+},
+{
+  id: "aps-deontologie", r: "aps", titre: "Déontologie, contrôles et sanctions", niv: ["APS"],
+  mc: "deontologie code de deontologie R631-1 R631-10 violence legitime defense police gendarmerie amiable CNAPS controle sanction interdiction temporaire d exercer 7 ans penalite financiere 7500 euros publication circonstance aggravante loi securite globale 25 mai 2021 exercer sans carte",
+  clair: "L’agent doit respecter le code de déontologie de la sécurité privée : jamais de violence, sauf en légitime défense, et appel aux forces de l’ordre quand un différend ne se règle pas à l’amiable. Le CNAPS contrôle la profession et peut sanctionner, jusqu’à une interdiction d’exercer de 7 ans.",
+  b: [
+    { t: "kv", x: [
+      ["Le code de déontologie", "Articles R631-1 et suivants du Code de la sécurité intérieure. Il s’impose aux entreprises de sécurité privée et à leurs agents."],
+      ["Pas de violence", "Jamais de violence, même légère, sauf en légitime défense (Code pénal, articles 122-5 et 122-6). Si un différend avec une personne qui refuse un contrôle ne peut pas se régler à l’amiable, l’agent fait appel à la police ou à la gendarmerie (article R631-10)."],
+      ["Contrôles", "Le CNAPS contrôle les entreprises et les agents, et sanctionne les manquements."],
+      ["Sanctions", "Interdiction temporaire d’exercer jusqu’à **7 ans**. Pour un salarié, pénalité financière jusqu’à **7 500 €**. Les sanctions peuvent être publiées sur le site du CNAPS (loi du 25 mai 2021)."],
+      ["Violences", "Être agent de sécurité privée en service est une circonstance aggravante, que l’agent soit victime ou auteur de violences (loi du 25 mai 2021)."],
+      ["Exercer sans carte", "Interdit. Sans carte ni récépissé valide, l’agent et son employeur s’exposent à des sanctions."],
+    ] },
+    { t: "links", x: ["aps-pouvoirs", "aps-legitime-defense", "aps-carte"] },
+  ],
+  src: ["qe7802", "cnapsSG", "cnapsRenouv", "csi", "cp"],
 },
 {
   id: "aps-article-73", r: "aps", titre: "Flagrant délit : l’article 73", niv: ["APS", "1", "2"],
@@ -2544,7 +2612,7 @@ D.fiches.push(
     ] },
     { t: "call", x: ["17", "112"] },
   ],
-  src: ["cpp", "tiAps"],
+  src: ["cpp"],
 },
 {
   id: "aps-legitime-defense", r: "aps", titre: "Légitime défense et non-assistance", niv: ["APS", "1", "2"],
@@ -2568,22 +2636,22 @@ D.fiches.push(
 D.fiches.push(
 {
   id: "nouveautes", r: "actu", titre: "Ce qui a changé en 2025 et 2026", niv: ["1", "2", "3", "APS"],
-  mc: "nouveautes 2025 2026 decret 2025-1100 arrete 1er decembre 2025 gaz 23 fevrier 2025 ventilation 29 juillet 2025 loi 18 aout 2026 loi 20 mars 2026 palpation vehicules cameras pietons Crans-Montana MAC 15 juin 2024",
+  mc: "nouveautes 2025 2026 decret 2025-1100 arrete 1er decembre 2025 gaz 23 fevrier 2025 ventilation 29 juillet 2025 loi 18 aout 2026 loi 20 mars 2026 vehicules L613-2-1 loi RIPOST cameras individuelles cameras pietons Crans-Montana formation initiale agents de securite privee arrete 1er septembre 2025 175 heures",
   clair: "Les règles bougent. Voici, par date, les changements récents qui concernent les agents de sécurité incendie et les agents de sécurité privée.",
   b: [
     { t: "timeline", x: [
-      ["Août 2026", "Sécurité privée : loi n° 2026-798 du 18 août 2026", "L’article L613-2 du Code de la sécurité intérieure est réécrit : palpation possible en cas de menaces graves (arrêté du préfet) ou dans un périmètre de protection, avec accord exprès et par une personne du même sexe. L’inspection visuelle des véhicules passe dans un nouvel article L613-2-1, avec deux régimes (grands événements et sites listés, ou autorisation du préfet en cas de menaces graves). L’article 53 prévoit une expérimentation de caméras individuelles pour les agents de surveillance : formation spécifique, registre d’utilisation tenu pour le CNAPS, et l’agent ne peut pas visionner ni modifier ses enregistrements.", ["tiAps", "acte1", "cam2026", "loi798"]],
+      ["Août 2026", "Sécurité privée : loi n° 2026-798 du 18 août 2026 (loi RIPOST)", "L’inspection visuelle des véhicules et de leurs coffres passe dans un nouvel article L613-2-1 du Code de la sécurité intérieure et s’étend à d’autres lieux : à la demande du gestionnaire (grands événements, enceintes de plus de 300 spectateurs, certains sites sensibles) ou sur autorisation du préfet en cas de menaces graves, toujours avec l’accord exprès du conducteur, sans fouille ni palpation. La loi prévoit aussi une expérimentation de 3 ans des caméras individuelles pour les agents privés de sécurité : elle ne pourra commencer qu’après la publication d’un décret en Conseil d’État, qui n’était pas encore paru lors de la vérification de l’appli. Le Conseil constitutionnel a jugé ces deux mesures conformes à la Constitution (décision n° 2026-915 DC du 14 août 2026).", ["loi798", "ccRipost", "cnapsCam", "cnapsVeh"]],
       ["Juillet 2026", "ERP de 5e catégorie : vérifications des installations", "Depuis le 1er juillet 2026, les installations de gaz et d’électricité en exploitation des ERP de 5e catégorie doivent être vérifiées au moins tous les 3 ans, et toute installation de gaz neuve ou modifiée est vérifiée à la réception des travaux, dans tous les ERP (arrêté du 1er décembre 2025, articles PE 4 et PE 10).", ["aphp1225", "pe4"]],
       ["Juin 2026", "Réponse du ministère de l’Intérieur sur le décret n° 2025-1100", "Le ministère précise que le décret n’a pas supprimé de contrôle : les ERP de 5e catégorie sans locaux d’hébergement étaient déjà dispensés d’autorisation de travaux au titre de l’incendie. Ils doivent désormais informer l’autorité de police des travaux par une description succincte. Après l’incendie mortel de Crans-Montana (Suisse, 1er janvier 2026), les préfets ont été invités à multiplier les visites inopinées, notamment dans les établissements de nuit disposant d’un sous-sol où le public danse.", ["qe12228"]],
-      ["Mars 2026", "Loi n° 2026-201 du 20 mars 2026 (Jeux olympiques 2030)", "Son article 43 a autorisé pour la première fois l’inspection visuelle des véhicules et de leurs coffres par les agents de sécurité privée, pour certains grands événements, avec l’accord du conducteur. Ce dispositif a été repris et élargi en août 2026.", ["cnapsVeh", "acte1"]],
+      ["Mars 2026", "Loi n° 2026-201 du 20 mars 2026 (Jeux olympiques 2030)", "Son article 43 a autorisé pour la première fois l’inspection visuelle des véhicules et de leurs coffres par les agents de sécurité privée, pour certains grands événements, avec l’accord du conducteur. Ce dispositif a été repris et élargi en août 2026.", ["cnapsVeh"]],
       ["Janvier 2026", "Nouvelle réglementation du gaz dans les ERP", "L’arrêté du 23 février 2025 s’applique depuis le 1er janvier 2026 : exigences de sécurité recentrées sur des objectifs, solutions techniques décrites dans des guides approuvés. Les opérations d’entretien et de vérification suivent les articles GZ 14 et GZ 15 (1re à 4e catégorie) et PE 4 (5e catégorie) à partir du 1er juillet 2026.", ["gaz2025"]],
       ["Novembre 2025", "Décret n° 2025-1100 du 19 novembre 2025", "Il encadre les « solutions d’effet équivalent » en sécurité incendie (études d’ingénierie accompagnées par des organismes reconnus), transfère des règles incendie des bâtiments à usage professionnel du Code du travail vers le Code de la construction, et modifie certaines procédures (en vigueur depuis le 21 novembre 2025).", ["qe12228"]],
+      ["Octobre 2025", "Nouvelle formation initiale des agents de sécurité privée", "L’arrêté du 1er septembre 2025 fixe le cahier des charges de la formation initiale (en vigueur le 1er octobre 2025) et remplace celui du 27 juin 2017 : environ 175 heures pour la surveillance humaine, avec les principes de la République, et certains modules théoriques peuvent se suivre à distance.", ["arr2025"]],
       ["Août 2025", "Traitement d’air et ventilation", "L’arrêté du 29 juillet 2025 modifie les dispositions du règlement ERP sur le traitement d’air et la ventilation, en vigueur depuis le 1er août 2025.", ["ch2025"]],
-      ["Juin 2024", "Nouveau contenu du MAC APS", "L’arrêté du 15 juin 2024 sur la formation continue des agents de sécurité privée fixe le programme du MAC : premiers secours, cadre juridique, principes de la République, compétences opérationnelles et prévention des risques terroristes.", ["mac2024"]],
     ] },
     { t: "info", x: "Pour les SSIAP, le texte de référence reste l’arrêté du 2 mai 2005 modifié. Lors de la vérification de l’appli (octobre 2026), aucune réforme du diplôme n’a été trouvée." },
   ],
-  src: ["qe12228", "aphp1225", "pe4", "gaz2025", "ch2025", "cnapsVeh", "tiAps", "acte1", "cam2026", "mac2024"],
+  src: ["qe12228", "aphp1225", "pe4", "gaz2025", "ch2025", "loi798", "ccRipost", "cnapsCam", "cnapsVeh", "arr2025"],
 }
 );
 
@@ -2821,8 +2889,8 @@ D.procedures.push(
   ],
   jamais: ["Utiliser la contrainte (sauf légitime défense ou flagrant délit, article 73).", "Rester seul face à un groupe menaçant."],
   apres: ["Rédiger un compte rendu précis : heure, faits, paroles, témoins."],
-  liens: ["aps-pouvoirs", "aps-legitime-defense", "aps-article-73"],
-  src: ["tiAps", "cp"],
+  liens: ["aps-pouvoirs", "aps-deontologie", "aps-legitime-defense", "aps-article-73"],
+  src: ["qe7802", "cp", "cpp"],
 },
 {
   id: "p-eau", titre: "Fuite d’eau ou inondation", ic: "goutte", co: "blue", appel: [],
@@ -2859,14 +2927,14 @@ D.numeros = [
 D.glossaire = [
   { s: "AG", n: "Alarme générale", d: "Signal sonore qui ordonne l’évacuation.", f: "alarme" },
   { s: "AGS", n: "Alarme générale sélective", d: "Alarme destinée au seul personnel désigné, quand l’évacuation demande des précautions.", f: "alarme" },
-  { s: "APS", n: "Agent de prévention et de sécurité", d: "Agent de sécurité privée (surveillance, gardiennage), titulaire d’une carte professionnelle du CNAPS.", f: "aps-carte" },
+  { s: "APS", n: "Agent de prévention et de sécurité", d: "Agent de sécurité privée (surveillance humaine, gardiennage), titulaire d’une carte professionnelle du CNAPS.", f: "aps-devenir" },
   { s: "APSAD", n: "Référentiels d’assurance du CNPP", d: "Règles techniques demandées par les assureurs (R1 sprinkleurs, R4 extincteurs, R7 détection…). Ce ne sont pas des lois.", f: "apsad" },
   { s: "BAAS", n: "Bloc autonome d’alarme sonore", d: "Sirène avec sa propre batterie. Type Ma (manuel), Pr (principal), Sa (satellite).", f: "alarme" },
   { s: "BAES", n: "Bloc autonome d’éclairage de sécurité", d: "Bloc lumineux qui s’allume tout seul en cas de coupure pour baliser les sorties. Autonomie d’au moins 1 heure.", f: "eclairage-securite" },
   { s: "CCDSA", n: "Commission consultative départementale de sécurité et d’accessibilité", d: "La commission (et ses sous-commissions) qui donne les avis de sécurité sur les ERP.", f: "commission-securite" },
   { s: "CCH", n: "Code de la construction et de l’habitation", d: "Contient les règles de base des ERP (R.143-1 et suivants) et des IGH (R.146-3 et suivants).", f: "erp-classement" },
   { s: "CMSI", n: "Centralisateur de mise en sécurité incendie", d: "Partie du SSI qui commande les DAS et l’alarme générale.", f: "ssi" },
-  { s: "CNAPS", n: "Conseil national des activités privées de sécurité", d: "Établissement public qui délivre et contrôle les cartes professionnelles de la sécurité privée.", f: "aps-carte" },
+  { s: "CNAPS", n: "Conseil national des activités privées de sécurité", d: "Établissement public du ministère de l’Intérieur qui délivre les cartes professionnelles de la sécurité privée, contrôle la profession et sanctionne les manquements.", f: "aps-devenir" },
   { s: "CO2", n: "Dioxyde de carbone", d: "Gaz extincteur propre, utilisable sur électricité, très froid à la sortie.", f: "extincteurs" },
   { s: "DAE", n: "Défibrillateur automatisé externe", d: "Appareil qui analyse le cœur et délivre un choc électrique si nécessaire. Il guide l’utilisateur à la voix.", f: "arret-cardiaque" },
   { s: "DAI", n: "Détecteur automatique d’incendie", d: "Détecteur de fumée, de chaleur ou de flammes relié au tableau du SSI.", f: "detecteurs" },
@@ -2879,7 +2947,7 @@ D.glossaire = [
   { s: "IGH", n: "Immeuble de grande hauteur", d: "Plus de 28 m (ou plus de 50 m pour l’habitation).", f: "igh" },
   { s: "IMH", n: "Immeuble de moyenne hauteur", d: "Habitation dont le logement le plus haut est entre 28 et 50 m.", f: "igh" },
   { s: "ITGH", n: "Immeuble de très grande hauteur", d: "Plus de 200 m.", f: "igh" },
-  { s: "MAC", n: "Maintien et actualisation des compétences", d: "Formation obligatoire pour renouveler la carte professionnelle d’agent de sécurité privée.", f: "aps-carte" },
+  { s: "MAC", n: "Maintien et actualisation des compétences", d: "Formation à suivre dans les 24 mois avant la fin de validité de la carte professionnelle, obligatoire pour la renouveler.", f: "aps-mac" },
   { s: "MS", n: "Articles « moyens de secours » du règlement ERP", d: "Extincteurs, RIA, SSI, alarme, alerte, service de sécurité…", f: "service-securite-erp" },
   { s: "OA", n: "Organisme agréé", d: "Bureau de contrôle agréé par le ministère de l’Intérieur pour certaines vérifications.", f: "verifications" },
   { s: "OPJ", n: "Officier de police judiciaire", d: "Policier ou gendarme habilité, à qui l’on remet l’auteur d’un flagrant délit.", f: "aps-article-73" },
@@ -2891,12 +2959,13 @@ D.glossaire = [
   { s: "RIA", n: "Robinet d’incendie armé", d: "Tuyau sur dévidoir, toujours en eau sous pression.", f: "ria" },
   { s: "SATI", n: "Système automatique de test intégré", d: "BAES qui font leurs essais tout seuls.", f: "eclairage-securite" },
   { s: "SDI", n: "Système de détection incendie", d: "Détecteurs, déclencheurs manuels et tableau de signalisation.", f: "ssi" },
+  { s: "SGE", n: "Surveillance de grands événements", d: "Carte professionnelle limitée à la surveillance d’événements de plus de 300 personnes, obtenue après une formation de 106 heures.", f: "aps-devenir" },
   { s: "SMSI", n: "Système de mise en sécurité incendie", d: "Centralisateur, DAS et alarme.", f: "ssi" },
   { s: "SSI", n: "Système de sécurité incendie", d: "L’ensemble qui détecte le feu et met le bâtiment en sécurité.", f: "ssi" },
   { s: "SSIAP", n: "Service de sécurité incendie et d’assistance à personnes", d: "Les diplômes d’agent (1), de chef d’équipe (2) et de chef de service (3).", f: "ssiap1" },
   { s: "SST", n: "Sauveteur secouriste du travail", d: "Formation de secourisme en entreprise.", f: "reflexes-secours" },
   { s: "TC", n: "Technicien compétent", d: "Personne qualifiée pour les vérifications annuelles.", f: "verifications" },
-  { s: "TFP APS", n: "Titre à finalité professionnelle Agent de prévention et de sécurité", d: "Formation de base de l’agent de sécurité privée (ex-CQP APS).", f: "aps-carte" },
+  { s: "TFP APS", n: "Titre à finalité professionnelle Agent de prévention et de sécurité", d: "Une des certifications qui permettent d’obtenir la carte professionnelle d’agent de sécurité privée.", f: "aps-devenir" },
   { s: "UGA", n: "Unité de gestion d’alarme", d: "Partie du système qui gère et diffuse l’alarme générale.", f: "alarme" },
   { s: "UP", n: "Unité de passage", d: "Largeur de base des dégagements : 0,60 m.", f: "degagements" },
   { s: "Colonne sèche", n: "", d: "Tuyau vide qui monte dans les étages, alimenté par les pompiers depuis la façade.", f: "colonnes" },
@@ -3133,18 +3202,26 @@ D.quiz = [
   Q("Le référentiel APSAD R7 concerne…", ["La détection automatique d’incendie", "Les sprinkleurs", "Les extincteurs", "La mousse à haut foisonnement"], "apsad", "R1 : sprinkleurs. R4 : extincteurs. R12 : mousse.");
   // Agent de sécurité privée
   Q("Durée de validité de la carte professionnelle :", ["5 ans", "3 ans", "10 ans", "À vie"], "aps-carte", "Elle est délivrée par le CNAPS.");
-  Q("Pour renouveler la carte, le MAC doit être suivi…", ["Dans les 24 mois qui précèdent la fin de validité", "Le jour de l’expiration", "Dans les 5 ans après", "Une seule fois dans la carrière"], "aps-carte", "Avec un secourisme en cours de validité.");
-  Q("Durée maximale du MAC APS (arrêté du 15 juin 2024) :", ["34 heures", "175 heures", "7 heures", "67 heures"], "aps-carte", "Elle peut être réduite selon les modules déjà validés.");
+  Q("Pour renouveler la carte, le MAC doit être suivi…", ["Dans les 24 mois qui précèdent la fin de validité", "Le jour de l’expiration", "Dans les 5 ans après", "Une seule fois dans la carrière"], "aps-mac", "Code de la sécurité intérieure, article L612-20-1.");
+  Q("Durée du MAC APS avec le module de premiers secours :", ["34 heures", "175 heures", "7 heures", "67 heures"], "aps-mac", "27 heures avec un secourisme de moins de 2 ans.");
+  Q("La demande de renouvellement de la carte se dépose…", ["Au moins 3 mois avant la date d’expiration", "Le jour de l’expiration", "Après l’expiration", "Un an avant, au plus tôt"], "aps-carte", "Le CNAPS n’accepte pas les demandes faites plus de 6 mois avant.");
+  Q("La carte expire pendant l’examen de la demande de renouvellement : l’agent peut continuer à travailler…", ["S’il a un récépissé du CNAPS en cours de validité", "Toujours", "Jamais, même avec un récépissé", "S’il a le SSIAP 1"], "aps-carte", "Le récépissé n’est pas automatique : il faut une demande complète déposée dans les délais.");
+  Q("Durée de la formation initiale d’un agent de surveillance (APS) :", ["Environ 175 heures", "14 heures", "34 heures", "1 607 heures"], "aps-devenir", "Arrêté du 1er septembre 2025.");
+  Q("Un candidat hors Union européenne doit être titulaire d’un titre de séjour depuis au moins…", ["5 ans", "6 mois", "1 an", "10 ans"], "aps-devenir", "Depuis la loi du 25 mai 2021.");
   Q("Fouiller un bagage :", ["Seulement avec l’accord du propriétaire", "Toujours possible sans accord", "Interdit dans tous les cas", "Seulement par un agent de l’autre sexe"], "aps-pouvoirs", "L’inspection visuelle se fait quand la personne présente son sac.");
   Q("Inspection visuelle d’un véhicule et de son coffre :", ["Avec l’accord exprès du conducteur, dans les cas prévus par la loi", "Sans accord, toujours", "Jamais possible", "Seulement la nuit"], "aps-pouvoirs", "Article L613-2-1, créé en 2026.");
   Q("Le conducteur refuse l’inspection de son véhicule :", ["L’accès en véhicule est refusé, mais les occupants peuvent entrer à pied", "On garde ses clés", "On fouille quand même", "On le retient"], "aps-pouvoirs", "On ne force jamais.");
+  Q("Palpation à l’entrée d’un match de plus de 300 spectateurs, par un agent qui a la carte :", ["Possible sous le contrôle d’un OPJ, avec accord exprès, par une personne du même sexe", "Interdite", "Possible sans accord", "Possible seulement avec un agrément du préfet"], "aps-pouvoirs", "Depuis 2021, l’agent qui a la carte et la formation n’a plus besoin d’agrément.");
+  Q("Sans autorisation du préfet, un agent de surveillance peut agir…", ["Dans la limite des lieux dont il a la garde", "Partout sur la voie publique", "Dans tout le quartier", "Seulement la nuit"], "aps-pouvoirs", "Code de la sécurité intérieure, article L613-1.");
+  Q("Une personne refuse un contrôle et le ton monte :", ["Pas de violence : si cela ne se règle pas à l’amiable, appeler la police ou la gendarmerie", "La maîtriser au sol", "La fouiller de force", "La retenir jusqu’au lendemain"], "aps-deontologie", "Code de déontologie, article R631-10.");
+  Q("Durée maximale d’une interdiction temporaire d’exercer prononcée par le CNAPS :", ["7 ans", "6 mois", "1 an", "30 ans"], "aps-deontologie", "Depuis la loi du 25 mai 2021.");
   Q("Un agent de sécurité privée peut-il intervenir dans un conflit du travail ?", ["Non", "Oui, s’il est payé pour", "Oui, la nuit", "Oui, avec un brassard"], "aps-pouvoirs", "Code de la sécurité intérieure, L612-4.");
   Q("L’article 73 s’applique…", ["Au crime ou au délit flagrant puni d’une peine de prison", "À toute contravention", "À un simple soupçon", "À une dispute"], "aps-article-73", "On remet l’auteur à un officier de police judiciaire.");
   Q("Après avoir appréhendé l’auteur d’un flagrant délit :", ["Appeler aussitôt le 17 et le remettre aux policiers ou gendarmes", "Le fouiller", "L’enfermer jusqu’au lendemain", "Le relâcher sans rien noter"], "aps-article-73", "Et tout noter : heure, faits, témoins.");
   Q("Légitime défense : l’acte de défense doit être…", ["Immédiat, nécessaire et proportionné", "Prévu à l’avance", "Plus fort que l’attaque", "Fait le lendemain"], "aps-legitime-defense", "Code pénal, article 122-5.");
   Q("Non-assistance à personne en danger :", ["Jusqu’à 5 ans de prison et 75 000 € d’amende", "Une amende de 38 €", "Aucune sanction", "Un simple avertissement"], "aps-legitime-defense", "Code pénal, article 223-6.");
   // Nouveautés
-  Q("La loi n° 2026-798 du 18 août 2026 a notamment…", ["Réécrit l’article L613-2 et créé l’article L613-2-1 sur les véhicules", "Supprimé le SSIAP", "Créé un SSIAP 4", "Interdit les extincteurs à poudre"], "nouveautes", "Elle prévoit aussi une expérimentation de caméras individuelles.");
+  Q("La loi n° 2026-798 du 18 août 2026 a notamment…", ["Créé l’article L613-2-1 sur l’inspection visuelle des véhicules", "Supprimé le SSIAP", "Créé un SSIAP 4", "Interdit les extincteurs à poudre"], "nouveautes", "Elle prévoit aussi une expérimentation de caméras individuelles, qui attend un décret.");
   Q("Le texte de référence des SSIAP reste…", ["L’arrêté du 2 mai 2005 modifié", "Une loi de 2026", "L’arrêté du 25 juin 1980", "Le Code de la route"], "nouveautes", "Aucune réforme du diplôme n’a été trouvée en octobre 2026.");
 })();
 
@@ -6296,7 +6373,7 @@ const APP = (() => {
     { id: "o-extincteurs", t: "Nombre d’extincteurs", d: "Surface de chaque niveau : nombre minimal d’extincteurs.", ic: "extincteur", co: "red", mc: "nombre extincteurs 200 m2 300 m2 niveau MS 39 PE 26 R4227-29" },
     { id: "o-commission", t: "Visites de la commission de sécurité", d: "Type et catégorie : périodicité des visites (GE 4) et date de la prochaine.", ic: "registre", co: "blue", mc: "commission securite periodicite visite GE 4 3 ans 5 ans" },
     { id: "o-recyclage", t: "Mon recyclage SSIAP", d: "Date du diplôme ou du dernier recyclage : date limite, remise à niveau, secourisme.", ic: "calendrier", co: "amber", mc: "recyclage remise a niveau date anniversaire 3 ans secourisme 1607 heures" },
-    { id: "o-carte", t: "Ma carte professionnelle (APS)", d: "Fin de validité de la carte : période pour suivre le MAC avant le renouvellement.", ic: "carte", co: "amber", mc: "carte professionnelle CNAPS MAC renouvellement 24 mois 5 ans agent de securite" },
+    { id: "o-carte", t: "Ma carte professionnelle (APS)", d: "Fin de validité de la carte : quand suivre le MAC et quand demander le renouvellement.", ic: "carte", co: "amber", mc: "carte professionnelle CNAPS MAC renouvellement 24 mois 5 ans 3 mois 6 mois recepisse agent de securite" },
   ];
   TOOLS.forEach((t) => (TL[t.id] = t));
 
@@ -7339,18 +7416,20 @@ const APP = (() => {
         <label class="field"><span>Ou date de délivrance (la carte vaut 5 ans)</span><input id="k-d" type="date"></label>
       </div>
       <div id="out" aria-live="polite"></div>
-      ${toolFoot(["aps-carte", "cumul-ssiap-aps"], "Conditions de renouvellement à confirmer auprès du CNAPS. Un agent qui fait uniquement de la sécurité incendie n’a pas besoin de carte professionnelle.")}`;
+      ${toolFoot(["aps-carte", "aps-mac", "cumul-ssiap-aps"], "Règles du CNAPS : demande de renouvellement au moins 3 mois avant l’expiration, MAC dans les 24 mois qui précèdent. En cas de doute, la délégation du CNAPS fait foi. Un agent qui fait uniquement de la sécurité incendie n’a pas besoin de carte professionnelle.")}`;
     const update = () => {
       let fin = parseD($("#k-f").value);
       const del = parseD($("#k-d").value);
       if (!fin && del) fin = addM(del, 60);
       if (!fin) { $("#out").innerHTML = res("", `<p class="muted">Indiquez la date de fin de validité ou la date de délivrance.</p>`); return; }
-      const deb = addM(fin, -24), t = today(), r = days(t, fin);
+      const mac = addM(fin, -24), dem1 = addM(fin, -6), dem2 = addM(fin, -3), t = today(), r = days(t, fin);
       let cls = "", pill, msg;
-      if (r < 0) { cls = "alert"; pill = `<span class="pill red">Carte expirée</span>`; msg = tx("Sans carte valide, on ne peut plus exercer d’activité de sécurité privée. Contactez le CNAPS."); }
-      else if (t >= deb) { cls = ""; pill = `<span class="pill amber">C’est le moment</span>`; msg = tx("Vous êtes dans les 24 mois qui précèdent la fin de validité : le MAC suivi maintenant compte pour le renouvellement. Gardez aussi un secourisme à jour."); }
-      else { cls = "ok"; pill = `<span class="pill green">Carte valide</span>`; msg = tx(`Le MAC doit être suivi dans les 24 mois qui précèdent la fin de validité, donc à partir du ${fmtD(deb)}.`); }
-      $("#out").innerHTML = res(cls, `${pill}<div class="big">${fmtD(fin)}<small>Fin de validité : ${rel(r)}</small></div><p>${msg}</p><p class="small">${tx(`Période pour suivre le MAC : du ${fmtD(deb)} au ${fmtD(fin)}.`)}</p>`);
+      if (r < 0) { cls = "alert"; pill = `<span class="pill red">Carte expirée</span>`; msg = tx("Sans carte valide ni récépissé, on ne peut plus exercer. Pour une nouvelle demande : autorisation préalable du CNAPS pour entrer en formation, puis MAC suivi dans les 12 mois qui précèdent la demande."); }
+      else if (t >= dem2) { cls = "alert"; pill = `<span class="pill red">Demande en retard</span>`; msg = tx(`La demande de renouvellement devait être déposée au plus tard le ${fmtD(dem2)}, 3 mois avant l’expiration. Déposez-la tout de suite, complète, avec l’attestation de MAC : sans récépissé du CNAPS, vous ne pourrez plus travailler après le ${fmtD(fin)}.`); }
+      else if (t >= dem1) { cls = ""; pill = `<span class="pill amber">Demandez le renouvellement</span>`; msg = tx(`Déposez votre demande complète avant le ${fmtD(dem2)}, avec l’attestation de MAC.`); }
+      else if (t >= mac) { cls = ""; pill = `<span class="pill amber">C’est le moment du MAC</span>`; msg = tx(`Vous êtes dans les 24 mois qui précèdent la fin de validité : le MAC suivi maintenant compte pour le renouvellement. La demande se dépose ensuite entre le ${fmtD(dem1)} et le ${fmtD(dem2)}.`); }
+      else { cls = "ok"; pill = `<span class="pill green">Carte valide</span>`; msg = tx(`Le MAC pourra être suivi à partir du ${fmtD(mac)}, et la demande de renouvellement déposée entre le ${fmtD(dem1)} et le ${fmtD(dem2)}.`); }
+      $("#out").innerHTML = res(cls, `${pill}<div class="big">${fmtD(fin)}<small>Fin de validité : ${rel(r)}</small></div><p>${msg}</p><p class="small">${tx(`Période pour suivre le MAC : du ${fmtD(mac)} au ${fmtD(dem2)}, pour joindre l’attestation à la demande. Demande de renouvellement : du ${fmtD(dem1)} au ${fmtD(dem2)}.`)}</p>`);
     };
     return { html, title: TL["o-carte"].t, tab: "outils", back: "outils", update };
   }
