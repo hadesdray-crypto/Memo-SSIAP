@@ -1,0 +1,38 @@
+{
+  "name": "Mémo SSIAP",
+  "short_name": "Mémo SSIAP",
+  "description": "Le mémo de poche de l’agent de sécurité incendie (SSIAP 1, 2, 3) et de l’agent de sécurité privée : règles, schémas, conduites à tenir et outils, utilisable sans connexion.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f2f1",
+  "theme_color": "#b3121f",
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
