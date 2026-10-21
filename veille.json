@@ -1,8 +1,8 @@
 {
  "v": 1,
- "maj": "2026-10-21T10:15:07.425Z",
+ "maj": "2026-10-21T11:48:26.185Z",
  "sources": 65,
- "lues": 44,
+ "lues": 42,
  "premiere": false,
  "gemini": true,
  "injoignables": [
@@ -135,24 +135,6 @@
  ],
  "alertes": [
   {
-   "id": "058c7de45f",
-   "date": "2026-10-21",
-   "type": "pdf",
-   "t": "Programme de formation SSIAP 1 (blocs de l’arrêté du 2 mai 2005)",
-   "o": "CCI Hauts-de-France",
-   "u": "https://document.hautsdefrance.cci.fr/formation/pdf/version/3/product/109214",
-   "fiches": [
-    "Le triangle du feu",
-    "Comment le feu se propage",
-    "Les fumées et les phénomènes dangereux",
-    "Les détecteurs automatiques d’incendie (DAI)",
-    "Les rondes de sécurité",
-    "Programme des formations SSIAP 1 et 2"
-   ],
-   "portee": "incertain",
-   "resume": "Le document officiel a été remplacé par une nouvelle version. À vérifier."
-  },
-  {
    "id": "aab653a64e",
    "date": "2026-10-21",
    "type": "pdf",
@@ -174,6 +156,24 @@
    "u": "https://formaction.u-bordeaux.fr/training/pdf/3527",
    "fiches": [
     "Carte professionnelle, TFP APS et MAC"
+   ],
+   "portee": "incertain",
+   "resume": "Le document officiel a été remplacé par une nouvelle version. À vérifier."
+  },
+  {
+   "id": "058c7de45f",
+   "date": "2026-10-21",
+   "type": "pdf",
+   "t": "Programme de formation SSIAP 1 (blocs de l’arrêté du 2 mai 2005)",
+   "o": "CCI Hauts-de-France",
+   "u": "https://document.hautsdefrance.cci.fr/formation/pdf/version/3/product/109214",
+   "fiches": [
+    "Le triangle du feu",
+    "Comment le feu se propage",
+    "Les fumées et les phénomènes dangereux",
+    "Les détecteurs automatiques d’incendie (DAI)",
+    "Les rondes de sécurité",
+    "Programme des formations SSIAP 1 et 2"
    ],
    "portee": "incertain",
    "resume": "Le document officiel a été remplacé par une nouvelle version. À vérifier."
