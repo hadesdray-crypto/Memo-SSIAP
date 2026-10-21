@@ -1,6 +1,6 @@
 # Mémo SSIAP : base de connaissances
 
-Contenu vérifié le 21 octobre 2026 (version 1.2.0). Sécurité incendie en France : SSIAP 1, 2 et 3, ERP et IGH, agent de sécurité privée (APS).
+Contenu vérifié le 21 octobre 2026 (version 1.3.0). Sécurité incendie en France : SSIAP 1, 2 et 3, ERP et IGH, agent de sécurité privée (APS).
 
 **Règles d’utilisation :** chaque fiche indique ses sources. En cas de doute, le texte officiel en vigueur et les consignes du site font foi. Ce document ne remplace ni la formation, ni les consignes de l’établissement, ni les ordres des secours. Les normes AFNOR et les référentiels APSAD sont payants : ils sont seulement résumés.
 

@@ -968,6 +968,15 @@ details summary { cursor: pointer; }
 .crop-box { position: absolute; border: 3px solid var(--red-bg); box-shadow: 0 0 0 9999px rgba(10, 5, 6, .5); pointer-events: none; border-radius: 4px; }
 @media print { .tts, .guide { display: none !important; } }
 
+/* ---------- Veille réglementaire ---------- */
+.vcard { padding: 14px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; gap: 6px; }
+.vcard p { margin: 0; }
+.vcard.en { border-left: 4px solid var(--amber-bg); }
+.vcard.ok { border-left: 4px solid var(--green-bg); }
+.vcard a .ic { width: 1rem; height: 1rem; vertical-align: -0.15em; }
+.verif.warn { border-color: color-mix(in srgb, var(--amber-bg) 45%, var(--line)); background: var(--amber-tint); color: var(--ink); text-decoration: none; }
+.verif.warn > .ic { margin-left: auto; color: var(--ink-3); width: 1.1rem; height: 1.1rem; flex: none; align-self: center; }
+
 </style>
 </head>
 <body>
@@ -984,7 +993,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "1.2.0",
+    version: "1.3.0",
     verifie: "21 octobre 2026",
     verifieCourt: "21/10/2026",
   },
@@ -6291,7 +6300,7 @@ const APP = (() => {
   ];
   TOOLS.forEach((t) => (TL[t.id] = t));
 
-  const PAGE_T = { accueil: "Accueil", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages" };
+  const PAGE_T = { accueil: "Accueil", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire" };
   const tok = (id) => {
     if (id === "numeros") return "urgence";
     if (id === "quiz") return "o-quiz";
@@ -6603,6 +6612,7 @@ const APP = (() => {
       </section>
       <div id="res" class="sec"${state.q.trim() ? "" : " hidden"}>${state.q.trim() ? resultsHTML(state.q) : ""}</div>
       <div id="home" class="sec" style="gap:24px"${state.q.trim() ? " hidden" : ""}>
+        ${veilleBanner()}
         ${VX.ttsOk && !store.get("tip-voix", false) ? `<div class="verif tip"><span class="ico">${icon("hautparleur")}</span><span class="t"><b>L’appli peut lire à voix haute</b><span>Touchez le haut-parleur en haut de l’écran pour écouter une page. Les conduites à tenir se lisent aussi étape par étape.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="tts-page">${icon("hautparleur")}Écouter l’accueil</button><button class="btn ghost" data-act="tip-no">J’ai compris</button></span></span></div>` : ""}
         ${showInstall ? `<div class="verif">${icon("installer")}<span class="t"><b>Installer l’appli sur cet appareil</b><span>Elle s’ouvre comme une application et reste disponible sans connexion.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="install">Installer</button><button class="btn ghost" data-act="install-no">Plus tard</button></span></span></div>` : ""}
         <section class="sec">
@@ -6739,6 +6749,7 @@ const APP = (() => {
         ${card("glossaire", "glossaire", "blue", "Sigles et matériel", "Quel objet fait quoi : " + D.glossaire.length + " sigles et équipements expliqués.")}
         ${card("sources", "source", "green", "Toutes les sources", Object.keys(D.sources).length + " sources, avec leur type et le lien pour vérifier.")}
         ${card("favoris", "etoile", "amber", "Mes favoris", "Les fiches et outils que vous avez marqués.")}
+        ${card("veille", "nouveau", "amber", "Veille réglementaire", "Chaque lundi, un robot vérifie si les textes officiels cités par l’appli ont changé.")}
         ${card("reglages", "outils", "", "Réglages", "Voix et vitesse de lecture, dictée, assistant Gemini, affichage.")}
         ${card("apropos", "info", "", "À propos, fiabilité et installation", "Comment le contenu est vérifié, utilisation sans connexion.")}
       </div></section>`;
@@ -6978,6 +6989,66 @@ const APP = (() => {
   const toolFoot = (ids, t) => `${disc(t)}<section class="sec"><h2 class="lbl b">Les règles utilisées</h2><div class="links">${ids.map(linkCard).join("")}</div></section>`;
   const res = (cls, inner) => `<div class="result ${cls}">${inner}</div>`;
   const prefill = {};
+
+  /* ---------- Veille réglementaire (résultat publié par le robot GitHub) ---------- */
+  const VERIF_ISO = (() => { const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(D.meta.verifieCourt || ""); return m ? `${m[3]}-${m[2]}-${m[1]}` : "2000-01-01"; })();
+  const VEILLE_URLS = (() => {
+    const h = location.hostname, seg = location.pathname.split("/").filter(Boolean);
+    const raw = /\.github\.io$/i.test(h) && seg[0] && !/\.html?$/i.test(seg[0]) ? `https://raw.githubusercontent.com/${h.split(".")[0]}/${seg[0]}/main/veille.json` : "";
+    return raw ? [raw, "veille.json"] : ["veille.json"];
+  })();
+  const TITLE_TOK = {};
+  D.fiches.forEach((f) => (TITLE_TOK[f.titre] = "f-" + f.id));
+  D.procedures.forEach((p) => (TITLE_TOK[p.titre] = p.id));
+  TITLE_TOK["Numéros d’urgence"] = "urgence";
+  let veille = store.get("veille", null), veilleBusy = false;
+  const veilleOk = (j) => j && j.v === 1 && Array.isArray(j.alertes) && typeof j.maj === "string";
+  if (!veilleOk(veille)) veille = null;
+  async function veilleFetch(minAge) {
+    if (veilleBusy || navigator.onLine === false || Date.now() - (store.get("veille-at", 0) || 0) < minAge) return;
+    veilleBusy = true;
+    try {
+      for (const u of VEILLE_URLS) {
+        try {
+          const r = await fetch(`${u}?t=${Date.now()}`, { cache: "no-store" });
+          if (!r.ok) continue;
+          const j = await r.json();
+          if (!veilleOk(j)) continue;
+          const changed = !veille || veille.maj !== j.maj;
+          veille = j;
+          store.set("veille", j);
+          store.set("veille-at", Date.now());
+          if (changed && cur && (cur.home || curTok === "veille")) rerender();
+          break;
+        } catch (e) { /* absent ou hors ligne */ }
+      }
+    } finally { veilleBusy = false; }
+  }
+  const httpsUrl = (u) => (/^https:\/\//i.test(String(u || "")) ? String(u) : "");
+  const vDate = (iso) => { const d = parseD(String(iso || "").slice(0, 10)); return d ? fmtD(d) : ""; };
+  const enCours = (a) => a.portee !== "forme" && String(a.date || "") > VERIF_ISO;
+  const veilleAlertes = () => (veille ? veille.alertes.filter((a) => a && typeof a === "object" && a.portee !== "forme") : []);
+  function veilleBanner() {
+    const n = veilleAlertes().filter(enCours).length;
+    return n ? `<a class="verif warn" href="#veille"><span class="ico amber">${icon("attention")}</span><span class="t"><b>Veille réglementaire : ${n} texte${n > 1 ? "s" : ""} officiel${n > 1 ? "s" : ""} modifié${n > 1 ? "s" : ""}</b><span>Vérification en cours. En attendant, le texte officiel fait foi.</span></span>${icon("chevron")}</a>` : "";
+  }
+  function pageVeille() {
+    veilleFetch(5 * 60e3);
+    const v = veille, al = veilleAlertes(), rc = v && Array.isArray(v.recherche) ? v.recherche.filter((x) => x && typeof x === "object") : [];
+    const inj = v && Array.isArray(v.injoignables) ? v.injoignables : [];
+    const fl = (titles) => (Array.isArray(titles) ? titles : []).map((t) => (TITLE_TOK[t] ? `<a href="#${TITLE_TOK[t]}">${tx(t)}</a>` : tx(t))).join(", ");
+    const statut = !v
+      ? `<p>Pas encore de résultat. Le robot de veille tourne chaque lundi sur GitHub${PWA ? " : son résultat s’affichera ici après sa première vérification, quand le téléphone a internet." : ". Dans cet aperçu, il n’est pas branché."}</p>`
+      : `<p><strong>Dernière vérification : ${tx(vDate(v.maj))}</strong></p><p class="small muted">${+v.lues || 0} source${+v.lues > 1 ? "s" : ""} relue${+v.lues > 1 ? "s" : ""} sur ${+v.sources || 0}${v.gemini ? "" : ", sans Gemini (pas de résumé ni de recherche des nouveaux textes)"}.${v.premiere ? " Première vérification : le robot a enregistré l’état actuel des textes, il signalera les changements à partir de la prochaine." : ""}</p>`;
+    const html = `<nav class="crumb"><a href="#outils">Outils</a></nav>
+      <div class="page-h"><h1>Veille réglementaire</h1><p>Chaque lundi, un robot vérifie si les textes officiels cités par l’appli ont changé. Il prévient, mais il ne modifie jamais l’appli tout seul : chaque changement est vérifié avant de corriger les fiches.</p></div>
+      <div class="result">${statut}</div>
+      <section class="sec"><h2 class="lbl">Textes modifiés</h2>${al.length ? `<div class="cards">${al.map((a) => `<div class="vcard ${enCours(a) ? "en" : "ok"}"><span class="pill ${enCours(a) ? "amber" : "green"}">${enCours(a) ? "Vérification en cours" : "Pris en compte"}</span><b>${tx(a.t)}</b><span class="small muted">${tx(a.o || "")}${a.o ? " · " : ""}changement repéré le ${tx(vDate(a.date))}</span><p>${a.ia ? `<span class="small muted">Résumé automatique par IA, à confirmer : </span>` : ""}${tx(a.resume || "")}</p>${Array.isArray(a.fiches) && a.fiches.length ? `<p class="small">Fiches concernées : ${fl(a.fiches)}</p>` : ""}${httpsUrl(a.u) ? `<a class="small" href="${esc(httpsUrl(a.u))}" target="_blank" rel="noopener noreferrer">Voir le texte officiel ${icon("externe")}</a>` : ""}</div>`).join("")}</div>` : `<p class="empty">${v ? "Aucun changement repéré ces six derniers mois." : "Aucun résultat pour l’instant."}</p>`}</section>
+      ${rc.length ? `<section class="sec"><h2 class="lbl a">Nouveaux textes signalés, à confirmer</h2><div class="cards">${rc.map((x) => `<div class="vcard"><b>${tx(x.titre)}</b><span class="small muted">Publié le ${tx(vDate(x.date))}</span>${x.resume ? `<p>${tx(x.resume)}</p>` : ""}${httpsUrl(x.u) ? `<a class="small" href="${esc(httpsUrl(x.u))}" target="_blank" rel="noopener noreferrer">Ouvrir le texte ${icon("externe")}</a>` : ""}</div>`).join("")}</div></section>` : ""}
+      ${inj.length ? `<details class="small"><summary>${inj.length} source${inj.length > 1 ? "s" : ""} non vérifiable${inj.length > 1 ? "s" : ""} automatiquement</summary><ul style="margin-top:6px">${inj.map((x) => `<li>${tx(x.t)}${x.o ? ` (${tx(x.o)})` : ""}${x.code ? ` : ${tx(x.code)}` : ""}</li>`).join("")}</ul></details>` : ""}
+      ${disc("En attendant une vérification, le texte officiel en vigueur et les consignes de votre site font foi. Contenu de l’appli vérifié le " + D.meta.verifieCourt + ".")}`;
+    return { html, title: "Veille réglementaire", tab: "outils", back: "outils" };
+  }
 
   /* ---------- Outil : catégorie d'un ERP ---------- */
   function toolCategorie() {
@@ -7446,6 +7517,7 @@ const APP = (() => {
     if (t === "dictee") return RP.pageDictee();
     if (t === "planning" || t.startsWith("pl-")) return PL.page(t);
     if (t === "reglages") return pageReglages();
+    if (t === "veille") return pageVeille();
     if (t.startsWith("f-")) return pageFiche(t.slice(2));
     if (t.startsWith("r-")) return pageRub(t.slice(2));
     if (t.startsWith("p-")) return pageProc(t);
@@ -7763,7 +7835,9 @@ const APP = (() => {
     $("#zoom").addEventListener("click", (e) => { if (e.target.id === "zoom") closeZoom(); });
     window.addEventListener("hashchange", () => render());
     window.addEventListener("offline", () => toast("Hors connexion : tout le mémo reste disponible."));
+    window.addEventListener("online", () => veilleFetch(3600e3));
     render();
+    setTimeout(() => veilleFetch(6 * 3600e3), 1500);
     if (PWA) {
       window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredPrompt = e; if (cur && (cur.home || curTok === "apropos")) rerender(); });
       window.addEventListener("appinstalled", () => { deferredPrompt = null; toast("Appli installée."); });

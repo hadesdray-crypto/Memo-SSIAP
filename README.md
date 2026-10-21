@@ -11,6 +11,7 @@ Le mémo de poche de l’agent de sécurité incendie (SSIAP 1, 2 et 3) et de l�
 - **Mon planning** : les heures de la semaine avec le lieu, le motif et l’affaire. Ajout au clavier (horaires fréquents en un geste), **à la voix** (« hier de 18 h à 20 h 30, heures sup au tribunal, salle 4, affaire 24/1234 ») ou par **photo du planning imprimé** (lue par Gemini, puis vérifiée par vous). Totaux par jour et par semaine, heures supplémentaires, relevé du mois à copier ou à ouvrir dans un tableur.
 - **Entraînement** : 213 questions corrigées et expliquées, chacune reliée à sa fiche. Quiz rapide, par thème et par niveau, examen blanc SSIAP 1 (30 questions, note sur 20), révision des erreurs, suivi des progrès. Les questions peuvent être lues à voix haute.
 - **8 outils de calcul** : quel extincteur sur quel feu, catégorie d’un ERP, calcul de l’effectif, dégagements et UP, nombre d’extincteurs, visites de la commission de sécurité, recyclage SSIAP, carte professionnelle APS.
+- **Veille réglementaire** : chaque lundi, un robot sur GitHub vérifie si les textes officiels cités par l’appli ont changé et l’indique dans l’appli (« vérification en cours »). Il ne modifie jamais l’appli tout seul.
 - Recherche instantanée, 54 sigles expliqués, favoris, « Mes numéros du site », thème clair ou sombre, texte agrandi, page **Réglages** (voix, vitesse, Gemini, données).
 - Chaque fiche cite ses sources (67 au total) avec la date de vérification.
 
@@ -25,6 +26,17 @@ Les fichiers à envoyer sont tous dans le dossier **1-a-mettre-sur-github**, san
 5. Après une ou deux minutes, l’adresse de l’appli s’affiche en haut de la page Pages : `https://VOTRE-NOM.github.io/memo-ssiap/`.
 
 Le dépôt est public : le code de l’appli est visible, mais **aucune donnée personnelle** n’y est. Les rapports, le planning et la clé Gemini restent sur chaque téléphone.
+
+## Robot de veille réglementaire (une seule fois, facultatif)
+
+Le robot tourne sur GitHub, gratuitement, chaque lundi vers 7 h. Il relit les pages officielles citées par l’appli (Légifrance, préfectures, SDIS, INRS…), repère celles qui ont changé et publie le résultat, que l’appli affiche dans **Outils → Veille réglementaire** (et par un message sur l’accueil). Avec une clé Gemini, il résume aussi chaque changement en français simple et cherche les nouveaux textes officiels publiés. Il ne modifie **jamais** le contenu de l’appli : chaque changement doit être vérifié, puis l’appli corrigée.
+
+1. Envoyez les fichiers du dossier `1-a-mettre-sur-github` comme d’habitude (ils contiennent `veille.mjs` et `veille-sources.json`).
+2. Créez le fichier du robot : sur la page du dépôt, **Add file → Create new file**. Comme nom, tapez exactement `.github/workflows/veille.yml`, puis collez le contenu du fichier `veille.yml` (dossier `3-robot-de-veille`) et **Commit changes**.
+3. Clé Gemini (conseillé) : **Settings → Secrets and variables → Actions → New repository secret**. *Name* : `GEMINI_API_KEY`, *Secret* : votre clé (aistudio.google.com/apikey) → **Add secret**. La clé reste cachée : elle n’apparaît ni dans le code ni dans l’appli.
+4. Premier essai : onglet **Actions → Veille réglementaire → Run workflow**. Après 1 à 3 minutes, une coche verte apparaît. La première fois, le robot enregistre l’état actuel des textes ; il signale les changements à partir de la fois suivante.
+
+Ne supprimez pas les fichiers `veille.json` et `veille-etat.json` créés par le robot dans le dépôt. Si GitHub met un jour le robot en pause, réactivez-le dans l’onglet **Actions**.
 
 ## Installer l’appli sur le téléphone
 
@@ -56,7 +68,7 @@ Le fichier `base-connaissances-ssiap.md` reprend tout le contenu de l’appli av
 
 ## Mettre à jour l’appli
 
-Envoyez les nouveaux fichiers sur GitHub (**Add file → Upload files**, ils remplacent les anciens). Au lancement suivant avec internet, l’appli affiche « Une nouvelle version du mémo est prête » : touchez **Mettre à jour**. Les rapports, le planning et les réglages sont conservés.
+Envoyez les nouveaux fichiers du dossier `1-a-mettre-sur-github` sur GitHub (**Add file → Upload files**, ils remplacent les anciens ; les fichiers du robot de veille ne sont pas touchés). Au lancement suivant avec internet, l’appli affiche « Une nouvelle version du mémo est prête » : touchez **Mettre à jour**. Les rapports, le planning et les réglages sont conservés.
 
 ## Fiabilité du contenu
 
@@ -74,6 +86,7 @@ node qa/check-data.js      # contrôle des liens et des sources
 node build.mjs             # produit le site dans dist
 python3 scripts/icons.py   # icônes (Playwright), si besoin
 python3 qa/test-app.py     # tests dans le navigateur (Playwright)
+node qa/test-veille.mjs    # test du robot de veille (pages et Gemini simulés)
 ```
 
 Envoyez ensuite le contenu de `dist` sur GitHub.
