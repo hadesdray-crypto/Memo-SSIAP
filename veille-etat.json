@@ -217,9 +217,9 @@
    "chg": null
   },
   "prog1": {
-   "h": "d0350e7507ded44f00439f190e73aae2516891512e8077f81bef120896559280",
+   "h": "0c954db14b1badcea371b8f6f432a90ab077a7178f88a0e7278a73787bd6bd59",
    "p": null,
-   "chg": null
+   "chg": "2026-10-21"
   },
   "prog2": {
    "h": "4959201ffd4a1440efd9c6b896d381d1964f7090e9d4e1dc0d722356ce2a55e2",
@@ -294,9 +294,9 @@
    "chg": null
   },
   "ddtDeg": {
-   "h": "3ed11cc0bff8e15128346e5d503d722ce1be22b4987a1b6f008c061e9b286681",
+   "h": "b6040dbed8e4d397567523e2e752c58572745d1f695213547cac9436fed8c1ba",
    "p": null,
-   "chg": null
+   "chg": "2026-10-21"
   },
   "ffbDeg": {
    "h": "8b40adb69bd2d13320abc19943622c1939c63da9d9cb9228696c2dc89dc6c2d8",
@@ -880,9 +880,9 @@
    "chg": null
   },
   "macBdx": {
-   "h": "5c19e331ed24ba623ad8cbf0acf63a8c34f77dbda83c1469750934e83b5ad1d6",
+   "h": "b354b1892749d17d71bd795cfec13f2bb2bb04af4863da2fe3715b400b8e1ac5",
    "p": null,
-   "chg": null
+   "chg": "2026-10-21"
   },
   "tfp": {
    "h": "cce64576842f18b2af778a089d140b472b0f4be72b9af5ce8ae55167bf0e9884",
@@ -1648,42 +1648,47 @@
    "h": "b2f14ba5791d62dc68ef8006947c0c636cea85bdb3487ebb7e1ad562adbdb694",
    "p": null,
    "chg": null
+  },
+  "amu": {
+   "h": "bfeb127c6012179af918788c31822a257076becc3e5b6c19df9fe7e12cd9775e",
+   "p": null,
+   "chg": null
   }
  },
  "echecs": {
-  "a2005": 1,
-  "memento": 1,
+  "a2005": 2,
+  "memento": 2,
   "fc5641": 0,
   "fc5642": 0,
   "prog1": 0,
   "prog2": 0,
   "qe111762": 0,
-  "rserp": 1,
+  "rserp": 2,
   "batissMS": 0,
   "inrs6054": 0,
-  "eduExt": 1,
-  "sdis86": 1,
-  "sdis86L14": 1,
+  "eduExt": 2,
+  "sdis86": 2,
+  "sdis86L14": 2,
   "spERP": 0,
   "ddtDeg": 0,
   "ffbDeg": 0,
   "illkirch": 0,
-  "ardeche": 1,
+  "ardeche": 2,
   "cultureReg": 0,
   "ienReg": 0,
-  "cch": 1,
+  "cch": 2,
   "ighFormation": 0,
-  "amu": 1,
+  "amu": 0,
   "imh": 0,
   "ct4227_29": 0,
   "ct4227_36": 0,
   "ct4227_37": 0,
   "ct4227_39": 0,
   "oppBaes": 0,
-  "acMart": 1,
+  "acMart": 2,
   "acNorm": 0,
-  "acLyon": 1,
-  "eureAlarme": 1,
+  "acLyon": 2,
+  "eureAlarme": 2,
   "socotecDF": 0,
   "adapsa": 0,
   "qe12228": 0,
@@ -1691,31 +1696,33 @@
   "pe4": 0,
   "gaz2025": 0,
   "ch2025": 0,
-  "csi": 1,
-  "l6132": 1,
-  "cnapsVeh": 1,
-  "tiAps": 1,
+  "csi": 2,
+  "l6132": 2,
+  "cnapsVeh": 2,
+  "tiAps": 2,
   "acte1": 0,
   "cam2026": 0,
   "loi798": 0,
   "mac2024": 0,
   "macBdx": 0,
   "tfp": 0,
-  "cp": 1,
-  "cpp": 1,
+  "cp": 2,
+  "cpp": 2,
   "fedecardio": 0,
   "psc1": 0,
-  "attentat": 1,
-  "gend114": 1,
+  "attentat": 2,
+  "gend114": 2,
   "grdf": 0,
   "legrandSSI": 0,
   "nomadSSI": 0,
   "apsadR1": 0,
   "apsadR7": 0,
   "apsadR12": 0,
-  "baesEC": 1,
-  "villebon": 1,
+  "baesEC": 2,
+  "villebon": 2,
   "niortColis": 0
  },
- "vus": []
+ "vus": [],
+ "modele": "gemini-3.8-flash",
+ "modeleLe": "2026-10-21"
 }
