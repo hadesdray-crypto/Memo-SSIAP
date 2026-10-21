@@ -1690,6 +1690,8 @@ Chaque activité fait l’objet d’une demande et d’une carte distinctes, et 
 
 > **Bon à savoir :** **Carte « surveillance de grands événements » (SGE)** : délivrée après une formation de 106 heures, elle est limitée à la surveillance d’événements de plus de 300 personnes. Elle est valable 5 ans (décret du 29 décembre 2023).
 
+> **Bon à savoir :** **ADS ou APS ?** « ADS » (agent de sécurité) est le mot du langage courant et des annonces d’emploi. « APS » (agent de prévention et de sécurité) est l’intitulé officiel de la formation, du titre (TFP APS) et de la carte professionnelle du CNAPS. C’est le même métier : pour un examen ou un document officiel, c’est APS qui compte.
+
 Voir aussi : Carte professionnelle : validité et renouvellement, Le MAC : la formation pour renouveler la carte, SSIAP et agent de sécurité (APS) : le cumul.
 
 **Sources :**
@@ -2288,6 +2290,7 @@ Les textes qui ont changé récemment.
 
 # Sigles et matériel
 
+- **ADS** (Agent de sécurité) : Agent de sécurité privée. Dans le langage courant, « ADS » et « APS » désignent le même métier : ADS est le mot du terrain et des annonces, APS est l’intitulé officiel de la formation, du titre et de la carte professionnelle.
 - **AG** (Alarme générale) : Signal sonore qui ordonne l’évacuation.
 - **AGS** (Alarme générale sélective) : Alarme destinée au seul personnel désigné, quand l’évacuation demande des précautions.
 - **APS** (Agent de prévention et de sécurité) : Agent de sécurité privée (surveillance humaine, gardiennage), titulaire d’une carte professionnelle du CNAPS.
