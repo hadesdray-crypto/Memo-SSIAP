@@ -7,6 +7,7 @@
 <meta name="description" content="Le mémo de poche de l’agent de sécurité incendie (SSIAP 1, 2, 3) et de l’agent de sécurité privée : règles, schémas, conduites à tenir et outils, utilisable sans connexion.">
 <meta name="theme-color" content="#b3121f">
 <meta name="color-scheme" content="light dark">
+<script>try{var t=JSON.parse(localStorage.getItem("memo-ssiap:theme"));if(t==null||t==="sombre"){document.documentElement.setAttribute("data-theme","dark");document.documentElement.setAttribute("data-boot","1")}}catch(e){document.documentElement.setAttribute("data-theme","dark");document.documentElement.setAttribute("data-boot","1")}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -7646,9 +7647,11 @@ const APP = (() => {
 
   /* ---------- Thème et taille ---------- */
   const root = document.documentElement;
-  const hostTheme = root.getAttribute("data-theme");
-  let theme = store.get("theme", "auto");
+  const hostTheme = root.hasAttribute("data-boot") ? null : root.getAttribute("data-theme");
+  let theme = store.get("theme", "sombre");
+  if (!THEME_L_OK(theme)) theme = "sombre";
   const THEME_L = { auto: "automatique", clair: "clair", sombre: "sombre" };
+  function THEME_L_OK(t) { return t === "auto" || t === "clair" || t === "sombre"; }
   function applyTheme() {
     if (theme === "clair") root.setAttribute("data-theme", "light");
     else if (theme === "sombre") root.setAttribute("data-theme", "dark");
@@ -7767,7 +7770,7 @@ const APP = (() => {
         toast(on ? "Ajouté à vos favoris." : "Retiré de vos favoris.");
         break;
       }
-      case "theme": theme = theme === "auto" ? "clair" : theme === "clair" ? "sombre" : "auto"; store.set("theme", theme); applyTheme(); toast(`Thème ${THEME_L[theme]}.`); break;
+      case "theme": theme = theme === "sombre" ? "clair" : theme === "clair" ? "auto" : "sombre"; store.set("theme", theme); applyTheme(); toast(`Thème ${THEME_L[theme]}.`); break;
       case "size": size = SIZES[(SIZES.indexOf(size) + 1) % SIZES.length]; store.set("size", size); applySize(); toast("Texte " + SIZE_L[size] + "."); break;
       case "go-search": go("recherche"); break;
       case "back": if (stack.length > 1) history.back(); else go(cur && cur.back ? cur.back : "accueil"); break;
