@@ -108,6 +108,8 @@
   color-scheme: dark;
 }
 :root[data-size="grand"] { font-size: 112.5%; }
+:root[data-size="tres"] { font-size: 125%; }
+:root[data-size="enorme"] { font-size: 140%; }
 
 /* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -879,6 +881,13 @@ body.tts-open .toast { bottom: calc(var(--tabs-h) + 84px + env(safe-area-inset-b
 .guide-b .btn:disabled { opacity: .45; }
 body.guide-open { overflow: hidden; }
 [data-size="grand"] .guide-x { font-size: 1.85rem; }
+[data-size="tres"] .guide-x { font-size: 1.85rem; }
+[data-size="enorme"] .guide-x { font-size: 1.85rem; }
+[data-size="tres"] .page-h, [data-size="enorme"] .page-h { min-width: 0; }
+[data-size="tres"] .page-h h1, [data-size="enorme"] .page-h h1 { overflow-wrap: anywhere; hyphens: auto; }
+[data-size="tres"] .brand-t b, [data-size="enorme"] .brand-t b { font-size: 15px; letter-spacing: 0; }
+[data-size="tres"] .brand-t small, [data-size="enorme"] .brand-t small { display: none; }
+[data-size="enorme"] .fav span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- Dictée ---------- */
 .mic { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 16px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--surface); color: var(--red); font-weight: 700; flex: none; }
@@ -6969,7 +6978,7 @@ const APP = (() => {
         <p class="small muted">Créer une clé gratuite : <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a> · <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">conditions d’utilisation de Gemini</a></p>
       </section>
       <section class="sec about"><h2 class="lbl g">Affichage</h2>
-        <div class="chips"><button class="btn ghost" data-act="theme">${icon("auto")}Thème : ${THEME_L[theme]}</button><button class="btn ghost" data-act="size">${icon("texte")}Texte ${size === "grand" ? "agrandi" : "normal"}</button></div>
+        <div class="chips"><button class="btn ghost" data-act="theme">${icon("auto")}Thème : ${THEME_L[theme]}</button><button class="btn ghost" data-act="size">${icon("texte")}Texte ${SIZE_L[size]}</button></div>
       </section>
       <section class="sec about"><h2 class="lbl">Mes données</h2>
         <p>Favoris, numéros, rapports, planning, résultats du quiz et réglages sont enregistrés seulement sur cet appareil.</p>
@@ -7649,7 +7658,10 @@ const APP = (() => {
     if (b) { b.innerHTML = icon(theme === "clair" ? "soleil" : theme === "sombre" ? "lune" : "auto"); b.setAttribute("aria-label", `Thème ${THEME_L[theme]}. Changer le thème`); }
   }
   let size = store.get("size", "normal");
-  const applySize = () => { if (size === "grand") root.setAttribute("data-size", "grand"); else root.removeAttribute("data-size"); };
+  const SIZES = ["normal", "grand", "tres", "enorme"];
+  const SIZE_L = { normal: "normal", grand: "agrandi", tres: "très agrandi", enorme: "énorme" };
+  if (!SIZES.includes(size)) size = "normal";
+  const applySize = () => { if (size !== "normal") root.setAttribute("data-size", size); else root.removeAttribute("data-size"); };
 
   /* ---------- Messages ---------- */
   let toastTimer = null;
@@ -7756,7 +7768,7 @@ const APP = (() => {
         break;
       }
       case "theme": theme = theme === "auto" ? "clair" : theme === "clair" ? "sombre" : "auto"; store.set("theme", theme); applyTheme(); toast(`Thème ${THEME_L[theme]}.`); break;
-      case "size": size = size === "grand" ? "normal" : "grand"; store.set("size", size); applySize(); toast(size === "grand" ? "Texte agrandi." : "Texte normal."); break;
+      case "size": size = SIZES[(SIZES.indexOf(size) + 1) % SIZES.length]; store.set("size", size); applySize(); toast("Texte " + SIZE_L[size] + "."); break;
       case "go-search": go("recherche"); break;
       case "back": if (stack.length > 1) history.back(); else go(cur && cur.back ? cur.back : "accueil"); break;
       case "clear-q": { const i = $("#q"); if (i) { i.value = ""; onSearchInput(""); i.focus(); } break; }
