@@ -635,8 +635,8 @@ td:first-child { font-weight: 700; }
 .jx-res .btn { width: 100%; max-width: 360px; }
 .jx-big { font: 700 2rem/1.1 var(--font-d); color: var(--red); overflow-wrap: anywhere; }
 .jx-names { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.jx-sc { display: flex; gap: 6px; }
-.jx-sc span { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font: 700 1.1rem/1.2 var(--font-d); }
+.jx-sc { display: flex; flex-wrap: wrap; gap: 6px; }
+.jx-sc span { flex: 1 1 62px; min-width: 0; display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font: 700 1.1rem/1.2 var(--font-d); }
 .jx-sc span b { font: 600 .72rem/1.2 system-ui, sans-serif; color: var(--ink-2); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .jx-sc span.on { border-color: var(--red-bg); background: var(--red-tint); }
 .jx-timer { display: flex; align-items: center; gap: 10px; }
@@ -6569,7 +6569,7 @@ const APP = (() => {
     { id: "rapports", t: "Rapports d’incident", d: "Racontez à la voix ou remplissez étape par étape : chronologie à l’heure près, questions sur ce qui manque, contrôle de qualité, ligne de main courante.", ic: "registre", co: "red", mc: "rapport incident compte rendu main courante redaction chronologie intervention dicter vocal voix dictee" },
     { id: "planning", t: "Mon planning et mes heures", d: "Vos heures de la semaine : photo du planning, heures supplémentaires à la voix ou au clavier, avec le lieu, le motif et l’affaire. Totaux et relevé du mois.", ic: "calendrier", co: "blue", mc: "planning heures horaires semaine heures supplementaires sup affaire tribunal lieu motif releve mois pointage" },
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
-    { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 4 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
+    { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
     { id: "o-categorie", t: "Catégorie d’un ERP", d: "Activité et effectif : 5e catégorie ou 1er groupe, puis catégorie 1 à 4.", ic: "immeuble", co: "blue", mc: "classement categorie erp effectif seuil 5e groupe" },
     { id: "o-effectif", t: "Calcul de l’effectif", d: "Surface, sièges ou places : nombre de personnes à prendre en compte.", ic: "personnes", co: "blue", mc: "effectif theorique densite surface m2 personnes calcul" },
@@ -7949,7 +7949,7 @@ const APP = (() => {
     }).join("");
     return `${jHeader()}
       <section class="sec"><h2 class="lbl a">Préparer mon diplôme</h2><div class="cards">${cards}</div></section>
-      <section class="sec"><h2 class="lbl b">Jouer à plusieurs</h2><button type="button" class="card jx-battle" data-act="jx-bsetup"><span class="ico red">${icon("personnes")}</span><span class="t"><b>Battle de 2 à 4 joueurs</b><span>Un seul téléphone, on se le passe. Rapidité et bonnes réponses rapportent des points.</span></span>${icon("chevron")}</button></section>
+      <section class="sec"><h2 class="lbl b">Jouer à plusieurs</h2><button type="button" class="card jx-battle" data-act="jx-bsetup"><span class="ico red">${icon("personnes")}</span><span class="t"><b>Battle de 2 à 10 joueurs</b><span>Un seul téléphone, on se le passe. Rapidité et bonnes réponses rapportent des points.</span></span>${icon("chevron")}</button></section>
       <p style="margin:0"><button type="button" class="btn-link" data-act="jx-pedit">Modifier mon profil</button> · <a href="#jeu-import">Ajouter des questions</a></p>
       ${disc("Jeu d’entraînement : il aide à retenir, il ne remplace ni la formation, ni les textes officiels. La jauge mesure ce que vous avez retenu dans l’appli, pas votre résultat à l’examen.")}`;
   }
@@ -8003,11 +8003,11 @@ const APP = (() => {
   }
   function jBSetup() {
     const chip = (act, v, label, on) => `<button type="button" data-act="${act}" data-v="${v}" aria-pressed="${on}">${label}</button>`;
-    while (B.names.length < 4) B.names.push("");
+    while (B.names.length < 10) B.names.push("");
     if (!B.names[0] && jP) B.names[0] = jP.pseudo;
     const cats = [["all", "Toutes"], ...JCATS.filter((c) => c.id !== "terrain" && jPool(c.id, B.mode).some((q) => q.type === "qcm")).map((c) => [c.id, c.t])];
     return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>Battle</h1><p>Chacun son tour, avec une question différente. Plus on répond vite et juste, plus on marque.</p></div>
-      <section class="sec"><h2 class="lbl">Joueurs</h2><div class="filters" role="group" aria-label="Nombre de joueurs">${[2, 3, 4].map((n) => chip("jx-bn", n, n + " joueurs", B.n === n)).join("")}</div>
+      <section class="sec"><h2 class="lbl">Joueurs (2 à 10)</h2><div class="filters" role="group" aria-label="Nombre de joueurs, de 2 à 10">${[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => chip("jx-bn", n, n, B.n === n)).join("")}</div>
         <div class="jx-names">${Array.from({ length: B.n }, (_, i) => `<label class="fld"><span>Joueur ${i + 1}</span><input type="text" maxlength="14" data-bn="${i}" autocomplete="off" value="${esc(B.names[i])}" placeholder="Joueur ${i + 1}"></label>`).join("")}</div></section>
       <section class="sec"><h2 class="lbl b">Réglages</h2>
         <div class="filters" role="group" aria-label="Questions par joueur">${[3, 5, 10].map((n) => chip("jx-br", n, n + " questions chacun", B.rounds === n)).join("")}</div>
@@ -8021,9 +8021,9 @@ const APP = (() => {
     const q = BT.qs[BT.t], p = BT.players[BT.t % B.n], round = Math.floor(BT.t / B.n) + 1;
     if (BT.step === "end") {
       const sorted = BT.players.map((p0, i) => ({ ...p0, i })).sort((a, b) => b.score - a.score);
-      const med = ["🥇", "🥈", "🥉", "4"];
+      const med = ["🥇", "🥈", "🥉"];
       let rk = 0;
-      return `<div class="score jx-res"><h2>Résultat du battle</h2><div class="jx-podium">${sorted.map((p0, j) => { if (j && p0.score < sorted[j - 1].score) rk = j; return `<div class="jx-pod r${rk}"><span class="m">${med[rk]}</span><b>${tx(p0.name)}</b><span>${p0.score} points · ${p0.ok} bonne${p0.ok > 1 ? "s" : ""} réponse${p0.ok > 1 ? "s" : ""}</span></div>`; }).join("")}</div>
+      return `<div class="score jx-res"><h2>Résultat du battle</h2><div class="jx-podium">${sorted.map((p0, j) => { if (j && p0.score < sorted[j - 1].score) rk = j; return `<div class="jx-pod r${rk}"><span class="m">${rk < 3 ? med[rk] : "#" + (rk + 1)}</span><b>${tx(p0.name)}</b><span>${p0.score} points · ${p0.ok} bonne${p0.ok > 1 ? "s" : ""} réponse${p0.ok > 1 ? "s" : ""}</span></div>`; }).join("")}</div>
         <p>${sorted[1] && sorted[0].score === sorted[1].score ? "Égalité ! Une revanche pour les départager ?" : `Bravo ${tx(sorted[0].name)} !`}</p>
         <button type="button" class="btn" data-act="jx-bagain">Revanche</button><button type="button" class="btn ghost" data-act="jx-bsetup">Changer les réglages</button><button type="button" class="btn ghost" data-act="jx-hub">Retour au jeu</button></div>`;
     }
