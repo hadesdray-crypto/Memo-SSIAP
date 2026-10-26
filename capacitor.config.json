@@ -1,0 +1,17 @@
+{
+  "appId": "fr.memossiap.app",
+  "appName": "Mémo SSIAP",
+  "webDir": "dist",
+  "backgroundColor": "#b3121f",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "appReadyTimeout": 15000,
+      "resetWhenUpdate": true,
+      "responseTimeout": 600
+    }
+  }
+}

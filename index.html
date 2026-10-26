@@ -6421,6 +6421,7 @@ Réponds uniquement en JSON : {"creneaux":[{"date":"AAAA-MM-JJ ou null","debut":
 /* Mémo SSIAP : application (routeur, pages, recherche, outils, quiz). Aucune dépendance externe. */
 const APP = (() => {
   const PWA = typeof MEMO_PWA !== "undefined" && MEMO_PWA === true;
+  const EST_APK = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());
   const NB = " ", NNB = " ";
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -6987,7 +6988,7 @@ const APP = (() => {
       : `<span class="offline" style="background:var(--blue-tint);color:var(--blue)">${icon("info")}Aperçu en ligne</span>`;
     const nbSrc = Object.keys(D.sources).length;
     const html = `<nav class="crumb"><a href="#outils">Outils</a></nav>
-      <div class="page-h"><h1>À propos</h1><p data-act="dev-tap">Mémo SSIAP ${esc(D.meta.version)}, contenu vérifié le ${D.meta.verifie}.</p></div>
+      <div class="page-h"><h1>À propos</h1><p data-act="dev-tap">Mémo SSIAP ${esc(D.meta.version)}${EST_APK ? " (application 1." + APK_VERSION + ")" : ""}, contenu vérifié le ${D.meta.verifie}.</p></div>
       <section class="sec about"><h2 class="lbl">Ce que contient l’appli</h2>
         <ul><li>${D.fiches.length} fiches, avec ${Object.keys(SCHEMAS).length} schémas, sur le feu, les extincteurs, le SSI, le bâtiment, les missions, les secours, le métier SSIAP, les ERP et IGH, les contrôles et l’agent de sécurité privée.</li><li>${D.procedures.length} conduites à tenir pour les situations d’urgence.</li><li>${TOOLS.length} outils de calcul et de révision, ${D.glossaire.length} sigles expliqués, les numéros d’urgence.</li></ul>
       </section>
@@ -7003,6 +7004,7 @@ const APP = (() => {
         ${signalBtn("À propos")}
         <p><a class="btn ghost" href="#conditions">Conditions d’utilisation</a> <a class="btn ghost" href="#signalements">Mes signalements${sigs().length ? " (" + sigs().length + ")" : ""}</a></p>
       </section>
+      ${majBloc()}
       <section class="sec about"><h2 class="lbl b">Sans connexion et installation</h2>
         <p>${status}</p>
         ${PWA && deferredPrompt ? `<p><button class="btn" data-act="install">${icon("installer")}Installer l’appli</button></p>` : ""}
@@ -7165,7 +7167,8 @@ const APP = (() => {
   const VERIF_ISO = (() => { const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(D.meta.verifieCourt || ""); return m ? `${m[3]}-${m[2]}-${m[1]}` : "2000-01-01"; })();
   const VEILLE_URLS = (() => {
     const h = location.hostname, seg = location.pathname.split("/").filter(Boolean);
-    const raw = /\.github\.io$/i.test(h) && seg[0] && !/\.html?$/i.test(seg[0]) ? `https://raw.githubusercontent.com/${h.split(".")[0]}/${seg[0]}/main/veille.json` : "";
+    const apk = EST_APK ? "https://raw.githubusercontent.com/hadesdray-crypto/memo-ssiap/main/veille.json" : "";
+    const raw = apk || /\.github\.io$/i.test(h) && seg[0] && !/\.html?$/i.test(seg[0]) ? `https://raw.githubusercontent.com/${h.split(".")[0]}/${seg[0]}/main/veille.json` : "";
     return raw ? [raw, "veille.json"] : ["veille.json"];
   })();
   const TITLE_TOK = {};
@@ -7933,6 +7936,10 @@ const APP = (() => {
       case "sig-toujours": store.set("envoi-auto", true); $("#signal").hidden = true; synchro(true); toast("Envoi automatique activé."); break;
       case "sig-plus-tard": $("#signal").hidden = true; break;
       case "sig-stop": store.set("envoi-auto", false); rerender(); toast("Envoi automatique désactivé : l’appli vous demandera chaque fois."); break;
+      case "maj-go": majLancer(); break;
+      case "maj-redem": majRedemarrer(); break;
+      case "maj-plus-tard": $("#maj").hidden = true; break;
+      case "maj-verif": majVerifier(true); break;
       case "dev-set": devSet(b.dataset.id, b.dataset.e); break;
       case "dev-tap": { const n = Date.now(); devTaps = n - devT < 1500 ? devTaps + 1 : 1; devT = n; if (devTaps >= 5) { devTaps = 0; go("dev"); } break; }
       case "sig-del": store.set("signalements", sigs().filter((q) => q.id !== b.dataset.id)); rerender(); toast("Signalement supprimé."); break;
@@ -8219,6 +8226,82 @@ const APP = (() => {
     return { html, title: "Conditions d’utilisation", tab: "outils", back: "apropos" };
   }
 
+  /* ---------- Mises à jour de l'application Android (dans l'appli : explication, barre de progression, redémarrage) ---------- */
+  const APK_VERSION = 0; /* remplacé à la fabrication de l'APK */
+  const DEPOT = "https://github.com/hadesdray-crypto/memo-ssiap";
+  const API_REL = "https://api.github.com/repos/hadesdray-crypto/memo-ssiap/releases/latest";
+  const LIEN_APK = DEPOT + "/releases/latest/download/memo-ssiap.apk";
+  const pont = () => window.Capacitor;
+  const modDispo = (n) => { const c = pont(); return !!(c && ((c.Plugins && n in c.Plugins) || (c.isPluginAvailable && c.isPluginAvailable(n)) || (c.PluginHeaders && c.PluginHeaders.some((h) => h.name === n)))); };
+  const appelMod = (n, m, o) => { const c = pont(), d = c && c.Plugins && c.Plugins[n]; if (d && typeof d[m] === "function") return d[m](o || {}); if (c && c.nativePromise) return c.nativePromise(n, m, o || {}); return Promise.reject(new Error("Module " + n + " absent")); };
+  async function ecouteMod(n, e, f) {
+    const c = pont(), d = c && c.Plugins && c.Plugins[n];
+    if (d && d.addListener) { const h = await d.addListener(e, f); return () => h.remove(); }
+    if (c && c.nativeCallback) { const id = c.nativeCallback(n, "addListener", { eventName: e }, f); return () => { c.nativePromise && c.nativePromise(n, "removeListener", { eventName: e, callbackId: id }).catch(() => {}); }; }
+    return () => {};
+  }
+  const MAJ = { nouvelle: 0, phase: "rien", pct: 0, taille: 0, empreinte: "", bundle: null, detail: "", verif: "", propose: false };
+  async function majVerifier(manuel) {
+    if (!EST_APK || MAJ.phase === "telechargement" || MAJ.phase === "pret") return;
+    MAJ.verif = "en-cours"; majDessiner();
+    try {
+      const ac = new AbortController(), t = setTimeout(() => ac.abort(), 15000);
+      const r = await fetch(API_REL, { cache: "no-store", signal: ac.signal });
+      clearTimeout(t);
+      if (!r.ok) throw new Error(String(r.status));
+      const rel = await r.json(), n = Number(String(rel.tag_name || "").replace(/\D/g, ""));
+      const zip = (rel.assets || []).find((a) => a.name === "web.zip");
+      MAJ.taille = zip ? Math.round(zip.size / 1048576) : 0;
+      MAJ.empreinte = String((zip && zip.digest) || "").replace(/^sha256:/, "") || ((String(rel.body || "").match(/web\.zip sha256 : ([0-9a-f]{64})/) || [])[1] || "");
+      if (n > APK_VERSION) { MAJ.nouvelle = n; MAJ.phase = "propose"; MAJ.verif = ""; if (!MAJ.propose || manuel) { MAJ.propose = true; majOuvrir(); } }
+      else { MAJ.verif = "a-jour"; if (manuel) toast("Votre application est à jour."); }
+    } catch (e) { MAJ.verif = navigator.onLine ? "erreur" : "hors-ligne"; if (manuel) toast(MAJ.verif === "hors-ligne" ? "Pas de connexion : la mise à jour se fera plus tard." : "Impossible de vérifier pour l’instant. Réessayez plus tard."); }
+    majDessiner();
+  }
+  async function majLancer() {
+    if (!MAJ.nouvelle) return;
+    if (!modDispo("CapacitorUpdater")) { location.href = LIEN_APK; return; }
+    if (!MAJ.empreinte) await majVerifier(false);
+    MAJ.phase = "telechargement"; MAJ.pct = 0; MAJ.detail = ""; majDessiner();
+    const stop = await ecouteMod("CapacitorUpdater", "download", (e) => { MAJ.pct = Math.max(0, Math.min(100, Math.round(e.percent))); majDessiner(); });
+    try {
+      MAJ.bundle = await appelMod("CapacitorUpdater", "download", { url: `${DEPOT}/releases/download/android-${MAJ.nouvelle}/web.zip`, version: String(MAJ.nouvelle), checksum: (MAJ.empreinte || "").toLowerCase() });
+      MAJ.phase = "pret"; MAJ.pct = 100;
+    } catch (e) { MAJ.phase = "erreur"; MAJ.detail = e && e.message ? e.message : String(e); }
+    stop(); majDessiner();
+  }
+  async function majRedemarrer() {
+    if (!MAJ.bundle) return;
+    store.set("maj-terminee", MAJ.nouvelle);
+    try { await appelMod("CapacitorUpdater", "set", { id: MAJ.bundle.id }); } catch (e) { MAJ.phase = "erreur"; MAJ.detail = String(e && e.message || e); majDessiner(); }
+  }
+  function majOuvrir() { const o = $("#maj"); if (o) { o.hidden = false; majDessiner(); } }
+  function majDessiner() {
+    const c = $("#maj-c");
+    if (c && !$("#maj").hidden) {
+      const n = MAJ.nouvelle ? "1." + MAJ.nouvelle : "";
+      const bar = `<div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${MAJ.pct}"><i style="width:${MAJ.pct}%"></i></div>`;
+      c.innerHTML = {
+        propose: `<h2 id="maj-t">Une nouvelle version est prête</h2><p>La version <strong>${n}</strong> apporte des corrections et des informations à jour.</p><ul class="avis-l"><li>Elle se télécharge dans l’appli${MAJ.taille ? " (environ " + MAJ.taille + " Mo)" : ""}, sans rien réinstaller.</li><li>Vos réglages, favoris, rapports et signalements sont conservés.</li><li>Vous choisissez le moment : rien ne démarre sans votre accord.</li></ul><div class="signal-b"><button type="button" class="btn" data-act="maj-go">Mettre à jour</button><button type="button" class="btn ghost" data-act="maj-plus-tard">Plus tard</button></div>`,
+        telechargement: `<h2 id="maj-t">Téléchargement en cours…</h2>${bar}<p class="signal-mini">${MAJ.pct} %. Gardez l’appli ouverte et restez connecté. Tout reste utilisable en attendant.</p>`,
+        pret: `<h2 id="maj-t">Mise à jour prête</h2>${bar}<p>Le nouveau contenu est téléchargé. Touchez « Redémarrer » pour passer à la version <strong>${n}</strong>.</p><div class="signal-b"><button type="button" class="btn" data-act="maj-redem">Redémarrer l’appli</button><button type="button" class="btn ghost" data-act="maj-plus-tard">Plus tard</button></div>`,
+        erreur: `<h2 id="maj-t">La mise à jour n’a pas abouti</h2><p>Rien n’est cassé : votre version actuelle continue de fonctionner. Vérifiez votre connexion puis réessayez.</p><p class="signal-mini">${tx(MAJ.detail || "")}</p><div class="signal-b"><button type="button" class="btn" data-act="maj-go">Réessayer</button><button type="button" class="btn ghost" data-act="maj-plus-tard">Fermer</button></div>`
+      }[MAJ.phase] || `<h2 id="maj-t">Votre application est à jour</h2><div class="signal-b"><button type="button" class="btn ghost" data-act="maj-plus-tard">Fermer</button></div>`;
+    }
+    const s = $("#maj-etat");
+    if (s) s.textContent = !EST_APK ? "Les mises à jour se font automatiquement dans le navigateur." : MAJ.phase === "propose" ? "Version 1." + MAJ.nouvelle + " disponible." : MAJ.verif === "en-cours" ? "Vérification…" : MAJ.verif === "hors-ligne" ? "Hors connexion : vérification plus tard." : MAJ.verif === "erreur" ? "Vérification impossible pour l’instant." : "Votre application est à jour (version 1." + APK_VERSION + ").";
+  }
+  function majDemarrer() {
+    if (!EST_APK) return;
+    if (modDispo("CapacitorUpdater")) appelMod("CapacitorUpdater", "notifyAppReady").catch(() => {});
+    if (store.get("maj-terminee", 0) && Number(store.get("maj-terminee", 0)) === APK_VERSION) { store.set("maj-terminee", 0); setTimeout(() => toast("Mise à jour terminée. Merci !"), 1200); }
+    setTimeout(() => majVerifier(false), 3000);
+    window.addEventListener("online", () => majVerifier(false));
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") majVerifier(false); });
+    setInterval(() => majVerifier(false), 30 * 60 * 1000);
+  }
+  const majBloc = () => `<section class="sec about"><h2 class="lbl b">Mises à jour de l’application</h2><p id="maj-etat">${EST_APK ? "Vérification…" : ""}</p>${EST_APK ? `<p><button type="button" class="btn ghost" data-act="maj-verif">Vérifier maintenant</button></p>` : ""}</section>`;
+
   function pageSignalements() {
     const l = sigs().slice().reverse();
     const date = (d) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -8265,6 +8348,7 @@ const APP = (() => {
         <label class="tick"><input type="checkbox" id="guide-v" data-set="guide-voix"><span>Lire chaque étape à voix haute</span></label>
       </div></div>
       <div class="overlay" id="signal" role="dialog" aria-modal="true" aria-labelledby="signal-t" hidden><div class="box signal-box"><button class="close" data-act="signal-close" aria-label="Fermer">${icon("fermer")}</button><div id="signal-c"></div></div></div>
+      <div class="overlay" id="maj" role="dialog" aria-modal="true" aria-labelledby="maj-t" hidden><div class="box signal-box" id="maj-c"></div></div>
       <div class="overlay" id="avis" role="dialog" aria-modal="true" aria-labelledby="avis-t" hidden><div class="box signal-box" id="avis-c"></div></div>
       <div class="toast" id="toast" role="status" hidden></div>
       <div class="overlay" id="zoom" role="dialog" aria-modal="true" aria-label="Schéma agrandi" hidden><div class="box"><button class="close" data-act="zoom-close" aria-label="Fermer">${icon("fermer")}</button><div id="zoom-c"></div></div></div>`;
@@ -8307,11 +8391,12 @@ const APP = (() => {
     if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir();
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
     setTimeout(synchro, 2500);
+    majDemarrer();
     window.addEventListener("online", () => synchro());
     if (PWA) {
       window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredPrompt = e; if (cur && (cur.home || curTok === "apropos")) rerender(); });
       window.addEventListener("appinstalled", () => { deferredPrompt = null; toast("Appli installée."); });
-      if ("serviceWorker" in navigator) {
+      if ("serviceWorker" in navigator && !EST_APK) {
         const hadController = !!navigator.serviceWorker.controller;
         let reloading = false;
         navigator.serviceWorker.addEventListener("controllerchange", () => { if (!hadController || reloading) return; reloading = true; location.reload(); });
