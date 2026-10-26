@@ -32,6 +32,10 @@ jobs:
           # Numéro de version de l'application (sert à savoir si une mise à jour existe).
           sed -i "s/const APK_VERSION = 0;/const APK_VERSION = ${{ github.run_number }};/" dist/index.html
           grep -q "const APK_VERSION = ${{ github.run_number }};" dist/index.html
+          # Date de fin de cette version : 90 jours après la fabrication (le jeu et les outils se bloquent ensuite jusqu'à la nouvelle version)
+          FIN=$(( ($(date -u +%s) + 90*86400) * 1000 ))
+          sed -i "s/const LIC_FIN = 0;/const LIC_FIN = ${FIN};/" dist/index.html
+          grep -q "const LIC_FIN = ${FIN};" dist/index.html
           # Paquet de mise à jour : l'application le télécharge elle-même, sans rien réinstaller.
           (cd dist && zip -qr ../web.zip .)
           ls -la web.zip

@@ -6591,7 +6591,7 @@ const APP = (() => {
   ];
   TOOLS.forEach((t) => (TL[t.id] = t));
 
-  const PAGE_T = { accueil: "Accueil", licence: "Ma licence", legal: "Mentions et conditions", textes: "Textes de référence", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire" };
+  const PAGE_T = { accueil: "Accueil", licence: "Ma version", legal: "Mentions et conditions", textes: "Textes de référence", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire" };
   const tok = (id) => {
     if (id === "numeros") return "urgence";
     if (id === "quiz") return "o-quiz";
@@ -7124,7 +7124,7 @@ const APP = (() => {
         </ul>
         <p class="practice">${esc(mention().court)}</p>
         ${signalBtn("À propos")}
-        <p><a class="btn" href="#licence">Ma licence</a> <a class="btn ghost" href="#legal">Mentions et conditions</a> <a class="btn ghost" href="#conditions">Conditions d’utilisation</a> <a class="btn ghost" href="#signalements">Mes signalements${sigs().length ? " (" + sigs().length + ")" : ""}</a></p>
+        <p><a class="btn" href="#licence">Ma version</a> <a class="btn ghost" href="#legal">Mentions et conditions</a> <a class="btn ghost" href="#conditions">Conditions d’utilisation</a> <a class="btn ghost" href="#signalements">Mes signalements${sigs().length ? " (" + sigs().length + ")" : ""}</a></p>
       </section>
       ${majBloc()}
       <section class="sec about"><h2 class="lbl b">Sans connexion et installation</h2>
@@ -8144,15 +8144,14 @@ const APP = (() => {
     }
   }
 
-  /* ---------- Licence : essai gratuit, compteur, codes signés (vérifiés sans connexion) ---------- */
-  const LIC_PUB = {"kty": "EC", "crv": "P-256", "x": "TqN2yvKEXKJNVvX0p-UOs3gf3k5WWpE7zzMQTpe0uYM", "y": "2OlYSQIAkg07t4IN9e86xF_sCH3XvfBv7z8VSnkgR64"};
-  const LIC_ESSAI_JOURS = 90;
-  const LIC_J0 = Date.UTC(2020, 0, 1), LIC_JOUR = 86400000;
+  /* ---------- Licence : chaque APK a une date de fin ; après, le jeu et les outils se bloquent jusqu'à la nouvelle version ---------- */
+  const LIC_FIN = 0; /* remplacé à la fabrication de l'APK : date de fin en millisecondes (0 = sans limite : site web, essais) */
+  const LIC_JOUR = 86400000;
+  const LIC_NOUVELLE = "https://github.com/hadesdray-crypto/Memo-SSIAP/releases/latest/download/memo-ssiap.apk";
   const LIC = (() => {
     let L = store.get("lic", null), lastP = performance.now(), neuf = false;
     const sauve = () => store.set("lic", L);
-    const hex8 = () => Array.from(crypto.getRandomValues(new Uint8Array(4))).map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
-    if (!L || typeof L.tt !== "number") { const n0 = Date.now(); L = { d: n0, tt: n0, lw: n0, fin: 0, unl: false, ser: [], app: hex8(), rec: 0 }; neuf = true; }
+    if (!L || typeof L.tt !== "number") { const n0 = Date.now(); L = { tt: n0, lw: n0, rec: 0 }; neuf = true; }
     function tick(boot) {
       const now = Date.now(), p = performance.now();
       const mono = Math.max(0, p - lastP); lastP = p;
@@ -8169,56 +8168,34 @@ const APP = (() => {
       document.addEventListener("visibilitychange", () => { if (!document.hidden) { tick(false); barre(); } });
       barre();
       const e = etat();
-      if (e.phase !== "illimitee" && e.reste > 0 && e.reste <= 14 * LIC_JOUR) {
+      if (e.phase === "limitee" && e.reste <= 14 * LIC_JOUR) {
         const j = new Date().toISOString().slice(0, 10);
-        if (store.get("lic-avert", "") !== j) { store.set("lic-avert", j); setTimeout(() => toast("Licence : il reste " + duree(e.reste) + "."), 1500); }
+        if (store.get("lic-avert", "") !== j) { store.set("lic-avert", j); setTimeout(() => toast("Cette version fonctionne encore " + duree(e.reste) + "."), 1500); }
       }
     }
     function etat() {
-      if (L.unl) return { phase: "illimitee", fin: 0, reste: Infinity };
-      const essaiFin = L.d + LIC_ESSAI_JOURS * LIC_JOUR, fin = Math.max(essaiFin, L.fin || 0), reste = fin - L.tt;
-      return { phase: reste <= 0 ? "expiree" : (L.fin && L.fin >= essaiFin ? "active" : "essai"), fin, reste };
+      if (!LIC_FIN) return { phase: "libre", reste: Infinity };
+      const reste = LIC_FIN - L.tt;
+      return { phase: reste <= 0 ? "expiree" : "limitee", reste };
     }
     function duree(ms) {
       if (ms >= LIC_JOUR) { const j = Math.floor(ms / LIC_JOUR), h = Math.floor((ms % LIC_JOUR) / 3600000); return j + " jour" + (j > 1 ? "s" : "") + (j < 14 ? " " + h + " h" : ""); }
       const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
       return h + " h " + m + " min";
     }
-    const dateFin = (e) => new Date(Date.now() + e.reste).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    const dateFin = () => new Date(LIC_FIN).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     function barre() {
       const b = document.getElementById("lic-bar"); if (!b) return;
       const e = etat();
-      if (e.phase === "illimitee") { b.hidden = true; return; }
+      if (e.phase === "libre") { b.hidden = true; return; }
       b.hidden = false;
       b.className = "lic-bar" + (e.phase === "expiree" ? " exp" : e.reste <= 14 * LIC_JOUR ? " warn" : "");
-      b.innerHTML = `<a href="#licence">${e.phase === "expiree" ? "Licence terminée : le jeu et les outils sont bloqués. Touchez pour réactiver." : (e.phase === "essai" ? "Essai gratuit" : "Licence") + " : il reste " + duree(e.reste)}</a>`;
+      b.innerHTML = `<a href="#licence">${e.phase === "expiree" ? "Cette version est terminée : le jeu et les outils sont bloqués. Touchez pour la remplacer." : "Cette version fonctionne encore " + duree(e.reste)}</a>`;
     }
-    const b32 = (s) => { const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"; let bits = 0, val = 0; const out = []; for (const ch of s) { const i = A.indexOf(ch); if (i < 0) return null; val = ((val << 5) | i) & 0xffff; bits += 5; if (bits >= 8) { out.push((val >>> (bits - 8)) & 255); bits -= 8; } } return new Uint8Array(out); };
-    async function activer(txt) {
-      const s = String(txt || "").toUpperCase().replace(/[^A-Z2-7]/g, "");
-      const b = b32(s);
-      if (!b || b.length < 76) return { ok: false, m: "Code incomplet ou illisible. Copiez-le en entier." };
-      const buf = b.slice(0, 76), p = buf.slice(0, 12), sig = buf.slice(12);
-      if (!(window.crypto && crypto.subtle)) return { ok: false, m: "Cet appareil ne permet pas de vérifier un code." };
-      try {
-        const cle = await crypto.subtle.importKey("jwk", LIC_PUB, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
-        if (!(await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, cle, sig, p))) return { ok: false, m: "Ce code n’est pas valide." };
-      } catch (e) { return { ok: false, m: "Vérification impossible sur cet appareil." }; }
-      if (p[0] !== 1) return { ok: false, m: "Ce code vient d’une version plus récente de l’application." };
-      const dv = new DataView(p.buffer, p.byteOffset, 12), jour = dv.getUint16(2), serie = dv.getUint32(4), app = dv.getUint32(8);
-      if (app && app !== (parseInt(L.app, 16) >>> 0)) return { ok: false, m: "Ce code est prévu pour un autre appareil." };
-      if (p[1] === 1) { L.unl = true; L.ser.push(serie); sauve(); barre(); return { ok: true, m: "Licence sans limite activée." }; }
-      const fin = LIC_J0 + (jour + 1) * LIC_JOUR - 1;
-      if (fin <= L.tt) return { ok: false, m: "Ce code est déjà périmé." };
-      if ((L.ser || []).includes(serie) && fin <= (L.fin || 0)) return { ok: true, m: "Ce code est déjà activé sur cet appareil." };
-      L.fin = Math.max(L.fin || 0, fin); L.ser = (L.ser || []).concat(serie).slice(-50); sauve(); barre();
-      return { ok: true, m: "Licence activée : il reste " + duree(etat().reste) + "." };
-    }
-    /* Pages bloquées quand la licence est terminée : le jeu et les outils. Fiches, procédures, numéros d’urgence et textes légaux restent accessibles. */
+    /* Pages bloquées à la fin : le jeu et les outils. Fiches, conduites à tenir, numéros d’urgence, mise à jour et textes légaux restent accessibles. */
     const BLOQUEES = ["jeu", "jeu-import", "rapports", "rapport", "dictee", "planning", "textes"];
     const bloque = (t) => etat().phase === "expiree" && (BLOQUEES.includes(t) || t.startsWith("o-") || t.startsWith("pl-") || t.startsWith("jeu-") || t.startsWith("texte-"));
-    const id = () => L.app.slice(0, 4) + "-" + L.app.slice(4);
-    return { init, tick, etat, duree, dateFin, activer, bloque, id, barre, get rec() { return L.rec || 0; } };
+    return { init, tick, etat, duree, dateFin, bloque, barre, get rec() { return L.rec || 0; } };
   })();
 
   const LEG_ND = "[Non disponible]";
@@ -8228,11 +8205,11 @@ const APP = (() => {
       ["Hébergement", `<p>Le site et les fichiers de téléchargement sont hébergés par GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis. <em>(À vérifier avant la mise en vente.)</em></p>`],
       ["Propriété", `<p>© ${LEG_ND}, tous droits réservés. Voir « Licence d’utilisation et droits d’auteur ».</p>`],
     ] },
-    { id: "cgv", t: "Conditions de licence et d’abonnement", d: "Essai gratuit, durées, prix, paiement, rétractation, médiation.", s: [
+    { id: "cgv", t: "Conditions de licence et d’abonnement", d: "Versions à durée limitée, prix, paiement, rétractation, médiation.", s: [
       ["1. Objet", `<p>Ces conditions décrivent l’essai gratuit et les licences payantes qui permettent d’utiliser les fonctions « Jeu » et « Outils » de l’application Mémo SSIAP.</p>`],
-      ["2. Essai gratuit", `<p>À la première ouverture, un essai gratuit de ${LIC_ESSAI_JOURS} jours démarre. Un compteur affiché en haut de l’écran indique le temps restant. Il est calculé sur l’appareil, sans connexion.</p>`],
-      ["3. Licences payantes", `<ul><li>Durées proposées : 30 jours, 90 jours ou 1 an.</li><li>Prix toutes taxes comprises : ${LEG_ND}</li><li>Moyens de paiement : ${LEG_ND}</li><li>Lien d’achat : ${LEG_ND}</li></ul>`],
-      ["4. Activation", `<p>Après l’achat, l’éditeur remet un code. Il se saisit dans « Ma licence ». Il est vérifié sur l’appareil, sans connexion. Un code peut être lié à un appareil précis. Il prolonge la licence jusqu’à la date indiquée.</p>`],
+      ["2. Compteur", `<p>Un compteur affiché en haut de l’écran indique le temps pendant lequel la version installée fonctionne encore. Il est calculé sur l’appareil, sans connexion.</p>`],
+      ["3. Versions à durée limitée", `<ul><li>Chaque version de l’application (fichier APK) fonctionne jusqu’à une date de fin indiquée dans l’application. Pour continuer, l’utilisateur installe la nouvelle version fournie par l’éditeur.</li><li>Prix toutes taxes comprises : ${LEG_ND}</li><li>Moyens de paiement : ${LEG_ND}</li><li>Lien d’achat : ${LEG_ND}</li></ul>`],
+      ["4. Nouvelle version", `<p>La nouvelle version s’installe par-dessus l’ancienne, sans désinstaller, et conserve les données de l’utilisateur. Elle redémarre un nouveau compte à rebours.</p>`],
       ["5. À la fin de la licence", `<p>Le jeu et les outils sont bloqués. Les fiches, les conduites à tenir, les numéros d’urgence et les textes légaux restent accessibles. Les données de l’utilisateur restent sur son appareil.</p>`],
       ["6. Droit de rétractation", `<p>${LEG_ND} <em>(Formulation à faire valider par un juriste : contenu numérique fourni immédiatement.)</em></p>`],
       ["7. Garanties légales", `<p>${LEG_ND}</p>`],
@@ -8242,14 +8219,14 @@ const APP = (() => {
     { id: "confidentialite", t: "Politique de confidentialité", d: "Quelles données, où elles restent, vos droits.", s: [
       ["Responsable du traitement", `<p>${LEG_ND}. Contact pour vos droits : ${LEG_ND}</p>`],
       ["Ce que fait l’application", `<ul><li>Elle ne demande aucun compte, n’affiche aucune publicité et ne suit pas votre navigation.</li><li>Vos préférences, favoris, rapports, planning, profil de jeu et compteur de licence restent sur votre appareil.</li><li>Elle ne se connecte à Internet ou n’utilise le micro qu’avec votre accord, modifiable à tout moment dans « Confidentialité et connexions ».</li></ul>`],
-      ["Licence", `<p>Un identifiant d’appareil est créé au hasard sur l’appareil. Il n’est lié à aucune identité. Il n’est communiqué que si vous le donnez vous-même pour obtenir un code lié à votre appareil.</p>`],
+      ["Compteur de version", `<p>Le compteur de temps est enregistré sur l’appareil. Il n’est lié à aucune identité et n’est jamais envoyé.</p>`],
       ["Signalements", `<p>Un signalement est enregistré sur l’appareil. Il n’est envoyé qu’avec votre accord. Prestataire de réception : ${LEG_ND}. Durée de conservation : ${LEG_ND}</p>`],
       ["Vos droits", `<p>Vous pouvez demander l’accès, la rectification, l’effacement de vos données, vous opposer à leur traitement ou en demander la portabilité. Vous pouvez saisir la CNIL (cnil.fr). Pour effacer les données de l’appareil : Réglages, « Effacer mes données ».</p>`],
     ] },
     { id: "droits", t: "Licence d’utilisation et droits d’auteur", d: "Ce que vous avez le droit de faire avec l’application.", s: [
       ["Droits de l’éditeur", `<p>© ${LEG_ND}, tous droits réservés. L’application, son code, ses questions, ses fiches et sa présentation sont protégés par le droit d’auteur. Les textes de loi et documents officiels cités restent des textes publics ou appartiennent à leurs auteurs. Les synthèses de documents protégés sont rédigées avec des mots propres et renvoient à la source.</p>`],
       ["Ce que permet la licence", `<p>Un droit d’usage personnel, non exclusif et non transmissible, sur l’appareil de l’utilisateur.</p>`],
-      ["Ce qui est interdit sans accord écrit", `<ul><li>Copier, republier ou revendre l’application ou ses contenus.</li><li>Extraire les questions ou les fiches en masse.</li><li>Contourner le compteur, modifier l’application ou fabriquer des codes.</li><li>Partager un code de licence avec des tiers.</li></ul>`],
+      ["Ce qui est interdit sans accord écrit", `<ul><li>Copier, republier ou revendre l’application ou ses contenus.</li><li>Extraire les questions ou les fiches en masse.</li><li>Contourner le compteur ou modifier l’application.</li><li>Redistribuer une version de l’application à des tiers.</li></ul>`],
       ["Sanctions", `<p>Toute utilisation contraire peut entraîner la fin de la licence, sans préjudice des poursuites prévues par le Code de la propriété intellectuelle.</p>`],
     ] },
   ];
@@ -8271,19 +8248,16 @@ const APP = (() => {
   }
   function pageLicence() {
     const e = LIC.etat();
-    const titre = { essai: "Essai gratuit en cours", active: "Licence active", illimitee: "Licence sans limite", expiree: "Licence terminée" }[e.phase];
-    const reste = e.phase === "illimitee" ? "Aucune date de fin." : e.phase === "expiree" ? "Le jeu et les outils sont bloqués. Les fiches, les conduites à tenir, les numéros d’urgence et les textes légaux restent accessibles." : "Il reste <strong>" + LIC.duree(e.reste) + "</strong>, jusqu’au " + LIC.dateFin(e) + " environ.";
+    const titre = { libre: "Version sans date de fin", limitee: "Version en cours de validité", expiree: "Version terminée" }[e.phase];
+    const reste = e.phase === "libre" ? "Cette version n’a pas de date de fin." : e.phase === "expiree" ? "Le jeu et les outils sont bloqués. Les fiches, les conduites à tenir, les numéros d’urgence et les textes légaux restent accessibles. Installez la nouvelle version : elle remplace celle-ci sans rien effacer." : "Cette version fonctionne encore <strong>" + LIC.duree(e.reste) + "</strong>, jusqu’au " + LIC.dateFin() + " environ.";
     const rec = LIC.rec ? `<p class="muted">Une date du téléphone incohérente a été détectée ${LIC.rec} fois. Le temps ne revient jamais en arrière.</p>` : "";
-    const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav><div class="page-h"><h1>Ma licence</h1><p>${titre}.</p></div>
+    const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav><div class="page-h"><h1>Ma version</h1><p>${titre}.</p></div>
       <section class="sec about"><h2 class="lbl">Temps restant</h2><p>${reste}</p>${rec}<p class="muted">Le compteur tourne sur votre appareil, même sans connexion. Un recul de la date du téléphone ne rend pas de temps.</p></section>
-      <section class="sec about"><h2 class="lbl">Activer ou prolonger</h2>
-        <label class="fld"><span>Code de licence</span><textarea id="lic-code" rows="3" spellcheck="false" autocomplete="off" autocapitalize="characters"></textarea></label>
-        <div class="signal-b"><button type="button" class="btn" data-act="lic-ok">Activer</button></div>
-        <p id="lic-msg" role="status" class="muted"></p>
-        <p class="small muted">Identifiant de cet appareil : <strong>${esc(LIC.id())}</strong>. Indiquez-le seulement si l’on vous demande un code lié à votre appareil.</p>
-        <p>Acheter ou prolonger une licence : ${LEG_ND.replace("[", "<mark class=\"nd\">[").replace("]", "]</mark>")}</p></section>
-      <section class="sec"><div class="cards">${card("legal-cgv", "outils", "", "Conditions de licence et d’abonnement", "Durées, prix, paiement, rétractation.")}${card("legal", "outils", "", "Mentions et conditions", "Mentions légales, confidentialité, droits d’auteur.")}${card("urgence", "telephone", "", "Numéros d’urgence", "Toujours accessibles.")}</div></section>`;
-    return { html, title: "Ma licence", tab: "outils", back: "apropos" };
+      <section class="sec about"><h2 class="lbl">Nouvelle version</h2>
+        <p><a class="btn" href="${LIC_NOUVELLE}" rel="noopener">Télécharger la dernière version</a></p>
+        <p class="small muted">Touchez le fichier téléchargé : Android propose de mettre à jour l’application, sans désinstaller et sans perdre vos données. Le téléchargement se fait depuis votre navigateur, uniquement quand vous touchez ce bouton.</p></section>
+      <section class="sec"><div class="cards">${card("legal-cgv", "outils", "", "Conditions de licence et d’abonnement", "Versions à durée limitée, prix, paiement.")}${card("legal", "outils", "", "Mentions et conditions", "Mentions légales, confidentialité, droits d’auteur.")}${card("urgence", "telephone", "", "Numéros d’urgence", "Toujours accessibles.")}</div></section>`;
+    return { html, title: "Ma version", tab: "outils", back: "apropos" };
   }
   const TOOL_PAGES = { "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
 
@@ -8500,7 +8474,6 @@ const APP = (() => {
     if ((act.startsWith("rp-") || act.startsWith("dc-")) && RP.click(b, act, rerender, render, go)) return;
     if (act.startsWith("pl-") && PL.click(b, act, rerender, render, go)) return;
     if (act.startsWith("jx-") && jxClick(b, act)) return;
-    if (act === "lic-ok") { const z = $("#lic-code"), o = $("#lic-msg"); LIC.activer(z ? z.value : "").then((r) => { if (o) { o.textContent = r.m; o.className = r.ok ? "ok-msg" : "err-msg"; } if (r.ok) setTimeout(rerender, 900); }); return; }
     switch (act) {
       case "tts-page": if (VX.active) VX.stop(); else VX.readEl(main(), cur && cur.title ? cur.title : "Accueil"); break;
       case "tts-read": if (VX.active) VX.stop(); else VX.readEl($(b.dataset.sel), cur && cur.title ? cur.title : ""); break;
