@@ -7819,9 +7819,13 @@ const APP = (() => {
       case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; } break; }
       case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
       case "signal-close": $("#signal").hidden = true; break;
-      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); $("#signal").hidden = true; toast(SRV() ? "Merci ! Votre signalement est enregistré et part dès que vous avez du réseau." : "Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); synchro(); if (location.hash === "#signalements") rerender(); break; }
+      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); $("#signal").hidden = true; demandeFaite = false; toast(SRV() ? "Merci ! Votre signalement est enregistré. Il sera envoyé avec votre accord dès que vous avez du réseau." : "Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); synchro(); if (location.hash === "#signalements") rerender(); break; }
       case "signal-copy": { const x = signalLire(b.dataset.ctx); if (x) copyText(signalCorps(x), "Message copié."); break; }
       case "signal-mail": { const x = signalLire(b.dataset.ctx); if (x) location.href = "mailto:" + D.meta.contact + "?subject=" + encodeURIComponent("Mémo SSIAP : signalement (" + x.type + ")") + "&body=" + encodeURIComponent(signalCorps(x)); break; }
+      case "sig-oui": $("#signal").hidden = true; synchro(true); break;
+      case "sig-toujours": store.set("envoi-auto", true); $("#signal").hidden = true; synchro(true); toast("Envoi automatique activé."); break;
+      case "sig-plus-tard": $("#signal").hidden = true; break;
+      case "sig-stop": store.set("envoi-auto", false); rerender(); toast("Envoi automatique désactivé : l’appli vous demandera chaque fois."); break;
       case "dev-set": devSet(b.dataset.id, b.dataset.e); break;
       case "dev-tap": { const n = Date.now(); devTaps = n - devT < 1500 ? devTaps + 1 : 1; devT = n; if (devTaps >= 5) { devTaps = 0; go("dev"); } break; }
       case "sig-del": store.set("signalements", sigs().filter((q) => q.id !== b.dataset.id)); rerender(); toast("Signalement supprimé."); break;
@@ -7961,7 +7965,7 @@ const APP = (() => {
     const plein = n >= SIG_MAX;
     $("#signal-c").innerHTML = `<h2 id="signal-t">Signaler une erreur ou une idée</h2>
       <p class="signal-ctx">Page concernée : <strong>${tx(ctx)}</strong></p>
-      <div class="foot-note">${icon("info")}<span>${SRV() ? "Votre signalement sera envoyé automatiquement dès que vous avez du réseau." : "L’envoi automatique sera activé lors d’une prochaine mise à jour. En attendant, votre signalement reste sur votre téléphone et partira tout seul dès que ce sera possible."} (${n} sur ${SIG_MAX})</span></div>
+      <div class="foot-note">${icon("info")}<span>${SRV() ? "Votre signalement ne partira qu’avec votre accord, dès que vous avez du réseau." : "L’envoi automatique sera activé lors d’une prochaine mise à jour. En attendant, votre signalement reste sur votre téléphone et partira tout seul dès que ce sera possible."} (${n} sur ${SIG_MAX})</span></div>
       ${plein ? `<p class="signal-err">Vous avez atteint la limite de ${SIG_MAX} signalements en attente. Supprimez-en depuis « Mes signalements » pour en ajouter.</p>` : `
       <div class="signal-nom"><label>Prénom<input id="signal-prenom" autocomplete="off" maxlength="30" value="${esc(p.prenom || "")}"></label><label>Nom<input id="signal-nom" autocomplete="off" maxlength="30" value="${esc(p.nom || "")}"></label></div>
       <p class="signal-mini">Ce nom sert uniquement à vous répondre. Il peut être inventé, mais il faut deux mots.</p>
@@ -7996,13 +8000,25 @@ const APP = (() => {
   const appareil = () => { let a = store.get("appareil", ""); if (!a) { a = window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12); store.set("appareil", a); } return a; };
   const hdr = (jwt) => ({ apikey: SRV().cle, Authorization: "Bearer " + (jwt || SRV().cle), "Content-Type": "application/json", "x-appareil": appareil() });
   let syncEnCours = false;
-  async function synchro() {
+  let demandeFaite = false;
+  function demanderAccord(n) {
+    demandeFaite = true;
+    $("#signal-c").innerHTML = `<h2 id="signal-t">Envoyer vos signalements ?</h2>
+      <p>Vous avez du réseau et <strong>${n} signalement${n > 1 ? "s" : ""}</strong> en attente. Ils servent à corriger l’appli si une erreur est confirmée.</p>
+      <p class="signal-mini">Seront envoyés : votre prénom et nom, ce que vous avez écrit, la page concernée, les informations techniques si vous les avez jointes, et un numéro anonyme de votre téléphone pour vous répondre. Rien d’autre.</p>
+      <div class="signal-b"><button type="button" class="btn" data-act="sig-oui">Envoyer maintenant</button><button type="button" class="btn ghost" data-act="sig-toujours">Toujours envoyer automatiquement</button><button type="button" class="btn ghost" data-act="sig-plus-tard">Plus tard</button></div>`;
+    $("#signal").hidden = false;
+  }
+  async function synchro(force) {
     const S = SRV();
     if (!S || !navigator.onLine || syncEnCours) return;
+    const att = sigs().filter((x) => x.etat === "a-envoyer");
+    const ok = force === true || store.get("envoi-auto", false);
+    if (att.length && !ok && !demandeFaite && $("#signal").hidden) demanderAccord(att.length);
     syncEnCours = true;
     try {
       let l = sigs();
-      for (const r of l.filter((x) => x.etat === "a-envoyer")) {
+      for (const r of ok ? l.filter((x) => x.etat === "a-envoyer") : []) {
         const res = await fetch(S.url + "/rest/v1/signalements", { method: "POST", headers: { ...hdr(), Prefer: "return=minimal" }, body: JSON.stringify({ id: r.id, appareil: appareil(), prenom: r.prenom, nom: r.nom, type: r.type, page: r.page, adresse: r.adresse, texte: r.texte, source: r.source || null, tech: r.tech, version: D.meta.version, date: r.date }) });
         if (res.ok || res.status === 409) r.etat = "envoye"; else break;
       }
@@ -8063,7 +8079,8 @@ const APP = (() => {
     const date = (d) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav>
       <div class="page-h"><h1>Mes signalements</h1><p>${l.length} sur ${SIG_MAX} en attente d’envoi.</p></div>
-      <div class="foot-note">${icon("info")}<span>${SRV() ? "Vos signalements sont envoyés automatiquement dès que vous avez du réseau." : "L’envoi automatique sera activé lors d’une prochaine mise à jour : vos signalements partiront alors tout seuls, sans rien faire."} Merci de nous aider à améliorer l’appli.</span></div>
+      <div class="foot-note">${icon("info")}<span>${SRV() ? (store.get("envoi-auto", false) ? "Vos signalements sont envoyés automatiquement dès que vous avez du réseau." : "Vos signalements ne partent qu’avec votre accord, dès que vous avez du réseau.") : "L’envoi automatique sera activé lors d’une prochaine mise à jour : vos signalements partiront alors tout seuls, sans rien faire."} Merci de nous aider à améliorer l’appli.</span></div>
+      ${SRV() && l.some((x) => x.etat === "a-envoyer") ? `<p><button type="button" class="btn" data-act="sig-oui">Envoyer maintenant</button></p>` : ""}${SRV() && store.get("envoi-auto", false) ? `<p><button type="button" class="btn ghost" data-act="sig-stop">Désactiver l’envoi automatique</button></p>` : ""}
       ${l.length ? l.map((r) => `<section class="sec sig-it"><p class="lbl">${tx(r.type)}</p><h2>${tx(r.page)}</h2><p>${tx(r.texte)}</p><p class="signal-mini">${date(r.date)} · de ${tx(r.prenom + " " + r.nom)} · <strong>${tx(ETAT_SIG(r)[0])}</strong></p>${ETAT_SIG(r)[1] ? `<p class="sig-merci">${tx(ETAT_SIG(r)[1])}</p>` : ""}${r.etat === "refuse" && r.reponse ? `<p class="signal-mini">${tx(r.reponse)}</p>` : ""}<button type="button" class="btn ghost" data-act="sig-del" data-id="${esc(r.id)}">Supprimer</button></section>`).join("") : `<p class="practice">Aucun signalement pour l’instant. Le bouton « Signaler une erreur » se trouve en bas de chaque fiche.</p>`}`;
     return { html, title: "Mes signalements", tab: "outils", back: "apropos" };
   }
