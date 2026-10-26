@@ -634,7 +634,9 @@ td:first-child { font-weight: 700; }
 .jx-res { gap: 12px; }
 .jx-res .btn { width: 100%; max-width: 360px; }
 .jx-big { font: 700 2rem/1.1 var(--font-d); color: var(--red); overflow-wrap: anywhere; }
-.jx-names { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.jx-names { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+.jx-names input{min-width:0;width:100%;box-sizing:border-box}
+.jx-setup{display:flex;flex-direction:column;gap:16px}
 .jx-sc { display: flex; flex-wrap: wrap; gap: 6px; }
 .jx-sc span { flex: 1 1 62px; min-width: 0; display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font: 700 1.1rem/1.2 var(--font-d); }
 .jx-sc span b { font: 600 .72rem/1.2 system-ui, sans-serif; color: var(--ink-2); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -653,6 +655,68 @@ td:first-child { font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .jx-stars i.on { animation: none; } }
 
 .txt-ref p{margin:.5em 0;line-height:1.5;white-space:pre-line}
+.jx-home{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#b3131f,#7d0d16);color:#fff;text-decoration:none}
+.jx-home .e{font-size:2rem}.jx-home .t{flex:1;display:flex;flex-direction:column}.jx-home .t b{font-size:1.05rem}.jx-home .t span{font-size:.85rem;opacity:.92}
+.jx-home .go{background:#fff;color:#8a0f19;font-weight:700;padding:8px 14px;border-radius:999px}
+.jx-modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 14px}
+.jx-mode{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px;border-radius:14px;border:0;color:#fff;background:linear-gradient(135deg,#b3131f,#7d0d16);font:inherit;cursor:pointer}
+.jx-mode.b{background:linear-gradient(135deg,#1d4f9c,#12306a)}
+.jx-mode .e{font-size:1.8rem}.jx-mode b{font-size:1.1rem}.jx-mode span:last-child{font-size:.8rem;opacity:.92}
+
+.jx-job{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#b3131f,#7d0d16);color:#fff}
+.jx-job .e{font-size:2.2rem}.jx-job div{flex:1;display:flex;flex-direction:column}.jx-job small{opacity:.85;font-size:.78rem}.jx-job b{font:700 1.1rem/1.15 var(--font-d)}
+.jx-jobs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.jx-job-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.jx-job-card .e{font-size:2rem}.jx-job-card small{font-size:.72rem;color:var(--ink-2);margin-top:2px}.jx-job-card b{font:700 .95rem/1.15 var(--font-d)}
+.jx-job-card .m{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.78rem;color:var(--ink-2)}
+.jx-job-card:disabled{opacity:.55}
+.jx-map{position:relative;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.jx-band{position:absolute;left:0;right:0;border-top:1px dashed var(--line)}
+.jx-band.z0{background:linear-gradient(#fff3d6,#ffe9b8)}.jx-band.z1{background:linear-gradient(#e6f0ff,#d6e6ff)}.jx-band.z2{background:linear-gradient(#f1e8ff,#e6d9ff)}.jx-band.z3{background:linear-gradient(#e3f7ea,#d1f0dc)}
+.jx-band.z4{background:linear-gradient(#e9e9ee,#dcdce4)}.jx-band.z5{background:linear-gradient(#ffe5d6,#ffd6c0)}.jx-band.z6{background:linear-gradient(#dff3fb,#c9e9f6)}.jx-band.z7{background:linear-gradient(#fff0b8,#ffe58a)}
+@media (prefers-color-scheme: dark){.jx-band{filter:brightness(.42) saturate(.8)}}
+:root[data-theme="dark"] .jx-band{filter:brightness(.42) saturate(.8)}
+:root[data-theme="light"] .jx-band{filter:none}
+.jx-zl{position:absolute;left:10px;top:6px;font:700 .8rem/1 var(--font-d);padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.85);color:#333}
+.jx-road{position:absolute;inset:0;width:100%;height:100%}
+.jx-road .rd{fill:none;stroke:rgba(0,0,0,.28);stroke-width:10;stroke-linecap:round;stroke-dasharray:1 14;vector-effect:non-scaling-stroke}
+.jx-road .rd.dn{stroke:#2e9d4f;stroke-dasharray:none;stroke-width:8}
+.jx-pt{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+.jx-pt .jx-node{width:60px;height:60px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.jx-here{position:absolute;top:-34px;font-size:1.7rem;animation:jx-bob 1.2s ease-in-out infinite;pointer-events:none}
+@keyframes jx-bob{50%{transform:translateY(-6px)}}
+.jx-node.here{animation:jx-pulse 1.6s ease-in-out infinite}
+@keyframes jx-pulse{50%{box-shadow:0 0 0 8px rgba(179,19,31,.25)}}
+.jx-st{position:absolute;top:58px;font-size:.7rem;letter-spacing:1px;color:#e8a317;text-shadow:0 1px 0 rgba(0,0,0,.2);white-space:nowrap}
+.jx-fin{position:absolute;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;width:78%;padding:12px;border-radius:14px;background:#fff;color:#222;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.jx-fin .e{font-size:2rem}.jx-fin b{font:700 1rem/1.15 var(--font-d)}.jx-fin span:last-child{font-size:.8rem;color:#555}
+.jx-fin.gold{background:linear-gradient(135deg,#ffe58a,#f4b92a);animation:jx-pulse 1.6s ease-in-out infinite}
+.jx-grand{display:flex;flex-direction:column;align-items:center}
+.jx-gstart,.jx-gend{padding:8px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font:700 .9rem/1 var(--font-d)}
+.jx-gend{background:linear-gradient(135deg,#ffe58a,#f4b92a);color:#442}
+.jx-glink{width:0;height:26px;border-left:4px dotted var(--line-2)}
+.jx-gs{position:relative;width:100%}
+.jx-gs .jx-here{left:4px;top:-18px}
+.jx-gbtn{width:100%;display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.jx-gbtn.done{border-color:var(--green-bg)}
+.jx-gbtn .e{font-size:2.2rem}.jx-gbtn .t{flex:1;display:flex;flex-direction:column}.jx-gbtn small{font-size:.72rem;color:var(--ink-2)}.jx-gbtn b{font:700 1rem/1.15 var(--font-d)}.jx-gbtn .t span{font-size:.8rem;color:var(--ink-2)}
+.jx-sides{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.jx-side{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:center}
+.jx-side .e{font-size:1.6rem}.jx-side b{font:700 .8rem/1.15 var(--font-d)}.jx-side span:last-child{font-size:.7rem;color:var(--ink-2)}.jx-side:disabled{opacity:.5}
+.jx-track{display:flex;flex-direction:column;gap:6px;width:100%}
+.jx-lane{display:grid;grid-template-columns:64px 1fr 38px;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.jx-lane.on{border-color:var(--red-bg);background:var(--red-tint)}
+.jx-lane b{font:600 .75rem/1.1 system-ui,sans-serif;overflow-wrap:anywhere}
+.jx-lane .rail{position:relative;height:26px;border-radius:13px;background:rgba(0,0,0,.08)}
+.jx-lane .rail i{position:absolute;left:0;top:0;bottom:0;border-radius:13px;background:linear-gradient(90deg,#f4b92a,#2e9d4f);transition:width .6s}
+.jx-lane .runner{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:1.3rem;transition:left .6s}
+.jx-lane .goal{position:absolute;right:2px;top:50%;transform:translateY(-50%);font-size:1.1rem}
+.jx-lane small{font:700 .75rem/1 var(--font-d);text-align:right}
+.jx-conf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30}
+.jx-conf i{position:absolute;top:-30px;font-style:normal;font-size:1.4rem;animation:jx-fall 3.2s linear var(--d) 2 both}
+@keyframes jx-fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.jx-conf{display:none}.jx-here,.jx-node.here,.jx-fin.gold{animation:none}}
+.jx-setup .filters{flex-wrap:wrap;overflow:visible}
 /* Glossaire */
 .gl-letter { margin: 6px 0 0; font: 700 1.3rem/1 var(--font-d); color: var(--red); }
 .gl { display: flex; flex-direction: column; gap: 6px; }
@@ -680,7 +744,7 @@ td:first-child { font-weight: 700; }
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   box-shadow: 0 -4px 18px rgba(40, 10, 15, .06);
 }
-.tabs-in { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); height: var(--tabs-h); }
+.tabs-in { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: var(--tabs-h); }
 .tabs a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; text-decoration: none; color: var(--ink-3); font-size: .72rem; font-weight: 700; position: relative; }
 .tabs a .ic { width: 1.45rem; height: 1.45rem; }
 .tabs a[aria-current="page"] { color: var(--red); }
@@ -6898,6 +6962,7 @@ const APP = (() => {
       </section>
       <div id="res" class="sec"${state.q.trim() ? "" : " hidden"}>${state.q.trim() ? resultsHTML(state.q) : ""}</div>
       <div id="home" class="sec" style="gap:24px"${state.q.trim() ? " hidden" : ""}>
+        <a class="jx-home" href="#jeu"><span class="e">🎯</span><span class="t"><b>Jeu : prépare ton diplôme</b><span>Parcours sur la carte, combats de 2 à 10 joueurs. Sans connexion.</span></span><span class="go">Jouer</span></a>
         ${veilleBanner()}
         ${VX.ttsOk && !store.get("tip-voix", false) ? `<div class="verif tip"><span class="ico">${icon("hautparleur")}</span><span class="t"><b>L’appli peut lire à voix haute</b><span>Touchez le haut-parleur en haut de l’écran pour écouter une page. Les conduites à tenir se lisent aussi étape par étape.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="tts-page">${icon("hautparleur")}Écouter l’accueil</button><button class="btn ghost" data-act="tip-no">J’ai compris</button></span></span></div>` : ""}
         ${showInstall ? `<div class="verif">${icon("installer")}<span class="t"><b>Installer l’appli sur cet appareil</b><span>Elle s’ouvre comme une application et reste disponible sans connexion.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="install">Installer</button><button class="btn ghost" data-act="install-no">Plus tard</button></span></span></div>` : ""}
@@ -7817,6 +7882,11 @@ const APP = (() => {
     { id: "terrain", t: "Sur le terrain", ic: "ronde", co: "green" },
   ];
   const JZONES = ["Le hall d’accueil", "Le poste de sécurité", "Les couloirs", "Les escaliers", "Le sous-sol", "La toiture", "Le grand ERP", "Le jour J"];
+  const JTITRES = { ssiap1: "Agent de service de sécurité incendie", ssiap2: "Chef d’équipe de sécurité incendie", ssiap3: "Chef de service de sécurité incendie", reglementation: "Expert des textes et du règlement", aps: "Agent de prévention et de sécurité", sst: "Sauveteur secouriste du travail", h0b0: "Personnel habilité H0B0", terrain: "Agent aguerri du terrain" };
+  const JEMO = { ssiap1: "🧯", ssiap2: "🧑‍🚒", ssiap3: "🏢", reglementation: "📜", aps: "🛡️", sst: "⛑️", h0b0: "⚡", terrain: "🚨" };
+  const JZEMO = ["🏢", "🖥️", "🚪", "🪜", "🅿️", "🏗️", "🏙️", "🎓"];
+  const JGRAND = ["ssiap1", "ssiap2", "ssiap3"];
+  const jConf = () => `<div class="jx-conf" aria-hidden="true">${Array.from({ length: 16 }, (_, i) => `<i style="left:${(i * 37 + 7) % 100}%;--d:${(i % 8) * 0.25}s">${["🎉", "✨", "🎓", "⭐", "🔥"][i % 5]}</i>`).join("")}</div>`;
   const JAV = ["🧯", "🚒", "🦺", "🔥", "🛡️", "🧑‍🚒", "🚨", "⛑️"];
   const JRANKS = [["Stagiaire", 0], ["Rondier", 60], ["Agent", 160], ["Agent confirmé", 320], ["Chef de poste", 550], ["Chef d’équipe", 850], ["Adjoint au chef de service", 1250], ["Chef de service", 1800], ["Expert", 2600], ["Légende du feu", 3600]];
   const JT = 20000;
@@ -7825,7 +7895,7 @@ const APP = (() => {
   if (jP && (typeof jP !== "object" || !jP.pseudo)) jP = null;
   if (jP) { jP.st = jP.st || {}; jP.serie = jP.serie || { d: "", n: 0 }; jP.xp = jP.xp || 0; }
   const J = { view: "hub", cat: null, mode: "examen", run: null, av: JAV[0], pseudo: "", reset: false };
-  const B = { n: 2, names: [], rounds: 5, timer: true, cat: "all", mode: "examen" };
+  const B = { n: 2, names: [], rounds: 5, timer: true, cat: "all", mode: "examen", kind: "points", goal: 8 };
   let BT = null, jTimer = null;
   const jSave = () => store.set("jeu", jP);
   const jDay = (t) => new Date(t || Date.now()).toISOString().slice(0, 10);
@@ -7918,10 +7988,10 @@ const APP = (() => {
     $$("[data-bn]").forEach((el) => (B.names[+el.dataset.bn] = el.value.trim().slice(0, 14)));
     let pool = jBk().filter((q) => q.type === "qcm" && q.mode === B.mode && (B.cat === "all" || q.cats.includes(B.cat)));
     if (pool.length < 4) { toast("Pas assez de questions dans cette catégorie pour un battle. Choisissez « Toutes »."); return false; }
-    const total = B.n * B.rounds, qs = [];
+    const course = B.kind === "course", rounds = course ? B.goal + 4 : B.rounds, total = B.n * rounds, qs = [];
     let bag = [];
     while (qs.length < total) { if (!bag.length) bag = shuffle(pool.slice()); qs.push(jPrep(bag.pop())); }
-    BT = { players: Array.from({ length: B.n }, (_, i) => ({ name: B.names[i] || (i === 0 && jP ? jP.pseudo : "Joueur " + (i + 1)), score: 0, ok: 0 })), qs, t: 0, step: "ready", pick: -1, gain: 0 };
+    BT = { course, goal: B.goal, rounds, players: Array.from({ length: B.n }, (_, i) => ({ name: B.names[i] || (i === 0 && jP ? jP.pseudo : "Joueur " + (i + 1)), score: 0, ok: 0 })), qs, t: 0, step: "ready", pick: -1, gain: 0 };
     J.view = "bplay";
     return true;
   }
@@ -7968,11 +8038,14 @@ const APP = (() => {
   function jHub() {
     const cards = JCATS.map((c) => {
       const n = jPool(c.id, "examen").length + jPool(c.id, "culture").length, g = jGauge(c.id);
-      return `<button type="button" class="card jx-cat" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}>${jRing(g)}<span class="t"><b>${tx(c.t)}</b><span>${n ? `${n} question${n > 1 ? "s" : ""} · préparation du diplôme` : "Bientôt disponible"}</span></span>${icon("chevron")}</button>`;
+      return `<button type="button" class="jx-job-card" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}><span class="e" aria-hidden="true">${JEMO[c.id] || "🎯"}</span><small>Devenir</small><b>${tx(JTITRES[c.id] || c.t)}</b><span class="m">${jRing(g)}<span>${n ? n + " question" + (n > 1 ? "s" : "") : "Bientôt disponible"}</span></span></button>`;
     }).join("");
-    return `${jHeader()}
-      <section class="sec"><h2 class="lbl a">Préparer mon diplôme</h2><div class="cards">${cards}</div></section>
-      <section class="sec"><h2 class="lbl b">Jouer à plusieurs</h2><button type="button" class="card jx-battle" data-act="jx-bsetup"><span class="ico red">${icon("personnes")}</span><span class="t"><b>Battle de 2 à 10 joueurs</b><span>Un seul téléphone, on se le passe. Rapidité et bonnes réponses rapportent des points.</span></span>${icon("chevron")}</button></section>
+    return `<div class="page-h"><h1>Jeu</h1><p>Prépare ton diplôme en jouant, seul ou à plusieurs.</p></div>${jHeader()}
+      <div class="jx-modes"><button type="button" class="jx-mode" data-act="jx-goto" data-t="jx-parcours"><span class="e">🗺️</span><b>Parcours</b><span>Seul, étape par étape sur la carte</span></button><button type="button" class="jx-mode b" data-act="jx-bsetup"><span class="e">🏁</span><b>Course et combat</b><span>De 2 à 10 joueurs, on se passe le téléphone</span></button></div>
+      <section class="sec" id="jx-parcours"><h2 class="lbl a">Parcours : choisis ton métier</h2><div class="jx-jobs">${cards}</div>
+        <button type="button" class="card" data-act="jx-grand"><span class="ico amber">🌍</span><span class="t"><b>Voir la grande carte (aperçu)</b><span>Un seul chemin, du stagiaire au chef de service.</span></span>${icon("chevron")}</button></section>
+      <section class="sec" id="jx-combat"><h2 class="lbl b">Course et combat</h2><button type="button" class="card jx-battle" data-act="jx-bsetup"><span class="ico red">${icon("personnes")}</span><span class="t"><b>Toute une classe, de 2 à 10 joueurs</b><span>Course jusqu’au diplôme ou combat aux points. Un seul téléphone, on se le passe.</span></span>${icon("chevron")}</button>
+        <div class="card" aria-disabled="true" style="opacity:.6"><span class="ico">📡</span><span class="t"><b>Course en direct, chacun son téléphone</b><span>Bientôt disponible : il faudra brancher le serveur.</span></span></div></section>
       <p style="margin:0"><button type="button" class="btn-link" data-act="jx-pedit">Modifier mon profil</button> · <a href="#jeu-import">Ajouter des questions</a></p>
       ${disc("Jeu d’entraînement : il aide à retenir, il ne remplace ni la formation, ni les textes officiels. La jauge mesure ce que vous avez retenu dans l’appli, pas votre résultat à l’examen.")}`;
   }
@@ -7981,18 +8054,37 @@ const APP = (() => {
     const c = JCAT[J.cat], mode = J.mode, sts = jStages(c.id, mode), s = jSt(c.id, mode), g = jGauge(c.id);
     let cur = sts.findIndex((_, k) => !(s.s[k] >= 1));
     if (cur < 0) cur = sts.length;
+    const STEP = 88, TOP = 64, XS = [20, 50, 80, 50];
+    const H = TOP + sts.length * STEP + 150;
+    const pt = (k) => ({ x: XS[k % 4], y: TOP + k * STEP });
+    const seg = (k) => { const p = pt(k - 1), q = pt(k), m = (p.y + q.y) / 2; return ` C ${p.x},${m} ${q.x},${m} ${q.x},${q.y}`; };
+    let full = `M ${pt(0).x},${pt(0).y}`, doneP = `M ${pt(0).x},${pt(0).y}`;
+    for (let k = 1; k < sts.length; k++) { full += seg(k); if (k <= cur) doneP += seg(k); }
+    const bands = Array.from({ length: Math.ceil(sts.length / 6) }, (_, z) => `<div class="jx-band z${z % 8}" style="top:${TOP - STEP / 2 + z * 6 * STEP}px;height:${Math.min(6, sts.length - z * 6) * STEP}px"><span class="jx-zl">${JZEMO[z % 8]} ${tx(JZONES[z % JZONES.length])}</span></div>`).join("");
     const nodes = sts.map((st, k) => {
-      const done = s.s[k] >= 1, open = k <= cur, here = k === cur;
-      const zone = k % 6 === 0 ? `<h3 class="jx-zone">${tx(JZONES[Math.floor(k / 6) % JZONES.length])}</h3>` : "";
-      return `${zone}<div class="jx-row p${k % 4}">${here ? `<span class="jx-here" aria-hidden="true">${jP.av}</span>` : ""}<button type="button" class="jx-node${done ? " done" : ""}${here ? " here" : ""}" data-act="jx-stage" data-k="${k}"${open ? "" : " disabled"} aria-label="Étape ${k + 1}${done ? ", " + s.s[k] + " étoile" + (s.s[k] > 1 ? "s" : "") : open ? ", à jouer" : ", verrouillée"}">${open ? k + 1 : "🔒"}</button><span class="jx-lab"><b>Étape ${k + 1}</b><span>${done ? jStars(s.s[k]) : open ? `${st.length} questions` : "Verrouillée"}</span></span></div>`;
+      const p = pt(k), done = s.s[k] >= 1, open = k <= cur, here = k === cur;
+      return `<div class="jx-pt" style="left:${p.x}%;top:${p.y}px">${here ? `<span class="jx-here" aria-hidden="true">${jP.av}</span>` : ""}<button type="button" class="jx-node${done ? " done" : ""}${here ? " here" : ""}" data-act="jx-stage" data-k="${k}"${open ? "" : " disabled"} aria-label="Étape ${k + 1}${done ? ", " + s.s[k] + " étoile" + (s.s[k] > 1 ? "s" : "") : open ? ", à jouer" : ", verrouillée"}">${open ? k + 1 : "🔒"}</button>${done ? `<span class="jx-st" aria-hidden="true">${jStars(s.s[k])}</span>` : ""}</div>`;
     }).join("");
-    const msg = g === 100 ? `<div class="jx-dipl"><b>🎓 Diplômé à 100 %… dans le jeu !</b><p>D’après l’appli, vous avez tellement bien répondu que vous ne pouvez plus rater. C’est un clin d’œil 😄 : l’examen, lui, se prépare avec votre centre de formation et les textes officiels.</p></div>` : (mode === "examen" && g != null ? `<p class="muted" style="margin:0">${JMSG.filter((m) => g >= m[0] && m[1]).pop()[1]}</p>` : "");
+    const fin = TOP + sts.length * STEP;
+    const finish = `<div class="jx-fin${g === 100 ? " gold" : ""}" style="top:${fin - 20}px"><span class="e">${g === 100 ? "🎓" : "🏁"}</span><b>${tx(JTITRES[c.id] || c.t)}</b><span>${g === 100 ? "Diplômé… dans le jeu !" : "Ligne d’arrivée : le diplôme"}</span></div>`;
+    const msg = g === 100 ? `${jConf()}<div class="jx-dipl"><b>🎓 Diplômé à 100 %… dans le jeu !</b><p>D’après l’appli, vous avez tellement bien répondu que vous ne pouvez plus rater. C’est un clin d’œil 😄 : l’examen, lui, se prépare avec votre centre de formation et les textes officiels.</p></div>` : (mode === "examen" && g != null ? `<p class="muted" style="margin:0">${JMSG.filter((m) => g >= m[0] && g < 100).pop()[1]}</p>` : "");
     return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>
-      <div class="page-h"><h1>${tx(c.t)}</h1></div>
+      <section class="jx-job"><span class="e" aria-hidden="true">${JEMO[c.id] || "🎯"}</span><div><small>Parcours : devenir</small><b>${tx(JTITRES[c.id] || c.t)}</b></div>${jRing(g, true)}</section>
       <div class="filters" role="group" aria-label="Type de questions"><button type="button" data-act="jx-mode" data-v="examen" aria-pressed="${mode === "examen"}">Examen</button><button type="button" data-act="jx-mode" data-v="culture" aria-pressed="${mode === "culture"}">Culture, pour aller plus loin</button></div>
-      ${mode === "examen" ? `<div class="jx-gauge">${jRing(g, true)}<div><b>Préparation du diplôme</b><span>${jPool(c.id, "examen").filter((q) => s.ok[q.id]).length} questions maîtrisées sur ${jPool(c.id, "examen").length}</span></div></div>` : `<p class="muted" style="margin:0">Questions bonus : elles ne comptent pas dans la jauge du diplôme.</p>`}
+      ${mode === "examen" ? `<p class="muted" style="margin:0">${jPool(c.id, "examen").filter((q) => s.ok[q.id]).length} questions maîtrisées sur ${jPool(c.id, "examen").length}.</p>` : `<p class="muted" style="margin:0">Questions bonus : elles ne comptent pas dans la jauge du diplôme.</p>`}
       ${msg}
-      ${sts.length ? `<div class="jx-map">${nodes}</div>` : `<p class="muted">Les questions de cette partie arrivent bientôt.</p>`}`;
+      ${sts.length ? `<div class="jx-map" style="height:${H}px">${bands}<svg class="jx-road" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${full}" class="rd"/><path d="${doneP}" class="rd dn"/></svg>${nodes}${finish}</div>` : `<p class="muted">Les questions de cette partie arrivent bientôt.</p>`}`;
+  }
+  function jGrand() {
+    const first = JGRAND.findIndex((id) => (jGauge(id) || 0) < 100);
+    const st = JGRAND.map((id, i) => {
+      const c = JCAT[id], g = jGauge(id), n = jPool(id, "examen").length + jPool(id, "culture").length;
+      return `<div class="jx-gs">${i === first ? `<span class="jx-here" aria-hidden="true">${jP.av}</span>` : ""}<button type="button" class="jx-gbtn${g === 100 ? " done" : ""}" data-act="jx-cat" data-c="${id}"${n ? "" : " disabled"}><span class="e">${JEMO[id]}</span><span class="t"><small>Étape ${i + 1}</small><b>${tx(JTITRES[id])}</b><span>${tx(c.t)} · ${n} questions</span></span>${jRing(g)}</button></div>`;
+    }).join('<div class="jx-glink" aria-hidden="true"></div>');
+    const side = JCATS.filter((c) => !JGRAND.includes(c.id)).map((c) => { const n = jPool(c.id, "examen").length + jPool(c.id, "culture").length; return `<button type="button" class="jx-side" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}><span class="e">${JEMO[c.id]}</span><b>${tx(c.t)}</b><span>${n ? n + " questions" : "Bientôt"}</span></button>`; }).join("");
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>La grande carte</h1><p>Un seul chemin, du stagiaire au chef de service. Aperçu : dites-moi si vous préférez cette vue ou un parcours par métier.</p></div>
+      <div class="jx-grand"><div class="jx-gstart">🚪 Départ : stagiaire</div><div class="jx-glink" aria-hidden="true"></div>${st}<div class="jx-glink" aria-hidden="true"></div><div class="jx-gend">🏆 Chef de service</div></div>
+      <section class="sec"><h2 class="lbl b">Sur le côté de la route</h2><div class="jx-sides">${side}</div></section>`;
   }
   function jPlay() {
     const r = J.run, n = r.qs.length, q = r.qs[r.i], answered = r.picked[r.i] != null, c = JCAT[r.cat];
@@ -8029,19 +8121,30 @@ const APP = (() => {
     while (B.names.length < 10) B.names.push("");
     if (!B.names[0] && jP) B.names[0] = jP.pseudo;
     const cats = [["all", "Toutes"], ...JCATS.filter((c) => c.id !== "terrain" && jPool(c.id, B.mode).some((q) => q.type === "qcm")).map((c) => [c.id, c.t])];
-    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>Battle</h1><p>Chacun son tour, avec une question différente. Plus on répond vite et juste, plus on marque.</p></div>
+    return `<div class="jx-setup"><nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>Course et combat</h1><p>Chacun son tour, avec une question différente. Un seul téléphone, on se le passe.</p></div>
+      <section class="sec"><h2 class="lbl a">Style de partie</h2><div class="filters" role="group" aria-label="Style de partie">${chip("jx-bk", "course", "🎓 Course au diplôme", B.kind === "course")}${chip("jx-bk", "points", "⚔️ Combat aux points", B.kind === "points")}</div>
+        <p class="muted" style="margin:0">${B.kind === "course" ? "Chaque bonne réponse fait avancer votre coureur. Le premier qui atteint l’objectif est diplômé… dans le jeu !" : "Plus on répond vite et juste, plus on marque."}</p>
+        ${B.kind === "course" ? `<div class="filters" role="group" aria-label="Objectif">${[5, 8, 12].map((n) => chip("jx-bg", n, n + " bonnes réponses", B.goal === n)).join("")}</div>` : ""}</section>
       <section class="sec"><h2 class="lbl">Joueurs (2 à 10)</h2><div class="filters" role="group" aria-label="Nombre de joueurs, de 2 à 10">${[2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => chip("jx-bn", n, n, B.n === n)).join("")}</div>
         <div class="jx-names">${Array.from({ length: B.n }, (_, i) => `<label class="fld"><span>Joueur ${i + 1}</span><input type="text" maxlength="14" data-bn="${i}" autocomplete="off" value="${esc(B.names[i])}" placeholder="Joueur ${i + 1}"></label>`).join("")}</div></section>
       <section class="sec"><h2 class="lbl b">Réglages</h2>
-        <div class="filters" role="group" aria-label="Questions par joueur">${[3, 5, 10].map((n) => chip("jx-br", n, n + " questions chacun", B.rounds === n)).join("")}</div>
+        ${B.kind === "course" ? "" : `<div class="filters" role="group" aria-label="Questions par joueur">${[3, 5, 10].map((n) => chip("jx-br", n, n + " questions chacun", B.rounds === n)).join("")}</div>`}
         <div class="filters" role="group" aria-label="Chrono">${chip("jx-bt", 1, "Avec chrono (20 s)", B.timer)}${chip("jx-bt", 0, "Sans chrono", !B.timer)}</div>
         <div class="filters" role="group" aria-label="Type de questions">${chip("jx-bm", "examen", "Examen", B.mode === "examen")}${chip("jx-bm", "culture", "Culture", B.mode === "culture")}</div>
         <div class="filters" role="group" aria-label="Catégorie">${cats.map(([v, l]) => chip("jx-bc", v, tx(l), B.cat === v)).join("")}</div></section>
-      <button type="button" class="btn" data-act="jx-bgo">Lancer le battle</button>`;
+      <button type="button" class="btn" data-act="jx-bgo">${B.kind === "course" ? "Lancer la course" : "Lancer le combat"}</button></div>`;
   }
-  const jScores = () => `<div class="jx-sc">${BT.players.map((p, i) => `<span class="${BT.step !== "end" && i === BT.t % B.n ? "on" : ""}"><b>${tx(p.name)}</b>${p.score}</span>`).join("")}</div>`;
+  const jTrack = () => `<div class="jx-track" aria-label="La course">${BT.players.map((p, i) => { const pc = Math.min(100, (p.ok / BT.goal) * 100); return `<div class="jx-lane${BT.step !== "end" && i === BT.t % B.n ? " on" : ""}"><b>${tx(p.name)}</b><div class="rail"><i style="width:${pc}%"></i><span class="runner" style="left:${pc}%">${JAV[i % JAV.length]}</span><span class="goal">🎓</span></div><small>${p.ok}/${BT.goal}</small></div>`; }).join("")}</div>`;
+  const jScores = () => BT.course ? jTrack() : `<div class="jx-sc">${BT.players.map((p, i) => `<span class="${BT.step !== "end" && i === BT.t % B.n ? "on" : ""}"><b>${tx(p.name)}</b>${p.score}</span>`).join("")}</div>`;
   function jBPlay() {
-    const q = BT.qs[BT.t], p = BT.players[BT.t % B.n], round = Math.floor(BT.t / B.n) + 1;
+    const q = BT.qs[BT.t], p = BT.players[BT.t % B.n], round = Math.floor(BT.t / B.n) + 1, RN = BT.rounds;
+    if (BT.step === "end" && BT.course) {
+      const sorted = BT.players.map((p0, i) => ({ ...p0, i })).sort((a, b) => b.ok - a.ok || b.score - a.score);
+      const win = sorted.filter((x) => x.ok >= BT.goal);
+      return `${win.length ? jConf() : ""}<div class="score jx-res"><h2>${win.length ? "🎓 Diplômé" + (win.length > 1 ? "s" : "") + " : " + win.map((x) => tx(x.name)).join(", ") : "Personne n’a passé la ligne d’arrivée"}</h2>${jTrack()}
+        <p>${win.length ? "Diplômé… dans le jeu ! 😄 L’examen, lui, se prépare avec votre centre de formation." : "La classe a bien couru. Une revanche pour franchir la ligne ?"}</p>
+        <button type="button" class="btn" data-act="jx-bagain">Revanche</button><button type="button" class="btn ghost" data-act="jx-bsetup">Changer les réglages</button><button type="button" class="btn ghost" data-act="jx-hub">Retour au jeu</button></div>`;
+    }
     if (BT.step === "end") {
       const sorted = BT.players.map((p0, i) => ({ ...p0, i })).sort((a, b) => b.score - a.score);
       const med = ["🥇", "🥈", "🥉"];
@@ -8051,7 +8154,7 @@ const APP = (() => {
         <button type="button" class="btn" data-act="jx-bagain">Revanche</button><button type="button" class="btn ghost" data-act="jx-bsetup">Changer les réglages</button><button type="button" class="btn ghost" data-act="jx-hub">Retour au jeu</button></div>`;
     }
     if (BT.step === "ready") {
-      return `${jScores()}<div class="score jx-res"><span class="jx-big">${tx(p.name)}</span><p>C’est à vous de jouer.<br>Manche ${round} sur ${B.rounds}. Passez-vous le téléphone, la question reste cachée.</p><button type="button" class="btn" data-act="jx-bready">Je suis prêt</button><p style="margin:0"><button type="button" class="btn-link" data-act="jx-bquit">Arrêter le battle</button></p></div>`;
+      return `${jScores()}<div class="score jx-res"><span class="jx-big">${tx(p.name)}</span><p>C’est à vous de jouer.<br>${BT.course ? "Objectif : " + BT.goal + " bonnes réponses." : "Manche " + round + " sur " + RN + "."} Passez-vous le téléphone, la question reste cachée.</p><button type="button" class="btn" data-act="jx-bready">Je suis prêt</button><p style="margin:0"><button type="button" class="btn-link" data-act="jx-bquit">Arrêter le battle</button></p></div>`;
     }
     const answered = BT.step === "fb";
     const timer = B.timer && !answered ? `<div class="jx-timer"><div class="qbar"><i id="jx-tbar" style="width:100%"></i></div><span id="jx-tsec">20 s</span></div>` : "";
@@ -8060,17 +8163,18 @@ const APP = (() => {
       const ok = BT.pick >= 0 && q.ch[BT.pick].ok;
       fb = `<div class="qfb"><p><b class="${ok ? "g" : "r"}">${BT.pick < 0 ? "Temps écoulé !" : ok ? "Bonne réponse !" : "Raté !"}</b>${ok ? ` +${BT.gain} points` : ""}</p>${q.x ? `<p>${tx(q.x)}</p>` : ""}</div><button type="button" class="btn" data-act="jx-bnext">${BT.t + 1 < BT.qs.length ? "Au suivant" : "Voir le podium"}</button>`;
     }
-    return `${jScores()}<div class="quiz"><div class="qmeta"><span>${tx(p.name)} · manche ${round} / ${B.rounds}</span></div>${timer}<p class="qq">${tx(q.q)}</p><div class="qc">${q.ch.map((ch, i) => { const cls = answered ? (ch.ok ? "good" : BT.pick === i ? "bad" : "") : ""; return `<button type="button" class="${cls}" data-act="jx-bpick" data-k="${i}"${answered ? " disabled" : ""}><span class="tag">${"ABCD"[i]}</span>${tx(ch.t)}${cls === "good" ? icon("ok") : cls === "bad" ? icon("fermer") : ""}</button>`; }).join("")}</div>${fb}</div>`;
+    return `${jScores()}<div class="quiz"><div class="qmeta"><span>${tx(p.name)} · manche ${round} / ${RN}</span></div>${timer}<p class="qq">${tx(q.q)}</p><div class="qc">${q.ch.map((ch, i) => { const cls = answered ? (ch.ok ? "good" : BT.pick === i ? "bad" : "") : ""; return `<button type="button" class="${cls}" data-act="jx-bpick" data-k="${i}"${answered ? " disabled" : ""}><span class="tag">${"ABCD"[i]}</span>${tx(ch.t)}${cls === "good" ? icon("ok") : cls === "bad" ? icon("fermer") : ""}</button>`; }).join("")}</div>${fb}</div>`;
   }
   function pageJeu() {
     let body;
     if (!jP || J.view === "profil") body = jProfile();
     else if (J.view === "cat") body = jCat();
+    else if (J.view === "grand") body = jGrand();
     else if (J.view === "play") body = J.run ? (J.run.done ? jResult() : jPlay()) : jHub();
     else if (J.view === "bsetup") body = jBSetup();
     else if (J.view === "bplay" && BT) body = jBPlay();
     else body = jHub();
-    return { html: `${J.view === "play" || J.view === "bplay" ? "" : toolHead("jeu")}${body}`, title: TL.jeu.t, tab: "outils", back: "outils", after: () => { if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
+    return { html: body, title: "Jeu", tab: "jeu", back: "accueil", after: () => { if (J.view === "cat" && J.focusHere) { J.focusHere = false; setTimeout(() => { const n = document.querySelector(".jx-node.here"); if (n) n.scrollIntoView({ block: "center" }); }, 60); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
   }
   function pageJeuImport() {
     return { html: `<nav class="crumb"><a href="#jeu">Jeu</a></nav><div class="page-h"><h1>Ajouter des questions</h1><p>Collez un lot de questions au format JSON, ou choisissez le fichier. Les questions sans source, avec une erreur de format ou déjà présentes sont écartées.</p></div>
@@ -8095,7 +8199,10 @@ const APP = (() => {
       case "jx-reset-no": J.reset = false; rerender(); return true;
       case "jx-reset-yes": jP.st = {}; jP.xp = 0; jP.serie = { d: "", n: 0 }; jSave(); J.reset = false; J.view = "hub"; toast("Progression effacée."); jGo(); return true;
       case "jx-hub": jHome(); jGo(); return true;
-      case "jx-cat": J.cat = b.dataset.c; J.view = "cat"; J.run = null; jGo(); return true;
+      case "jx-cat": J.cat = b.dataset.c; J.view = "cat"; J.run = null; J.focusHere = true; jGo(); return true;
+      case "jx-grand": J.view = "grand"; jGo(); return true;
+      case "jx-bk": B.kind = b.dataset.v; rerender(); return true;
+      case "jx-bg": B.goal = +b.dataset.v; rerender(); return true;
       case "jx-mode": J.mode = b.dataset.v; rerender(); return true;
       case "jx-stage": jStart(b.dataset.c || J.cat || (r && r.cat), r ? r.mode : J.mode, +b.dataset.k); jGo(); return true;
       case "jx-pick": {
@@ -8114,6 +8221,7 @@ const APP = (() => {
         r.picked[r.i] = 1; jAnswer(r.seq.every((v, i) => v === q.ordre[i])); rerender(); return true;
       }
       case "jx-next": r.seq = []; if (r.i + 1 < r.qs.length) r.i++; else jFinish(); jGo(); return true;
+      case "jx-goto": { const el = document.getElementById(b.dataset.t); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); return true; }
       case "jx-quit": J.view = "cat"; J.run = null; jGo(); return true;
       case "jx-bsetup": J.view = "bsetup"; BT = null; clearInterval(jTimer); jGo(); return true;
       case "jx-bn": case "jx-br": case "jx-bt": case "jx-bm": case "jx-bc": {
@@ -8125,7 +8233,7 @@ const APP = (() => {
       case "jx-bgo": case "jx-bagain": if (jBStart()) jGo(); return true;
       case "jx-bready": BT.step = "q"; BT.deadline = Date.now() + JT; render(true); return true;
       case "jx-bpick": jBPick(+b.dataset.k); return true;
-      case "jx-bnext": if (BT.t + 1 < BT.qs.length) { BT.t++; BT.step = "ready"; } else { BT.step = "end"; if (jP) jGain(15); } jGo(); return true;
+      case "jx-bnext": if (BT.t + 1 < BT.qs.length && !(BT.course && (BT.t + 1) % B.n === 0 && BT.players.some((x) => x.ok >= BT.goal))) { BT.t++; BT.step = "ready"; } else { BT.step = "end"; if (jP) jGain(15); } jGo(); return true;
       case "jx-bquit": jHome(); jGo(); return true;
       case "jx-imp": {
         const f = $("#jx-file").files[0], out = $("#jx-impr");
@@ -8864,6 +8972,7 @@ const APP = (() => {
         <a href="#rappel" data-tab="rappel">${icon("rappel")}<span>Rappel</span></a>
         <a href="#urgence" data-tab="urgence" class="sos-tab"><span class="bub">${icon("telephone")}</span><span>Urgence</span></a>
         <a href="#regles" data-tab="regles">${icon("regles")}<span>Règles</span></a>
+        <a href="#jeu" data-tab="jeu">${icon("quiz")}<span>Jeu</span></a>
         <a href="#outils" data-tab="outils">${icon("outils")}<span>Outils</span></a>
       </div></nav>
       <div class="tts" id="tts" role="region" aria-label="Lecture à voix haute" hidden><div class="tts-pop" id="tts-pop" hidden></div><div class="tts-in">
