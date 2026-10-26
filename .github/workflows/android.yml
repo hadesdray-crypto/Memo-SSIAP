@@ -1,0 +1,85 @@
+name: Application Android
+
+on:
+  push:
+    branches: [main]
+    paths: ["index.html", "manifest.webmanifest", "icon-*.png", "maskable-512.png", "apple-touch-icon.png", "favicon-32.png", "android-ressources/**", "capacitor.config.json", "package.json", ".github/workflows/android.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Construire la page
+        run: |
+          mkdir dist
+          cp index.html manifest.webmanifest icon-192.png icon-512.png maskable-512.png apple-touch-icon.png favicon-32.png dist/
+          # Numéro de version de l'application (sert à savoir si une mise à jour existe).
+          sed -i "s/const APK_VERSION = 0;/const APK_VERSION = ${{ github.run_number }};/" dist/index.html
+          grep -q "const APK_VERSION = ${{ github.run_number }};" dist/index.html
+          # Paquet de mise à jour : l'application le télécharge elle-même, sans rien réinstaller.
+          (cd dist && zip -qr ../web.zip .)
+          ls -la web.zip
+      - name: Préparer le projet Android
+        run: |
+          npm install --save --no-audit --no-fund @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capgo/capacitor-updater@7.53.0 @capacitor-community/text-to-speech@6 @capacitor-community/speech-recognition@7
+          npx cap add android
+          pip install pillow
+          python android-ressources/remplacer.py
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"1.${{ github.run_number }}\"/" android/app/build.gradle
+          npx cap sync android
+          # Permissions prévues dès la première version, pour ne jamais avoir à réinstaller : réseau, micro (dictée), son, vibration.
+          for P in ACCESS_NETWORK_STATE RECORD_AUDIO MODIFY_AUDIO_SETTINGS VIBRATE; do
+            grep -q "android.permission.$P" android/app/src/main/AndroidManifest.xml || sed -i "s#<uses-permission android:name=\"android.permission.INTERNET\" />#<uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.$P\" />#" android/app/src/main/AndroidManifest.xml
+          done
+          grep -n "uses-permission" android/app/src/main/AndroidManifest.xml
+          grep -q RECORD_AUDIO android/app/src/main/AndroidManifest.xml
+          echo "Modules du téléphone inclus :"; cat android/app/src/main/assets/capacitor.plugins.json
+          # Sécurité : on s'arrête si un module attendu manque.
+          grep -q CapacitorUpdater android/app/src/main/assets/capacitor.plugins.json
+          grep -q TextToSpeech android/app/src/main/assets/capacitor.plugins.json
+          grep -q SpeechRecognition android/app/src/main/assets/capacitor.plugins.json
+          grep -q '"App"\|capacitor-app\|AppPlugin' android/app/src/main/assets/capacitor.plugins.json
+      - name: Compiler
+        run: cd android && ./gradlew assembleRelease --no-daemon -q
+      - name: Signer
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          BT=$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)
+          APK=android/app/build/outputs/apk/release/app-release-unsigned.apk
+          $ANDROID_HOME/build-tools/$BT/zipalign -f -p 4 $APK aligne.apk
+          # La clé de signature est dans les secrets GitHub (KEYSTORE_BASE64 et KEYSTORE_PASSWORD), jamais dans le dépôt.
+          test -n "$KEYSTORE_BASE64" && test -n "$KEYSTORE_PASSWORD" || { echo "::error::Secrets KEYSTORE_BASE64 / KEYSTORE_PASSWORD manquants"; exit 1; }
+          echo "::notice::Secret clé : ${#KEYSTORE_BASE64} caractères. Mot de passe : ${#KEYSTORE_PASSWORD} caractères."
+          echo "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/cle.jks" || { echo "::error::La clé collée n'est pas du base64 valide"; exit 1; }
+          keytool -list -keystore "$RUNNER_TEMP/cle.jks" -storepass "$KEYSTORE_PASSWORD" > /dev/null 2>&1 || { echo "::error::La clé ne s'ouvre pas avec ce mot de passe"; exit 1; }
+          $ANDROID_HOME/build-tools/$BT/apksigner sign --ks "$RUNNER_TEMP/cle.jks" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out memo-ssiap.apk aligne.apk
+          rm -f "$RUNNER_TEMP/cle.jks"
+          ls -la memo-ssiap.apk
+      - name: Publier
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "android-${{ github.run_number }}" memo-ssiap.apk web.zip \
+            --title "Mémo SSIAP, application Android, version 1.${{ github.run_number }}" \
+            --notes "Ouvrir memo-ssiap.apk sur le téléphone Android et toucher Installer. Tout est dans l'application : elle marche sans Internet. Les mises à jour de contenu se font ensuite dans l'application, avec une barre de progression.
+
+          web.zip sha256 : $(sha256sum web.zip | cut -d' ' -f1)" \
+            --latest
