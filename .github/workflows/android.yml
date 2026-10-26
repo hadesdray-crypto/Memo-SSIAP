@@ -5,6 +5,17 @@ on:
     branches: [main]
     paths: ["index.html", "manifest.webmanifest", "icon-*.png", "maskable-512.png", "apple-touch-icon.png", "favicon-32.png", "android-ressources/**", "capacitor.config.json", "package.json", ".github/workflows/android.yml"]
   workflow_dispatch:
+    inputs:
+      nom:
+        description: "Nom du destinataire (laisser vide pour la version publique)"
+        required: false
+        default: ""
+      jours:
+        description: "Durée de vie en jours (0 = sans limite)"
+        required: true
+        default: "90"
+        type: choice
+        options: ["30", "90", "365", "400", "0"]
 
 permissions:
   contents: write
@@ -32,10 +43,23 @@ jobs:
           # Numéro de version de l'application (sert à savoir si une mise à jour existe).
           sed -i "s/const APK_VERSION = 0;/const APK_VERSION = ${{ github.run_number }};/" dist/index.html
           grep -q "const APK_VERSION = ${{ github.run_number }};" dist/index.html
-          # Date de fin de cette version : 90 jours après la fabrication (le jeu et les outils se bloquent ensuite jusqu'à la nouvelle version)
-          FIN=$(( ($(date -u +%s) + 90*86400) * 1000 ))
-          sed -i "s/const LIC_FIN = 0;/const LIC_FIN = ${FIN};/" dist/index.html
+          # Date de fin de cette version, et nom du destinataire si la version est personnalisée (lancement à la main).
+          JOURS="${{ github.event.inputs.jours || '90' }}"
+          NOM="${{ github.event.inputs.nom }}"
+          NOM=$(printf '%s' "$NOM" | tr -cd "[:alnum:] '._-" | cut -c1-40)
+          if [ "$JOURS" = "0" ]; then FIN=0; else FIN=$(( ($(date -u +%s) + JOURS*86400) * 1000 )); fi
+          sed -i "s/const LIC_FIN = 0;/const LIC_FIN = ${FIN};/; s/const LIC_JOURS = 0;/const LIC_JOURS = ${JOURS};/" dist/index.html
+          python3 - "$NOM" <<'EOF'
+          import sys, json
+          nom = sys.argv[1]
+          p = "dist/index.html"
+          h = open(p, encoding="utf-8").read()
+          a = 'const LIC_NOM = "";'
+          assert a in h
+          open(p, "w", encoding="utf-8").write(h.replace(a, "const LIC_NOM = " + json.dumps(nom, ensure_ascii=False) + ";", 1))
+          EOF
           grep -q "const LIC_FIN = ${FIN};" dist/index.html
+          echo "PERSO=${NOM}" >> "$GITHUB_ENV"
           # Paquet de mise à jour : l'application le télécharge elle-même, sans rien réinstaller.
           (cd dist && zip -qr ../web.zip .)
           ls -la web.zip
@@ -77,7 +101,15 @@ jobs:
           $ANDROID_HOME/build-tools/$BT/apksigner sign --ks "$RUNNER_TEMP/cle.jks" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out memo-ssiap.apk aligne.apk
           rm -f "$RUNNER_TEMP/cle.jks"
           ls -la memo-ssiap.apk
+      - name: Garder la version personnalisée (non publiée)
+        if: env.PERSO != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: memo-ssiap-${{ github.run_number }}
+          path: memo-ssiap.apk
+          retention-days: 14
       - name: Publier
+        if: env.PERSO == ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

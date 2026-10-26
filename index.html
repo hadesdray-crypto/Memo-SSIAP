@@ -8146,12 +8146,21 @@ const APP = (() => {
 
   /* ---------- Licence : chaque APK a une date de fin ; après, le jeu et les outils se bloquent jusqu'à la nouvelle version ---------- */
   const LIC_FIN = 0; /* remplacé à la fabrication de l'APK : date de fin en millisecondes (0 = sans limite : site web, essais) */
+  const LIC_NOM = ""; /* remplacé à la fabrication d'une version personnalisée : nom du destinataire */
+  const LIC_JOURS = 0; /* remplacé à la fabrication : durée en jours (sert au message de la page « Ma version ») */
   const LIC_JOUR = 86400000;
   const LIC_NOUVELLE = "https://github.com/hadesdray-crypto/Memo-SSIAP/releases/latest/download/memo-ssiap.apk";
   const LIC = (() => {
     let L = store.get("lic", null), lastP = performance.now(), neuf = false;
     const sauve = () => store.set("lic", L);
     if (!L || typeof L.tt !== "number") { const n0 = Date.now(); L = { tt: n0, lw: n0, rec: 0 }; neuf = true; }
+    /* Version retenue : une version personnalisée garde sa date de fin ; une mise à jour sans nom (publique) ne la prolonge jamais. */
+    const cand = { nom: LIC_NOM, fin: LIC_FIN, jours: LIC_JOURS };
+    let V = L.v;
+    if (!V) V = cand;
+    else if (cand.nom) { if (cand.nom !== V.nom || cand.fin > V.fin) V = cand; }
+    else if (!V.nom) V = cand;
+    L.v = V; sauve();
     function tick(boot) {
       const now = Date.now(), p = performance.now();
       const mono = Math.max(0, p - lastP); lastP = p;
@@ -8174,8 +8183,8 @@ const APP = (() => {
       }
     }
     function etat() {
-      if (!LIC_FIN) return { phase: "libre", reste: Infinity };
-      const reste = LIC_FIN - L.tt;
+      if (!L.v.fin) return { phase: "libre", reste: Infinity };
+      const reste = L.v.fin - L.tt;
       return { phase: reste <= 0 ? "expiree" : "limitee", reste };
     }
     function duree(ms) {
@@ -8183,7 +8192,7 @@ const APP = (() => {
       const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
       return h + " h " + m + " min";
     }
-    const dateFin = () => new Date(LIC_FIN).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    const dateFin = () => new Date(L.v.fin).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     function barre() {
       const b = document.getElementById("lic-bar"); if (!b) return;
       const e = etat();
@@ -8195,7 +8204,7 @@ const APP = (() => {
     /* Pages bloquées à la fin : le jeu et les outils. Fiches, conduites à tenir, numéros d’urgence, mise à jour et textes légaux restent accessibles. */
     const BLOQUEES = ["jeu", "jeu-import", "rapports", "rapport", "dictee", "planning", "textes"];
     const bloque = (t) => etat().phase === "expiree" && (BLOQUEES.includes(t) || t.startsWith("o-") || t.startsWith("pl-") || t.startsWith("jeu-") || t.startsWith("texte-"));
-    return { init, tick, etat, duree, dateFin, bloque, barre, get rec() { return L.rec || 0; } };
+    return { init, tick, etat, duree, dateFin, bloque, barre, get nom() { return L.v.nom; }, get jours() { return L.v.jours; }, get rec() { return L.rec || 0; } };
   })();
 
   const LEG_ND = "[Non disponible]";
@@ -8250,9 +8259,10 @@ const APP = (() => {
     const e = LIC.etat();
     const titre = { libre: "Version sans date de fin", limitee: "Version en cours de validité", expiree: "Version terminée" }[e.phase];
     const reste = e.phase === "libre" ? "Cette version n’a pas de date de fin." : e.phase === "expiree" ? "Le jeu et les outils sont bloqués. Les fiches, les conduites à tenir, les numéros d’urgence et les textes légaux restent accessibles. Installez la nouvelle version : elle remplace celle-ci sans rien effacer." : "Cette version fonctionne encore <strong>" + LIC.duree(e.reste) + "</strong>, jusqu’au " + LIC.dateFin() + " environ.";
+    const blague = LIC.jours > 366 ? "Cette fois, le temps vous fait un cadeau : " + LIC.jours + " jours." : LIC.jours >= 365 ? "365 jours, 366 les années bissextiles : le temps ne vous fait pas de cadeau." : "";
     const rec = LIC.rec ? `<p class="muted">Une date du téléphone incohérente a été détectée ${LIC.rec} fois. Le temps ne revient jamais en arrière.</p>` : "";
-    const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav><div class="page-h"><h1>Ma version</h1><p>${titre}.</p></div>
-      <section class="sec about"><h2 class="lbl">Temps restant</h2><p>${reste}</p>${rec}<p class="muted">Le compteur tourne sur votre appareil, même sans connexion. Un recul de la date du téléphone ne rend pas de temps.</p></section>
+    const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav><div class="page-h"><h1>Ma version</h1><p>${LIC.nom ? "Version de " + esc(LIC.nom) + ". " : ""}${titre}.</p></div>
+      <section class="sec about"><h2 class="lbl">Temps restant</h2><p>${reste}</p>${rec}<p class="muted">Le compteur tourne sur votre appareil, même sans connexion. Un recul de la date du téléphone ne rend pas de temps.</p>${blague ? `<p class="small muted"><em>${blague}</em></p>` : ""}</section>
       <section class="sec about"><h2 class="lbl">Nouvelle version</h2>
         <p><a class="btn" href="${LIC_NOUVELLE}" rel="noopener">Télécharger la dernière version</a></p>
         <p class="small muted">Touchez le fichier téléchargé : Android propose de mettre à jour l’application, sans désinstaller et sans perdre vos données. Le téléchargement se fait depuis votre navigateur, uniquement quand vous touchez ce bouton.</p></section>
