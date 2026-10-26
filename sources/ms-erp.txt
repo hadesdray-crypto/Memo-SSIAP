@@ -1,0 +1,1415 @@
+Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 1
+CHAPITRE XI
+ARTICLES « MS »
+Moyens de secours contre l'incendie
+SECTION I
+GÉNÉRALITÉS
+Article MS 1
+Différents moyens de secours
+(Arrêté du 2 février 1993)
+Les moyens de secours prévus à l'article R. 123-11 du Code
+de la construction et de l'habitation peuvent comporter :
+- des moyens d'extinction ;
+- des dispositions visant à faciliter l'action des sapeurs-
+pompiers ;
+- un service de sécurité incendie ;
+- un système de sécurité incendie (S.S.I.) pouvant
+comprendre :
+- un système de détection automatique d'incendie ;
+- un système de mise en sécurité incendie ;
+- un système d'alarme ;
+- un système d'alerte.
+Dispositions particulières
+Article MS 2
+Les dispositions particulières aux différents types
+d'établissement qui font l'objet du titre II du livre II précisent
+les moyens de secours à installer dans chaque type
+d'établissement.
+Article MS 3
+Documents à fournir
+Les documents à fournir en application de l'article GE 2 § 2
+précisent :
+- les moyens de secours prévus, à l'exception des appareils
+mobiles ;
+- leur emplacement ;
+- le tracé, le diamètre, le mode d'alimentation et la
+pression des canalisations d'eau, etc. ;
+- les caractéristiques techniques des dispositifs proposés.
+SECTION II
+MOYENS D'EXTINCTION
+Article MS 4
+Différents moyens d'extinction
+Les moyens d'extinction sont choisis parmi les suivants :
+- robinets d'incendie armés ;
+- déversoirs ponctuels ;
+- éléments de construction irrigués ;
+- bouches et poteaux d'incendie privés et points d'eau ;
+- colonnes sèches ;
+- colonnes en charge (dites colonnes humides) ;
+- installations d'extinction automatique ou à commande
+manuelle ;
+- appareils mobiles ;
+- moyens divers (réserves de sable, couverture, etc.).
+SOUS-SECTION 1
+BOUCHES ET POTEAUX D'INCENDIE PRIVÉS ET POINTS D'EAU
+Article MS 5
+Objet
+§ 1. Quand les prises d'eau publiques sont trop éloignées ou
+d'un débit insuffisant, la pose de bouches ou poteaux
+d'incendie normalisés peut être imposée.
+§ 2. Ces appareils doivent être conformes aux normes
+françaises et être alimentés :
+- soit par des branchements particuliers d'incendie des
+établissements intéressés ;
+- soit directement par les conduites publiques.
+§ 3. Ils peuvent éventuellement être remplacés ou complétés
+par des points d'eau facilement utilisables en permanence
+tels que : cours d'eau, bassins, citernes, etc., d'une capacité
+en rapport avec le risque à défendre.
+Article MS 6
+Détermination des points d'eau nécessaires
+§ 1. Les moyens en eau nécessaires à la lutte contre
+l'incendie doivent être évalués en fonction des risques et
+déterminés selon les directives des services publics de
+secours contre l'incendie.
+§ 2. L'itinéraire entre le ou les points d'eau et l'établissement
+doit permettre le passage facile des moyens des sapeurs-
+pompiers.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 2
+Article MS 7
+Accessibilité des points d'eau
+Les emplacements des points d'eau doivent être :
+- facilement accessibles en permanence ;
+- signalés conformément à la norme française ;
+- situés à 5 mètres au plus du bord de la chaussée ou de
+l'aire de stationnement des engins d'incendie.
+SOUS-SECTION 2
+BRANCHEMENTS ET CANALISATIONS
+Article MS 8
+Dispositions générales
+§ 1. Les canalisations de branchement alimentant les moyens
+de secours contre l'incendie, à l'intérieur d'un même
+établissement, ne doivent comporter aucun orifice de puisage
+autre que ceux intéressant ces moyens de secours. Elles
+doivent être indépendantes des conduites assurant les besoins
+ordinaires de l'établissement.
+Toutefois, des branchements mixtes peuvent être autorisés
+après avis de la commission de sécurité.
+Dans ce cas, la conduite assurant les besoins ordinaires et
+celle desservant les secours contre l'incendie doivent être
+indépendantes l'une de l'autre à partir de l'extrémité aval du
+branchement mixte qui les alimente. Le débit du piquage
+desservant les deux canalisations doit être suffisant pour
+alimenter les secours contre l'incendie et tous les besoins
+ordinaires.
+§ 2. Le diamètre des canalisations doit être calculé en
+fonction de la longueur de celles-ci, du nombre de robinets ou
+d'orifices à desservir et de leur hauteur par rapport au sol
+compte tenu du débit et de la pression des conduites de ville.
+§ 3. Les branchements et canalisations situés à l'intérieur des
+bâtiments et alimentant les moyens de secours contre
+l'incendie doivent être en matériaux incombustibles.
+Article MS 9
+Protection des canalisations d'incendie
+§ 1. Les parties de canalisations se trouvant dans les locaux à
+risques particuliers d'incendie doivent être en métaux ou
+alliages dont le point de fusion est d'au moins 1 000°C. Elles
+ne doivent comporter aucune partie soudée à l'étain. Les
+jonctions doivent être soudées, vissées ou serties.
+§ 2. Les canalisations doivent être protégées contre le gel.
+§ 3. Les canalisations doivent être peintes conformément à
+la norme française relative aux teintes conventionnelles des
+tuyauteries.
+Article MS 10
+Compteurs 
+(Arrêté du 24 janvier 1984)
+Les compteurs utilisés sur les branchements doivent être
+d'un modèle approuvé par le ministre de l'industrie (service
+des instruments et mesures).
+Article MS 11
+Barrages
+§ 1. Les canalisations doivent être munies de vannes de
+barrage plombées en position d'utilisation et de robinets de
+vidange en nombre suffisant pour parer aux dangers et
+inconvénients qu'entraînerait la rupture de ces canalisations.
+§ 2. S'il existe dans un même établissement des
+canalisations d'incendie alimentées par (Arrêté du 22
+décembre 1981) « des branchements distincts » sur des
+conduites de ville différentes, des intercommunications
+doivent être prévues afin de mettre en charge les diverses
+canalisations en cas d'indisponibilité de l'un des
+branchements.
+Article MS 12
+Pression
+§ 1. Des manomètres avec robinets à trois voies doivent
+permettre de mesurer la pression de l'eau dans chaque
+canalisation.
+§ 2. (Arrêté du 19 novembre 2001) « S'il existe des appareils
+pour assurer la pression nécessaire et si l'établissement ne
+dispose pas de groupe électrogène de sécurité, les appareils
+doivent être alimentés par une dérivation issue directement
+du tableau principal du bâtiment ou de l'établissement dans
+les conditions de l'article EL 14 ».
+MS 13
+Raccords d'alimentation
+Des raccords pour le branchement des engins des sapeurs-
+pompiers destinés à refouler l'eau en pression dans les
+canalisations d'incendie peuvent être exigés dans certains
+établissements.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 3
+SOUS-SECTION 3
+ROBINETS D'INCENDIE ARMÉS
+Article MS 14
+Généralités
+§ 1. La composition, les caractéristiques hydrauliques et
+l'installation de robinets d'incendie armés doivent être
+conformes aux normes (Arrêté du 22 novembre 2004) « les
+concernant ».
+§ 2. Les robinets d'incendie armés sont désignés par (Arrêté
+du 2 février 1993) « leur diamètre nominal qui peut être
+(Arrêté du 22 novembre 2004) « DN 19/6, DN 25/8 ou
+DN 33/12 ».
+§ 3. Les robinets d'incendie armés doivent être numérotés en
+une série unique.
+Article MS 15
+Emplacements
+§ 1. Sauf impossibilité, les robinets d'incendie armés doivent
+être placés à l'intérieur des bâtiments, le plus près possible et
+à l'extérieur des locaux à protéger.
+§ 2. Le nombre de robinets d'incendie armés et le choix de
+leurs emplacements doivent être tels que toute la surface des
+locaux puisse être efficacement atteinte.
+§ 3. Dans les locaux présentant des risques importants
+d'incendie, tout point de la surface de ces locaux doit pouvoir
+être battu par au moins deux jets de lance.
+§ 4. Si les robinets d'incendie armés sont placés dans des
+armoires ou coffrets, ceux-ci doivent être signalés et ne pas
+comporter de dispositifs de condamnation.
+Article MS 16
+Alimentation
+§ 1. Sauf impossibilité, les robinets d'incendie armés doivent
+être alimentés par une canalisation d'eau en pression
+desservie par les conduites publiques.
+§ 2. L'alimentation par réservoirs élevés ou sous pression
+peut exceptionnellement être admise.
+Article MS 17
+Pression
+§ 1. Dans tous les cas, la pression minimale de
+fonctionnement à laquelle le débit doit être fourni ne doit
+pas être inférieure à 2,5 bars au robinet d'incendie armé le
+plus défavorisé.
+§ 2. Un manomètre avec robinets à trois voies doit être mis
+en place près de ce robinet d'incendie armé pour permettre
+le contrôle de cette pression.
+SOUS-SECTION 4
+COLONNES SÈCHES
+Article MS 18
+Objet
+§ 1. (Arrêté du 2 février 1993) « Des colonnes sèches
+doivent être installées dans les établissements, dès lors que
+des locaux à risques importants sont aménagés dans des
+étages dont le plancher bas est à plus de 18 mètres du
+niveau de la voie accessible aux engins des sapeurs-
+pompiers. »
+§ 2. Elles doivent être conformes aux normes françaises.
+Article MS 19
+Raccords d'alimentation
+§ 1. Les raccords d'alimentation des colonnes sèches
+doivent être placés en des endroits facilement accessibles
+aux sapeurs-pompiers, sur la façade la plus proche des
+bouches ou poteaux d'incendie.
+Ils doivent être signalés et une pancarte doit indiquer
+l'escalier ou le dispositif d'accès desservi.
+Sauf cas particulier, le regroupement de ces raccords
+d'alimentation est interdit.
+§ 2. Le cheminement entre les raccords d'alimentation des
+colonnes sèches et les bouches ou poteaux d'incendie ne
+doit pas dépasser 60 mètres de longueur.
+Article MS 20
+Prises d'incendie
+Les prises d'incendie doivent être placées dans les cages
+d'escaliers ou dans leurs dispositifs d'accès.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 4
+Article MS 21
+Vidange et purge d'air
+Les colonnes sèches doivent être munies d'un dispositif de
+vidange et de purge d'air.
+SOUS-SECTION 5
+COLONNES EN CHARGE
+(DITES COLONNES HUMIDES)
+Article MS 22
+Généralités
+§ 1. Les colonnes en charge peuvent être imposées dans
+certains établissements importants.
+§ 2. Ces colonnes et leurs dispositifs d'alimentation doivent
+être conformes aux normes françaises.
+Article MS 23
+Alimentation 
+§ 1. Le dispositif d'alimentation de chaque colonne (réservoir
+en charge, surpresseur, pompe, etc.) doit assurer en
+permanence, à l'un quelconque des niveaux, pendant le temps
+requis pour la stabilité au feu du bâtiment, avec un minimum
+d'une heure, un débit horaire de 60 mètres cubes sous une
+pression statique comprise entre 4,5 bars et 8,5 bars.
+§ 2. Lorsque le débit est assuré par des réservoirs, ceux-ci
+doivent avoir une capacité telle qu'un débit de 60 mètres
+cubes par heure au moins soit exclusivement réservé au
+service d'incendie durant le temps requis au paragraphe
+précédent. Cette capacité peut être augmentée en fonction des
+risques particuliers de l'établissement.
+§ 3. Chaque colonne en charge doit être alimentée de manière
+indépendante à partir de la nourrice située en aval des
+surpresseurs.
+Article MS 24
+Réalimentation
+§ 1. Les colonnes en charge doivent pouvoir être réalimentées
+à partir de deux orifices de 65 millimètres dotés de vannes,
+placés au niveau d'accès des sapeurs-pompiers et à moins de
+60 mètres d'une bouche ou d'un poteau d'incendie.
+§ 2. Les orifices de réalimentation doivent être signalés et
+porter l'inscription : « Réalimentation des colonnes en
+charge ; pression : ... bar. »
+SOUS-SECTION 6
+INSTALLATIONS D'EXTINCTION AUTOMATIQUE OU À COMMANDE
+MANUELLE
+Article MS 25
+Système d’extinction automatique du type sprinkleur
+(Arrêté du 12 octobre 2006)
+§ 1. Un système d’extinction automatique du type
+sprinkleur peut être exigé dans tout ou partie d’un
+établissement.
+§ 2. La partie de l’établissement protégée par un tel système
+doit être isolée de la partie non protégée dans les conditions
+prévues pour les locaux à risques particuliers.
+§ 3. L’aménagement et l’exploitation des locaux protégés ne
+doivent pas s’opposer au fonctionnement dans les meilleurs
+délais et à pleine efficacité du système.
+§ 4. Un système d’extinction automatique du type
+sprinkleur doit être conforme aux normes françaises
+homologuées et réalisé par des entreprises spécialisées et
+dûment qualifiées.
+Article MS 26
+Locaux à risques courants
+Abrogé par arrêté du 12 octobre 2006
+Article MS 27
+Locaux à risques particuliers
+Abrogé par arrêté du 12 octobre 2006
+Article MS 28
+Sources d’eau, pompes ou surpresseurs
+(Arrêté du 12 octobre 2006)
+§ 1. Les sources d’eau (réseau d’eau public, réservoir,
+source inépuisable), les pompes -ou surpresseurs- doivent
+répondre aux caractéristiques définies aux paragraphes 8, 9
+et 10 de la norme NF EN 12-845 (décembre 2004).
+§ 2. Les sources d’eau doivent être au minimum de type
+unique supérieur au sens de la norme précitée.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 5
+Est également considéré comme une source d’eau unique
+supérieure un ensemble constitué :
+- d’une part, par une pompe puisant dans sa propre réserve
+d’eau, un surpresseur ou un réservoir sous pression,
+dimensionné pour alimenter les cinq sprinkleurs les plus
+défavorisés pendant 30 minutes (source dite de type A) ;
+- d’autre part, par une pompe puisant dans sa propre
+réserve d’eau ou un surpresseur, dimensionné pour
+alimenter le débit maximal (surface impliquée) pendant
+90 minutes pour un risque HH, 60 minutes pour un
+risque OH, 30 minutes pour un risque LH (source dite de
+type B).
+§ 3. Les opérations de maintenance ne peuvent conduire à
+l’indisponibilité simultanée des deux pompes ou surpresseurs
+précédemment cités.
+§ 4. Lorsque les pompes ou surpresseurs sont électriques, ils
+doivent disposer d’une alimentation électrique de sécurité
+(AES) conforme à l’article EL 13.
+Toutefois, dans la mesure où la source d’eau dite de type B
+utilise une autre source d’énergie, la pompe (ou surpresseur)
+électrique (source dite de type A) peut être alimentée dans les
+conditions prévues à l’article EL 14.
+Dans les deux cas visés ci-dessus, les canalisations
+électriques doivent répondre aux dispositions de
+l’article EL 16, § 1.
+§ 5. Les vannes de barrage et de contre-barrage des conduites
+d’eau doivent être signalées et aisément accessibles afin de
+permettre leur manœuvre par les services de secours et de
+lutte contre l’incendie.
+Article MS 29
+Contrôles
+(Arrêté du 12 octobre 2006)
+A chaque source d’eau (en aval de chaque pompe ou
+surpresseur), un dispositif installé à demeure doit permettre la
+mesure du débit et de la pression.
+Aux points les plus défavorisés du système, l’adjonction
+d’une tuyauterie d’essai munie d’une vanne dont le diamètre
+correspond au débit d’un sprinkleur doit permettre de vérifier
+la présence et l’écoulement de l’eau.
+Article MS 30
+Autres installations d'extinction automatique
+§ 1. Des installations fixes ou mobiles mettant en œuvre
+divers agents extincteurs peuvent être prévues pour la défense
+de tout ou partie des locaux accessibles au public ou non d'un
+établissement.
+Elles doivent être conformes, soit aux normes françaises,
+soit aux règles techniques définies dans des instructions
+particulières.
+De telles installations ne peuvent être autorisées qu'après
+avis de la commission de sécurité.
+§ 2. Les locaux de stockage des produits destinés à
+alimenter les installations fixes d'extinction automatique
+autres qu'à l'eau doivent être considérés comme des locaux à
+risques importants.
+SOUS-SECTION 7
+DÉVERSOIRS PONCTUELS
+Article MS 31
+Caractéristiques
+§ 1. Les déversoirs ponctuels doivent être en métal résistant
+aux hautes températures. Leur raccordement aux
+canalisations doit répondre aux conditions de l'article
+MS 11 (§ 2).
+§ 2. Les déversoirs doivent être disposés de manière à
+pouvoir inonder instantanément les locaux où ils sont
+installés.
+§ 3. Les déversoirs doivent être commandés par deux
+vannes ou robinets de mise en œuvre situés l'un à l'intérieur
+du local desservi, à proximité d'une issue, l'autre à
+l'extérieur, en un endroit bien visible et facilement
+accessible. Tous les déversoirs d'un même local doivent
+pouvoir être commandés simultanément.
+Article MS 32
+Alimentation
+§ 1. La pression aux déversoirs en cours de fonctionnement
+ne doit pas être inférieure à 0,5 bar et le débit à
+250 litres/minute.
+§ 2. Les déversoirs peuvent être alimentés :
+- soit par une canalisation faisant partie d'une installation
+de robinets d'incendie armés ;
+- soit par une canalisation spéciale, exclusivement
+destinée à cet usage.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 6
+Article MS 33
+Diffuseurs
+Les déversoirs peuvent être remplacés par des diffuseurs
+d'eau pulvérisée assurant un débit qui ne doit pas être
+inférieur à 5 litres/minute/mètre carré.
+Article MS 34
+Contrôles de débit
+Toutes dispositions doivent être prises pour permettre le
+contrôle du débit :
+- à la source d'eau pour ce qui concerne le débit à assurer
+sur la surface à protéger ;
+- aux diffuseurs.
+SOUS-SECTION 8 
+ÉLÉMENTS DE CONSTRUCTION IRRIGUÉS
+Article MS 35
+Définition
+Des rideaux d'eau composés de canalisations munies de
+diffuseurs adaptés peuvent être imposés pour améliorer la
+résistance au feu de certains éléments de construction
+(cloisons, rideaux, portes, etc.). Ils constituent des éléments
+de construction irrigués.
+Article MS 36
+Alimentation et mise en œuvre 
+Dans tous les cas où l'eau est utilisée pour obtenir le degré de
+résistance au feu d'un élément de construction irrigué,
+l'alimentation et la mise en œuvre du dispositif doivent être
+assurées dans les conditions définies dans les dispositions
+particulières du présent règlement ou, à défaut, après avis de
+la commission de sécurité.
+Article MS 37
+Contrôles
+§ 1. Un manomètre, avec robinet à trois voies, placé en amont
+des robinets ou vannes de mise en œuvre, doit permettre de
+vérifier en permanence la pression existante dans la
+canalisation alimentant l'élément de construction irrigué.
+§ 2. Toutes dispositions doivent être prises pour permettre le
+contrôle du débit de la canalisation d'alimentation.
+SOUS-SECTION 9
+APPAREILS MOBILES ET MOYENS DIVERS
+Article MS 38
+Caractéristiques
+(Arrêté du 26 juin 2008)
+§ 1. Les établissements doivent être dotés de moyens
+d'extinction tels que :
+- extincteurs portatifs ;
+- extincteurs sur roues ;
+- seaux et seaux pompes d'incendie,
+pour permettre au personnel et éventuellement au public
+d'intervenir sur un début d'incendie.
+§ 2. L'extincteur doit avoir un marquage clair comportant au
+moins :
+- la ou les classes de feu (A, B, C, D, F) qu'il permet
+d'éteindre, précédé de leur capacité d'extinction en
+chiffre ;
+- des pictogrammes indiquant les modalités de sa mise en
+œuvre ;
+- les dangers et les restrictions éventuels d'utilisation.
+§ 3. Un extincteur doit être de manipulation facile et avoir
+une contenance minimale de six litres pour les extincteurs à
+eau. Afin de faciliter sa localisation tant par le personnel
+que par le public, il doit être de couleur rouge. Il doit
+justifier de son efficacité au moyen d'un essai réalisé par un
+laboratoire spécialisé indépendant.
+§ 4. Un extincteur doit faire l'objet d'une vérification
+annuelle et d'une révision tous les dix ans par une personne
+ou un organisme compétent. Il doit être marqué d'une
+étiquette clairement identifiable apposée par la personne ou
+l'organisme ayant réalisé cette dernière. Les années et les
+mois des vérifications doivent apparaître sur l'étiquette.
+Un plan d'implantation des extincteurs et un relevé des
+vérifications doivent être portés au registre de sécurité.
+Article MS 39
+Emplacement
+(Arrêté du 26 juin 2008)
+§ 1. Les moyens d'extinction doivent être répartis de
+préférence dans les dégagements, en des endroits visibles et
+facilement accessibles. Ils peuvent être protégés à condition
+de faire l'objet d'une signalisation claire. Ils ne doivent pas
+apporter de gêne à la circulation des personnes et leur
+emplacement, repéré par une signalisation durable, doit être
+tel que leur efficacité ne risque pas d'être compromise par
+les variations éventuelles de température survenant dans
+l'établissement.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 7
+§ 2. Les extincteurs portatifs sont judicieusement répartis et
+appropriés aux risques notamment électriques qu'ils doivent
+combattre. Il y a un minimum d'un appareil pour 200 m2 et
+par niveau, avec un minimum de deux par établissement. Ils
+doivent être accrochés à un élément fixe, avec une
+signalisation durable, sans placer la poignée de portage à plus
+de 1,20 m du sol.
+Article MS 40
+Moyens divers
+Des couvertures, toiles, seaux d'eau ou autres moyens divers
+peuvent être exigés dans certains cas particuliers.
+SECTION III
+DISPOSITIONS VISANT À FACILITER L'ACTION DES SAPEURS-POMPIERS
+Article MS 41
+Affichage du plan de l'établissement
+(Arrêté du 20 novembre 2000) « Un plan schématique, sous
+forme de pancarte inaltérable, doit être apposé à chaque
+entrée de bâtiment de l'établissement pour faciliter
+l'intervention des sapeurs-pompiers.
+Le plan doit avoir les caractéristiques des plans d'intervention
+définies à la norme NF S 60-303 (Arrêté du 24 septembre
+2009) « du 20 septembre 1987 » relative aux plans et
+consignes de protection contre l'incendie.
+Il doit représenter au minimum le sous-sol, le rez-de-
+chaussée, chaque étage ou l'étage courant de l'établissement.
+Doivent y figurer, outre les dégagements, (Arrêté du 24
+septembre 2009) « les espaces d’attente sécurisés » et les
+cloisonnements principaux, l'emplacement :
+- des divers locaux techniques et autres locaux à risques
+particuliers ;
+- des dispositifs et commandes de sécurité ;
+- des organes de coupure des fluides ;
+- des organes de coupure des sources d'énergie ;
+- des moyens d'extinction fixes et d'alarme. »
+Article MS 42
+Moyens pour faciliter l'action des sapeurs-pompiers
+§ 1. Pour faciliter les sauvetages et l'extinction, peuvent être
+exigés :
+- des balcons, passerelles, échelles, terrasses, etc.,
+permettant d'accéder aux locaux mal dégagés ;
+- des tours d'incendie permettant aux sapeurs-pompiers
+d'accéder directement aux niveaux d'un immeuble sans
+être incommodés par les flammes, la chaleur et la
+fumée ;
+- des trémies pratiquées dans les planchers pour faciliter
+l'attaque des feux en sous-sol.
+§ 2. Pour faciliter la confection des plans d'intervention, les
+exploitants doivent fournir, à la demande des sapeurs-
+pompiers, tous les plans et documents nécessaires.
+Article MS 43
+Tours d'incendie
+Les tours d'incendie sont des escaliers protégés qui doivent
+être d'accès facile pour les secours venant de l'extérieur.
+(Arrêté du 2 février 1993) « Ils doivent être droits de
+préférence, avoir au moins 0,70 mètre d'emmarchement et
+comporter des marches non glissantes, présentant un giron
+supérieur ou égal à 0,25 mètre et un alignement des nez de
+marche limité à 45° maximum. » Ils doivent desservir tous
+les niveaux et comporter en partie haute un accès direct vers
+l'extérieur. Ces tours doivent être munies de colonnes
+sèches ou en charge.
+Article MS 44
+Trémies d'attaque 
+Les trémies d'attaque doivent avoir 0,60 mètre de côté ou de
+diamètre et être distantes les unes des autres de 20 mètres
+environ. Elles doivent être fermées par des tampons
+étanches, de même résistance au feu que les planchers,
+susceptibles d'être enlevées rapidement pour faciliter, en cas
+d'incendie, l'attaque du feu par les sapeurs-pompiers. Elles
+doivent être signalées de manière distincte et durable et
+leurs abords doivent être constamment dégagés.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 8
+SECTION IV
+SERVICE DE SÉCURITÉ INCENDIE
+Article MS 45
+Généralités
+(Arrêté du 11 décembre 2009)
+En application de l'article R. 123-11 du Code de la
+construction et de l'habitation, la surveillance des
+établissements doit être assurée pendant la présence du public
+par un service de sécurité incendie tel que défini à l'article
+MS 46.
+Article MS 46
+Composition et missions du service
+(Arrêté du 11 décembre 2009)
+§ 1. Pendant la présence du public, le service de sécurité
+incendie est composé selon le type, la catégorie et les
+caractéristiques des établissements de l'une des façons
+suivantes :
+a) Par des personnes désignées par l'exploitant et entraînées
+à la manœuvre des moyens de secours contre l'incendie
+et à l'évacuation du public ;
+b) Par des agents de sécurité-incendie dont la qualification
+est définie à l'article MS 48 ;
+c) Par des sapeurs-pompiers d'un service public de secours
+et de lutte contre l'incendie ;
+d) Par la combinaison de ces différentes possibilités,
+déterminée après avis de la commission compétente.
+Lorsque le service est assuré par des agents de sécurité
+incendie, l'effectif doit être de trois personnes au moins
+présentes simultanément, dont un chef d'équipe. Cet effectif
+doit être adapté à l'importance de l'établissement.
+En outre, le chef d'équipe et un agent de sécurité au moins ne
+doivent pas être distraits de leurs missions spécifiques.
+Les autres agents de sécurité-incendie peuvent être employés
+à des tâches de maintenance technique dans l'établissement.
+Ils doivent se trouver en liaison permanente avec le poste de
+sécurité.
+Le service de sécurité-incendie, dont la qualification est fixée
+à l'article MS 48, doit être placé, lorsque les dispositions
+particulières le prévoient, sous la direction d'un chef de
+service de sécurité-incendie spécifiquement affecté à cette
+tâche.
+§ 2. Ce service assure la sécurité générale dans
+l'établissement et a notamment pour mission :
+a) De connaître et de faire appliquer les consignes en cas
+d'incendie, notamment pour ce qui concerne les
+dispositions mises en œuvre pour l'évacuation des
+personnes en situation de handicap ;
+b) De prendre éventuellement, sous l'autorité de
+l'exploitant, les premières mesures de sécurité ;
+c) D'assurer la vacuité et la permanence des
+cheminements d'évacuation jusqu'à la voie publique ;
+d) De diriger les secours en attendant l'arrivée des
+sapeurs-pompiers, puis de se mettre à la disposition du
+chef de détachement d'intervention des sapeurs-
+pompiers ;
+e) De veiller au bon fonctionnement du matériel et des
+équipements de protection contre l'incendie, d'en
+effectuer ou de faire effectuer les essais et l'entretien
+(moyens de secours du présent chapitre, dispositif de
+fermeture des portes, de désenfumage, d'éclairage de
+sécurité, groupes moteurs thermiques-générateurs,
+etc.) ;
+f) D'organiser des rondes pour prévenir et détecter les
+risques d'incendie et de panique, y compris dans les
+locaux non occupés.
+§ 3. Dans la suite du présent paragraphe le terme :
+- « exploitant » vaut pour l'exploitant ou son
+représentant ;
+- « organisateur » vaut pour le ou les contractants
+représentant le ou les organisateurs.
+Il peut être admis qu'en atténuation du premier paragraphe
+une convention soit signée entre l'exploitant et un ou des
+utilisateurs de l'établissement pour organiser le service de
+sécurité lors de manifestations ou d'activités dans les
+établissements autres que ceux de la 1re catégorie, sans
+hébergement, disposant d'une alarme générale ne
+nécessitant pas une surveillance humaine et dont l'effectif
+total n'excède pas 300 personnes.
+L'organisateur signataire de cette convention doit être
+capable d'assurer les missions définies au paragraphe deux
+a, b et c du présent article.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 9
+En matière de risque d'incendie et de panique la convention
+doit comporter les points suivants :
+- l'identité de la ou des personnes assurant les missions
+définies ci-dessus ;
+- la ou les activités autorisées ;
+- l'effectif maximal autorisé ;
+- les périodes, les jours ou les heures d'utilisation ;
+- les dispositions relatives à la sécurité (consignes et
+moyens de secours mis à disposition) ;
+- les coordonnées de la (des) personne(s) à contacter en
+cas d'urgence.
+Par la signature de cette convention l'organisateur certifie
+notamment qu'il a :
+- pris connaissance des consignes générales et
+particulières de sécurité ainsi que des éventuelles
+consignes particulières données par l'exploitant et
+s'engage à les respecter ;
+- procédé avec l'exploitant à une visite de l'établissement
+et à une reconnaissance des voies d'accès et des issues de
+secours ;
+- reçu de l'exploitant une information sur la mise en œuvre
+de l'ensemble des moyens de secours dont dispose
+l'établissement.
+Un exemplaire de cette convention doit être annexé au
+registre de sécurité.
+Article MS 47
+Consignes
+(Arrêté du 20 novembre 2000) « Des consignes précises,
+conformes à la norme NF S 60-303 (Arrêté du 24 septembre
+2009) « du 20 septembre 1987 » relative aux plans et
+consignes de protection contre l'incendie, destinées aux
+personnels de l'établissement, constamment mises à jour, et
+affichées sur supports fixes et inaltérables doivent indiquer :
+- les modalités d'alerte des sapeurs-pompiers ;
+- les dispositions à prendre pour assurer la sécurité du
+public et du personnel ;
+- (Arrêté du 24 septembre 2009) « les dispositions à
+prendre pour favoriser l’évacuation des personnes en
+situation de handicap ou leur évacuation différée si celle-
+ci est rendue nécessaire ; »
+- la mise en œuvre des moyens de secours de
+l'établissement ;
+- l'accueil et le guidage des sapeurs-pompiers. »
+Article MS 48
+Formation et qualification du personnel du service de
+sécurité incendie
+(Arrêté du 11 décembre 2009)
+§ 1. Les personnes désignées par l'exploitant, mentionnées
+au paragraphe 1.a de l'article MS 46 pour assurer la sécurité
+contre l'incendie, doivent avoir reçu une formation conduite
+à l'initiative et sous la responsabilité de l'exploitant.
+§ 2. La qualification professionnelle des agents de sécurité
+incendie (chef du service, chef d'équipe et agents de
+sécurité) mentionnés au paragraphe 1b de l'article MS 46,
+doit être vérifiée dans les conditions définies par arrêté
+ministériel.
+§ 3. Le contrôle de l'instruction du service de sécurité
+incendie est assuré par les commissions de sécurité lors des
+visites qu'elles effectuent dans les établissements.
+Article MS 49
+Service assuré par des sapeurs-pompiers
+§ 1. Les services de sécurité incendie assurés dans certains
+établissements par des sapeurs-pompiers doivent être
+inspectés par leurs officiers ou sous-officiers dans le but de
+veiller à la bonne exécution du service.
+§ 2. (Arrêté du 10 octobre 2005) « Ces services et ces
+rondes sont rétribués par l'établissement. »
+Article MS 50
+Poste de sécurité
+§ 1. Un poste de sécurité doit être mis à la disposition
+exclusive des personnels chargés de la sécurité incendie.
+§ 2. Ce poste, d'accès aisé et si possible au niveau d'arrivée
+des secours extérieurs, doit être, sauf cas particulier, relié au
+centre de secours des sapeurs-pompiers par un moyen de
+transmission rapide et sûr.
+§ 3. Lorsque le service est assuré par des agents de sécurité
+incendie, le poste doit être occupé en permanence par une
+personne au moins.
+§ 4. Le poste de sécurité doit notamment recevoir les
+alarmes restreintes transmises par postes téléphoniques,
+avertisseurs manuels, installations de détection et/ou
+d'extinction automatique. De plus, des commandes
+manuelles des dispositifs d'alarme, de désenfumage
+mécanique, de conditionnement, etc., doivent être installées
+à l'intérieur de celui-ci.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 10
+§ 5. Le poste de sécurité et ses accès doivent être
+convenablement protégés contre un feu survenant dans
+l'établissement.
+§ 6. (Arrêté du 24 septembre 2009) «Ce poste doit être en
+mesure d’établir une liaison avec les espaces d’attente
+sécurisés. »
+Article MS 51
+Exercices d'instruction
+Des exercices d'instruction du personnel doivent être
+organisés sous la responsabilité de l'exploitant. La date de
+ceux-ci doit être portée sur le registre de sécurité de
+l'établissement.
+Article MS 52
+Présence de l'exploitant
+(Arrêté du 11 décembre 2009)
+§ 1. Pendant la présence du public, l'exploitant ou son
+représentant doit se trouver dans l'établissement pour :
+- décider des éventuelles premières mesures de sécurité ;
+- assurer l'accès à tous les locaux communs ou recevant du
+public aux membres de la commission de sécurité lors
+des visites de sécurité en application de l'article R. 123-
+49 du code la construction et de l'habitation ;
+- assurer la mise à jour du registre de sécurité prévu à
+l'article R. 123-51 du code de la construction et de
+l'habitation.
+§ 2. Lorsque les conditions d'exploitation le justifient, il peut
+être admis par la commission de sécurité compétente que
+l'exploitant ou son représentant ne soit pas en permanence
+dans l'établissement sous réserve :
+- d'être joignable en permanence et en mesure de rejoindre
+l'établissement dans les délais les plus courts ;
+- que des consignes claires soient données au service de
+sécurité incendie présent sur le site.
+SECTION V
+SYSTÈME DE SÉCURITÉ INCENDIE (S.S.I.)
+Article MS 53
+Objet
+(Arrêté du 2 février 1993)
+§ 1. Le système de sécurité incendie d'un établissement est
+constitué de l'ensemble des matériels servant à collecter
+toutes les informations ou ordres liés à la seule sécurité
+incendie, à les traiter et à effectuer les fonctions nécessaires
+à la mise en sécurité de l'établissement.
+La mise en sécurité peut comporter les fonctions suivantes :
+- compartimentage (au sens large, non limité à celui
+indiqué à l'article CO 25) ;
+- évacuation des personnes (diffusion du signal
+d'évacuation, gestion des issues) ;
+- désenfumage ;
+- extinction automatique ;
+- mise à l'arrêt de certaines installations techniques.
+§ 2. Les systèmes de sécurité incendie (SSI) doivent
+satisfaire d'une part aux dispositions des normes en vigueur
+et, d'autre part, aux principes définis ci-après. Selon ces
+textes, les systèmes de sécurité incendie sont classés en cinq
+catégories par ordre de sévérité décroissante, appelées A, B,
+C, D et E .
+§ 3. Les dispositions particulières à chaque type
+d'établissement précisent, le cas échéant, la catégorie du
+système de sécurité exigé.
+§ 4. Selon la norme en vigueur visant l'installation des
+systèmes de sécurité incendie, on entend par « cheminement
+technique protégé » une galerie technique, une gaine, un
+caniveau ou un vide de construction dont le volume est
+protégé d'un incendie extérieur de telle manière que les
+canalisations qui l'empruntent puissent continuer à assurer
+leur service pendant un temps déterminé.
+De même, on entend par « volume technique protégé » un
+local ou un placard dont le volume est protégé d'un incendie
+extérieur de telle manière que les matériels qu'il contient
+puissent continuer à assurer leur service pendant un temps
+déterminé.
+En règle générale, ce temps doit correspondre au degré de
+stabilité au feu exigé pour le bâtiment, avec un maximum
+d'une heure, sauf à la traversée de locaux à risques
+particuliers pour lesquels la protection doit être identique à
+celle exigée pour ce local.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 11
+Article MS 54
+Zones : terminologie
+(Arrêté du 2 février 1993)
+a) Zone : un bâtiment ou un établissement est généralement
+découpé, au titre de la sécurité incendie, en plusieurs
+volumes correspondant chacun, selon le cas, à un local,
+un niveau, une cage d'escalier, un canton, un secteur ou à
+un compartiment. Une zone peut correspondre à un ou
+plusieurs de ces volumes ou à l'ensemble d'un bâtiment.
+Les zones de détection, les zones de mise en sécurité et
+les zones de diffusion d'alarme définies ci-après n'ont pas
+nécessairement les mêmes limites géographiques.
+b) Zone de détection : zone surveillée par un ensemble de
+détecteurs et/ou de déclencheurs manuels, auxquels
+correspond une signalisation commune dans
+l'équipement de commande et de signalisation du
+système de détection incendie.
+Par analogie, chaque zone équipée d'un ensemble de 
+déclencheurs manuels auxquels correspond une 
+signalisation commune dans un équipement d'alarme du 
+type 2 (tel que défini ci-après) constitue une zone de 
+détection.
+c) Zone de mise en sécurité : zone susceptible d'être mise
+en sécurité par le système de mise en sécurité incendie.
+Article MS 55
+Conception des zones
+(Arrêté du 2 février 1993)
+§ 1. Une zone de diffusion d'alarme doit englober une ou
+plusieurs zone(s) de mise en sécurité. Chaque zone de mise
+en sécurité doit englober une ou plusieurs zone(s) de
+détection.
+§ 2. En dehors des cas prévus explicitement par le présent
+règlement, il appartient au concepteur ou à l'exploitant de
+proposer, à la conception (dans le cadre de l'article GE 2), à
+la commission de sécurité, la division de l'établissement en
+zones de détection et en zones de mise en sécurité incendie.
+§.3. Dans un même bâtiment, on distingue éventuellement
+plusieurs zones de détection. Dans ce cas, l'implantation des
+zones de détection doit être étudiée en fonction de la
+configuration interne du bâtiment et des dégagements ainsi
+que la division éventuelle en zones de mise en sécurité.
+Chaque zone de détection doit pouvoir être rapidement
+inspectée par la personne alertée.
+SOUS-SECTION 1
+SYSTÈME DE DÉTECTION INCENDIE
+(ARRÊTÉ DU 2 FÉVRIER 1993)
+Article MS 56
+Principes généraux
+(Arrêté du 2 février 1993)
+§ 1. La surveillance assurée par le service de sécurité
+incendie prévue à la section IV du présent chapitre peut être
+complétée ou localement remplacée par des installations
+généralisées ou partielles de détection incendie conformes
+aux normes en vigueur.
+§ 2. L'installation de détection automatique d'incendie doit
+déceler et signaler tout début d'incendie dans les meilleurs
+délais et mettre en œuvre les éventuels équipements de
+sécurité qui lui sont asservis.
+§ 3. Cette exigence est réputée satisfaite lorsqu'une
+installation remplit sa fonction :
+- lors de la combustion d'un foyer type adapté à la nature
+du risque rencontré dans l'établissement (ou lors de
+l'utilisation d'un dispositif reconnu équivalent par le
+ministre de l'Intérieur) dans le cas de la première
+vérification d'une installation neuve ou modifiée ou
+dans le cas d'un changement de la nature des risques de
+l'établissement ;
+- lors d'essais fonctionnels réalisés au moyen d'appareils
+de vérification adaptés au type de détecteur mis en
+place dans les autres cas.
+§ 4. Les foyers-types (plaques de mousse de polyuréthane,
+bac d'alcool, bobine électrique, etc.) sont ceux définis à
+l'annexe II du fascicule du cahier des clauses techniques
+générales applicables aux marchés publics de travaux relatif
+aux installations de détection incendie.
+Les essais fonctionnels sont ceux définis au paragraphe 7.3
+de ce même document.
+Article MS 57
+Contraintes liées au système de détection incendie
+(Arrêté du 2 février 1993)
+§ 1. Les installations de détection impliquent, pendant la
+présence du public, l'existence dans les établissements
+concernés d'un personnel permanent qualifié, susceptible
+d'alerter les sapeurs-pompiers et de mettre en œuvre les
+moyens de lutte contre l'incendie.
+§ 2. Toutes dispositions doivent être prises pour éliminer les
+fausses alarmes sans nuire à l'efficacité de l'installation.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 12
+Article MS 58
+Obligations de l'installateur et de l'exploitant
+(Arrêté du 2 février 1993)
+§ 1. Les matériels de détection automatique d'incendie
+doivent être admis à la marque NF Matériel de détection
+d'incendie et être estampillés comme tels, ou faire l'objet de
+toute autre certification de qualité en vigueur dans un État-
+membre de la Communauté économique européenne. Cette
+certification devra alors présenter des garanties équivalentes à
+celles de la marque NF Matériel de détection d'incendie,
+notamment en ce qui concerne l'intervention d'une tierce
+partie indépendante et les performances prévues dans les
+normes correspondantes.
+§ 2. L'installation des systèmes de détection doit être réalisée
+par des entreprises spécialisées et dûment qualifiées.
+§ 3. Toute installation de détection doit faire l'objet d'un
+contrat d'entretien avec un installateur qualifié. Ce contrat
+doit inclure les essais fonctionnels prévus à l'article MS 56,
+paragraphe 3, deuxième tiret.
+§ 4. Ce contrat d'entretien ainsi que la notice descriptive des
+conditions d'entretien et de fonctionnement doivent être
+annexés au registre de sécurité.
+SOUS-SECTION 2
+SYSTÈME DE MISE EN SÉCURITÉ INCENDIE (S.M.S.I.)
+Article MS 59
+Généralités
+(Arrêté du 2 février 1993)
+§ 1. Le système de mise en sécurité incendie est constitué de
+l'ensemble des équipements qui assurent les fonctions
+nécessaires à la mise en sécurité d'un établissement en cas
+d'incendie, soit à partir des informations transmises par le
+système de détection incendie (lorsque celui-ci existe), soit à
+partir d'ordres en provenance de commandes manuelles. Il
+comprend :
+- des dispositifs actionnés de sécurité, répartis
+éventuellement par zones de mise en sécurité ;
+- les équipements nécessaires pour assurer la commande
+des dispositifs actionnés de sécurité.
+§ 2. Les dispositifs et équipements constituant le système de
+mise en sécurité incendie doivent être conformes aux
+normes en vigueur. De plus, les centralisateurs de mise en
+sécurité incendie intégrés aux systèmes de sécurité incendie
+de catégorie A ou B doivent être admis à la marque
+NF Centralisateurs de mise en sécurité incendie et être
+estampillés comme tels, ou faire l'objet de toute autre
+certification de qualité en vigueur dans un État-membre de
+la Communauté économique européenne. Cette certification
+devra alors présenter des garanties équivalentes à celles de
+la marque NF Centralisateurs de mise en sécurité incendie,
+notamment en ce qui concerne l'intervention d'une tierce
+partie indépendante et les performances prévues dans les
+normes correspondantes.
+Article MS 60
+Automatismes
+(Arrêté du 2 février 1993)
+§ 1. (Arrêté du 23 décembre 1996) « Les dispositifs de
+désenfumage doivent être commandés par la détection
+automatique d'incendie, lorsque les dispositions
+particulières l'imposent. Cette disposition ne s'applique pas
+au désenfumage des cages d'escaliers dont la commande
+doit être uniquement manuelle. »
+Dans le cas où le présent règlement prévoit que le
+fonctionnement de la détection automatique entraîne le
+déclenchement des dispositifs actionnés de sécurité
+(système de sécurité incendie de catégorie A), ce
+déclenchement doit s'effectuer sans temporisation.
+§ 2. (Arrêté du 23 décembre 1996) « En complément des
+dispositions imposées à l'article CO 46, § 2, le
+déverrouillage automatique des issues de secours doit être
+obtenu dès le déclenchement du processus de l'alarme
+générale. Cependant, s'il existe un équipement d'alarme de
+type 1, ce déverrouillage doit être obtenu automatiquement
+et sans temporisation en cas de détection incendie. »
+§ 3. Les seuls dispositifs actionnés de sécurité pouvant être
+télécommandés par l'alarme d'un système de sécurité
+incendie de catégorie D ou E sont les portes résistant au feu
+à fermeture automatique (au sens de l'article CO 47) et le
+déverrouillage des portes d'issue de secours (visées à
+l'article CO 46 § 2).
+§ 4. Au moment de leur mise en œuvre, les mécanismes de
+commande des dispositifs actionnés de sécurité doivent
+avoir fait l'objet d'un procès-verbal en cours de validité
+délivré par un laboratoire agréé.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 13
+Ce procès-verbal est délivré à la suite d'un essai de contrôle
+de l'aptitude à l'emploi de ces mécanismes.
+(Arrêté du 29 juillet 2003) « De plus, en complément des
+matériels visés à l'article (Arrêté du 10 octobre 2005)
+« DF 4, » les portes résistant au feu et les clapets (Arrêté du
+10 octobre 2005) « télécommandés » doivent être admis à la
+marque NF. »
+SOUS-SECTION 3
+SYSTÈME D'ALARME
+Article MS 61
+Terminologie
+(Arrêté du 2 février 1993)
+a) Alarme générale : signal sonore ayant pour but de
+prévenir les occupants d'avoir à évacuer les lieux. Ce
+signal sonore peut être complété dans certains cas, par un
+signal visuel. L'alarme générale peut être immédiate ou
+temporisée.
+Alarme générale sélective : alarme générale limitée à 
+l'information de certaines catégories de personnel, selon 
+les dispositions prévues par le présent règlement pour 
+certains établissements.
+b) Alarme restreinte : signal sonore et visuel distinct du
+signal d'alarme générale ayant pour but d'avertir soit le
+poste de sécurité incendie de l'établissement, soit la
+direction ou le gardien, soit le personnel désigné à cet
+effet, de l'existence d'un sinistre et de sa localisation.
+c) Exploitation de l'alarme restreinte : on entend par
+« exploiter l'alarme restreinte » vérifier si le processus
+résulte d'un déclenchement intempestif ou d'un sinistre,
+et, dans ce dernier cas, déclencher immédiatement
+l'alarme générale.
+Article MS 62
+Classement
+(Arrêté du 2 février 1993)
+§ 1. Les systèmes d'alarme doivent satisfaire d'une part aux
+principes définis ci-après et, d'autre part, aux dispositions
+des normes en vigueur, en particulier la norme relative aux
+équipements d'alarme. Cette norme classe les équipements
+d'alarme en quatre types par ordre de sécurité décroissante,
+appelés 1, 2a ou 2b, 3 et 4.
+Les dispositions particulières à chaque type d'établissement
+précisent dans chaque cas les types d'équipements d'alarme
+qui doivent être utilisés pour chaque catégorie
+d'établissement.
+§ 2. Seuls les équipements d'alarme des types 1, 2a et 2b
+comportent une temporisation. En conséquence, si
+l'exploitant souhaite disposer d'une temporisation alors que
+les dispositions particulières prévoient un équipement
+d'alarme du type 3 ou 4, il y a lieu d'installer un équipement
+d'alarme du type 2a ou 2b au minimum et de respecter
+toutes les contraintes liées à ce type.
+§ 3. Un équipement d'alarme du type 4 peut être constitué
+de tout dispositif sonore à condition qu'il soit autonome
+(cloche, sifflet, trompe, bloc autonome d'alarme sonore du
+type Sa associé à un interrupteur, etc.).
+§ 4. Les différents bâtiments d'un même établissement
+peuvent comporter des équipements d'alarme de types
+différents, sauf dispositions contraires prévues dans la suite
+du présent règlement.
+Article MS 63
+Utilisation de l'alarme générale sélective
+(Arrêté du 2 février 1993)
+Dans les établissements où des précautions particulières
+doivent être prises pour procéder à l'évacuation du public
+soit en raison d'incapacités physiques, soit en raison
+d'effectifs très importants, du personnel désigné à cet effet
+doit pouvoir être prévenu par un signal d'alarme générale
+sélective (distinct du signal d'alarme générale lorsque celui-
+ci est également prévu) suivant les dispositions particulières
+fixées à cet effet pour certains types d'établissements.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 14
+Article MS 64
+Principes généraux d'alarme
+(Arrêté du 2 février 1993)
+§ 1. En principe, l'alarme générale doit être donnée par
+bâtiment.
+§ 2. Dans le cas où l'établissement comporte plusieurs zones
+de mise en sécurité incendie, il appartient au concepteur ou à
+l'exploitant de proposer, dans le cadre de l'article GE 2, à la
+commission de sécurité de définir la division de
+l'établissement en zones de diffusion de l'alarme générale, en
+prenant toujours comme principe que la diffusion de l'alarme
+générale doit englober, au minimum, la zone mise en sécurité
+incendie laquelle doit englober la zone de détection.
+§ 3. (Arrêté du 24 septembre 2009) «Un signal sonore doit
+être complété par un dispositif destiné à rendre l'alarme
+perceptible en tenant compte de la spécificité des locaux et
+des différentes situations de handicap des personnes amenées
+à les fréquenter isolément. »
+Article MS 65
+Conditions générales d'installation
+(Arrêté du 2 février 1993)
+§ 1. Les déclencheurs manuels doivent être disposés dans les
+circulations, à chaque niveau, à proximité immédiate de
+chaque escalier, au rez-de-chaussée à proximité des sorties.
+Ils doivent être placés à une hauteur d'environ (Arrêté du 20
+novembre 2000) « 1,30 » mètre au-dessus du niveau du sol et
+ne pas être dissimulés par le vantail d'une porte lorsque celui-
+ci est maintenu ouvert. De plus, ils ne doivent pas présenter
+une saillie supérieure à 0,10 mètre.
+§ 2. (Arrêté du 19 novembre 2001) « Les canalisations
+électriques alimentant les diffuseurs sonores non autonomes
+doivent être conformes aux dispositions de l'article
+EL 16 § 1. »
+§ 3. Les diffuseurs d'alarme sonore, notamment les blocs
+autonomes d'alarme sonore (BAAS) des types Ma et Sa,
+doivent être mis hors de portée du public par éloignement
+(hauteur minimum de 2,25 mètres) ou par interposition d'un
+obstacle.
+§ 4. Dans le cas du type 3, lorsqu'un bâtiment est équipé de
+plusieurs blocs autonomes d'alarme sonore (BAAS de type
+Ma, au sens de la norme en vigueur), l'action sur un seul
+déclencheur manuel doit provoquer le fonctionnement de
+tous les BAAS du bâtiment. La mise à l'état d'arrêt de
+l'équipement d'alarme doit être effectuée à partir d'un seul
+point. Le dispositif de télécommande doit être accessible
+seulement au personnel qui en a la charge.
+Article MS 66
+Règles spécifiques applicables aux équipements d'alarme
+des types 1 et 2
+(Arrêté du 2 février 1993)
+§ 1. Le tableau de signalisation de l'équipement d'alarme
+des types 1 et 2 doit être installé à un emplacement non
+accessible au public et surveillé pendant les heures
+d'exploitation de l'établissement. Il doit être visible du
+personnel de surveillance et ses organes de commande et de
+signalisation doivent demeurer aisément accessibles. Il doit
+être fixé aux éléments stables de la construction.
+S'il existe un report de l'alarme restreinte, ce report doit être
+limité à une distance permettant au personnel de
+surveillance de se rendre rapidement au tableau de
+signalisation afin d'être en mesure d'exploiter l'alarme
+restreinte.
+§ 2. Le fonctionnement d'un déclencheur manuel ou d'un
+détecteur automatique d'incendie doit déclencher
+immédiatement l'alarme restreinte au niveau du tableau de
+signalisation ou de l'équipement de signalisation centralisé.
+§ 3. Le déclenchement de l'alarme générale intervient
+automatiquement, au bout d'une temporisation, réglable
+suivant les caractéristiques de l'établissement, avec un
+maximum de cinq minutes après le déclenchement de
+l'alarme restreinte.
+§ 4. Une commande manuelle disposée sur le tableau de
+signalisation ou sur l'équipement de signalisation centralisé
+doit permettre de déclencher immédiatement l'alarme
+générale, par zone de diffusion, au niveau d'accès 1, au sens
+des normes en vigueur visant les systèmes de sécurité
+incendie.
+§ 5. La temporisation ne doit être admise que lorsque
+l'établissement dispose, pendant la présence du public, d'un
+personnel qualifié pour exploiter immédiatement l'alarme
+restreinte. Si les conditions d'exploitation d'une installation
+comportant initialement une temporisation viennent à être
+modifiées, la durée de temporisation doit être adaptée à ces
+nouvelles conditions, voire éventuellement annulée.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 15
+§ 6. Dans le cas du type 1, chaque zone de diffusion d'alarme
+doit comporter au moins une boucle sur laquelle sont
+raccordés les déclencheurs manuels. Chaque boucle de
+déclencheurs manuels doit être séparée des boucles des
+détecteurs automatiques d'incendie. Cette mesure n'est pas
+applicable pour les dispositifs à localisation d'adresse de
+zone, sous réserve que ces derniers différencient les
+déclencheurs manuels des détecteurs automatiques.
+Article MS 67
+Conditions d'exploitation
+(Arrêté du 2 février 1993)
+§ 1. Pendant la présence du public, l'équipement d'alarme doit
+être à l'état de veille général.
+En dehors de la présence du public et du personnel, si
+l'établissement dispose d'un moyen d'exploiter l'alarme
+restreinte, l'équipement d'alarme peut être mis à l'état de
+veille limité à l'alarme restreinte.
+§ 2. Aucun autre signal sonore susceptible d'être émis dans
+l'établissement ne doit entraîner une confusion avec le signal
+sonore d'alarme générale.
+§ 3. Le personnel de l'établissement doit être informé de la
+signification du signal sonore d'alarme générale et du signal
+sonore d'alarme générale sélective, si ce dernier existe. Cette
+information doit être complétée éventuellement par des
+exercices périodiques d'évacuation.
+§ 4. Il peut être admis, selon les dispositions particulières ou
+après avis de la commission de sécurité, que la diffusion du
+signal sonore d'alarme générale conforme à la norme visant
+les équipements d'alarme soit entrecoupée ou interrompue par
+des messages pré-enregistrés prescrivant clairement
+l'évacuation du public.
+SOUS-SECTION 4
+ENTRETIEN ET CONSIGNES D'EXPLOITATION
+Article MS 68
+Entretien
+(Arrêté du 2 février 1993)
+Le système de sécurité incendie doit être maintenu en bon
+état de fonctionnement. Cet entretien doit être assuré :
+- soit par un technicien compétent habilité par
+l'établissement ;
+- soit par l'installateur de chaque équipement ou son
+représentant habilité.
+Toutefois, les systèmes de sécurité incendie de catégories A
+et B doivent toujours faire l'objet d'un contrat d'entretien.
+Dans tous les cas, le contrat passé avec les personnes
+physiques ou morales, ou les consignes données au
+technicien attaché à l'établissement, doivent préciser la
+périodicité des interventions et prévoir la réparation rapide
+ou l'échange des éléments défaillants. La preuve de
+l'existence de ce contrat ou des consignes écrites doit
+pouvoir être fournie et être transcrite sur le registre de
+sécurité.
+Article MS 69
+Consignes d'exploitation
+(Arrêté du 2 février 1993)
+Le personnel de l'établissement doit être initié au
+fonctionnement du système d'alarme.
+L'exploitant ou son représentant doit s'assurer, une fois par
+semaine au moins, du bon fonctionnement de l'installation
+et de l'aptitude des alimentations électriques et/ou
+pneumatiques de sécurité à satisfaire aux exigences du
+présent règlement.
+L'exploitant doit faire effectuer sous sa responsabilité les
+remises en état le plus rapidement possible.
+L'exploitant doit disposer en permanence d'un stock de
+petites fournitures de rechange des modèles utilisés tels que
+lampes, fusibles, vitres pour déclencheurs manuels à bris de
+glace, cartouches de gaz inerte comprimé, etc.
+SECTION VI
+SYSTÈME D'ALERTE
+Article MS 70
+Alerte, définition, règles générales
+(Arrêté du 11 septembre 2023)
+L’alerte est l’action de demander l’intervention d’un service
+d’incendie et de secours.
+§ 1. Les sapeurs-pompiers doivent pouvoir être alertés sans
+retard. 
+§ 2. Cette alerte est assurée : 
+- soit par un dispositif appelé “liaison prioritaire” ; 
+- soit par tout autre moyen de communication. 
+§ 3. Quel que soit le dispositif qui assure l’alerte, il remplit
+les objectifs suivants : 
+a) Etre propre à l’établissement et en permanence
+accessible à l’ensemble du personnel ; 
+b) Assurer une liaison vocale de qualité et une bonne
+audibilité lors de la communication d’urgence ; 
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 16
+c) Offrir une fiabilité de fonctionnement, y compris en cas
+de coupure de l’alimentation électrique, pendant une
+durée minimale d’1 heure portée à 6 heures pour les
+établissements comportant des locaux à sommeil. 
+§ 4. Le dispositif indiqué au §2, premier tiret, répond
+obligatoirement en plus des objectifs fixés au §3, aux 
+exigences suivantes : 
+- être à poste fixe et efficacement signalé ;
+- être alimenté conformément à l’article EL12 et pour les
+établissements comportant des locaux à sommeil, avec
+une autonomie minimale de 6 heures ; 
+- aboutir de manière prioritaire à un centre de traitement
+de l’alerte défini en accord avec le service d’incendie et
+de secours compétent ; 
+- permettre l’identification automatique de l’établissement.
+§ 5. Les modalités d’appel des sapeurs-pompiers sont
+affichées de façon apparente, permanente et inaltérable 
+près des dispositifs d’alerte ou à défaut à l’entrée principale
+de l’établissement.
+Article MS 71
+Communications radioélectriques
+(Arrêté du 28 juin 2024)
+§ 1. Les services publics qui concourent aux missions de
+sécurité civile doivent être assurés de la continuité des
+communications radioélectriques avec leurs moyens propres
+en tout point de l’établissement situé en infrastructure des
+ERP du 1er groupe et des parcs de stationnement couverts,
+disposant de plus d’un niveau de sous-sol. La continuité
+radioélectrique réside dans la capacité de communiquer entre,
+d’une part, le point d’accès principal des secours à
+l’établissement et, d’autre part, les locaux de l’établissement
+situés en sous-sol. Cette capacité est appréciée dans les
+conditions définies dans l’instruction technique (IT) 250
+relative au contrôle de la continuité des communications
+radioélectriques dans les établissements recevant du public.
+Toutefois, les dispositions du présent chapitre ne sont pas
+applicables si la surface totale de l’ensemble des niveaux en
+sous-sol de l’établissement est inférieure à 100 m2.
+§ 2. Lorsque les conditions définies au paragraphe 1 ci-dessus
+ne sont pas satisfaites, l’exploitant doit disposer d’une
+installation technique fixe permettant d’assurer la continuité
+des communications radioélectriques dans les parties de
+l’établissement situées en infrastructure. A cet effet,
+l’exploitant étudie, réalise, met en oeuvre et entretient cette
+installation conformément aux dispositions définies dans
+l’instruction technique susmentionnée. Avant toute
+réalisation, les dossiers techniques des équipements que
+l’exploitant entend mettre en oeuvre sont soumis à l’avis du
+service d’incendie et de secours. Ces dossiers doivent décrire
+clairement le service proposé et la technique mise en oeuvre.
+La commission de sécurité compétente s’assure de la
+validation, par le service d’incendie et de secours, du
+dispositif proposé.
+§ 3. La vérification de la continuité des moyens de
+communications radioélectriques est réalisée par un
+organisme agréé par le ministère chargé de la sécurité
+civile :
+- une fois avant l’ouverture au public de l’établissement
+concerné ; puis
+- une fois tous les trois ans et lors de la visite de
+réception consécutive à des travaux relatifs à
+l’installation précitée.
+Les vérifications initiales et triennales répondront aux
+exigences prévues dans l’instruction technique
+susmentionnée.
+§ 4. Les installations relatives à la continuité des moyens de
+communications radioélectriques constituent des
+installations de sécurité de l’établissement, concourant à
+faciliter l’intervention des secours, en application des
+dispositions relatives aux installations de sécurité prévues à
+l’article EL 3 de l’arrêté du 25 juin 1980 modifié portant
+approbation des dispositions générales du règlement de
+sécurité contre les risques d’incendie et de panique dans les
+établissements recevant du public. A ce titre, leur
+alimentation électrique est conforme à celle prévue à
+l’article EL 12 de l’arrêté précité. En aggravation du § 3,
+l’autonomie est portée à quatre heures, correspondant à la
+nécessité pour les secours de disposer d’une continuité des
+communications radioélectriques pendant les phases
+successives de reconnaissance, d’attaque et de déblais.
+§ 5. La vérification et la mise en oeuvre d’une installation
+fixe sont réalisées conformément à l’instruction technique
+susmentionnée. En dérogation aux dispositions du livre II,
+titre Ier, chapitre Ier, section 2 du présent règlement, la
+vérification de la continuité de transmission des moyens de
+communications radioélectriques fait l’objet d’une
+attestation de vérifications réglementaires. Son contenu
+reprend les items figurant en article appendice au livre II,
+titre Ier, chapitre Ier, section 2 du présent règlement et elle
+statue de façon conclusive, par le libellé « installation
+conforme » ou « installation non conforme ».
+§ 6. Un exemplaire de l’attestation de vérifications
+réglementaires ainsi que le relevé, détaillé par niveau, des
+mesures réalisées dans l’établissement, sont remis à
+l’exploitant de l’établissement. Cette attestation est
+consignée dans le registre de sécurité.
+§ 7. Une dérogation totale ou partielle à l’obligation de
+continuité des communications radioélectriques ne peut être
+accordée à l’exploitant qu’après avis conforme de la
+commission de sécurité, en fonction de la nature de
+l’exploitation de l’établissement mais aussi du nombre, de
+l’accessibilité et de la surface unitaire du local ou des
+locaux situés en infrastructure. Dans le cas d’une dérogation
+partielle, notamment en cas de perturbation potentielle des
+appareils d’imagerie médicale ou de blocs opératoires, les
+limites de cette dérogation seront précisées (zone ou locaux
+concernés).
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr Règlement Sécurité Incendie ERP – Documentation Batiss - Arrêté du 25 juin 1980 modifié - Articles « MS » - Moyens de Secours
+MàJ: 2024-08-27 Index réglementation sécurité incendie ERP Page 17
+§ 8. Les dispositions du présent article sont déclinées dans
+l’instruction technique relative au contrôle de la continuité
+des communications radioélectriques dans les établissements
+recevant du public et résumées dans les logigrammes
+fonctionnels y figurant.
+SECTION VII
+ENTRETIEN, VÉRIFICATIONS ET CONTRÔLES
+Article MS 72
+Entretien et signalisation
+(Arrêté du 2 février 1993)
+§ 1. Tous les appareils ou dispositifs d'extinction et d'alerte
+doivent être soigneusement entretenus et maintenus en
+permanence en bon état de fonctionnement. Le personnel de
+l'établissement doit être initié à leur mise en œuvre. Cette
+information doit être maintenue dans le temps.
+§ 2. Des pancartes indicatrices de manœuvre doivent être
+placées bien en évidence à proximité des appareils, des
+barrages et des mises en œuvre.
+(Arrêté du 29 janvier 2003) « Lorsqu’un appareil ou un
+dispositif n’est pas apparent, il doit être signalé par un
+panneau conforme aux signaux normalisés d’indication de
+localisation d’un équipement de lutte contre l'incendie ou
+d’un autre moyen d’alarme ou d’alerte définis à la norme
+NF X 08-003 relative aux couleurs et signaux de sécurité ».
+Article MS 73
+Vérifications techniques
+(Arrêté du 12 octobre 2006)
+§ 1. Avant leur mise en service, les appareils et installations
+fixes doivent faire l’objet d’une vérification, fonctionnement
+compris, dans les conditions prévues à la section II du
+chapitre Ier du présent titre. De plus, les systèmes de sécurité
+incendie de catégories A et B ainsi que les systèmes
+d’extinction automatique du type sprinkleur doivent toujours
+être vérifiés par une personne ou un organisme agréé.
+§ 2. En cours d’exploitation, ces mêmes appareils ou
+installations ainsi que les appareils mobiles doivent être
+vérifiés, au moins une fois par an, dans les conditions prévues
+à la section II précitée. De plus, les systèmes de sécurité
+incendie de catégories A et B et les systèmes d’extinction
+automatique du type sprinkleur doivent être vérifiés tous les
+trois ans par une personne ou un organisme agréé.
+§ 3. Pour les systèmes de sécurité incendie, les vérifications
+doivent être conformes aux modalités prévues par la norme
+en vigueur correspondante. Pour les systèmes de détection
+d’incendie, les vérifications doivent comporter les essais
+fonctionnels prévus à l’article MS 56 (§ 3, deuxième tiret).
+§ 4. Pour les systèmes d’extinction automatique du type
+sprinkleur et indépendamment des opérations de
+maintenance et de vérification prévues dans la norme
+NF EN 12845 (décembre 2004), la vérification triennale
+comprend :
+- l’examen de l’adéquation du système avec les classes
+de risque au vu du dossier technique de l’installation et
+une visite du site ;
+- un examen des conditions de maintenance ;
+- un examen des conditions d’exploitation ;
+- une vérification de la réalité des opérations de
+maintenance par des essais portant sur :
+- le démarrage et le débit des pompes ;
+- les essais des dispositifs d’alarme dédiés au système.
+Article MS 74
+Contrôles
+(Arrêté du 2 février 1993)
+Lors des visites périodiques effectuées par les commissions
+de sécurité, toutes dispositions doivent être prises par
+l'exploitant pour permettre le contrôle efficace des moyens
+de secours. A cet effet, la direction doit mettre en place le
+personnel compétent et le matériel nécessaire aux essais de
+fonctionnement.
+MS 75
+Autres obligations de l'exploitant
+(Arrêté du 12 octobre 2006)
+L’exploitant est tenu de :
+- produire, à l’occasion de la visite de réception des
+installations visées aux sections II (sous-sections 1 à 8)
+et V du présent chapitre, le
+ dossier technique des
+installations annexé au registre de sécurité de
+l’établissement et comportant un exemplaire du rapport
+des examens et essais avant la mise en service ;
+- classer ensuite dans ce registre tous les documents,
+rapports, attestations qui doivent être rédigés et lui être
+remis après tout examen ou intervention quelconque sur
+l’installation.
+Batiss - 35 av. Pierre Sémard - 94200 Ivry-sur-Seine – Téléphone : 01 53 14 00 00 - Page Web : www.batiss.fr
