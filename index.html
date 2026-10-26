@@ -7896,16 +7896,15 @@ const APP = (() => {
   /* ---------- Avertissement et signalement d’erreur ---------- */
   const MENTIONS = {
     soutien: {
-      titre: "Avant de commencer",
-      court: "Outil de révision non officiel. Il ne remplace ni la formation agréée, ni les textes officiels, ni les consignes de votre site.",
+      titre: "Bienvenue dans le Mémo SSIAP",
+      court: "Outil de révision et d’aide-mémoire, en amélioration continue. Il complète la formation agréée et les textes officiels, sans les remplacer.",
       points: [
-        "Cette appli est un <strong>outil d’aide à la révision</strong> et un aide-mémoire. Elle n’est <strong>pas une application officielle ni certifiée</strong>.",
-        "Chaque information est vérifiée avec des sources, mais <strong>une erreur ou un texte dépassé reste possible</strong>.",
-        "En situation réelle, suivez <strong>les consignes de votre site, les ordres de votre hiérarchie et ceux des secours</strong>. En cas de doute, le texte officiel en vigueur fait foi.",
-        "Elle <strong>ne remplace pas la formation</strong> dispensée par un organisme agréé.",
-        "Si vous voyez une erreur, le bouton « Signaler une erreur » permet de nous le dire."
+        "Le Mémo SSIAP est un <strong>outil de révision et d’aide-mémoire</strong>. Chaque information s’appuie sur des <strong>sources officielles citées</strong>, avec leur date de vérification.",
+        "La réglementation évolue sans cesse. L’appli est donc <strong>mise à jour en continu</strong> : certains contenus peuvent changer, et une <strong>veille réglementaire</strong> surveille les textes cités.",
+        "Elle n’est pas une application officielle. Elle <strong>complète</strong> votre formation agréée, les textes en vigueur et les consignes de votre site, qui <strong>font foi</strong> en cas de doute.",
+        "<strong>Votre retour compte</strong> : une information vous semble inexacte ou dépassée ? Le bouton « Signaler une erreur » nous permet de la corriger rapidement."
       ],
-      case: "J’ai compris que cette appli peut contenir des erreurs et qu’elle ne remplace ni la formation, ni les textes officiels, ni les consignes de mon site."
+      case: "J’ai compris que le Mémo SSIAP est un outil d’aide qui complète, sans les remplacer, la formation, les textes officiels et les consignes de mon site."
     }
   };
   const mention = () => MENTIONS[D.meta.statut] || MENTIONS.soutien;
