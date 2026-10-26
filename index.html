@@ -17,7 +17,11 @@
 <meta name="apple-mobile-web-app-title" content="Mémo SSIAP">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}.signal-box { max-width: 560px; padding: 22px 18px 16px; }
 .signal-box h2 { margin: 0 44px 10px 0; font-size: 1.2rem; }
-.avis-l mark { background: var(--red-bg); color: #fff; padding: .1em .4em; border-radius: 6px; font-weight: 700; -webkit-box-decoration-break: clone; box-decoration-break: clone; line-height: 1.7; }
+.avis-scroll mark { background: var(--red-bg); color: #fff; padding: .1em .4em; border-radius: 6px; font-weight: 700; -webkit-box-decoration-break: clone; box-decoration-break: clone; line-height: 1.7; }
+.avis-scroll { max-height: 48vh; overflow-y: auto; padding-right: 6px; margin: 0 0 8px; border-bottom: 1px solid var(--line); }
+.avis-alerte { margin: 4px 0 14px; font-size: 1.05rem; line-height: 1.9; }
+.avis-hint { margin: 6px 0; color: var(--ink-2, var(--ink)); font-size: .9rem; }
+.avis-case { margin: 10px 0; }
 .avis-l { margin: 0 0 14px; padding-left: 1.2em; display: grid; gap: 8px; }
 .signal-p { margin: 14px 0 0; }
 .signal-f { border: 0; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
@@ -7801,7 +7805,7 @@ const APP = (() => {
       case "uncheck": { const box = b.closest("[data-check]"); $$("input", box).forEach((i) => (i.checked = false)); updateCheck(box); break; }
       case "zoom": openZoom(b.dataset.id, b.dataset.cap); break;
       case "zoom-close": closeZoom(); break;
-      case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); $("#avis").hidden = true; } break; }
+      case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; } break; }
       case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
       case "signal-close": $("#signal").hidden = true; break;
       case "signal-copy": { const x = signalTexte(b.dataset.ctx); if (!x.t) { $("#signal-err").textContent = "Écrivez d’abord quelques mots."; $("#signal-txt").focus(); break; } copyText(x.corps, "Message copié."); break; }
@@ -7898,28 +7902,36 @@ const APP = (() => {
   const MENTIONS = {
     soutien: {
       titre: "Bienvenue dans le Mémo SSIAP",
-      court: "Outil de révision et d’aide-mémoire, en amélioration continue. Il complète la formation agréée et les textes officiels, sans les remplacer.",
+      court: "Simple aide-mémoire, jamais une consigne : vous restez responsable de vos actes, diplômé ou non. Seuls votre formation et les textes officiels font foi.",
       points: [
-        "Le Mémo SSIAP est un <strong>outil de révision et d’aide-mémoire</strong>. Chaque information s’appuie sur des <strong>sources officielles citées</strong>, avec leur date de vérification.",
-        "La réglementation évolue sans cesse. L’appli est donc <strong>mise à jour en continu</strong> : certains contenus peuvent changer, et une <strong>veille réglementaire</strong> surveille les textes cités.",
-        "Elle n’est pas une application officielle. Elle <strong>complète</strong> votre formation agréée, les textes en vigueur et les consignes de votre site, qui <strong>font foi</strong> en cas de doute.",
-        "<mark>L’agent est formé et diplômé : les actions qu’il mène sur le terrain relèvent de sa propre responsabilité professionnelle.</mark> L’appli est une aide, jamais un ordre.",
-        "<strong>Votre retour compte</strong> : une information vous semble inexacte ou dépassée ? Le bouton « Signaler une erreur » nous permet de la corriger rapidement."
+        "Le Mémo SSIAP est un <strong>outil de révision et un aide-mémoire</strong> pour le travail de tous les jours : il aide à ne rien oublier.",
+        "Ce n’est pas un manque de sérieux : chaque information s’appuie sur des <strong>sources officielles citées</strong> dans l’appli, avec leur <strong>date de vérification</strong>.",
+        "Mais <strong>tout peut changer</strong> : textes, arrêtés, normes. La réglementation évolue sans cesse, et même une source vérifiée peut être dépassée le lendemain. Une <strong>veille réglementaire</strong> surveille les textes cités et l’appli est <strong>mise à jour en continu</strong>.",
+        "L’appli n’est <strong>pas une application officielle</strong> et ne remplace ni la formation agréée, ni les textes en vigueur, ni les consignes de votre site.",
+        "<strong>Votre retour compte</strong> : une information vous semble inexacte ou dépassée ? Le bouton « Signaler une erreur », présent sur chaque fiche, nous permet de la corriger."
       ],
-      case: "J’ai compris que le Mémo SSIAP est un outil d’aide qui complète, sans les remplacer, la formation, les textes officiels et les consignes de mon site."
+      alerte: "Simple aide-mémoire, jamais une consigne : vous restez responsable de vos actes, diplômé ou non. Seuls votre formation et les textes officiels font foi.",
+      case: "En validant, je certifie avoir pris connaissance que cette appli est un simple aide-mémoire, jamais une consigne, et que je reste responsable de mes actes, diplômé ou non. Seuls ma formation et les textes officiels font foi."
     }
   };
   const mention = () => MENTIONS[D.meta.statut] || MENTIONS.soutien;
   const signalBtn = (ctx) => `<p class="signal-p" data-tts="skip"><button type="button" class="btn ghost" data-act="signaler" data-ctx="${esc(ctx)}">${icon("alerte")}Signaler une erreur</button></p>`;
   function avisOuvrir() {
     const m = mention(), o = $("#avis");
-    $("#avis-c").innerHTML = `<h2 id="avis-t">${tx(m.titre)}</h2><ul class="avis-l">${m.points.map((p) => `<li>${p}</li>`).join("")}</ul>
-      <label class="tick"><input type="checkbox" id="avis-chk"><span>${tx(m.case)}</span></label>
+    $("#avis-c").innerHTML = `<h2 id="avis-t">${tx(m.titre)}</h2>
+      <div class="avis-scroll" id="avis-scroll" tabindex="0" role="region" aria-label="Conditions d’utilisation, faire défiler jusqu’en bas">
+        <ul class="avis-l">${m.points.map((p) => `<li>${p}</li>`).join("")}</ul>
+        <p class="avis-alerte"><mark>${tx(m.alerte)}</mark></p>
+      </div>
+      <p class="avis-hint" id="avis-hint">${icon("chevron")}Faites défiler jusqu’en bas pour valider.</p>
+      <label class="tick avis-case"><input type="checkbox" id="avis-chk" disabled><span>${tx(m.case)}</span></label>
       <p><button type="button" class="btn" id="avis-ok" data-act="avis-ok" disabled>Je continue</button></p>`;
     o.hidden = false;
-    const chk = $("#avis-chk");
+    const sc = $("#avis-scroll"), chk = $("#avis-chk");
+    const fini = () => { if (sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 12) { chk.disabled = false; $("#avis-hint").hidden = true; } };
+    sc.addEventListener("scroll", fini);
     chk.addEventListener("change", () => { $("#avis-ok").disabled = !chk.checked; });
-    chk.focus();
+    requestAnimationFrame(() => { fini(); sc.focus(); });
   }
   function signalOuvrir(ctx) {
     const o = $("#signal"), mail = !!D.meta.contact;
