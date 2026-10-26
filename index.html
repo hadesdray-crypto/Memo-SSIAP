@@ -20,6 +20,7 @@
 .signal-nom input, .signal-in { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
 .signal-mini { font-size: .88rem; margin: 6px 0; }
 .sig-it { margin-top: 12px; }
+.sig-merci { font-weight: 700; color: var(--green, var(--ink)); margin: 6px 0; }
 .signal-box { max-width: 560px; padding: 22px 18px 16px; }
 .signal-box h2 { margin: 0 44px 10px 0; font-size: 1.2rem; }
 .avis-scroll mark { background: var(--red-bg); color: #fff; padding: .1em .4em; border-radius: 6px; font-weight: 700; -webkit-box-decoration-break: clone; box-decoration-break: clone; line-height: 1.7; }
@@ -1034,6 +1035,8 @@ const D = {
     avisVersion: 1,
     /* Adresse qui reçoit les signalements d’erreur. Vide = le bouton propose seulement de copier le message. */
     contact: "",
+    /* Serveur des signalements (Supabase) : renseigner url et cle (clé publique « anon ») pour activer l’envoi automatique. Vide = inactif. */
+    serveur: { url: "", cle: "" },
   },
   rubriques: [
     { id: "feu", tab: "rappel", titre: "Le feu", ic: "flamme", co: "red", desc: "Triangle du feu, propagation, classes de feux, fumées" },
@@ -6936,7 +6939,7 @@ const APP = (() => {
       : `<span class="offline" style="background:var(--blue-tint);color:var(--blue)">${icon("info")}Aperçu en ligne</span>`;
     const nbSrc = Object.keys(D.sources).length;
     const html = `<nav class="crumb"><a href="#outils">Outils</a></nav>
-      <div class="page-h"><h1>À propos</h1><p>Mémo SSIAP ${esc(D.meta.version)}, contenu vérifié le ${D.meta.verifie}.</p></div>
+      <div class="page-h"><h1>À propos</h1><p data-act="dev-tap">Mémo SSIAP ${esc(D.meta.version)}, contenu vérifié le ${D.meta.verifie}.</p></div>
       <section class="sec about"><h2 class="lbl">Ce que contient l’appli</h2>
         <ul><li>${D.fiches.length} fiches, avec ${Object.keys(SCHEMAS).length} schémas, sur le feu, les extincteurs, le SSI, le bâtiment, les missions, les secours, le métier SSIAP, les ERP et IGH, les contrôles et l’agent de sécurité privée.</li><li>${D.procedures.length} conduites à tenir pour les situations d’urgence.</li><li>${TOOLS.length} outils de calcul et de révision, ${D.glossaire.length} sigles expliqués, les numéros d’urgence.</li></ul>
       </section>
@@ -7635,6 +7638,7 @@ const APP = (() => {
     if (t === "favoris") return pageFavoris();
     if (t === "apropos") return pageApropos();
     if (t === "signalements") return pageSignalements();
+    if (t === "dev") return pageDev();
     if (t === "rapports") return RP.pageList();
     if (t === "rapport") return RP.pageEdit();
     if (t === "dictee") return RP.pageDictee();
@@ -7815,9 +7819,11 @@ const APP = (() => {
       case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; } break; }
       case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
       case "signal-close": $("#signal").hidden = true; break;
-      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); $("#signal").hidden = true; toast("Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); if (location.hash === "#signalements") rerender(); break; }
+      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); $("#signal").hidden = true; toast(SRV() ? "Merci ! Votre signalement est enregistré et part dès que vous avez du réseau." : "Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); synchro(); if (location.hash === "#signalements") rerender(); break; }
       case "signal-copy": { const x = signalLire(b.dataset.ctx); if (x) copyText(signalCorps(x), "Message copié."); break; }
       case "signal-mail": { const x = signalLire(b.dataset.ctx); if (x) location.href = "mailto:" + D.meta.contact + "?subject=" + encodeURIComponent("Mémo SSIAP : signalement (" + x.type + ")") + "&body=" + encodeURIComponent(signalCorps(x)); break; }
+      case "dev-set": devSet(b.dataset.id, b.dataset.e); break;
+      case "dev-tap": { const n = Date.now(); devTaps = n - devT < 1500 ? devTaps + 1 : 1; devT = n; if (devTaps >= 5) { devTaps = 0; go("dev"); } break; }
       case "sig-del": store.set("signalements", sigs().filter((q) => q.id !== b.dataset.id)); rerender(); toast("Signalement supprimé."); break;
       case "del-num": state.confirmDel = +b.dataset.i; $("#mesnum-c").innerHTML = myNumsHTML(); break;
       case "del-no": state.confirmDel = -1; $("#mesnum-c").innerHTML = myNumsHTML(); break;
@@ -7882,6 +7888,7 @@ const APP = (() => {
     const f = e.target;
     if (!f.dataset || !f.dataset.act) return;
     e.preventDefault();
+    if (f.dataset.act === "dev-login") { devLogin(f); return; }
     if (f.dataset.act === "search") { const i = $("#q", f); if (i) i.blur(); return; }
     if (f.dataset.act === "pl-save") { PL.submit(f, go); return; }
     if (f.dataset.act === "add-num") {
@@ -7954,7 +7961,7 @@ const APP = (() => {
     const plein = n >= SIG_MAX;
     $("#signal-c").innerHTML = `<h2 id="signal-t">Signaler une erreur ou une idée</h2>
       <p class="signal-ctx">Page concernée : <strong>${tx(ctx)}</strong></p>
-      <div class="foot-note">${icon("info")}<span>L’envoi automatique sera activé lors d’une prochaine mise à jour. En attendant, votre signalement reste sur votre téléphone (${n} sur ${SIG_MAX}) et partira tout seul dès que ce sera possible.</span></div>
+      <div class="foot-note">${icon("info")}<span>${SRV() ? "Votre signalement sera envoyé automatiquement dès que vous avez du réseau." : "L’envoi automatique sera activé lors d’une prochaine mise à jour. En attendant, votre signalement reste sur votre téléphone et partira tout seul dès que ce sera possible."} (${n} sur ${SIG_MAX})</span></div>
       ${plein ? `<p class="signal-err">Vous avez atteint la limite de ${SIG_MAX} signalements en attente. Supprimez-en depuis « Mes signalements » pour en ajouter.</p>` : `
       <div class="signal-nom"><label>Prénom<input id="signal-prenom" autocomplete="off" maxlength="30" value="${esc(p.prenom || "")}"></label><label>Nom<input id="signal-nom" autocomplete="off" maxlength="30" value="${esc(p.nom || "")}"></label></div>
       <p class="signal-mini">Ce nom sert uniquement à vous répondre. Il peut être inventé, mais il faut deux mots.</p>
@@ -7981,16 +7988,83 @@ const APP = (() => {
     if (texte.length < 10) return bad("Expliquez en quelques mots (dix lettres au moins).", "signal-txt");
     err.textContent = "";
     store.set("profil", { prenom, nom });
-    return { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date: new Date().toISOString(), prenom, nom, type: ty, page: ctx, adresse: location.hash || "#accueil", texte, source: v("signal-src"), tech: $("#signal-tech").checked ? infosTech() : null, etat: "a-envoyer" };
+    return { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date: new Date().toISOString(), prenom, nom, type: ty, page: ctx, adresse: location.hash || "#accueil", texte, source: v("signal-src"), tech: $("#signal-tech").checked ? infosTech() : null, etat: "a-envoyer", appareil: appareil() };
   }
   const signalCorps = (r) => `${r.type}\nDe : ${r.prenom} ${r.nom}\nPage : ${r.page} (${r.adresse})\nVersion : ${D.meta.version} (contenu vérifié le ${D.meta.verifieCourt})\n\n${r.texte}\n${r.source ? "\nSource : " + r.source + "\n" : ""}${r.tech ? "\nInformations techniques : " + JSON.stringify(r.tech) + "\n" : ""}`;
+  /* ---------- Serveur de signalements (prêt, inactif tant que D.meta.serveur est vide) ---------- */
+  const SRV = () => (D.meta.serveur && D.meta.serveur.url && D.meta.serveur.cle ? D.meta.serveur : null);
+  const appareil = () => { let a = store.get("appareil", ""); if (!a) { a = window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12); store.set("appareil", a); } return a; };
+  const hdr = (jwt) => ({ apikey: SRV().cle, Authorization: "Bearer " + (jwt || SRV().cle), "Content-Type": "application/json", "x-appareil": appareil() });
+  let syncEnCours = false;
+  async function synchro() {
+    const S = SRV();
+    if (!S || !navigator.onLine || syncEnCours) return;
+    syncEnCours = true;
+    try {
+      let l = sigs();
+      for (const r of l.filter((x) => x.etat === "a-envoyer")) {
+        const res = await fetch(S.url + "/rest/v1/signalements", { method: "POST", headers: { ...hdr(), Prefer: "return=minimal" }, body: JSON.stringify({ id: r.id, appareil: appareil(), prenom: r.prenom, nom: r.nom, type: r.type, page: r.page, adresse: r.adresse, texte: r.texte, source: r.source || null, tech: r.tech, version: D.meta.version, date: r.date }) });
+        if (res.ok || res.status === 409) r.etat = "envoye"; else break;
+      }
+      store.set("signalements", l);
+      const res = await fetch(S.url + "/rest/v1/signalements?select=id,etat,reponse,corrige_en&appareil=eq." + encodeURIComponent(appareil()), { headers: hdr() });
+      if (res.ok) {
+        const m = new Map((await res.json()).map((x) => [x.id, x]));
+        l = sigs();
+        l.forEach((r) => { const x = m.get(r.id); if (x) { r.etat = x.etat === "recu" ? "envoye" : x.etat; r.reponse = x.reponse || ""; r.corrige_en = x.corrige_en || ""; } });
+        store.set("signalements", l);
+      }
+    } catch (e) { /* réseau indisponible : on réessaiera */ } finally { syncEnCours = false; if (location.hash === "#signalements") rerender(); }
+  }
+  const ETAT_SIG = (r) => ({
+    "a-envoyer": ["En attente d’envoi", ""],
+    envoye: ["Envoyé, en cours de vérification", "Merci, nous vérifions."],
+    confirme: ["Erreur confirmée", "Bravo, vous avez trouvé une vraie erreur ! Merci de nous aider à améliorer l’appli."],
+    corrige: ["Corrigé", `Bravo, vous avez trouvé une vraie erreur ! Elle est corrigée${r.corrige_en ? " dans la version " + r.corrige_en : ""}, grâce à vous. Merci !`],
+    refuse: ["Vérifié : pas une erreur", "Merci pour votre aide ! Après vérification, ce n’est pas une erreur."]
+  }[r.etat] || ["En attente d’envoi", ""]);
+
+  /* Espace développeur : caché (5 touches sur le numéro de version, dans À propos), connexion par compte. */
+  let devJwt = "";
+  function pageDev() {
+    setTimeout(devCharger, 0);
+    return { html: `<nav class="crumb"><a href="#apropos">À propos</a></nav><div class="page-h"><h1>Espace développeur</h1></div><div id="dev-c"><p>Chargement…</p></div>`, title: "Espace développeur", tab: "outils", back: "apropos" };
+  }
+  async function devCharger() {
+    const c = $("#dev-c"); if (!c) return;
+    const S = SRV();
+    if (!S) { c.innerHTML = `<p class="practice">Le serveur n’est pas encore connecté.</p>`; return; }
+    if (!devJwt) { c.innerHTML = `<form data-act="dev-login" class="signal-nom"><label>E-mail<input name="e" type="email" autocomplete="username"></label><label>Mot de passe<input name="p" type="password" autocomplete="current-password"></label><button class="btn" type="submit">Se connecter</button></form><p id="dev-err" class="signal-err"></p>`; return; }
+    try {
+      const res = await fetch(S.url + "/rest/v1/signalements?select=*&order=date.desc&limit=200", { headers: hdr(devJwt) });
+      if (res.status === 401) { devJwt = ""; devCharger(); return; }
+      const l = await res.json();
+      const lab = { recu: "Nouveau", confirme: "Confirmé", corrige: "Corrigé", refuse: "Pas une erreur" };
+      c.innerHTML = `<p>${l.length} signalement(s).</p>` + l.map((r) => `<section class="sec sig-it"><p class="lbl">${tx(r.type)} · ${lab[r.etat] || r.etat}</p><h2>${tx(r.page || "")}</h2><p><strong>${tx(r.prenom + " " + r.nom)}</strong> signale :</p><p>${tx(r.texte)}</p>${r.source ? `<p class="signal-mini">Source : ${tx(r.source)}</p>` : ""}<p class="signal-mini">${new Date(r.date).toLocaleString("fr-FR")} · version ${tx(r.version || "?")}${r.tech ? " · " + tx(JSON.stringify(r.tech)) : ""}</p><div class="signal-b"><button class="btn ghost" data-act="dev-set" data-id="${esc(r.id)}" data-e="confirme">Confirmer</button><button class="btn ghost" data-act="dev-set" data-id="${esc(r.id)}" data-e="corrige">Corrigé (v. ${esc(D.meta.version)})</button><button class="btn ghost" data-act="dev-set" data-id="${esc(r.id)}" data-e="refuse">Pas une erreur</button></div></section>`).join("");
+    } catch (e) { c.innerHTML = `<p class="signal-err">Impossible de joindre le serveur.</p>`; }
+  }
+  async function devLogin(f) {
+    const S = SRV(), err = $("#dev-err");
+    try {
+      const res = await fetch(S.url + "/auth/v1/token?grant_type=password", { method: "POST", headers: { apikey: S.cle, "Content-Type": "application/json" }, body: JSON.stringify({ email: f.elements.e.value.trim(), password: f.elements.p.value }) });
+      const j = await res.json();
+      if (!res.ok || !j.access_token) { if (err) err.textContent = "Connexion refusée."; return; }
+      devJwt = j.access_token; devCharger();
+    } catch (e) { if (err) err.textContent = "Impossible de joindre le serveur."; }
+  }
+  async function devSet(id, etat) {
+    const S = SRV(); const body = { etat }; if (etat === "corrige") body.corrige_en = D.meta.version;
+    try { const res = await fetch(S.url + "/rest/v1/signalements?id=eq." + encodeURIComponent(id), { method: "PATCH", headers: hdr(devJwt), body: JSON.stringify(body) }); if (res.ok) { toast("Enregistré."); devCharger(); } else toast("Échec de l’enregistrement."); } catch (e) { toast("Serveur injoignable."); }
+  }
+  let devTaps = 0, devT = 0;
+
   function pageSignalements() {
     const l = sigs().slice().reverse();
     const date = (d) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav>
       <div class="page-h"><h1>Mes signalements</h1><p>${l.length} sur ${SIG_MAX} en attente d’envoi.</p></div>
-      <div class="foot-note">${icon("info")}<span>L’envoi automatique sera activé lors d’une prochaine mise à jour : vos signalements partiront alors tout seuls, sans rien faire. Merci de nous aider à améliorer l’appli.</span></div>
-      ${l.length ? l.map((r) => `<section class="sec sig-it"><p class="lbl">${tx(r.type)}</p><h2>${tx(r.page)}</h2><p>${tx(r.texte)}</p><p class="signal-mini">${date(r.date)} · de ${tx(r.prenom + " " + r.nom)} · <strong>En attente d’envoi</strong></p><button type="button" class="btn ghost" data-act="sig-del" data-id="${esc(r.id)}">Supprimer</button></section>`).join("") : `<p class="practice">Aucun signalement pour l’instant. Le bouton « Signaler une erreur » se trouve en bas de chaque fiche.</p>`}`;
+      <div class="foot-note">${icon("info")}<span>${SRV() ? "Vos signalements sont envoyés automatiquement dès que vous avez du réseau." : "L’envoi automatique sera activé lors d’une prochaine mise à jour : vos signalements partiront alors tout seuls, sans rien faire."} Merci de nous aider à améliorer l’appli.</span></div>
+      ${l.length ? l.map((r) => `<section class="sec sig-it"><p class="lbl">${tx(r.type)}</p><h2>${tx(r.page)}</h2><p>${tx(r.texte)}</p><p class="signal-mini">${date(r.date)} · de ${tx(r.prenom + " " + r.nom)} · <strong>${tx(ETAT_SIG(r)[0])}</strong></p>${ETAT_SIG(r)[1] ? `<p class="sig-merci">${tx(ETAT_SIG(r)[1])}</p>` : ""}${r.etat === "refuse" && r.reponse ? `<p class="signal-mini">${tx(r.reponse)}</p>` : ""}<button type="button" class="btn ghost" data-act="sig-del" data-id="${esc(r.id)}">Supprimer</button></section>`).join("") : `<p class="practice">Aucun signalement pour l’instant. Le bouton « Signaler une erreur » se trouve en bas de chaque fiche.</p>`}`;
     return { html, title: "Mes signalements", tab: "outils", back: "apropos" };
   }
 
@@ -8064,6 +8138,8 @@ const APP = (() => {
     render();
     if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir();
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
+    setTimeout(synchro, 2500);
+    window.addEventListener("online", () => synchro());
     if (PWA) {
       window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredPrompt = e; if (cur && (cur.home || curTok === "apropos")) rerender(); });
       window.addEventListener("appinstalled", () => { deferredPrompt = null; toast("Appli installée."); });
