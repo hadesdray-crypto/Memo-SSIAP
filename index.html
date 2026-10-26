@@ -15,7 +15,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mémo SSIAP">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}.signal-box { max-width: 560px; padding: 22px 18px 16px; }
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}.signal-nom { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.signal-nom label { display: grid; gap: 4px; font-weight: 600; }
+.signal-nom input, .signal-in { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+.signal-mini { font-size: .88rem; margin: 6px 0; }
+.sig-it { margin-top: 12px; }
+.signal-box { max-width: 560px; padding: 22px 18px 16px; }
 .signal-box h2 { margin: 0 44px 10px 0; font-size: 1.2rem; }
 .avis-scroll mark { background: var(--red-bg); color: #fff; padding: .1em .4em; border-radius: 6px; font-weight: 700; -webkit-box-decoration-break: clone; box-decoration-break: clone; line-height: 1.7; }
 .avis-scroll { max-height: 48vh; overflow-y: auto; padding-right: 6px; margin: 0 0 8px; border-bottom: 1px solid var(--line); }
@@ -6945,6 +6950,7 @@ const APP = (() => {
         </ul>
         <p class="practice">${esc(mention().court)}</p>
         ${signalBtn("À propos")}
+        <p><a class="btn ghost" href="#signalements">Mes signalements${sigs().length ? " (" + sigs().length + ")" : ""}</a></p>
       </section>
       <section class="sec about"><h2 class="lbl b">Sans connexion et installation</h2>
         <p>${status}</p>
@@ -7628,6 +7634,7 @@ const APP = (() => {
     if (t === "sources") return pageSources();
     if (t === "favoris") return pageFavoris();
     if (t === "apropos") return pageApropos();
+    if (t === "signalements") return pageSignalements();
     if (t === "rapports") return RP.pageList();
     if (t === "rapport") return RP.pageEdit();
     if (t === "dictee") return RP.pageDictee();
@@ -7808,8 +7815,10 @@ const APP = (() => {
       case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; } break; }
       case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
       case "signal-close": $("#signal").hidden = true; break;
-      case "signal-copy": { const x = signalTexte(b.dataset.ctx); if (!x.t) { $("#signal-err").textContent = "Écrivez d’abord quelques mots."; $("#signal-txt").focus(); break; } copyText(x.corps, "Message copié."); break; }
-      case "signal-mail": { const x = signalTexte(b.dataset.ctx); if (!x.t) { $("#signal-err").textContent = "Écrivez d’abord quelques mots."; $("#signal-txt").focus(); break; } location.href = "mailto:" + D.meta.contact + "?subject=" + encodeURIComponent(x.objet) + "&body=" + encodeURIComponent(x.corps); break; }
+      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); $("#signal").hidden = true; toast("Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); if (location.hash === "#signalements") rerender(); break; }
+      case "signal-copy": { const x = signalLire(b.dataset.ctx); if (x) copyText(signalCorps(x), "Message copié."); break; }
+      case "signal-mail": { const x = signalLire(b.dataset.ctx); if (x) location.href = "mailto:" + D.meta.contact + "?subject=" + encodeURIComponent("Mémo SSIAP : signalement (" + x.type + ")") + "&body=" + encodeURIComponent(signalCorps(x)); break; }
+      case "sig-del": store.set("signalements", sigs().filter((q) => q.id !== b.dataset.id)); rerender(); toast("Signalement supprimé."); break;
       case "del-num": state.confirmDel = +b.dataset.i; $("#mesnum-c").innerHTML = myNumsHTML(); break;
       case "del-no": state.confirmDel = -1; $("#mesnum-c").innerHTML = myNumsHTML(); break;
       case "del-yes": myNums.splice(+b.dataset.i, 1); store.set("mesnum", myNums); state.confirmDel = -1; $("#mesnum-c").innerHTML = myNumsHTML(); toast("Numéro supprimé."); break;
@@ -7933,24 +7942,56 @@ const APP = (() => {
     chk.addEventListener("change", () => { $("#avis-ok").disabled = !chk.checked; });
     requestAnimationFrame(() => { fini(); sc.focus(); });
   }
+  /* Signalements : gardés sur l’appareil (100 au maximum) en attendant l’envoi automatique, prévu dans une prochaine mise à jour. */
+  const SIG_MAX = 100;
+  const ERRS = [];
+  window.addEventListener("error", (e) => { ERRS.push(String(e.message || "erreur").slice(0, 120)); if (ERRS.length > 5) ERRS.shift(); });
+  const sigs = () => { const l = store.get("signalements", []); return Array.isArray(l) ? l : []; };
+  const TYPES_SIG = ["Information fausse", "Information dépassée", "Faute ou texte peu clair", "Bug de l’appli", "Idée d’amélioration"];
+  const infosTech = () => ({ version: D.meta.version, verifie: D.meta.verifieCourt, appareil: navigator.userAgent.slice(0, 160), ecran: innerWidth + "x" + innerHeight, hors_connexion: !navigator.onLine, page: location.hash || "#accueil", erreurs: ERRS.slice() });
   function signalOuvrir(ctx) {
-    const o = $("#signal"), mail = !!D.meta.contact;
-    $("#signal-c").innerHTML = `<h2 id="signal-t">Signaler une erreur</h2>
+    const o = $("#signal"), n = sigs().length, p = store.get("profil", {}) || {}, mail = !!D.meta.contact;
+    const plein = n >= SIG_MAX;
+    $("#signal-c").innerHTML = `<h2 id="signal-t">Signaler une erreur ou une idée</h2>
       <p class="signal-ctx">Page concernée : <strong>${tx(ctx)}</strong></p>
-      <fieldset class="signal-f"><legend>Quel est le problème ?</legend>
-        ${["Information fausse", "Information dépassée", "Faute ou texte peu clair", "Autre"].map((t, i) => `<label class="tick"><input type="radio" name="signal-type" value="${esc(t)}"${i === 0 ? " checked" : ""}><span>${tx(t)}</span></label>`).join("")}
+      <div class="foot-note">${icon("info")}<span>L’envoi automatique sera activé lors d’une prochaine mise à jour. En attendant, votre signalement reste sur votre téléphone (${n} sur ${SIG_MAX}) et partira tout seul dès que ce sera possible.</span></div>
+      ${plein ? `<p class="signal-err">Vous avez atteint la limite de ${SIG_MAX} signalements en attente. Supprimez-en depuis « Mes signalements » pour en ajouter.</p>` : `
+      <div class="signal-nom"><label>Prénom<input id="signal-prenom" autocomplete="off" maxlength="30" value="${esc(p.prenom || "")}"></label><label>Nom<input id="signal-nom" autocomplete="off" maxlength="30" value="${esc(p.nom || "")}"></label></div>
+      <p class="signal-mini">Ce nom sert uniquement à vous répondre. Il peut être inventé, mais il faut deux mots.</p>
+      <fieldset class="signal-f"><legend>De quoi s’agit-il ?</legend>
+        ${TYPES_SIG.map((t, i) => `<label class="tick"><input type="radio" name="signal-type" value="${esc(t)}"${i === 0 ? " checked" : ""}><span>${tx(t)}</span></label>`).join("")}
       </fieldset>
-      <label class="signal-f" for="signal-txt"><span>Expliquez en quelques mots (et indiquez le texte officiel si vous le connaissez)</span></label>
-      <textarea id="signal-txt" rows="5" maxlength="1500"></textarea>
+      <label class="signal-f" for="signal-txt"><span>Expliquez ce qui ne va pas</span></label>
+      <textarea id="signal-txt" rows="4" maxlength="1500"></textarea>
+      <label class="signal-f" for="signal-src"><span>Texte officiel ou preuve (facultatif)</span></label>
+      <input id="signal-src" maxlength="300" class="signal-in" placeholder="Article, lien, document…">
+      <label class="tick"><input type="checkbox" id="signal-tech" checked><span>Joindre les informations techniques (version, téléphone, dernières erreurs). Aucun contenu personnel.</span></label>
       <p id="signal-err" class="signal-err" role="alert"></p>
-      <div class="signal-b">${mail ? `<button type="button" class="btn" data-act="signal-mail" data-ctx="${esc(ctx)}">Envoyer par e-mail</button>` : ""}<button type="button" class="btn${mail ? " ghost" : ""}" data-act="signal-copy" data-ctx="${esc(ctx)}">Copier le message</button><button type="button" class="btn ghost" data-act="signal-close">Annuler</button></div>
-      ${mail ? "" : `<p class="foot-note">${icon("info")}<span>L’envoi automatique n’est pas encore activé : copiez le message, puis envoyez-le à la personne qui vous a donné l’appli.</span></p>`}`;
+      <div class="signal-b"><button type="button" class="btn" data-act="signal-save" data-ctx="${esc(ctx)}">Enregistrer le signalement</button>${mail ? `<button type="button" class="btn ghost" data-act="signal-mail" data-ctx="${esc(ctx)}">Envoyer par e-mail</button>` : ""}<button type="button" class="btn ghost" data-act="signal-copy" data-ctx="${esc(ctx)}">Copier</button><button type="button" class="btn ghost" data-act="signal-close">Annuler</button></div>`}`;
     o.hidden = false;
-    $("#signal-txt").focus();
+    const f = $("#signal-prenom"); if (f) f.focus();
   }
-  function signalTexte(ctx) {
-    const t = ($("#signal-txt") || {}).value || "", ty = ($("input[name=signal-type]:checked") || {}).value || "";
-    return { t: t.trim(), objet: `Mémo SSIAP : signalement (${ty})`, corps: `${ty}\nPage : ${ctx}\nAdresse de la page : ${location.hash || "#accueil"}\nVersion : ${D.meta.version} (contenu vérifié le ${D.meta.verifieCourt})\n\n${t.trim()}\n` };
+  function signalLire(ctx) {
+    const v = (id) => ((($("#" + id)) || {}).value || "").trim();
+    const prenom = v("signal-prenom"), nom = v("signal-nom"), texte = v("signal-txt"), err = $("#signal-err");
+    const ty = ($("input[name=signal-type]:checked") || {}).value || "";
+    const bad = (m, id) => { err.textContent = m; const e = $("#" + id); if (e) e.focus(); return null; };
+    if (prenom.length < 2) return bad("Indiquez un prénom (deux lettres au moins).", "signal-prenom");
+    if (nom.length < 2) return bad("Indiquez un nom (deux lettres au moins).", "signal-nom");
+    if (texte.length < 10) return bad("Expliquez en quelques mots (dix lettres au moins).", "signal-txt");
+    err.textContent = "";
+    store.set("profil", { prenom, nom });
+    return { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date: new Date().toISOString(), prenom, nom, type: ty, page: ctx, adresse: location.hash || "#accueil", texte, source: v("signal-src"), tech: $("#signal-tech").checked ? infosTech() : null, etat: "a-envoyer" };
+  }
+  const signalCorps = (r) => `${r.type}\nDe : ${r.prenom} ${r.nom}\nPage : ${r.page} (${r.adresse})\nVersion : ${D.meta.version} (contenu vérifié le ${D.meta.verifieCourt})\n\n${r.texte}\n${r.source ? "\nSource : " + r.source + "\n" : ""}${r.tech ? "\nInformations techniques : " + JSON.stringify(r.tech) + "\n" : ""}`;
+  function pageSignalements() {
+    const l = sigs().slice().reverse();
+    const date = (d) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    const html = `<nav class="crumb"><a href="#apropos">À propos</a></nav>
+      <div class="page-h"><h1>Mes signalements</h1><p>${l.length} sur ${SIG_MAX} en attente d’envoi.</p></div>
+      <div class="foot-note">${icon("info")}<span>L’envoi automatique sera activé lors d’une prochaine mise à jour : vos signalements partiront alors tout seuls, sans rien faire. Merci de nous aider à améliorer l’appli.</span></div>
+      ${l.length ? l.map((r) => `<section class="sec sig-it"><p class="lbl">${tx(r.type)}</p><h2>${tx(r.page)}</h2><p>${tx(r.texte)}</p><p class="signal-mini">${date(r.date)} · de ${tx(r.prenom + " " + r.nom)} · <strong>En attente d’envoi</strong></p><button type="button" class="btn ghost" data-act="sig-del" data-id="${esc(r.id)}">Supprimer</button></section>`).join("") : `<p class="practice">Aucun signalement pour l’instant. Le bouton « Signaler une erreur » se trouve en bas de chaque fiche.</p>`}`;
+    return { html, title: "Mes signalements", tab: "outils", back: "apropos" };
   }
 
   function shell() {
