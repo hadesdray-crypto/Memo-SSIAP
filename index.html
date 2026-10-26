@@ -586,6 +586,72 @@ td:first-child { font-weight: 700; }
 .score { text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center; padding: 22px 16px; }
 .score b { font: 700 3rem/1 var(--font-d); color: var(--red); }
 
+/* Jeu */
+.fld { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: .9rem; }
+.fld input, .fld textarea { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--field); color: var(--ink); }
+.jx-hero { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--radius); background: linear-gradient(135deg, var(--red-bg), #7d0c16); color: #fff; }
+.jx-av { font-size: 2.2rem; width: 3.4rem; height: 3.4rem; border-radius: 50%; background: rgba(255,255,255,.18); display: grid; place-items: center; flex: none; }
+.jx-me { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.jx-me b { font: 700 1.2rem/1.1 var(--font-d); overflow-wrap: anywhere; }
+.jx-me span, .jx-me small { font-size: .85rem; opacity: .92; }
+.jx-me .qbar { background: rgba(255,255,255,.3); }
+.jx-me .qbar i { background: #ffd66b; }
+.jx-flame { display: flex; flex-direction: column; align-items: center; font-size: 1.5rem; line-height: 1; }
+.jx-flame b { font: 700 .95rem/1 var(--font-d); }
+.jx-avs { display: flex; flex-wrap: wrap; gap: 8px; }
+.jx-avs button { font-size: 1.7rem; width: 3.2rem; height: 3.2rem; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface); }
+.jx-avs button[aria-pressed="true"] { border-color: var(--red-bg); box-shadow: 0 0 0 2px var(--red-bg) inset; }
+.jx-ring { --p: 0; width: 46px; height: 46px; border-radius: 50%; flex: none; display: grid; place-items: center; background: conic-gradient(var(--green-bg) calc(var(--p) * 1%), var(--line) 0); position: relative; }
+.jx-ring::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--surface); }
+.jx-ring b { position: relative; font: 700 .72rem/1 var(--font-d); }
+.jx-ring.big { width: 84px; height: 84px; }
+.jx-ring.big::before { inset: 8px; }
+.jx-ring.big b { font-size: 1.15rem; }
+.jx-cat:disabled { opacity: .6; }
+.jx-gauge { display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.jx-gauge div { display: flex; flex-direction: column; gap: 2px; }
+.jx-gauge span { font-size: .88rem; color: var(--ink-2); }
+.jx-dipl { padding: 14px; border-radius: var(--radius); background: var(--amber-tint); border: 1px solid var(--amber-bg); }
+.jx-dipl p { margin: 6px 0 0; }
+.jx-map { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 12px; }
+.jx-zone { margin: 14px 0 2px; font: 700 1rem/1.2 var(--font-d); color: var(--red); }
+.jx-row { display: flex; align-items: center; gap: 12px; position: relative; }
+.jx-row.p1 { padding-left: 22%; } .jx-row.p2 { padding-left: 44%; } .jx-row.p3 { padding-left: 22%; }
+.jx-node { width: 62px; height: 62px; border-radius: 50%; border: 3px solid var(--line-2); background: var(--surface); font: 700 1.2rem/1 var(--font-d); color: var(--ink-2); flex: none; display: grid; place-items: center; }
+.jx-node.done { background: var(--green-bg); border-color: var(--green-bg); color: #fff; }
+.jx-node.here { background: var(--red-bg); border-color: var(--red-press); color: #fff; box-shadow: 0 0 0 6px var(--red-tint-2); }
+.jx-node:disabled { opacity: .55; }
+.jx-lab { display: flex; flex-direction: column; font-size: .85rem; color: var(--ink-2); }
+.jx-lab b { color: var(--ink); }
+.jx-here { position: absolute; left: 0; top: -14px; font-size: 1.5rem; transform: translateX(var(--hx, 0)); pointer-events: none; }
+.jx-row.p0 .jx-here { left: 14px; } .jx-row.p1 .jx-here, .jx-row.p3 .jx-here { left: calc(22% + 14px); } .jx-row.p2 .jx-here { left: calc(44% + 14px); }
+.jx-sit { margin: 0; padding: 12px 14px; border-radius: var(--radius); background: var(--surface-2); border: 1px solid var(--line); font-weight: 600; }
+.qc .tag { min-width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--red-tint); color: var(--red); font: 700 .95rem/1 var(--font-d); flex: none; }
+.jx-stars { font-size: 2.6rem; letter-spacing: 4px; color: var(--line-2); }
+.jx-stars i { font-style: normal; display: inline-block; }
+.jx-stars i.on { color: #e8a317; animation: jx-pop .5s both; animation-delay: var(--d); }
+@keyframes jx-pop { 0% { transform: scale(.2) rotate(-40deg); opacity: 0; } 70% { transform: scale(1.3); } 100% { transform: scale(1); opacity: 1; } }
+.jx-res { gap: 12px; }
+.jx-res .btn { width: 100%; max-width: 360px; }
+.jx-big { font: 700 2rem/1.1 var(--font-d); color: var(--red); overflow-wrap: anywhere; }
+.jx-names { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.jx-sc { display: flex; gap: 6px; }
+.jx-sc span { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font: 700 1.1rem/1.2 var(--font-d); }
+.jx-sc span b { font: 600 .72rem/1.2 system-ui, sans-serif; color: var(--ink-2); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jx-sc span.on { border-color: var(--red-bg); background: var(--red-tint); }
+.jx-timer { display: flex; align-items: center; gap: 10px; }
+.jx-timer .qbar { flex: 1; }
+.jx-timer span { font: 700 1rem/1 var(--font-d); min-width: 3ch; text-align: right; }
+.jx-podium { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.jx-pod { display: flex; flex-direction: column; padding: 10px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.jx-pod .m { font-size: 1.8rem; line-height: 1; }
+.jx-pod.r0 { background: var(--amber-tint); border-color: var(--amber-bg); }
+.jx-pod b { font: 700 1.15rem/1.2 var(--font-d); color: var(--ink); }
+.jx-pod span:last-child { font-size: .88rem; color: var(--ink-2); }
+.jx-pod { align-items: center; text-align: center; }
+.jx-res h2 { margin: 0; font: 700 1.3rem/1.2 var(--font-d); }
+@media (prefers-reduced-motion: reduce) { .jx-stars i.on { animation: none; } }
+
 /* Glossaire */
 .gl-letter { margin: 6px 0 0; font: 700 1.3rem/1 var(--font-d); color: var(--red); }
 .gl { display: flex; flex-direction: column; gap: 6px; }
@@ -6503,6 +6569,7 @@ const APP = (() => {
     { id: "rapports", t: "Rapports d’incident", d: "Racontez à la voix ou remplissez étape par étape : chronologie à l’heure près, questions sur ce qui manque, contrôle de qualité, ligne de main courante.", ic: "registre", co: "red", mc: "rapport incident compte rendu main courante redaction chronologie intervention dicter vocal voix dictee" },
     { id: "planning", t: "Mon planning et mes heures", d: "Vos heures de la semaine : photo du planning, heures supplémentaires à la voix ou au clavier, avec le lieu, le motif et l’affaire. Totaux et relevé du mois.", ic: "calendrier", co: "blue", mc: "planning heures horaires semaine heures supplementaires sup affaire tribunal lieu motif releve mois pointage" },
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
+    { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 4 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
     { id: "o-categorie", t: "Catégorie d’un ERP", d: "Activité et effectif : 5e catégorie ou 1er groupe, puis catégorie 1 à 4.", ic: "immeuble", co: "blue", mc: "classement categorie erp effectif seuil 5e groupe" },
     { id: "o-effectif", t: "Calcul de l’effectif", d: "Surface, sièges ou places : nombre de personnes à prendre en compte.", ic: "personnes", co: "blue", mc: "effectif theorique densite surface m2 personnes calcul" },
@@ -6514,7 +6581,7 @@ const APP = (() => {
   ];
   TOOLS.forEach((t) => (TL[t.id] = t));
 
-  const PAGE_T = { accueil: "Accueil", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire" };
+  const PAGE_T = { accueil: "Accueil", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire" };
   const tok = (id) => {
     if (id === "numeros") return "urgence";
     if (id === "quiz") return "o-quiz";
@@ -7715,6 +7782,339 @@ const APP = (() => {
     VX.play([...$$(".qq, .qc button", box).map((el) => ({ t: el.matches("button") ? `Réponse ${[...el.parentElement.children].indexOf(el) + 1} : ${el.textContent.replace(/^\d+/, "").trim()}` : `Question ${quiz.i + 1}. ${el.textContent}`, el })), ...$$(".qfb p", box).map((el) => ({ t: el.textContent, el }))], { label: `Question ${quiz.i + 1}` });
   }
 
+  /* ---------- Jeu : profil, carte de progression, battle ---------- */
+  const JCATS = [
+    { id: "ssiap1", t: "SSIAP 1", ic: "badge", co: "red" },
+    { id: "ssiap2", t: "SSIAP 2", ic: "personnes", co: "blue" },
+    { id: "ssiap3", t: "SSIAP 3", ic: "immeuble", co: "blue" },
+    { id: "reglementation", t: "Textes et règlement", ic: "registre", co: "amber" },
+    { id: "aps", t: "APS", ic: "bouclier", co: "blue" },
+    { id: "sst", t: "SST, secourisme", ic: "croix", co: "green" },
+    { id: "h0b0", t: "H0B0, électricité", ic: "alerte", co: "amber" },
+    { id: "terrain", t: "Sur le terrain", ic: "ronde", co: "green" },
+  ];
+  const JZONES = ["Le hall d’accueil", "Le poste de sécurité", "Les couloirs", "Les escaliers", "Le sous-sol", "La toiture", "Le grand ERP", "Le jour J"];
+  const JAV = ["🧯", "🚒", "🦺", "🔥", "🛡️", "🧑‍🚒", "🚨", "⛑️"];
+  const JRANKS = [["Stagiaire", 0], ["Rondier", 60], ["Agent", 160], ["Agent confirmé", 320], ["Chef de poste", 550], ["Chef d’équipe", 850], ["Adjoint au chef de service", 1250], ["Chef de service", 1800], ["Expert", 2600], ["Légende du feu", 3600]];
+  const JT = 20000;
+  const JCAT = {}; JCATS.forEach((c) => (JCAT[c.id] = c));
+  let jP = store.get("jeu", null);
+  if (jP && (typeof jP !== "object" || !jP.pseudo)) jP = null;
+  if (jP) { jP.st = jP.st || {}; jP.serie = jP.serie || { d: "", n: 0 }; jP.xp = jP.xp || 0; }
+  const J = { view: "hub", cat: null, mode: "examen", run: null, av: JAV[0], pseudo: "", reset: false };
+  const B = { n: 2, names: [], rounds: 5, timer: true, cat: "all", mode: "examen" };
+  let BT = null, jTimer = null;
+  const jSave = () => store.set("jeu", jP);
+  const jDay = (t) => new Date(t || Date.now()).toISOString().slice(0, 10);
+  function jRank() { let i = 0; JRANKS.forEach((r, k) => { if (jP.xp >= r[1]) i = k; }); const nx = JRANKS[i + 1]; return { t: JRANKS[i][0], from: JRANKS[i][1], nx: nx ? nx[1] : null, nxt: nx ? nx[0] : null }; }
+  function jGain(xp) {
+    jP.xp += xp;
+    const d = jDay();
+    if (jP.serie.d !== d) jP.serie = { d, n: jP.serie.d === jDay(Date.now() - 864e5) ? jP.serie.n + 1 : 1 };
+    jSave();
+  }
+  /* Banque de questions : les questions du quiz de l'appli + les lots vérifiés (D.jeuLots) + lots importés sur cet appareil */
+  function jNorm(r) {
+    try {
+      const cat = String(r.categorie || ""), mode = r.mode === "culture" ? "culture" : "examen";
+      if (!JCAT[cat]) return null;
+      const src = r.source && (r.source.titre || r.source.reference) ? r.source : null;
+      if (cat === "terrain" || r.situation) {
+        const n = (r.actions || []).length;
+        if (!r.situation || n < 2 || !Array.isArray(r.ordre_correct) || !r.ordre_correct.length || r.ordre_correct.some((x) => !(x >= 0 && x < n)) || !src) return null;
+        return { id: hashQ(String(r.situation)), type: "terrain", cats: ["terrain"], mode, q: String(r.situation), acts: r.actions.map(String), ordre: r.ordre_correct.map(Number), evit: (r.actions_a_eviter || []).map(Number), x: String(r.explication || ""), src };
+      }
+      if (!r.question || !Array.isArray(r.reponses) || r.reponses.length !== 4 || !(r.bonne >= 0 && r.bonne <= 3) || !src) return null;
+      return { id: hashQ(String(r.question)), type: "qcm", cats: [cat], mode, q: String(r.question), c: r.reponses.map(String), a: +r.bonne, x: String(r.explication || ""), src };
+    } catch (e) { return null; }
+  }
+  let jBank = null;
+  const jMapNiv = { "1": "ssiap1", "2": "ssiap2", "3": "ssiap3", APS: "aps" };
+  function jBuild() {
+    const seen = new Set(), out = [];
+    QZ.forEach((q) => {
+      const cats = [...new Set((q.niv || []).map((n) => jMapNiv[n]).filter(Boolean))];
+      if (q.th === "erp" || q.th === "controles") cats.push("reglementation");
+      if (!cats.length) return;
+      seen.add(q.id);
+      out.push({ id: q.id, type: "qcm", cats, mode: "examen", q: q.q, c: q.c, a: q.a, x: q.x || "", f: q.f });
+    });
+    [...(D.jeuLots || []), ...store.get("jeu-lots", [])].forEach((r) => { const n = jNorm(r); if (n && !seen.has(n.id)) { seen.add(n.id); out.push(n); } });
+    return out;
+  }
+  const jBk = () => jBank || (jBank = jBuild());
+  const jPool = (cat, mode) => jBk().filter((q) => q.cats.includes(cat) && q.mode === mode).sort((a, b) => (a.id < b.id ? -1 : 1));
+  function jStages(cat, mode) {
+    const p = jPool(cat, mode);
+    if (!p.length) return [];
+    const n = Math.max(1, Math.floor(p.length / 5));
+    return Array.from({ length: n }, (_, k) => p.slice(Math.floor((k * p.length) / n), Math.floor(((k + 1) * p.length) / n)));
+  }
+  const jSt = (cat, mode) => { const k = cat + "." + mode; jP.st[k] = jP.st[k] || { s: {}, ok: {} }; return jP.st[k]; };
+  const jGauge = (cat) => { const p = jPool(cat, "examen"); if (!p.length) return null; const o = jSt(cat, "examen").ok; return Math.round((p.filter((q) => o[q.id]).length / p.length) * 100); };
+  /* Import d'un lot au format demandé à l'autre IA : renvoie le détail pour que Hades voie ce qui est retenu */
+  function jImport(text) {
+    let arr;
+    try { arr = JSON.parse(text.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "")); } catch (e) { return { err: "Le fichier n’est pas un JSON valide." }; }
+    if (!Array.isArray(arr)) return { err: "Il faut un tableau JSON de questions." };
+    const have = new Set(jBk().map((q) => q.id)), lots = store.get("jeu-lots", []);
+    let ok = 0, dup = 0, bad = 0;
+    arr.forEach((r) => { const n = jNorm(r); if (!n) bad++; else if (have.has(n.id)) dup++; else { have.add(n.id); lots.push(r); ok++; } });
+    store.set("jeu-lots", lots);
+    jBank = null;
+    return { ok, dup, bad };
+  }
+  const jPrep = (q) => (q.type === "terrain" ? { ...q } : { ...q, ch: shuffle(q.c.map((t, i) => ({ t, ok: i === q.a }))) });
+  const jStars = (n) => "★".repeat(n) + "☆".repeat(3 - n);
+
+  /* ----- Jeu solo ----- */
+  function jStart(cat, mode, k) {
+    const st = jStages(cat, mode)[k];
+    if (!st) return;
+    J.run = { cat, mode, k, qs: shuffle(st.slice()).map(jPrep), i: 0, picked: [], res: [], seq: [], done: false };
+    J.view = "play";
+  }
+  function jAnswer(ok) {
+    const r = J.run, q = r.qs[r.i], s = jSt(r.cat, r.mode);
+    r.res[r.i] = ok;
+    if (ok) { s.ok[q.id] = 1; jP.xp += 10; } else delete s.ok[q.id];
+    jSave();
+  }
+  function jFinish() {
+    const r = J.run, n = r.qs.length, sc = r.res.filter(Boolean).length, pct = sc / n;
+    const stars = pct === 1 ? 3 : pct >= 0.8 ? 2 : pct >= 0.6 ? 1 : 0;
+    const s = jSt(r.cat, r.mode);
+    if (stars > (s.s[r.k] || 0)) s.s[r.k] = stars;
+    r.stars = stars; r.sc = sc; r.xp = stars ? 20 + 10 * stars : 0; r.done = true;
+    jGain(r.xp);
+  }
+  const jHome = () => { clearInterval(jTimer); J.view = "hub"; J.run = null; BT = null; };
+
+  /* ----- Battle : 2 à 4 joueurs sur un seul téléphone ----- */
+  function jBStart() {
+    $$("[data-bn]").forEach((el) => (B.names[+el.dataset.bn] = el.value.trim().slice(0, 14)));
+    let pool = jBk().filter((q) => q.type === "qcm" && q.mode === B.mode && (B.cat === "all" || q.cats.includes(B.cat)));
+    if (pool.length < 4) { toast("Pas assez de questions dans cette catégorie pour un battle. Choisissez « Toutes »."); return false; }
+    const total = B.n * B.rounds, qs = [];
+    let bag = [];
+    while (qs.length < total) { if (!bag.length) bag = shuffle(pool.slice()); qs.push(jPrep(bag.pop())); }
+    BT = { players: Array.from({ length: B.n }, (_, i) => ({ name: B.names[i] || (i === 0 && jP ? jP.pseudo : "Joueur " + (i + 1)), score: 0, ok: 0 })), qs, t: 0, step: "ready", pick: -1, gain: 0 };
+    J.view = "bplay";
+    return true;
+  }
+  function jTimerStart() {
+    clearInterval(jTimer);
+    if (!B.timer || !BT || BT.step !== "q") return;
+    const tick = () => {
+      const bar = $("#jx-tbar");
+      if (!bar || !BT || BT.step !== "q") { clearInterval(jTimer); return; }
+      const left = Math.max(0, BT.deadline - Date.now());
+      bar.style.width = (left / JT) * 100 + "%";
+      const s = $("#jx-tsec"); if (s) s.textContent = Math.ceil(left / 1000) + " s";
+      if (left <= 0) { clearInterval(jTimer); jBPick(-1); }
+    };
+    jTimer = setInterval(tick, 200);
+    tick();
+  }
+  function jBPick(k) {
+    if (!BT || BT.step !== "q") return;
+    clearInterval(jTimer);
+    const q = BT.qs[BT.t], p = BT.players[BT.t % B.n], ok = k >= 0 && q.ch[k].ok;
+    const left = B.timer ? Math.max(0, BT.deadline - Date.now()) : 0;
+    BT.pick = k; BT.gain = ok ? 10 + (B.timer ? Math.ceil((left / JT) * 10) : 0) : 0;
+    p.score += BT.gain; if (ok) p.ok++;
+    BT.step = "fb";
+    render(true);
+  }
+
+  /* ----- Écrans ----- */
+  const jRing = (p, big) => `<span class="jx-ring${big ? " big" : ""}" style="--p:${p == null ? 0 : p}"><b>${p == null ? "–" : p + "%"}</b></span>`;
+  function jHeader() {
+    const rk = jRank(), pct = rk.nx ? Math.min(100, ((jP.xp - rk.from) / (rk.nx - rk.from)) * 100) : 100;
+    return `<section class="jx-hero"><span class="jx-av" aria-hidden="true">${jP.av}</span><div class="jx-me"><b>${tx(jP.pseudo)}</b><span>${tx(rk.t)} · ${jP.xp} points</span><div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${pct}%"></i></div><small>${rk.nx ? `Encore ${rk.nx - jP.xp} points pour devenir ${tx(rk.nxt)}` : "Rang maximum atteint"}</small></div>${jP.serie.n > 0 && jP.serie.d >= jDay(Date.now() - 864e5) ? `<span class="jx-flame" title="Jours de suite">🔥<b>${jP.serie.n}</b></span>` : ""}</section>`;
+  }
+  function jProfile() {
+    const first = !jP;
+    return `<section class="sec"><h2 class="lbl">${first ? "Créez votre profil" : "Mon profil"}</h2>
+      <p class="muted" style="margin:0">Le pseudo est libre : il peut être inventé. Il reste sur cet appareil.</p>
+      <label class="fld"><span>Pseudo</span><input id="jx-pseudo" type="text" maxlength="20" autocomplete="off" value="${esc(J.pseudo || (jP ? jP.pseudo : ""))}" placeholder="Ex. Capitaine Feu"></label>
+      <div class="jx-avs" role="group" aria-label="Choisir un avatar">${JAV.map((a) => `<button type="button" data-act="jx-av" data-v="${a}" aria-pressed="${a === J.av}">${a}</button>`).join("")}</div>
+      <div class="signal-b"><button type="button" class="btn" data-act="jx-psave">${first ? "C’est parti" : "Enregistrer"}</button>${first ? "" : `<button type="button" class="btn ghost" data-act="jx-hub">Annuler</button>`}</div>
+      ${first ? "" : (J.reset ? `<div class="confirm"><button class="yes" data-act="jx-reset-yes">Effacer ma progression</button><button data-act="jx-reset-no">Annuler</button></div>` : `<p style="margin:0"><button type="button" class="btn-link" data-act="jx-reset">Effacer ma progression du jeu</button></p>`)}</section>`;
+  }
+  function jHub() {
+    const cards = JCATS.map((c) => {
+      const n = jPool(c.id, "examen").length + jPool(c.id, "culture").length, g = jGauge(c.id);
+      return `<button type="button" class="card jx-cat" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}>${jRing(g)}<span class="t"><b>${tx(c.t)}</b><span>${n ? `${n} question${n > 1 ? "s" : ""} · préparation du diplôme` : "Bientôt disponible"}</span></span>${icon("chevron")}</button>`;
+    }).join("");
+    return `${jHeader()}
+      <section class="sec"><h2 class="lbl a">Préparer mon diplôme</h2><div class="cards">${cards}</div></section>
+      <section class="sec"><h2 class="lbl b">Jouer à plusieurs</h2><button type="button" class="card jx-battle" data-act="jx-bsetup"><span class="ico red">${icon("personnes")}</span><span class="t"><b>Battle de 2 à 4 joueurs</b><span>Un seul téléphone, on se le passe. Rapidité et bonnes réponses rapportent des points.</span></span>${icon("chevron")}</button></section>
+      <p style="margin:0"><button type="button" class="btn-link" data-act="jx-pedit">Modifier mon profil</button> · <a href="#jeu-import">Ajouter des questions</a></p>
+      ${disc("Jeu d’entraînement : il aide à retenir, il ne remplace ni la formation, ni les textes officiels. La jauge mesure ce que vous avez retenu dans l’appli, pas votre résultat à l’examen.")}`;
+  }
+  const JMSG = [[0, "Chaque grand pompier a commencé par un premier pas."], [25, "Ça démarre bien, continuez comme ça."], [50, "La moitié du chemin est faite."], [75, "Vous êtes presque au bout, ne lâchez rien."], [100, ""]];
+  function jCat() {
+    const c = JCAT[J.cat], mode = J.mode, sts = jStages(c.id, mode), s = jSt(c.id, mode), g = jGauge(c.id);
+    let cur = sts.findIndex((_, k) => !(s.s[k] >= 1));
+    if (cur < 0) cur = sts.length;
+    const nodes = sts.map((st, k) => {
+      const done = s.s[k] >= 1, open = k <= cur, here = k === cur;
+      const zone = k % 6 === 0 ? `<h3 class="jx-zone">${tx(JZONES[Math.floor(k / 6) % JZONES.length])}</h3>` : "";
+      return `${zone}<div class="jx-row p${k % 4}">${here ? `<span class="jx-here" aria-hidden="true">${jP.av}</span>` : ""}<button type="button" class="jx-node${done ? " done" : ""}${here ? " here" : ""}" data-act="jx-stage" data-k="${k}"${open ? "" : " disabled"} aria-label="Étape ${k + 1}${done ? ", " + s.s[k] + " étoile" + (s.s[k] > 1 ? "s" : "") : open ? ", à jouer" : ", verrouillée"}">${open ? k + 1 : "🔒"}</button><span class="jx-lab"><b>Étape ${k + 1}</b><span>${done ? jStars(s.s[k]) : open ? `${st.length} questions` : "Verrouillée"}</span></span></div>`;
+    }).join("");
+    const msg = g === 100 ? `<div class="jx-dipl"><b>🎓 Diplômé à 100 %… dans le jeu !</b><p>D’après l’appli, vous avez tellement bien répondu que vous ne pouvez plus rater. C’est un clin d’œil 😄 : l’examen, lui, se prépare avec votre centre de formation et les textes officiels.</p></div>` : (mode === "examen" && g != null ? `<p class="muted" style="margin:0">${JMSG.filter((m) => g >= m[0] && m[1]).pop()[1]}</p>` : "");
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>
+      <div class="page-h"><h1>${tx(c.t)}</h1></div>
+      <div class="filters" role="group" aria-label="Type de questions"><button type="button" data-act="jx-mode" data-v="examen" aria-pressed="${mode === "examen"}">Examen</button><button type="button" data-act="jx-mode" data-v="culture" aria-pressed="${mode === "culture"}">Culture, pour aller plus loin</button></div>
+      ${mode === "examen" ? `<div class="jx-gauge">${jRing(g, true)}<div><b>Préparation du diplôme</b><span>${jPool(c.id, "examen").filter((q) => s.ok[q.id]).length} questions maîtrisées sur ${jPool(c.id, "examen").length}</span></div></div>` : `<p class="muted" style="margin:0">Questions bonus : elles ne comptent pas dans la jauge du diplôme.</p>`}
+      ${msg}
+      ${sts.length ? `<div class="jx-map">${nodes}</div>` : `<p class="muted">Les questions de cette partie arrivent bientôt.</p>`}`;
+  }
+  function jPlay() {
+    const r = J.run, n = r.qs.length, q = r.qs[r.i], answered = r.picked[r.i] != null, c = JCAT[r.cat];
+    const head = `<div class="qmeta"><span>${tx(c.t)} · étape ${r.k + 1} · question ${r.i + 1} / ${n}</span><span>${r.res.filter(Boolean).length} juste${r.res.filter(Boolean).length > 1 ? "s" : ""}</span></div><div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${r.i}"><i style="width:${(r.i / n) * 100}%"></i></div>`;
+    let body;
+    if (q.type === "terrain") {
+      body = `<p class="qq">Sur le terrain</p><p class="jx-sit">${tx(q.q)}</p><p class="muted" style="margin:0">Touchez les ${q.ordre.length} bonnes actions, dans l’ordre où il faut les faire.</p>
+        <div class="qc">${q.acts.map((a, i) => { const pos = r.seq.indexOf(i), cls = answered ? (q.ordre.includes(i) ? "good" : q.evit.includes(i) ? "bad" : "") : ""; return `<button type="button" class="${cls}" data-act="jx-tpick" data-k="${i}"${answered ? " disabled" : ""}><span class="tag">${pos >= 0 ? pos + 1 : ""}</span>${tx(a)}${cls === "good" ? icon("ok") : cls === "bad" ? icon("fermer") : ""}</button>`; }).join("")}</div>
+        ${answered ? "" : `<button type="button" class="btn" data-act="jx-tval"${r.seq.length === q.ordre.length ? "" : " disabled"}>Valider mon ordre</button>`}`;
+    } else {
+      body = `<p class="qq">${tx(q.q)}</p><div class="qc">${q.ch.map((ch, i) => { const cls = answered ? (ch.ok ? "good" : r.picked[r.i] === i ? "bad" : "") : ""; return `<button type="button" class="${cls}" data-act="jx-pick" data-k="${i}"${answered ? " disabled" : ""}><span class="tag">${"ABCD"[i]}</span>${tx(ch.t)}${cls === "good" ? icon("ok") : cls === "bad" ? icon("fermer") : ""}</button>`; }).join("")}</div>`;
+    }
+    let fb = "";
+    if (answered) {
+      const ok = r.res[r.i];
+      const good = q.type === "terrain" ? `<p>Bon ordre : ${q.ordre.map((i, j) => `${j + 1}. ${tx(q.acts[i])}`).join(" ; ")}</p>` : "";
+      const srcL = q.src ? `<p class="muted" style="margin:0">Source : ${tx([q.src.titre, q.src.reference].filter(Boolean).join(", "))}</p>` : "";
+      fb = `<div class="qfb"><p><b class="${ok ? "g" : "r"}">${ok ? "Bonne réponse !" : "Pas tout à fait."}</b>${ok ? " +10 points" : ""}</p>${good}${q.x ? `<p>${tx(q.x)}</p>` : ""}${q.f && FI[q.f] ? `<p><a href="#f-${q.f}">Voir la fiche : ${tx(FI[q.f].titre)}</a></p>` : ""}${srcL}${signalBtn("Jeu : " + q.q.slice(0, 70))}</div>
+        <button type="button" class="btn" data-act="jx-next">${r.i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button>`;
+    }
+    return `<div class="quiz">${head}${body}${fb}<p style="margin:0"><button type="button" class="btn-link" data-act="jx-quit">Arrêter cette étape</button></p></div>`;
+  }
+  function jResult() {
+    const r = J.run, n = r.qs.length, next = jStages(r.cat, r.mode)[r.k + 1];
+    return `<div class="score jx-res"><span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
+      <b>${r.sc} / ${n}</b>
+      <p>${r.stars ? (r.stars === 3 ? "Sans faute, bravo !" : "Étape réussie !") : "Il manque un peu pour valider l’étape."} ${r.stars ? `+${r.xp} points de bonus.` : "Relisez les corrections et réessayez."}</p>
+      ${r.stars && next ? `<button type="button" class="btn" data-act="jx-stage" data-k="${r.k + 1}">Étape suivante</button>` : ""}
+      <button type="button" class="btn ghost" data-act="jx-stage" data-k="${r.k}">Rejouer cette étape</button>
+      <button type="button" class="btn ghost" data-act="jx-cat" data-c="${r.cat}">Retour à la carte</button></div>`;
+  }
+  function jBSetup() {
+    const chip = (act, v, label, on) => `<button type="button" data-act="${act}" data-v="${v}" aria-pressed="${on}">${label}</button>`;
+    while (B.names.length < 4) B.names.push("");
+    if (!B.names[0] && jP) B.names[0] = jP.pseudo;
+    const cats = [["all", "Toutes"], ...JCATS.filter((c) => c.id !== "terrain" && jPool(c.id, B.mode).some((q) => q.type === "qcm")).map((c) => [c.id, c.t])];
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>Battle</h1><p>Chacun son tour, avec une question différente. Plus on répond vite et juste, plus on marque.</p></div>
+      <section class="sec"><h2 class="lbl">Joueurs</h2><div class="filters" role="group" aria-label="Nombre de joueurs">${[2, 3, 4].map((n) => chip("jx-bn", n, n + " joueurs", B.n === n)).join("")}</div>
+        <div class="jx-names">${Array.from({ length: B.n }, (_, i) => `<label class="fld"><span>Joueur ${i + 1}</span><input type="text" maxlength="14" data-bn="${i}" autocomplete="off" value="${esc(B.names[i])}" placeholder="Joueur ${i + 1}"></label>`).join("")}</div></section>
+      <section class="sec"><h2 class="lbl b">Réglages</h2>
+        <div class="filters" role="group" aria-label="Questions par joueur">${[3, 5, 10].map((n) => chip("jx-br", n, n + " questions chacun", B.rounds === n)).join("")}</div>
+        <div class="filters" role="group" aria-label="Chrono">${chip("jx-bt", 1, "Avec chrono (20 s)", B.timer)}${chip("jx-bt", 0, "Sans chrono", !B.timer)}</div>
+        <div class="filters" role="group" aria-label="Type de questions">${chip("jx-bm", "examen", "Examen", B.mode === "examen")}${chip("jx-bm", "culture", "Culture", B.mode === "culture")}</div>
+        <div class="filters" role="group" aria-label="Catégorie">${cats.map(([v, l]) => chip("jx-bc", v, tx(l), B.cat === v)).join("")}</div></section>
+      <button type="button" class="btn" data-act="jx-bgo">Lancer le battle</button>`;
+  }
+  const jScores = () => `<div class="jx-sc">${BT.players.map((p, i) => `<span class="${BT.step !== "end" && i === BT.t % B.n ? "on" : ""}"><b>${tx(p.name)}</b>${p.score}</span>`).join("")}</div>`;
+  function jBPlay() {
+    const q = BT.qs[BT.t], p = BT.players[BT.t % B.n], round = Math.floor(BT.t / B.n) + 1;
+    if (BT.step === "end") {
+      const sorted = BT.players.map((p0, i) => ({ ...p0, i })).sort((a, b) => b.score - a.score);
+      const med = ["🥇", "🥈", "🥉", "4"];
+      let rk = 0;
+      return `<div class="score jx-res"><h2>Résultat du battle</h2><div class="jx-podium">${sorted.map((p0, j) => { if (j && p0.score < sorted[j - 1].score) rk = j; return `<div class="jx-pod r${rk}"><span class="m">${med[rk]}</span><b>${tx(p0.name)}</b><span>${p0.score} points · ${p0.ok} bonne${p0.ok > 1 ? "s" : ""} réponse${p0.ok > 1 ? "s" : ""}</span></div>`; }).join("")}</div>
+        <p>${sorted[1] && sorted[0].score === sorted[1].score ? "Égalité ! Une revanche pour les départager ?" : `Bravo ${tx(sorted[0].name)} !`}</p>
+        <button type="button" class="btn" data-act="jx-bagain">Revanche</button><button type="button" class="btn ghost" data-act="jx-bsetup">Changer les réglages</button><button type="button" class="btn ghost" data-act="jx-hub">Retour au jeu</button></div>`;
+    }
+    if (BT.step === "ready") {
+      return `${jScores()}<div class="score jx-res"><span class="jx-big">${tx(p.name)}</span><p>C’est à vous de jouer.<br>Manche ${round} sur ${B.rounds}. Passez-vous le téléphone, la question reste cachée.</p><button type="button" class="btn" data-act="jx-bready">Je suis prêt</button><p style="margin:0"><button type="button" class="btn-link" data-act="jx-bquit">Arrêter le battle</button></p></div>`;
+    }
+    const answered = BT.step === "fb";
+    const timer = B.timer && !answered ? `<div class="jx-timer"><div class="qbar"><i id="jx-tbar" style="width:100%"></i></div><span id="jx-tsec">20 s</span></div>` : "";
+    let fb = "";
+    if (answered) {
+      const ok = BT.pick >= 0 && q.ch[BT.pick].ok;
+      fb = `<div class="qfb"><p><b class="${ok ? "g" : "r"}">${BT.pick < 0 ? "Temps écoulé !" : ok ? "Bonne réponse !" : "Raté !"}</b>${ok ? ` +${BT.gain} points` : ""}</p>${q.x ? `<p>${tx(q.x)}</p>` : ""}</div><button type="button" class="btn" data-act="jx-bnext">${BT.t + 1 < BT.qs.length ? "Au suivant" : "Voir le podium"}</button>`;
+    }
+    return `${jScores()}<div class="quiz"><div class="qmeta"><span>${tx(p.name)} · manche ${round} / ${B.rounds}</span></div>${timer}<p class="qq">${tx(q.q)}</p><div class="qc">${q.ch.map((ch, i) => { const cls = answered ? (ch.ok ? "good" : BT.pick === i ? "bad" : "") : ""; return `<button type="button" class="${cls}" data-act="jx-bpick" data-k="${i}"${answered ? " disabled" : ""}><span class="tag">${"ABCD"[i]}</span>${tx(ch.t)}${cls === "good" ? icon("ok") : cls === "bad" ? icon("fermer") : ""}</button>`; }).join("")}</div>${fb}</div>`;
+  }
+  function pageJeu() {
+    let body;
+    if (!jP || J.view === "profil") body = jProfile();
+    else if (J.view === "cat") body = jCat();
+    else if (J.view === "play") body = J.run ? (J.run.done ? jResult() : jPlay()) : jHub();
+    else if (J.view === "bsetup") body = jBSetup();
+    else if (J.view === "bplay" && BT) body = jBPlay();
+    else body = jHub();
+    return { html: `${J.view === "play" || J.view === "bplay" ? "" : toolHead("jeu")}${body}`, title: TL.jeu.t, tab: "outils", back: "outils", after: () => { if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
+  }
+  function pageJeuImport() {
+    return { html: `<nav class="crumb"><a href="#jeu">Jeu</a></nav><div class="page-h"><h1>Ajouter des questions</h1><p>Collez un lot de questions au format JSON, ou choisissez le fichier. Les questions sans source, avec une erreur de format ou déjà présentes sont écartées.</p></div>
+      <label class="fld"><span>Fichier (.json ou .txt)</span><input type="file" id="jx-file" accept=".json,.txt,application/json,text/plain"></label>
+      <label class="fld"><span>Ou texte collé</span><textarea id="jx-txt" rows="8" spellcheck="false"></textarea></label>
+      <div class="signal-b"><button type="button" class="btn" data-act="jx-imp">Ajouter</button><button type="button" class="btn ghost" data-act="jx-imp-vider">Retirer les questions ajoutées</button></div><p id="jx-impr" class="muted" role="status"></p>
+      ${disc("Les questions ajoutées restent sur cet appareil. Elles doivent avoir été vérifiées avant usage.")}`, title: "Ajouter des questions", tab: "outils", back: "jeu" };
+  }
+  const jGo = () => { render(); window.scrollTo(0, 0); };
+  function jxClick(b, act) {
+    const r = J.run;
+    switch (act) {
+      case "jx-av": { const p = $("#jx-pseudo"); if (p) J.pseudo = p.value; J.av = b.dataset.v; rerender(); return true; }
+      case "jx-psave": {
+        const v = ($("#jx-pseudo").value || "").trim().slice(0, 20);
+        if (!v) { toast("Choisissez un pseudo, même inventé."); return true; }
+        if (!jP) jP = { pseudo: v, av: J.av, xp: 0, serie: { d: "", n: 0 }, st: {} }; else { jP.pseudo = v; jP.av = J.av; }
+        jSave(); J.view = "hub"; J.pseudo = ""; jGo(); return true;
+      }
+      case "jx-pedit": J.pseudo = jP.pseudo; J.av = jP.av; J.view = "profil"; jGo(); return true;
+      case "jx-reset": J.reset = true; rerender(); return true;
+      case "jx-reset-no": J.reset = false; rerender(); return true;
+      case "jx-reset-yes": jP.st = {}; jP.xp = 0; jP.serie = { d: "", n: 0 }; jSave(); J.reset = false; J.view = "hub"; toast("Progression effacée."); jGo(); return true;
+      case "jx-hub": jHome(); jGo(); return true;
+      case "jx-cat": J.cat = b.dataset.c; J.view = "cat"; J.run = null; jGo(); return true;
+      case "jx-mode": J.mode = b.dataset.v; rerender(); return true;
+      case "jx-stage": jStart(b.dataset.c || J.cat || (r && r.cat), r ? r.mode : J.mode, +b.dataset.k); jGo(); return true;
+      case "jx-pick": {
+        if (!r || r.picked[r.i] != null) return true;
+        r.picked[r.i] = +b.dataset.k; jAnswer(r.qs[r.i].ch[+b.dataset.k].ok); rerender(); return true;
+      }
+      case "jx-tpick": {
+        if (!r || r.picked[r.i] != null) return true;
+        const k = +b.dataset.k, q = r.qs[r.i], at = r.seq.indexOf(k);
+        if (at >= 0) r.seq.splice(at, 1); else if (r.seq.length < q.ordre.length) r.seq.push(k);
+        rerender(); return true;
+      }
+      case "jx-tval": {
+        const q = r.qs[r.i];
+        if (r.seq.length !== q.ordre.length) return true;
+        r.picked[r.i] = 1; jAnswer(r.seq.every((v, i) => v === q.ordre[i])); rerender(); return true;
+      }
+      case "jx-next": r.seq = []; if (r.i + 1 < r.qs.length) r.i++; else jFinish(); jGo(); return true;
+      case "jx-quit": J.view = "cat"; J.run = null; jGo(); return true;
+      case "jx-bsetup": J.view = "bsetup"; BT = null; clearInterval(jTimer); jGo(); return true;
+      case "jx-bn": case "jx-br": case "jx-bt": case "jx-bm": case "jx-bc": {
+        $$("[data-bn]").forEach((el) => (B.names[+el.dataset.bn] = el.value.trim().slice(0, 14)));
+        const v = b.dataset.v;
+        if (act === "jx-bn") B.n = +v; else if (act === "jx-br") B.rounds = +v; else if (act === "jx-bt") B.timer = v === "1"; else if (act === "jx-bm") { B.mode = v; B.cat = "all"; } else B.cat = v;
+        rerender(); return true;
+      }
+      case "jx-bgo": case "jx-bagain": if (jBStart()) jGo(); return true;
+      case "jx-bready": BT.step = "q"; BT.deadline = Date.now() + JT; render(true); return true;
+      case "jx-bpick": jBPick(+b.dataset.k); return true;
+      case "jx-bnext": if (BT.t + 1 < BT.qs.length) { BT.t++; BT.step = "ready"; } else { BT.step = "end"; if (jP) jGain(15); } jGo(); return true;
+      case "jx-bquit": jHome(); jGo(); return true;
+      case "jx-imp": {
+        const f = $("#jx-file").files[0], out = $("#jx-impr");
+        const run = (txt) => { const r = jImport(txt); out.textContent = r.err ? r.err : `${r.ok} question${r.ok > 1 ? "s" : ""} ajoutée${r.ok > 1 ? "s" : ""}, ${r.dup} déjà présente${r.dup > 1 ? "s" : ""}, ${r.bad} écartée${r.bad > 1 ? "s" : ""}.`; };
+        if (f) f.text().then(run); else run($("#jx-txt").value || "");
+        return true;
+      }
+      case "jx-imp-vider": store.set("jeu-lots", []); jBank = null; $("#jx-impr").textContent = "Questions ajoutées retirées."; return true;
+      default: return false;
+    }
+  }
+
   const TOOL_PAGES = { "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
 
   function notFound() {
@@ -7740,6 +8140,8 @@ const APP = (() => {
     if (t === "rapport") return RP.pageEdit();
     if (t === "dictee") return RP.pageDictee();
     if (t === "planning" || t.startsWith("pl-")) return PL.page(t);
+    if (t === "jeu") return pageJeu();
+    if (t === "jeu-import") return pageJeuImport();
     if (t === "reglages") return pageReglages();
     if (t === "veille") return pageVeille();
     if (t.startsWith("f-")) return pageFiche(t.slice(2));
@@ -7921,6 +8323,7 @@ const APP = (() => {
     const act = b.dataset.act;
     if ((act.startsWith("rp-") || act.startsWith("dc-")) && RP.click(b, act, rerender, render, go)) return;
     if (act.startsWith("pl-") && PL.click(b, act, rerender, render, go)) return;
+    if (act.startsWith("jx-") && jxClick(b, act)) return;
     switch (act) {
       case "tts-page": if (VX.active) VX.stop(); else VX.readEl(main(), cur && cur.title ? cur.title : "Accueil"); break;
       case "tts-read": if (VX.active) VX.stop(); else VX.readEl($(b.dataset.sel), cur && cur.title ? cur.title : ""); break;
