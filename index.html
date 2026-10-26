@@ -20,6 +20,13 @@
 .signal-nom input, .signal-in { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
 .signal-mini { font-size: .88rem; margin: 6px 0; }
 .sig-it { margin-top: 12px; }
+.priv-l { margin: 10px 0; }
+.priv-etat { font-weight: 700; margin: 10px 0; }
+#priv-btn.priv-off { opacity: .6; }
+#priv-btn.priv-act { color: var(--red-bg, currentColor); animation: privp 1.1s ease-in-out infinite; }
+#priv-btn.priv-mic { outline: 2px solid var(--red-bg, currentColor); border-radius: 12px; }
+@keyframes privp { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { #priv-btn.priv-act { animation: none; } }
 .signal-dic { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 0; }
 .sig-merci { font-weight: 700; color: var(--green, var(--ink)); margin: 6px 0; }
 .signal-box { max-width: 560px; padding: 22px 18px 16px; }
@@ -167,7 +174,8 @@ mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padd
 .logo { width: 36px; height: 36px; border-radius: 9px; background: #fff; display: grid; place-items: center; flex: none; }
 .logo svg { width: 30px; height: 30px; display: block; }
 .brand-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
-.brand-t b { font: 700 1.15rem/1.1 var(--font-d); letter-spacing: .01em; white-space: nowrap; }
+.brand-t b { font: 700 1.15rem/1.1 var(--font-d); letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 420px) { .top-in { gap: 0; } .brand { gap: 8px; } .brand-t b { font-size: 1.05rem; } .top-btn { width: 40px; } }
 .brand-t small { font-size: .74rem; color: var(--top-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top-btn {
   width: 42px; height: 44px; border-radius: 12px; border: 0; background: transparent; color: inherit; display: grid; place-items: center; flex: none;
@@ -1032,6 +1040,40 @@ details summary { cursor: pointer; }
 <script>
 (function () {
 "use strict";
+/* ---------- Confidentialité : ce que l'appli a le droit d'utiliser (internet, micro), choisi par l'utilisateur ---------- */
+const PRIV = (() => {
+  const K = "memo-ssiap:prive";
+  let e = { reseau: null, micro: null, total: false };
+  try { const j = JSON.parse(localStorage.getItem(K)); if (j && typeof j === "object") e = { ...e, ...j }; } catch (x) { /* rien */ }
+  const act = { reseau: 0, micro: false };
+  const ecout = new Set();
+  const dire = () => ecout.forEach((f) => { try { f(); } catch (x) { /* rien */ } });
+  const save = () => { try { localStorage.setItem(K, JSON.stringify(e)); } catch (x) { /* rien */ } dire(); };
+  return {
+    get: () => ({ ...e }),
+    reseauOk: () => !e.total && e.reseau === true,
+    microOk: () => !e.total && e.micro === true && e.reseau === true, /* la dictée du téléphone passe par internet */
+    set(k, v) { e[k] = v; save(); },
+    total(v) { e.total = !!v; save(); },
+    debut(t) { if (t === "reseau") act.reseau++; else act.micro = true; dire(); },
+    fin(t) { if (t === "reseau") act.reseau = Math.max(0, act.reseau - 1); else act.micro = false; dire(); },
+    actif: () => ({ reseau: act.reseau > 0, micro: act.micro }),
+    sur: (f) => ecout.add(f),
+    hook: null
+  };
+})();
+/* Toute demande vers un autre site passe ici : bloquée si la connexion est désactivée, et signalée par l'icône quand elle a lieu. */
+(() => {
+  const f0 = window.fetch.bind(window);
+  window.fetch = (u, o) => {
+    let ext = false;
+    try { ext = new URL(typeof u === "string" ? u : (u && u.url) || "", location.href).origin !== location.origin; } catch (x) { ext = false; }
+    if (!ext) return f0(u, o);
+    if (!PRIV.reseauOk()) return Promise.reject(new TypeError("Connexion désactivée dans Confidentialité"));
+    PRIV.debut("reseau");
+    return f0(u, o).finally(() => PRIV.fin("reseau"));
+  };
+})();
 const MEMO_PWA = true;
 /* data/00-base.js */
 /* Mémo SSIAP — base de données de l'application.
@@ -4985,6 +5027,7 @@ function VOIX(h) {
     "language-not-supported": "La dictée en français n’est pas disponible ici. Utilisez le micro du clavier.",
     unsupported: "La dictée n’est pas disponible dans ce navigateur. Touchez la zone de texte puis le micro du clavier.",
     "no-speech": "Je n’ai rien entendu. Touchez le micro et parlez normalement.",
+    prive: "Le micro ou la connexion est désactivé. Touchez l’icône de connexion en haut de l’écran pour l’autoriser, ou tapez le texte.",
     start: "La dictée n’a pas pu démarrer. Réessayez, ou utilisez le micro du clavier.",
   };
   const sttMsg = (c) => STT_MSG[c] || STT_MSG.start;
@@ -4992,6 +5035,7 @@ function VOIX(h) {
   /* Écoute : onText(texte définitif, texte provisoire), onDone(texte, erreur) */
   function listen({ onText, onDone, onState, single }) {
     if (!sttOk) { if (onDone) onDone("", "unsupported"); return null; }
+    if (!PRIV.microOk()) { if (PRIV.hook) PRIV.hook("micro"); if (onDone) onDone("", "prive"); return null; }
     stop();
     stopMic();
     let rec = null, stopped = false, done = false, restarts = 0, silent = 0, lastErr = "";
@@ -5006,6 +5050,7 @@ function VOIX(h) {
       if (done) return;
       done = true;
       if (mic && mic.rec === ctl) mic = null;
+      PRIV.fin("micro");
       if (onState) onState(false);
       if (onDone) onDone(finals.join(" ").trim(), finals.length ? "" : lastErr);
     };
@@ -5017,7 +5062,7 @@ function VOIX(h) {
       rec.continuous = !isAndroid;
       let started = false;
       const wd = setTimeout(() => { if (!started && !done) { stopped = true; lastErr = lastErr || "start"; try { rec.abort(); } catch (e) { /* rien */ } finish(); } }, 7000);
-      rec.onstart = () => { started = true; clearTimeout(wd); if (onState) onState(true); };
+      rec.onstart = () => { started = true; clearTimeout(wd); PRIV.debut("micro"); if (onState) onState(true); };
       rec.onresult = (e) => {
         let interim = "";
         for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -7925,7 +7970,7 @@ const APP = (() => {
       case "uncheck": { const box = b.closest("[data-check]"); $$("input", box).forEach((i) => (i.checked = false)); updateCheck(box); break; }
       case "zoom": openZoom(b.dataset.id, b.dataset.cap); break;
       case "zoom-close": closeZoom(); break;
-      case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; } break; }
+      case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; if (PRIV.get().reseau === null) privQuestion("reseau"); } break; }
       case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
       case "signal-close": $("#signal").hidden = true; break;
       case "signal-dicter": signalDicter(); break;
@@ -7936,6 +7981,10 @@ const APP = (() => {
       case "sig-toujours": store.set("envoi-auto", true); $("#signal").hidden = true; synchro(true); toast("Envoi automatique activé."); break;
       case "sig-plus-tard": $("#signal").hidden = true; break;
       case "sig-stop": store.set("envoi-auto", false); rerender(); toast("Envoi automatique désactivé : l’appli vous demandera chaque fois."); break;
+      case "priv": privOuvrir(); break;
+      case "priv-close": $("#priv").hidden = true; break;
+      case "priv-oui": { if (b.dataset.t === "micro") { PRIV.set("micro", true); PRIV.set("reseau", true); toast("Micro autorisé. Touchez de nouveau le bouton de dictée."); } else PRIV.set("reseau", true); $("#priv").hidden = true; privApresAutorisation(); break; }
+      case "priv-non": { PRIV.set(b.dataset.t === "micro" ? "micro" : "reseau", false); $("#priv").hidden = true; toast(b.dataset.t === "micro" ? "Micro refusé." : "Vous restez hors connexion."); break; }
       case "maj-go": majLancer(); break;
       case "maj-redem": majRedemarrer(); break;
       case "maj-plus-tard": $("#maj").hidden = true; break;
@@ -7982,6 +8031,14 @@ const APP = (() => {
     $("[data-count]", box).textContent = `${n} / ${all.length} vérifié${n > 1 ? "s" : ""}`;
   }
   function onInput(e) {
+    const pv = e.target && e.target.dataset && e.target.dataset.priv;
+    if (pv && e.type === "change") {
+      const on = e.target.checked;
+      if (pv === "total") PRIV.total(on); else PRIV.set(pv, on);
+      if (pv === "micro" && on) PRIV.set("reseau", true);
+      privOuvrir(); if (!on || pv === "reseau") { /* rien de plus */ } else privApresAutorisation();
+      return;
+    }
     const t = e.target;
     if (t.matches && t.matches("[data-vx-range]")) { VX.setRate(+t.value, e.type === "input"); return; }
     if (t.id === "q") { onSearchInput(t.value); return; }
@@ -8143,7 +8200,7 @@ const APP = (() => {
   }
   async function synchro(force) {
     const S = SRV();
-    if (!S || !navigator.onLine || syncEnCours) return;
+    if (!S || !navigator.onLine || syncEnCours || !PRIV.reseauOk()) return;
     const att = sigs().filter((x) => x.etat === "a-envoyer");
     const ok = force === true || store.get("envoi-auto", false);
     if (att.length && !ok && !demandeFaite && $("#signal").hidden) demanderAccord(att.length);
@@ -8243,6 +8300,7 @@ const APP = (() => {
   const MAJ = { nouvelle: 0, phase: "rien", pct: 0, taille: 0, empreinte: "", bundle: null, detail: "", verif: "", propose: false };
   async function majVerifier(manuel) {
     if (!EST_APK || MAJ.phase === "telechargement" || MAJ.phase === "pret") return;
+    if (!PRIV.reseauOk()) { if (manuel) toast("La connexion est désactivée : activez-la avec l’icône en haut de l’écran."); return; }
     MAJ.verif = "en-cours"; majDessiner();
     try {
       const ac = new AbortController(), t = setTimeout(() => ac.abort(), 15000);
@@ -8260,6 +8318,7 @@ const APP = (() => {
   }
   async function majLancer() {
     if (!MAJ.nouvelle) return;
+    if (!PRIV.reseauOk()) { MAJ.phase = "erreur"; MAJ.detail = "La connexion est désactivée : activez-la avec l’icône en haut de l’écran."; majDessiner(); return; }
     if (!modDispo("CapacitorUpdater")) { location.href = LIEN_APK; return; }
     if (!MAJ.empreinte) await majVerifier(false);
     MAJ.phase = "telechargement"; MAJ.pct = 0; MAJ.detail = ""; majDessiner();
@@ -8302,6 +8361,52 @@ const APP = (() => {
   }
   const majBloc = () => `<section class="sec about"><h2 class="lbl b">Mises à jour de l’application</h2><p id="maj-etat">${EST_APK ? "Vérification…" : ""}</p>${EST_APK ? `<p><button type="button" class="btn ghost" data-act="maj-verif">Vérifier maintenant</button></p>` : ""}</section>`;
 
+  /* ---------- Confidentialité : icône, panneau et questions ---------- */
+  const IC_WIFI = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/>';
+  function privBouton() {
+    const b = $("#priv-btn"); if (!b) return;
+    const s = PRIV.get(), a = PRIV.actif();
+    const off = s.total || s.reseau !== true;
+    b.innerHTML = IC_WIFI + (off ? '<path d="M3 3l18 18"/>' : "") + "</svg>";
+    b.classList.toggle("priv-off", off);
+    b.classList.toggle("priv-act", a.reseau || a.micro);
+    b.classList.toggle("priv-mic", a.micro);
+    b.setAttribute("aria-label", "Confidentialité et connexions. " + (s.total ? "Mode hors connexion total." : s.reseau === true ? "Connexion autorisée." : "Hors connexion.") + (a.micro ? " Micro en écoute." : a.reseau ? " Connexion en cours." : ""));
+  }
+  function privBoite(html) { $("#priv-c").innerHTML = html; $("#priv").hidden = false; }
+  function privOuvrir() {
+    const s = PRIV.get(), a = PRIV.actif();
+    const sw = (k, titre, txt, on, dis) => `<label class="tick priv-l"><input type="checkbox" data-priv="${k}"${on ? " checked" : ""}${dis ? " disabled" : ""}><span><strong>${titre}</strong> ${txt}</span></label>`;
+    privBoite(`<h2 id="priv-t">Confidentialité et connexions</h2>
+      <p class="signal-mini">Mémo SSIAP fonctionne entièrement sans internet et sans micro. Vous décidez de ce qu’il peut utiliser.</p>
+      ${sw("total", "Mode hors connexion total.", "L’appli n’utilise ni internet ni micro : rien n’est envoyé, rien n’est écouté.", s.total, false)}
+      ${sw("reseau", "Connexion internet.", "Mises à jour, veille réglementaire, signalements, assistant Gemini.", s.reseau === true, s.total)}
+      ${sw("micro", "Micro.", "Dictée vocale, seulement quand vous touchez le bouton. La dictée utilise aussi internet.", s.micro === true, s.total)}
+      <p class="priv-etat" id="priv-etat">${s.total ? "Tout est coupé : l’appli est totalement hors connexion." : a.micro ? "En ce moment : le micro écoute." : a.reseau ? "En ce moment : connexion à internet en cours." : "En ce moment : l’appli n’utilise ni internet ni micro."}</p>
+      <div class="signal-b"><button type="button" class="btn" data-act="priv-close">Fermer</button></div>`);
+  }
+  function privQuestion(type) {
+    if (type === "reseau") privBoite(`<h2 id="priv-t">Autoriser la connexion internet ?</h2>
+      <p>Elle sert uniquement à recevoir les mises à jour et la veille réglementaire, et à envoyer vos signalements <strong>avec votre accord</strong>. Tout le mémo marche sans.</p>
+      <p class="signal-mini">Vous pouvez changer d’avis à tout moment avec l’icône en haut de l’écran.</p>
+      <div class="signal-b"><button type="button" class="btn" data-act="priv-oui" data-t="reseau">Autoriser</button><button type="button" class="btn ghost" data-act="priv-non" data-t="reseau">Rester hors connexion</button></div>`);
+    else privBoite(`<h2 id="priv-t">Autoriser le micro pour dicter ?</h2>
+      <p>Le micro n’écoute que quand vous touchez le bouton de dictée. La dictée de votre téléphone utilise aussi internet : j’autorise les deux.</p>
+      <p class="signal-mini">Rien n’est enregistré par l’appli. Changement possible à tout moment avec l’icône en haut.</p>
+      <div class="signal-b"><button type="button" class="btn" data-act="priv-oui" data-t="micro">Autoriser</button><button type="button" class="btn ghost" data-act="priv-non" data-t="micro">Non merci</button></div>`);
+  }
+  function privDemarrer() {
+    PRIV.sur(privBouton); privBouton();
+    PRIV.sur(() => { if (!PRIV.microOk() && VX && VX.stopMic) VX.stopMic(); });
+    PRIV.hook = (t) => { const s = PRIV.get(); if (t === "micro") { if (s.total) { privOuvrir(); toast("Le mode hors connexion total est activé."); } else if (s.micro !== true || s.reseau !== true) privQuestion("micro"); } };
+    const debut = Date.now(); let rappele = false;
+    setInterval(() => {
+      const s = PRIV.get();
+      if (!rappele && !s.total && s.reseau === true && document.visibilityState === "visible" && Date.now() - debut > 10 * 60000) { rappele = true; toast("Vous êtes connecté à internet.", "Passer hors connexion", () => PRIV.total(true)); }
+    }, 60000);
+  }
+  function privApresAutorisation() { setTimeout(() => { veilleFetch(0); majVerifier(false); synchro(); }, 300); }
+
   function pageSignalements() {
     const l = sigs().slice().reverse();
     const date = (d) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -8321,6 +8426,7 @@ const APP = (() => {
           <a class="brand" href="#accueil" aria-label="Mémo SSIAP, accueil"><span class="logo">${LOGO}</span><span class="brand-t"><b>Mémo SSIAP</b><small>Agent SSIAP 1, 2, 3 et APS</small></span></a>
           <button class="top-btn" data-act="go-search" aria-label="Rechercher">${icon("recherche")}</button>
           <button class="top-btn" data-act="tts-page" id="ttsBtn" aria-label="Écouter cette page">${icon("hautparleur")}</button>
+          <button class="top-btn" id="priv-btn" data-act="priv" aria-label="Confidentialité et connexions"></button>
           <button class="top-btn" data-act="size" aria-label="Taille du texte">${icon("texte")}</button>
         </div>
       </header>
@@ -8348,6 +8454,7 @@ const APP = (() => {
         <label class="tick"><input type="checkbox" id="guide-v" data-set="guide-voix"><span>Lire chaque étape à voix haute</span></label>
       </div></div>
       <div class="overlay" id="signal" role="dialog" aria-modal="true" aria-labelledby="signal-t" hidden><div class="box signal-box"><button class="close" data-act="signal-close" aria-label="Fermer">${icon("fermer")}</button><div id="signal-c"></div></div></div>
+      <div class="overlay" id="priv" role="dialog" aria-modal="true" aria-labelledby="priv-t" hidden><div class="box signal-box" id="priv-c"></div></div>
       <div class="overlay" id="maj" role="dialog" aria-modal="true" aria-labelledby="maj-t" hidden><div class="box signal-box" id="maj-c"></div></div>
       <div class="overlay" id="avis" role="dialog" aria-modal="true" aria-labelledby="avis-t" hidden><div class="box signal-box" id="avis-c"></div></div>
       <div class="toast" id="toast" role="status" hidden></div>
@@ -8388,7 +8495,8 @@ const APP = (() => {
     { const t0 = current(); stack.length = 0; if (TOPS.has(t0)) { stack.push("accueil"); if (t0 !== "accueil") stack.push(t0); } else stack.push(t0); }
     render();
     navArm();
-    if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir();
+    if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir(); else if (PRIV.get().reseau === null) privQuestion("reseau");
+    privDemarrer();
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
     setTimeout(synchro, 2500);
     majDemarrer();
