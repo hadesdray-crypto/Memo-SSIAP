@@ -885,6 +885,19 @@ tr.tts-on td { background: transparent; }
 body.tts-open main { padding-bottom: calc(var(--tabs-h) + 100px + env(safe-area-inset-bottom, 0px)); }
 body.tts-open .toast { bottom: calc(var(--tabs-h) + 84px + env(safe-area-inset-bottom, 0px)); }
 @media (max-width: 380px) { .tts-b button { width: 38px; height: 38px; } .tts-b button.main { width: 46px; height: 46px; } .tts-in { gap: 6px; } }
+/* Réglage de la vitesse de la voix (barre de lecture et Réglages) */
+.tts-pop { max-width: var(--maxw); margin: 4px auto 10px; padding-bottom: 10px; border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent); }
+.spd { display: grid; gap: 10px; }
+.spd-row { display: flex; align-items: center; gap: 12px; }
+.spd-l { margin-right: auto; font-weight: 700; }
+.spd-v { min-width: 3.6em; text-align: right; font-weight: 800; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.spd-step { flex: none; width: 46px; height: 46px; border-radius: 50%; border: 1px solid color-mix(in srgb, currentColor 45%, transparent); background: transparent; color: inherit; font-size: 1.6rem; font-weight: 700; line-height: 1; display: grid; place-items: center; }
+.spd-step:disabled { opacity: .35; }
+.spd-row input[type="range"] { flex: 1; min-width: 0; height: 30px; accent-color: var(--red); }
+.spd-pre { display: flex; flex-wrap: wrap; gap: 6px; }
+.spd-pre button { min-height: 40px; min-width: 44px; padding: 0 10px; border-radius: 99px; border: 1px solid color-mix(in srgb, currentColor 40%, transparent); background: transparent; color: inherit; font-weight: 800; }
+.spd-pre button[aria-pressed="true"] { background: var(--red-bg); color: var(--on-red); border-color: transparent; }
+.spd-box { padding: 14px; border: 1px solid var(--line-2); border-radius: 14px; }
 
 /* ---------- Conduite à tenir pas à pas ---------- */
 .guide {
@@ -1027,7 +1040,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "1.4.0",
+    version: "1.5.0",
     verifie: "21 octobre 2026",
     verifieCourt: "21/10/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -4679,9 +4692,15 @@ function VOIX(h) {
   const { $, $$, esc, tx, icon, store, toast } = h;
   const SS = typeof speechSynthesis !== "undefined" ? speechSynthesis : null;
   const ttsOk = !!(SS && typeof SpeechSynthesisUtterance !== "undefined");
-  const RATES = [[0.8, "Lente"], [1, "Normale"], [1.25, "Rapide"]];
+  /* Vitesse de la voix : de 0,5 à 2, réglable au dixième près, avec quelques raccourcis. */
+  const RATE_MIN = 0.5, RATE_MAX = 2, PRESETS = [0.75, 1, 1.25, 1.5, 2];
+  const okRate = (r) => typeof r === "number" && isFinite(r) && r >= RATE_MIN && r <= RATE_MAX;
+  const roundRate = (r) => Math.round(Math.min(RATE_MAX, Math.max(RATE_MIN, Number(r) || 1)) * 100) / 100;
+  const rateTxt = (r) => { r = roundRate(r); return "×" + (Math.round(r * 10) === r * 10 ? r.toFixed(1) : String(r)).replace(".", ","); };
+  const rateShort = (r) => "×" + String(roundRate(r)).replace(".", ",");
+  const rateWord = (r) => (r < 0.95 ? "lente" : r <= 1.05 ? "normale" : "rapide");
   let prefs = Object.assign({ rate: 1, uri: "", quiz: false }, store.get("voix", {}) || {});
-  if (!RATES.some((r) => r[0] === prefs.rate)) prefs.rate = 1;
+  prefs.rate = okRate(prefs.rate) ? roundRate(prefs.rate) : 1;
   const savePrefs = () => store.set("voix", prefs);
 
   /* ---------- Voix disponibles ---------- */
@@ -4820,17 +4839,16 @@ function VOIX(h) {
     const show = active && opt.bar !== false;
     b.hidden = !show;
     document.body.classList.toggle("tts-open", show);
-    if (!show) return;
+    if (!show) { if (popOpen()) ratePop(false); return; }
     const n = Q.length ? Q[Q.length - 1].k + 1 : 0, k = Q[qi] ? Q[qi].k + 1 : n;
-    const rl = (RATES.find((r) => r[0] === prefs.rate) || RATES[1])[1], short = { 0.8: "×0,8", 1: "×1", 1.25: "×1,25" }[prefs.rate] || "×1";
     $("#tts-l").textContent = label || "Lecture";
     $("#tts-p").textContent = paused ? `En pause · ${k} / ${n}` : `${k} / ${n}`;
     const tg = $("#tts-tg");
     tg.innerHTML = icon(paused ? "lecture" : "pause");
     tg.setAttribute("aria-label", paused ? "Reprendre la lecture" : "Mettre en pause");
     const rb = $("#tts-rate");
-    rb.textContent = short;
-    rb.setAttribute("aria-label", `Vitesse ${rl.toLowerCase()}. Changer la vitesse`);
+    rb.textContent = rateShort(prefs.rate);
+    rb.setAttribute("aria-label", `Vitesse ${rateTxt(prefs.rate).replace("×", "")}, ${rateWord(prefs.rate)}. Régler la vitesse`);
   }
   function speakCur() {
     const my = ++gen;
@@ -4894,13 +4912,40 @@ function VOIX(h) {
     else if (i > 0 && qi - i < 1) { const k2 = Q[i - 1].k; while (i > 0 && Q[i - 1].k === k2) i--; }
     qi = i; restart();
   }
-  function rate() {
-    const i = RATES.findIndex((r) => r[0] === prefs.rate);
-    prefs.rate = RATES[(i + 1) % RATES.length][0];
+  /* Réglage de la vitesse : − et +, curseur et raccourcis. Affiché dans la barre de lecture et dans Réglages. */
+  function speedHTML() {
+    const r = prefs.rate;
+    return `<div class="spd tts-skip" data-tts="skip"><div class="spd-row"><span class="spd-l">Vitesse de la voix</span><output class="spd-v" aria-live="polite">${rateTxt(r)}</output></div>
+      <div class="spd-row"><button type="button" class="spd-step" data-act="vx-step" data-d="-1" aria-label="Moins vite"${r <= RATE_MIN ? " disabled" : ""}>−</button><input type="range" min="${RATE_MIN}" max="${RATE_MAX}" step="0.1" value="${r}" data-vx-range aria-label="Vitesse de la voix" aria-valuetext="${rateTxt(r)}"><button type="button" class="spd-step" data-act="vx-step" data-d="1" aria-label="Plus vite"${r >= RATE_MAX ? " disabled" : ""}>+</button></div>
+      <div class="spd-pre" role="group" aria-label="Vitesses rapides">${PRESETS.map((x) => `<button type="button" data-act="vx-rate" data-v="${x}" aria-pressed="${x === r}">${rateShort(x)}</button>`).join("")}</div></div>`;
+  }
+  function updSpeed() {
+    const r = prefs.rate;
+    $$(".spd").forEach((box) => {
+      const o = box.querySelector(".spd-v"); if (o) o.textContent = rateTxt(r);
+      const rg = box.querySelector("[data-vx-range]"); if (rg) { if (document.activeElement !== rg) rg.value = String(r); rg.setAttribute("aria-valuetext", rateTxt(r)); }
+      box.querySelectorAll(".spd-step").forEach((b) => { b.disabled = +b.dataset.d < 0 ? r <= RATE_MIN : r >= RATE_MAX; });
+      box.querySelectorAll("[data-act='vx-rate']").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.v === r)));
+    });
+  }
+  let rateDirty = false;
+  function setRate(r, live) {
+    r = roundRate(r);
+    if (live) { prefs.rate = r; rateDirty = true; updSpeed(); return; } /* pendant qu'on fait glisser : appliqué au lâcher */
+    if (r === prefs.rate && !rateDirty) { updSpeed(); return; }
+    prefs.rate = r; rateDirty = false;
     savePrefs();
     if (active) restart();
-    bar();
-    return prefs.rate;
+    bar(); updSpeed();
+  }
+  const stepRate = (d) => setRate(Math.round((prefs.rate + d * 0.1) * 10) / 10);
+  const popOpen = () => { const p = $("#tts-pop"); return !!(p && !p.hidden); };
+  function ratePop(open) {
+    const p = $("#tts-pop"), b = $("#tts-rate");
+    if (!p) return;
+    if (open == null) open = p.hidden;
+    if (open) { p.innerHTML = speedHTML(); p.hidden = false; } else { p.hidden = true; p.innerHTML = ""; }
+    if (b) b.setAttribute("aria-expanded", String(!!open));
   }
   /* Lit un élément de la page (ou toute la page) */
   function readEl(el, lab) {
@@ -4924,7 +4969,6 @@ function VOIX(h) {
   }
   const voiceLabel = (v) => `${v.name}${v.lang ? ` (${v.lang.replace("_", "-")})` : ""}${v.localService ? "" : " · en ligne"}`;
   function setVoice(uri) { prefs.uri = uri || ""; savePrefs(); }
-  function setRate(r) { if (RATES.some((x) => x[0] === r)) { prefs.rate = r; savePrefs(); if (active) restart(); bar(); } }
   function setQuiz(on) { prefs.quiz = !!on; savePrefs(); }
 
   /* ---------- Dictée ---------- */
@@ -5041,9 +5085,10 @@ function VOIX(h) {
   const micHTML = (target, status, labelTxt = "Dicter", cls = "") => `<button type="button" class="mic${cls ? " " + cls : ""}" data-act="vx-mic" data-target="${esc(target)}" data-status="${esc(status)}" data-label="${esc(labelTxt)}" aria-pressed="false">${icon("micro")}<span class="mic-l">${esc(labelTxt)}</span></button>`;
 
   return {
-    ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, rate, status, voiceLabel, setVoice, setRate, setQuiz,
+    ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, status, voiceLabel, setVoice, setRate, stepRate, setQuiz,
+    speedHTML, updSpeed, ratePop, popOpen, rateTxt, rateWord,
     get prefs() { return prefs; }, get active() { return active; }, get paused() { return paused; },
-    listen, stopMic, toggleMic, micHTML, sttMsg, RATES,
+    listen, stopMic, toggleMic, micHTML, sttMsg,
   };
 }
 
@@ -6991,7 +7036,7 @@ const APP = (() => {
       <section class="sec about"><h2 class="lbl">Lecture à voix haute</h2>
         <p>${tx(voiceSt)}</p>
         ${voiceSel}
-        ${vs.ok ? `<fieldset class="field"><legend>Vitesse</legend><div class="seg" role="group">${VX.RATES.map(([r, l]) => `<button type="button" data-act="vx-rate" data-v="${r}" aria-pressed="${VX.prefs.rate === r}">${l}</button>`).join("")}</div></fieldset>
+        ${vs.ok ? `<div class="field spd-box">${VX.speedHTML()}</div>
         <label class="tick"><input type="checkbox" data-set="quizvoice"${VX.prefs.quiz ? " checked" : ""}><span>Lire les questions du quiz à voix haute</span></label>
         <div class="chips"><button type="button" class="btn" data-act="vx-test">${icon("hautparleur")}Essayer la voix</button></div>` : ""}
         <details><summary><strong>Ajouter ou changer la voix française du téléphone</strong></summary><ul style="margin-top:8px">
@@ -7660,8 +7705,7 @@ const APP = (() => {
     const t = current();
     if (t !== curTok) { if (VX) { VX.stop(); VX.stopMic(); } if (guide) guideClose(); }
     if (curTok !== null) scrolls[curTok] = window.scrollY;
-    if (navForward) stack.push(t);
-    else { const k = stack.lastIndexOf(t); if (k >= 0) stack.length = k + 1; else stack.push(t); }
+    if (!stack.length) stack.push(t);
     let page;
     try { page = pageFor(t); } catch (e) { console.error(e); page = null; }
     if (!page) page = notFound();
@@ -7682,7 +7726,62 @@ const APP = (() => {
     curTok = t;
     navForward = false;
   }
-  const go = (t) => { navForward = true; if (current() === t) render(); else location.hash = t; };
+  /* Navigation dans l'appli : l'appli tient sa propre pile de pages et change l'adresse sans ajouter de page
+     à l'historique du navigateur. Les onglets du bas repartent de l'accueil, comme dans les applis Android. */
+  const TOPS = new Set(["accueil", "rappel", "urgence", "regles", "outils"]);
+  function navTo(t, back) {
+    t = t || "accueil";
+    navForward = !back;
+    if (!back) {
+      if (TOPS.has(t)) { stack.length = 0; stack.push("accueil"); if (t !== "accueil") stack.push(t); }
+      else { const k = stack.lastIndexOf(t); if (k >= 0) stack.length = k + 1; else stack.push(t); }
+    }
+    if (current() !== t) { try { history.replaceState(history.state, "", "#" + t); } catch (e) { location.hash = t; return; } }
+    render();
+  }
+  const go = (t) => navTo(t);
+  /* Une étape en arrière (bouton Retour du téléphone ou flèche en haut à gauche). false : déjà à l'accueil, rien à fermer. */
+  function appBack() {
+    if (guide) { guideClose(); return true; }
+    if (!$("#zoom").hidden) { closeZoom(); return true; }
+    const pv = $("#pl-view"); if (pv && !pv.hidden) { pv.hidden = true; const c = $("#pl-view-c"); if (c) c.innerHTML = ""; return true; }
+    if (VX.popOpen()) { VX.ratePop(false); return true; }
+    if (stack.length > 1) { stack.pop(); navTo(stack[stack.length - 1], true); return true; }
+    if (curTok !== "accueil") {
+      const b = cur && cur.back && cur.back !== curTok ? cur.back : "accueil";
+      stack.length = 0; stack.push("accueil"); if (b !== "accueil") stack.push(b);
+      navTo(b, true); return true;
+    }
+    if (VX.active) { VX.stop(); return true; }
+    return false;
+  }
+  /* Bouton Retour du téléphone : l'historique du navigateur garde deux pages, « base » et « dessus ». Retour ramène sur
+     « base » : l'appli recule d'une étape puis remet « dessus ». À l'accueil, un message prévient et un second appui quitte. */
+  const NAV = { t: 0, exiting: false };
+  const navUrl = () => location.pathname + location.search + "#" + (curTok || "accueil");
+  function navArm() {
+    clearTimeout(NAV.t);
+    if (NAV.exiting) { const tt = $("#toast"); if (tt && /^Appuyez encore/.test(tt.textContent)) tt.hidden = true; }
+    NAV.exiting = false;
+    try {
+      if (history.state && history.state.memo === "top") return;
+      history.replaceState({ memo: "root" }, "", navUrl()); history.pushState({ memo: "top" }, "", navUrl());
+    } catch (e) { /* navigateur sans historique */ }
+  }
+  function onPopState(e) {
+    const st = e.state;
+    if (!st || !st.memo) { /* adresse changée à la main ou par un lien extérieur : c'est une nouvelle page, pas un retour */
+      try { history.replaceState({ memo: "top" }, "", location.href); } catch (er) { /* rien */ }
+      if (current() !== curTok) navTo(current());
+      return;
+    }
+    if (st.memo === "top") { appBack(); try { history.replaceState(st, "", navUrl()); } catch (er) { /* rien */ } return; }
+    if (appBack()) { navArm(); return; }
+    NAV.exiting = true;
+    try { history.replaceState({ memo: "root" }, "", navUrl()); } catch (er) { /* rien */ }
+    toast("Appuyez encore une fois sur Retour pour quitter l’appli.");
+    clearTimeout(NAV.t); NAV.t = setTimeout(navArm, 4000);
+  }
   const rerender = () => { const y = window.scrollY; render(true); window.scrollTo(0, y); };
 
   /* ---------- Thème et taille ---------- */
@@ -7759,9 +7858,11 @@ const APP = (() => {
     if (a) {
       const href = a.getAttribute("href");
       if (href.startsWith("#")) {
-        navForward = true;
+        e.preventDefault();
         if (a.dataset.mark) pendingMark = state.q;
-        if (href.slice(1) === current()) { e.preventDefault(); render(); }
+        let t = href.slice(1);
+        try { t = decodeURIComponent(t); } catch (er) { /* adresse brute */ }
+        navTo(t || "accueil");
       }
       return;
     }
@@ -7778,10 +7879,11 @@ const APP = (() => {
       case "tts-tg": VX.toggle(); break;
       case "tts-prev": VX.prev(); break;
       case "tts-next": VX.next(); break;
-      case "tts-rate": { const r = VX.rate(); toast(`Vitesse ${(VX.RATES.find((x) => x[0] === r) || [0, "normale"])[1].toLowerCase()}.`); break; }
+      case "tts-rate": VX.ratePop(); break;
+      case "vx-step": VX.stepRate(+b.dataset.d); break;
       case "tts-stop": VX.stop(); break;
       case "vx-mic": VX.toggleMic(b); break;
-      case "vx-rate": VX.setRate(+b.dataset.v); rerender(); break;
+      case "vx-rate": VX.setRate(+b.dataset.v); break;
       case "vx-test": VX.play([{ t: "Bonjour, je suis la voix du Mémo SSIAP. Je peux lire les fiches, les conduites à tenir, les questions du quiz et vos rapports." }], { label: "Essai de la voix", bar: false }); break;
       case "qz-say": quizSay(); break;
       case "guide": guideOpen(b.dataset.id); break;
@@ -7813,7 +7915,7 @@ const APP = (() => {
       case "theme": theme = theme === "sombre" ? "clair" : theme === "clair" ? "auto" : "sombre"; store.set("theme", theme); applyTheme(); toast(`Thème ${THEME_L[theme]}.`); break;
       case "size": size = SIZES[(SIZES.indexOf(size) + 1) % SIZES.length]; store.set("size", size); applySize(); toast("Texte " + SIZE_L[size] + "."); break;
       case "go-search": go("recherche"); break;
-      case "back": if (stack.length > 1) history.back(); else go(cur && cur.back ? cur.back : "accueil"); break;
+      case "back": appBack(); break;
       case "clear-q": { const i = $("#q"); if (i) { i.value = ""; onSearchInput(""); i.focus(); } break; }
       case "sugg": { const i = $("#q"); if (i) { i.value = b.dataset.q; onSearchInput(b.dataset.q); } break; }
       case "niv": state.niv = b.dataset.v; store.set("niv", state.niv); rerender(); break;
@@ -7874,6 +7976,7 @@ const APP = (() => {
   }
   function onInput(e) {
     const t = e.target;
+    if (t.matches && t.matches("[data-vx-range]")) { VX.setRate(+t.value, e.type === "input"); return; }
     if (t.id === "q") { onSearchInput(t.value); return; }
     if (t.id === "gq") { $("#gl").innerHTML = glossList(t.value); return; }
     if (t.closest && t.closest("[data-check]")) { updateCheck(t.closest("[data-check]")); return; }
@@ -8146,9 +8249,9 @@ const APP = (() => {
         <a href="#regles" data-tab="regles">${icon("regles")}<span>Règles</span></a>
         <a href="#outils" data-tab="outils">${icon("outils")}<span>Outils</span></a>
       </div></nav>
-      <div class="tts" id="tts" role="region" aria-label="Lecture à voix haute" hidden><div class="tts-in">
+      <div class="tts" id="tts" role="region" aria-label="Lecture à voix haute" hidden><div class="tts-pop" id="tts-pop" hidden></div><div class="tts-in">
         <div class="tts-t"><b id="tts-l">Lecture</b><span id="tts-p"></span></div>
-        <div class="tts-b"><button type="button" data-act="tts-prev" aria-label="Revenir au passage précédent">${icon("precedent")}</button><button type="button" class="main" id="tts-tg" data-act="tts-tg" aria-label="Mettre en pause">${icon("pause")}</button><button type="button" data-act="tts-next" aria-label="Passer au passage suivant">${icon("suivant")}</button><button type="button" class="rate" id="tts-rate" data-act="tts-rate" aria-label="Vitesse">Normale</button><button type="button" data-act="tts-stop" aria-label="Arrêter la lecture">${icon("stop")}</button></div>
+        <div class="tts-b"><button type="button" data-act="tts-prev" aria-label="Revenir au passage précédent">${icon("precedent")}</button><button type="button" class="main" id="tts-tg" data-act="tts-tg" aria-label="Mettre en pause">${icon("pause")}</button><button type="button" data-act="tts-next" aria-label="Passer au passage suivant">${icon("suivant")}</button><button type="button" class="rate" id="tts-rate" data-act="tts-rate" aria-label="Vitesse" aria-expanded="false" aria-controls="tts-pop">×1,0</button><button type="button" data-act="tts-stop" aria-label="Arrêter la lecture">${icon("stop")}</button></div>
       </div></div>
       <div class="guide" id="guide" role="dialog" aria-modal="true" aria-labelledby="guide-t" hidden><div class="guide-in">
         <div class="guide-top"><span class="kind-l">Conduite à tenir, pas à pas</span><button type="button" class="close" data-act="guide-close" aria-label="Fermer">${icon("fermer")}</button></div>
@@ -8191,10 +8294,16 @@ const APP = (() => {
       if (guide && (e.key === "ArrowRight" || e.key === "ArrowLeft") && !/^(?:INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) guideGo(e.key === "ArrowRight" ? 1 : -1);
     });
     $("#zoom").addEventListener("click", (e) => { if (e.target.id === "zoom") closeZoom(); });
-    window.addEventListener("hashchange", () => render());
+    /* Adresse changée de l'extérieur (lien tapé ou ouvert) : on y va. Les retours de l'historique sont gérés par onPopState. */
+    window.addEventListener("hashchange", () => { if (current() !== curTok) navTo(current()); });
+    window.addEventListener("popstate", onPopState);
+    document.addEventListener("pointerdown", () => { if (NAV.exiting) navArm(); }, true);
+    document.addEventListener("click", (e) => { if (VX.popOpen() && !e.target.closest("#tts-pop, #tts-rate")) VX.ratePop(false); }, true);
     window.addEventListener("offline", () => toast("Hors connexion : tout le mémo reste disponible."));
     window.addEventListener("online", () => veilleFetch(3600e3));
+    { const t0 = current(); stack.length = 0; if (TOPS.has(t0)) { stack.push("accueil"); if (t0 !== "accueil") stack.push(t0); } else stack.push(t0); }
     render();
+    navArm();
     if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir();
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
     setTimeout(synchro, 2500);
