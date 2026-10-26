@@ -20,6 +20,7 @@
 .signal-nom input, .signal-in { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
 .signal-mini { font-size: .88rem; margin: 6px 0; }
 .sig-it { margin-top: 12px; }
+.signal-dic { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 0; }
 .sig-merci { font-weight: 700; color: var(--green, var(--ink)); margin: 6px 0; }
 .signal-box { max-width: 560px; padding: 22px 18px 16px; }
 .signal-box h2 { margin: 0 44px 10px 0; font-size: 1.2rem; }
@@ -7819,7 +7820,8 @@ const APP = (() => {
       case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); store.set("avis-date", new Date().toISOString()); $("#avis").hidden = true; } break; }
       case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
       case "signal-close": $("#signal").hidden = true; break;
-      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); $("#signal").hidden = true; demandeFaite = false; toast(SRV() ? "Merci ! Votre signalement est enregistré. Il sera envoyé avec votre accord dès que vous avez du réseau." : "Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); synchro(); if (location.hash === "#signalements") rerender(); break; }
+      case "signal-dicter": signalDicter(); break;
+      case "signal-save": { const x = signalLire(b.dataset.ctx); if (!x) break; const l = sigs(); if (l.length >= SIG_MAX) { $("#signal-err").textContent = "Limite atteinte."; break; } l.push(x); store.set("signalements", l); if (sigs().length !== l.length) { $("#signal-err").textContent = "Il n’y a plus assez de place sur ce téléphone pour enregistrer. Libérez de l’espace, puis réessayez."; break; } VX.stopMic(); $("#signal").hidden = true; demandeFaite = false; toast(SRV() ? "Merci ! Votre signalement est enregistré. Il sera envoyé avec votre accord dès que vous avez du réseau." : "Merci ! Votre signalement est enregistré. Il sera envoyé automatiquement dès que l’envoi sera activé."); synchro(); if (location.hash === "#signalements") rerender(); break; }
       case "signal-copy": { const x = signalLire(b.dataset.ctx); if (x) copyText(signalCorps(x), "Message copié."); break; }
       case "signal-mail": { const x = signalLire(b.dataset.ctx); if (x) location.href = "mailto:" + D.meta.contact + "?subject=" + encodeURIComponent("Mémo SSIAP : signalement (" + x.type + ")") + "&body=" + encodeURIComponent(signalCorps(x)); break; }
       case "sig-oui": $("#signal").hidden = true; synchro(true); break;
@@ -7974,6 +7976,8 @@ const APP = (() => {
       </fieldset>
       <label class="signal-f" for="signal-txt"><span>Expliquez ce qui ne va pas</span></label>
       <textarea id="signal-txt" rows="4" maxlength="1500"></textarea>
+      <div class="signal-dic"><button type="button" class="btn ghost" id="signal-dic" data-act="signal-dicter">Dicter à la voix</button><span class="signal-mini" id="signal-cpt">0 sur 1500</span></div>
+      <p class="signal-mini" id="signal-dic-m">La dictée utilise internet. Sans réseau, touchez la zone de texte puis le micro de votre clavier, ou écrivez.</p>
       <label class="signal-f" for="signal-src"><span>Texte officiel ou preuve (facultatif)</span></label>
       <input id="signal-src" maxlength="300" class="signal-in" placeholder="Article, lien, document…">
       <label class="tick"><input type="checkbox" id="signal-tech" checked><span>Joindre les informations techniques (version, téléphone, dernières erreurs). Aucun contenu personnel.</span></label>
@@ -7981,6 +7985,21 @@ const APP = (() => {
       <div class="signal-b"><button type="button" class="btn" data-act="signal-save" data-ctx="${esc(ctx)}">Enregistrer le signalement</button>${mail ? `<button type="button" class="btn ghost" data-act="signal-mail" data-ctx="${esc(ctx)}">Envoyer par e-mail</button>` : ""}<button type="button" class="btn ghost" data-act="signal-copy" data-ctx="${esc(ctx)}">Copier</button><button type="button" class="btn ghost" data-act="signal-close">Annuler</button></div>`}`;
     o.hidden = false;
     const f = $("#signal-prenom"); if (f) f.focus();
+    const t = $("#signal-txt"); if (t) t.addEventListener("input", () => { $("#signal-cpt").textContent = t.value.length + " sur 1500"; });
+  }
+  function signalDicter() {
+    const t = $("#signal-txt"), btn = $("#signal-dic"), m = $("#signal-dic-m");
+    if (!t) return;
+    if (btn.dataset.on === "1") { VX.stopMic(); return; }
+    if (!VX.sttOk) { m.textContent = VX.sttMsg("unsupported"); return; }
+    if (!navigator.onLine) { m.textContent = VX.sttMsg("network"); return; }
+    const base = t.value.trim();
+    const mets = (txt) => { t.value = (base ? base + " " : "") + txt; t.value = t.value.slice(0, 1500); const c = $("#signal-cpt"); if (c) c.textContent = t.value.length + " sur 1500"; };
+    VX.listen({
+      onState: (on) => { btn.dataset.on = on ? "1" : "0"; btn.textContent = on ? "Arrêter la dictée" : "Dicter à la voix"; if (on) m.textContent = "Je vous écoute… Parlez normalement."; },
+      onText: (fin, interim) => mets([fin, interim].filter(Boolean).join(" ")),
+      onDone: (txt, err) => { if (txt) mets(txt); m.textContent = txt ? "Relisez et corrigez si besoin avant d’enregistrer." : VX.sttMsg(err || "start"); },
+    });
   }
   function signalLire(ctx) {
     const v = (id) => ((($("#" + id)) || {}).value || "").trim();
