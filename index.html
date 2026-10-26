@@ -15,7 +15,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mémo SSIAP">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}.signal-box { max-width: 560px; padding: 22px 18px 16px; }
+.signal-box h2 { margin: 0 44px 10px 0; font-size: 1.2rem; }
+.avis-l { margin: 0 0 14px; padding-left: 1.2em; display: grid; gap: 8px; }
+.signal-p { margin: 14px 0 0; }
+.signal-f { border: 0; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.signal-f legend { font-weight: 700; margin-bottom: 6px; padding: 0; }
+.signal-ctx { margin: 0 0 8px; }
+#signal-txt { width: 100%; box-sizing: border-box; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.signal-err { color: var(--red-bg); min-height: 1.2em; margin: 6px 0; }
+.signal-b { display: flex; flex-wrap: wrap; gap: 8px; }
+#avis { z-index: 90; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+</style>
 <style>
 /* ===== Mémo SSIAP : feuille de style ===== */
 :root {
@@ -1006,6 +1018,12 @@ const D = {
     version: "1.4.0",
     verifie: "21 octobre 2026",
     verifieCourt: "21/10/2026",
+    /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
+       ajouter un statut dans MENTIONS (plus bas, dans l’appli) et changer cette valeur : les textes se mettent à jour partout. */
+    statut: "soutien",
+    avisVersion: 1,
+    /* Adresse qui reçoit les signalements d’erreur. Vide = le bouton propose seulement de copier le message. */
+    contact: "",
   },
   rubriques: [
     { id: "feu", tab: "rappel", titre: "Le feu", ic: "flamme", co: "red", desc: "Triangle du feu, propagation, classes de feux, fumées" },
@@ -6437,6 +6455,7 @@ const APP = (() => {
     if (!s) return "";
     return `<div class="src"><span class="led${LED[s.k]}"></span><div class="t"><span class="kind ${s.k}">${KIND[s.k]}</span><b>${tx(s.t)}</b><span>${tx(s.o)}</span>${s.u ? `<a href="${esc(s.u)}" target="_blank" rel="noopener noreferrer">Ouvrir la source ${icon("externe")}</a>` : `<span>Norme payante : contenu seulement résumé.</span>`}</div></div>`;
   };
+  const tx0 = (v) => (typeof v === "string" ? v : Array.isArray(v) ? v.join(" ") : String(v == null ? "" : v)).replace(/\*\*|\[\[|\]\]/g, "");
   const verifNote = () => `<p class="foot-note">${icon("source")}<span>Vérifié le ${D.meta.verifieCourt}. En cas de doute, le texte officiel en vigueur et les consignes de votre site font foi.</span></p>`;
 
   /* ---------- Blocs des fiches ---------- */
@@ -6778,7 +6797,7 @@ const APP = (() => {
         <div class="clair"><p class="lbl">En clair</p><p>${md(f.clair)}</p></div>
         <div class="body">${f.b.map(block).join("")}</div>
         ${f.retenir ? `<aside class="retenir"><p class="lbl">À retenir</p><ul>${f.retenir.map((x) => `<li>${icon("check")}<span>${md(x)}</span></li>`).join("")}</ul></aside>` : ""}
-        <section class="sec" data-tts="skip"><h2 class="lbl g">Sources de cette fiche</h2><div class="srcs">${f.src.map(srcItem).join("")}</div>${verifNote()}</section>
+        <section class="sec" data-tts="skip"><h2 class="lbl g">Sources de cette fiche</h2><div class="srcs">${f.src.map(srcItem).join("")}</div>${verifNote()}${signalBtn(tx0(f.titre))}</section>
         ${prev || next ? `<nav class="pager" aria-label="Fiches de la rubrique">${prev ? `<a href="#f-${prev.id}"><span>Précédente</span><b>${tx(prev.titre)}</b></a>` : ""}${next ? `<a class="next" href="#f-${next.id}"><span>Suivante</span><b>${tx(next.titre)}</b></a>` : ""}</nav>` : ""}
       </article>`;
     return { html, title: f.titre, tab: r.tab, back: "r-" + r.id };
@@ -6796,7 +6815,7 @@ const APP = (() => {
       ${p.jamais && p.jamais.length ? `<section class="never"><p class="lbl">Jamais</p><ul>${p.jamais.map((x) => `<li>${icon("fermer")}<span>${md(x)}</span></li>`).join("")}</ul></section>` : ""}
       ${p.apres && p.apres.length ? `<section class="sec after"><h2 class="lbl g">Après</h2><ul>${p.apres.map((x) => `<li>${icon("check")}<span>${md(x)}</span></li>`).join("")}</ul></section>` : ""}
       ${p.liens && p.liens.length ? `<section class="sec"><h2 class="lbl b">Pour aller plus loin</h2><div class="links">${p.liens.map(linkCard).join("")}</div></section>` : ""}
-      <section class="sec" data-tts="skip"><h2 class="lbl g">Sources</h2>${p.src.length ? `<div class="srcs">${p.src.map(srcItem).join("")}</div>` : `<p class="practice">Bonne pratique professionnelle, à adapter aux consignes de votre site.</p>`}${verifNote()}</section>
+      <section class="sec" data-tts="skip"><h2 class="lbl g">Sources</h2>${p.src.length ? `<div class="srcs">${p.src.map(srcItem).join("")}</div>` : `<p class="practice">Bonne pratique professionnelle, à adapter aux consignes de votre site.</p>`}${verifNote()}${signalBtn(tx0(p.titre))}</section>
       <div class="chips">${PROC_RP[p.id] ? `<button type="button" class="btn" data-act="rp-dict" data-type="${PROC_RP[p.id]}">${icon("micro")}Raconter le rapport</button><button type="button" class="btn ghost" data-act="rp-new" data-type="${PROC_RP[p.id]}">${icon("registre")}Rédiger le rapport</button>` : ""}${favBtn(p.id)}</div>`;
     return { html, title: p.titre, tab: "urgence", back: "urgence" };
   }
@@ -6919,7 +6938,8 @@ const APP = (() => {
           <li>Ce qui n’a pas pu être confirmé n’a pas été mis dans l’appli.</li>
           <li>Les textes évoluent : la date de vérification est indiquée partout. En cas de doute, le texte officiel en vigueur fait foi.</li>
         </ul>
-        <p class="practice">Cette appli aide à réviser et à se rappeler les bons gestes. Elle ne remplace ni la formation, ni les consignes de votre site, ni les ordres de votre hiérarchie et des secours.</p>
+        <p class="practice">${esc(mention().court)}</p>
+        ${signalBtn("À propos")}
       </section>
       <section class="sec about"><h2 class="lbl b">Sans connexion et installation</h2>
         <p>${status}</p>
@@ -7780,6 +7800,11 @@ const APP = (() => {
       case "uncheck": { const box = b.closest("[data-check]"); $$("input", box).forEach((i) => (i.checked = false)); updateCheck(box); break; }
       case "zoom": openZoom(b.dataset.id, b.dataset.cap); break;
       case "zoom-close": closeZoom(); break;
+      case "avis-ok": { const c = $("#avis-chk"); if (c && c.checked) { store.set("avis-accepte", D.meta.avisVersion); $("#avis").hidden = true; } break; }
+      case "signaler": signalOuvrir(b.dataset.ctx || "Mémo SSIAP"); break;
+      case "signal-close": $("#signal").hidden = true; break;
+      case "signal-copy": { const x = signalTexte(b.dataset.ctx); if (!x.t) { $("#signal-err").textContent = "Écrivez d’abord quelques mots."; $("#signal-txt").focus(); break; } copyText(x.corps, "Message copié."); break; }
+      case "signal-mail": { const x = signalTexte(b.dataset.ctx); if (!x.t) { $("#signal-err").textContent = "Écrivez d’abord quelques mots."; $("#signal-txt").focus(); break; } location.href = "mailto:" + D.meta.contact + "?subject=" + encodeURIComponent(x.objet) + "&body=" + encodeURIComponent(x.corps); break; }
       case "del-num": state.confirmDel = +b.dataset.i; $("#mesnum-c").innerHTML = myNumsHTML(); break;
       case "del-no": state.confirmDel = -1; $("#mesnum-c").innerHTML = myNumsHTML(); break;
       case "del-yes": myNums.splice(+b.dataset.i, 1); store.set("mesnum", myNums); state.confirmDel = -1; $("#mesnum-c").innerHTML = myNumsHTML(); toast("Numéro supprimé."); break;
@@ -7867,6 +7892,54 @@ const APP = (() => {
     let n;
     while ((n = w.nextNode())) { if (n.parentElement.closest("svg")) continue; const t = typo(n.data); if (t !== n.data) n.data = t; }
   }
+
+  /* ---------- Avertissement et signalement d’erreur ---------- */
+  const MENTIONS = {
+    soutien: {
+      titre: "Avant de commencer",
+      court: "Outil de révision non officiel. Il ne remplace ni la formation agréée, ni les textes officiels, ni les consignes de votre site.",
+      points: [
+        "Cette appli est un <strong>outil d’aide à la révision</strong> et un aide-mémoire. Elle n’est <strong>pas une application officielle ni certifiée</strong>.",
+        "Chaque information est vérifiée avec des sources, mais <strong>une erreur ou un texte dépassé reste possible</strong>.",
+        "En situation réelle, suivez <strong>les consignes de votre site, les ordres de votre hiérarchie et ceux des secours</strong>. En cas de doute, le texte officiel en vigueur fait foi.",
+        "Elle <strong>ne remplace pas la formation</strong> dispensée par un organisme agréé.",
+        "Si vous voyez une erreur, le bouton « Signaler une erreur » permet de nous le dire."
+      ],
+      case: "J’ai compris que cette appli peut contenir des erreurs et qu’elle ne remplace ni la formation, ni les textes officiels, ni les consignes de mon site."
+    }
+  };
+  const mention = () => MENTIONS[D.meta.statut] || MENTIONS.soutien;
+  const signalBtn = (ctx) => `<p class="signal-p" data-tts="skip"><button type="button" class="btn ghost" data-act="signaler" data-ctx="${esc(ctx)}">${icon("alerte")}Signaler une erreur</button></p>`;
+  function avisOuvrir() {
+    const m = mention(), o = $("#avis");
+    $("#avis-c").innerHTML = `<h2 id="avis-t">${tx(m.titre)}</h2><ul class="avis-l">${m.points.map((p) => `<li>${p}</li>`).join("")}</ul>
+      <label class="tick"><input type="checkbox" id="avis-chk"><span>${tx(m.case)}</span></label>
+      <p><button type="button" class="btn" id="avis-ok" data-act="avis-ok" disabled>Je continue</button></p>`;
+    o.hidden = false;
+    const chk = $("#avis-chk");
+    chk.addEventListener("change", () => { $("#avis-ok").disabled = !chk.checked; });
+    chk.focus();
+  }
+  function signalOuvrir(ctx) {
+    const o = $("#signal"), mail = !!D.meta.contact;
+    $("#signal-c").innerHTML = `<h2 id="signal-t">Signaler une erreur</h2>
+      <p class="signal-ctx">Page concernée : <strong>${tx(ctx)}</strong></p>
+      <fieldset class="signal-f"><legend>Quel est le problème ?</legend>
+        ${["Information fausse", "Information dépassée", "Faute ou texte peu clair", "Autre"].map((t, i) => `<label class="tick"><input type="radio" name="signal-type" value="${esc(t)}"${i === 0 ? " checked" : ""}><span>${tx(t)}</span></label>`).join("")}
+      </fieldset>
+      <label class="signal-f" for="signal-txt"><span>Expliquez en quelques mots (et indiquez le texte officiel si vous le connaissez)</span></label>
+      <textarea id="signal-txt" rows="5" maxlength="1500"></textarea>
+      <p id="signal-err" class="signal-err" role="alert"></p>
+      <div class="signal-b">${mail ? `<button type="button" class="btn" data-act="signal-mail" data-ctx="${esc(ctx)}">Envoyer par e-mail</button>` : ""}<button type="button" class="btn${mail ? " ghost" : ""}" data-act="signal-copy" data-ctx="${esc(ctx)}">Copier le message</button><button type="button" class="btn ghost" data-act="signal-close">Annuler</button></div>
+      ${mail ? "" : `<p class="foot-note">${icon("info")}<span>L’envoi automatique n’est pas encore activé : copiez le message, puis envoyez-le à la personne qui vous a donné l’appli.</span></p>`}`;
+    o.hidden = false;
+    $("#signal-txt").focus();
+  }
+  function signalTexte(ctx) {
+    const t = ($("#signal-txt") || {}).value || "", ty = ($("input[name=signal-type]:checked") || {}).value || "";
+    return { t: t.trim(), objet: `Mémo SSIAP : signalement (${ty})`, corps: `${ty}\nPage : ${ctx}\nAdresse de la page : ${location.hash || "#accueil"}\nVersion : ${D.meta.version} (contenu vérifié le ${D.meta.verifieCourt})\n\n${t.trim()}\n` };
+  }
+
   function shell() {
     return `
       <header class="top">
@@ -7901,6 +7974,8 @@ const APP = (() => {
         <div class="chips" id="guide-end" hidden></div>
         <label class="tick"><input type="checkbox" id="guide-v" data-set="guide-voix"><span>Lire chaque étape à voix haute</span></label>
       </div></div>
+      <div class="overlay" id="signal" role="dialog" aria-modal="true" aria-labelledby="signal-t" hidden><div class="box signal-box"><button class="close" data-act="signal-close" aria-label="Fermer">${icon("fermer")}</button><div id="signal-c"></div></div></div>
+      <div class="overlay" id="avis" role="dialog" aria-modal="true" aria-labelledby="avis-t" hidden><div class="box signal-box" id="avis-c"></div></div>
       <div class="toast" id="toast" role="status" hidden></div>
       <div class="overlay" id="zoom" role="dialog" aria-modal="true" aria-label="Schéma agrandi" hidden><div class="box"><button class="close" data-act="zoom-close" aria-label="Fermer">${icon("fermer")}</button><div id="zoom-c"></div></div></div>`;
   }
@@ -7933,6 +8008,7 @@ const APP = (() => {
     window.addEventListener("offline", () => toast("Hors connexion : tout le mémo reste disponible."));
     window.addEventListener("online", () => veilleFetch(3600e3));
     render();
+    if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir();
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
     if (PWA) {
       window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredPrompt = e; if (cur && (cur.home || curTok === "apropos")) rerender(); });
