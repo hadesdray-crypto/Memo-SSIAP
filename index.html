@@ -719,6 +719,7 @@ td:first-child { font-weight: 700; }
 .jx-setup .filters{flex-wrap:wrap;overflow:visible}
 /* ===== Jeu : monde graffiti ===== */
 .jc{display:block;overflow:visible}
+.jc.crop{overflow:hidden}
 .jc.idle .jc-head{animation:jc-bob 1.6s ease-in-out infinite;transform-origin:50% 90%;transform-box:fill-box}
 @keyframes jc-bob{50%{transform:translateY(-3px) rotate(-2deg)}}
 .jc.jump{animation:jc-jump .6s ease-out}
@@ -800,7 +801,7 @@ td:first-child { font-weight: 700; }
 .jx-stage{position:sticky;top:56px;z-index:6;display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;border-radius:18px;border:3px solid #1b1228;box-shadow:0 4px 0 #1b1228;background:radial-gradient(circle at 50% 120%,#ff5d8f 0,transparent 55%),linear-gradient(#3a2370,#1b1040)}
 .jx-pv{border:0;background:none;padding:0;cursor:pointer;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3))}
 .jx-pvb button{display:inline-flex;gap:6px;align-items:center;padding:10px 14px;border-radius:99px;border:3px solid #1b1228;background:#ffd23f;color:#1b1228;font:700 .9rem/1 var(--font-d);box-shadow:0 3px 0 #1b1228;cursor:pointer}
-.jx-tabs{position:sticky;top:178px;z-index:5;background:var(--bg,#0f0d17);margin:0 -4px;padding:6px 4px;display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}.jx-tabs::-webkit-scrollbar{display:none}
+.jx-tabs{position:sticky;top:232px;z-index:5;background:var(--bg,#0f0d17);margin:0 -4px;padding:6px 4px;display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}.jx-tabs::-webkit-scrollbar{display:none}
 .jx-tabs button{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:60px;padding:8px 10px;border-radius:14px;border:2px solid var(--line-2);background:var(--surface);color:var(--ink);font:600 .72rem/1 var(--font-d);cursor:pointer}
 .jx-tabs button span{font-size:1.25rem}
 .jx-tabs button[aria-pressed="true"]{border-color:#1b1228;background:#ffd23f;color:#1b1228;box-shadow:0 3px 0 #1b1228}
@@ -822,6 +823,41 @@ td:first-child { font-weight: 700; }
 .jx-tc .confirm{grid-column:1/-1}
 .jx-hb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .jx-hb button{padding:9px 14px;border-radius:99px;border:3px solid #1b1228;background:#fff;color:#1b1228;font:700 .82rem/1 var(--font-d);box-shadow:0 3px 0 #1b1228;cursor:pointer}
+.jx-cab{position:sticky;top:56px;z-index:6;display:flex;align-items:stretch;gap:10px;padding:8px;border-radius:16px;border:2px solid #0e1118;background:linear-gradient(#232733,#14171f);box-shadow:0 4px 0 #0e1118}
+.jx-cabs{position:relative;flex:none;width:122px;height:160px}
+.jx-cabin{position:absolute;inset:0;overflow:hidden;border-radius:12px 12px 4px 4px;border:3px solid #0e1118;background:radial-gradient(ellipse at 50% 0,#f3f6fb,#c3cbd8 70%);box-shadow:inset 0 0 0 3px #5b6272,0 6px 14px rgba(0,0,0,.5)}
+.jx-cabin::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18px;background:linear-gradient(#8e96a6,#6b7283);border-top:2px solid #0e1118}
+.jx-cabin.tr{animation:jx-trem .45s}
+@keyframes jx-trem{20%{transform:rotate(-2deg)}40%{transform:rotate(2deg) translateY(-2px)}60%{transform:rotate(-1deg)}80%{transform:rotate(1deg)}}
+.jx-plate{position:absolute;z-index:4;top:6px;left:50%;transform:translateX(-50%);padding:2px 8px;border-radius:4px;background:#0e1118;color:#e8ecf4;font:700 .56rem/1.4 var(--font-d);letter-spacing:.14em}
+.jx-led{position:absolute;z-index:3;top:0;left:12%;right:12%;height:3px;border-radius:2px;background:#7fe3ff;box-shadow:0 0 8px #7fe3ff}
+.jx-cin{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);z-index:1}
+.jx-cin.arrive{animation:jx-walk 2.2s cubic-bezier(.3,.7,.4,1) both}
+@keyframes jx-walk{0%{transform:translateX(-230%)}20%{transform:translateX(-190%) translateY(-6px)}35%{transform:translateX(-150%)}50%{transform:translateX(-120%) translateY(-6px)}65%{transform:translateX(-90%)}80%{transform:translateX(-65%) translateY(-5px)}100%{transform:translateX(-50%)}}
+.jx-door{position:absolute;z-index:3;top:0;bottom:0;width:50%;transform:scaleX(0);transition:transform .38s cubic-bezier(.5,0,.3,1.1);background:linear-gradient(90deg,rgba(0,0,0,.18),transparent 25%,transparent 75%,rgba(0,0,0,.22)),repeating-linear-gradient(0deg,#c4cad6 0 2px,#a9b1bf 2px 4px)}
+.jx-door.l{left:0;transform-origin:left;border-right:2px solid #0e1118}.jx-door.r{right:0;transform-origin:right;border-left:2px solid #0e1118}
+.jx-door.on{transform:scaleX(1)}
+.jx-hdl{position:absolute;top:48%;width:5px;height:20px;border-radius:3px;background:#2b2e38}
+.jx-door.l .jx-hdl{right:6px}.jx-door.r .jx-hdl{left:6px}
+.jx-fly{position:absolute;z-index:5;left:50%;top:36%;font-size:2rem;animation:jx-fly .7s cubic-bezier(.3,.7,.4,1) both;pointer-events:none}
+@keyframes jx-fly{from{transform:translate(-50%,90px) scale(1.4);opacity:1}to{transform:translate(-50%,0) scale(.4);opacity:0}}
+.jx-flash{position:absolute;inset:-8px;background:#fff;border-radius:14px;pointer-events:none;animation:jx-fl .7s ease-out both}
+@keyframes jx-fl{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
+.jx-cabb{flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center;min-width:0}
+.jx-cabb button{display:flex;align-items:center;gap:7px;padding:9px 11px;border-radius:10px;border:2px solid #0e1118;background:#e7ebf2;color:#14171f;font:700 .8rem/1.1 var(--font-d);box-shadow:0 3px 0 #0e1118;cursor:pointer;text-align:left}
+.jx-cabb button.go{background:var(--red-bg,#b3131f);color:#fff}
+.jx-cabb button:active{transform:translateY(3px);box-shadow:none}
+.jx-idc{border:2px solid #0e1118;border-radius:12px;background:#fff;color:#14171f;overflow:hidden;box-shadow:0 4px 0 #0e1118;animation:jx-idin .5s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes jx-idin{from{opacity:0;transform:translateY(-16px)}}
+.jx-idh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;background:linear-gradient(90deg,#14171f,#2b2e38);color:#fff;font:700 .72rem/1.2 var(--font-d)}
+.jx-idh span{opacity:.8;font-weight:500}
+.jx-idb{display:flex;align-items:center;gap:12px;padding:8px 10px}
+.jx-idb .jc{border:2px solid #0e1118;border-radius:8px;background:linear-gradient(#e8ecf4,#c3cbd8)}
+.jx-idb b{display:block;font:700 1rem/1.15 var(--font-d)}.jx-idb small{color:#555}
+.jx-prop2{padding:10px 12px;border-radius:12px;border:2px solid var(--line-2);background:var(--surface)}.jx-prop2 p{margin:4px 0 8px}
+.jx-sw.auto{display:grid;place-items:center;background:repeating-linear-gradient(45deg,#fff 0 6px,#cfd3dc 6px 12px);color:#14171f;font:800 .8rem/1 var(--font-d)}
+@media (max-height:700px){.jx-cab{position:static}.jx-tabs{top:56px!important}}
+@media (prefers-reduced-motion: reduce){.jx-cin.arrive,.jx-cabin.tr,.jx-fly,.jx-flash{animation:none}.jx-door{transition:none}}
 /* Glossaire */
 .gl-letter { margin: 6px 0 0; font: 700 1.3rem/1 var(--font-d); color: var(--red); }
 .gl { display: flex; flex-direction: column; gap: 6px; }
@@ -7987,36 +8023,46 @@ const APP = (() => {
     { id: "terrain", t: "Sur le terrain", ic: "ronde", co: "green" },
   ];
   const JZONES = ["Le hall d’accueil", "Le poste de sécurité", "Les couloirs", "Les escaliers", "Le sous-sol", "La toiture", "Le grand ERP", "Le jour J"];
-/* Personnages « graffiti » v2 : grosse tête, petit corps, contour épais au feutre, relief léger, ombre décalée façon sticker.
-   Tout est dessiné en SVG dans l'appli : rien à télécharger, ça marche sans internet. */
+/* Personnages « graffiti » v3 : grosse tête, petit corps, contour épais au feutre, relief léger, ombre décalée façon sticker.
+   Vêtements, tenues d'agences, matériel : tout est dessiné en SVG dans l'appli (rien à télécharger, marche sans internet). */
 const JINK = "#1b1228";
 const JPAL = {
   sk: [["#ffe6cf", "Très clair"], ["#f6c9a0", "Clair"], ["#f1b98f", "Beige"], ["#d9a066", "Hâlé"], ["#c68a5c", "Caramel"], ["#a8734a", "Brun"], ["#8d5a3b", "Brun foncé"], ["#6b4028", "Chocolat"], ["#4a2a1c", "Ébène"]],
-  hc: [["#1b1228", "Noir"], ["#4a2e1e", "Châtain foncé"], ["#8a5a33", "Châtain"], ["#b5532a", "Roux"], ["#e0a526", "Blond foncé"], ["#f4d77a", "Blond"], ["#e8e8f0", "Blanc"], ["#ff5d8f", "Rose"], ["#7b2cff", "Violet"], ["#2ec4b6", "Turquoise"], ["#3a86ff", "Bleu"], ["#e63946", "Rouge"]],
+  hc: [["#1b1228", "Noir"], ["#4a2e1e", "Châtain foncé"], ["#8a5a33", "Châtain"], ["#b5532a", "Roux"], ["#e0a526", "Blond foncé"], ["#f4d77a", "Blond"], ["#e8e8f0", "Blanc"], ["#9aa0ad", "Gris"], ["#ff5d8f", "Rose"], ["#7b2cff", "Violet"], ["#3a86ff", "Bleu"], ["#e63946", "Rouge"]],
   hs: [["short", "Court"], ["tuft", "Mèche"], ["bob", "Carré"], ["pony", "Queue de cheval"], ["afro", "Afro"], ["dread", "Dreads"], ["spike", "Pics"], ["curl", "Boucles"], ["mohawk", "Crête"], ["bun", "Chignon"], ["long", "Longs"], ["bald", "Chauve"]],
   ey: [["rond", "Ronds"], ["joyeux", "Joyeux"], ["cool", "Cool"], ["etoile", "Étoiles"]],
   mo: [["sourire", "Sourire"], ["grand", "Grand rire"], ["oh", "Surpris"], ["malin", "Malin"]],
-  ac: [["", "Aucun"], ["lunettes", "Lunettes"], ["barbe", "Barbe"], ["moustache", "Moustache"], ["pansement", "Pansement"]],
-  hat: [["", "Aucun"], ["casque", "Casque"], ["casquette", "Casquette"], ["bonnet", "Bonnet"], ["kepi", "Képi"]],
-  fit: [["#e63946", "Rouge"], ["#ff8a00", "Orange"], ["#ffd23f", "Jaune"], ["#06d6a0", "Vert"], ["#2ec4b6", "Turquoise"], ["#3a86ff", "Bleu"], ["#1d3a8a", "Bleu nuit"], ["#7b2cff", "Violet"], ["#ff5d8f", "Rose"], ["#2b2d42", "Anthracite"], ["#f4f1ea", "Blanc"], ["#8a5a33", "Marron"]],
+  ac: [["", "Aucun"], ["lunettes", "Lunettes"], ["soleil", "Solaires"], ["barbe", "Barbe"], ["moustache", "Moustache"], ["pansement", "Pansement"], ["oreillette", "Oreillette"]],
+  hat: [["", "Aucun"], ["casque", "Casque blanc"], ["casquette", "Casquette"], ["bonnet", "Bonnet"], ["kepi", "Képi"], ["beret", "Béret"], ["casque2", "Casque jaune"], ["calot", "Calot"]],
+  haut: [["veste", "Veste zippée"], ["blouson", "Blouson d’intervention"], ["polo", "Polo"], ["chemise", "Chemise et cravate"], ["costume", "Costume"], ["gilet", "Gilet fluo"], ["parka", "Parka de ronde"], ["secours", "Veste de secouriste"]],
+  bas: [["pantalon", "Pantalon"], ["cargo", "Pantalon treillis"], ["jogging", "Pantalon à bandes"], ["short", "Short"], ["jupe", "Jupe"], ["aucun", "Aucun"]],
+  chs: [["baskets", "Baskets"], ["rangers", "Rangers"], ["securite", "Chaussures de sécurité"], ["bottes", "Bottes"], ["mocassins", "Chaussures de ville"], ["aucun", "Pieds nus"]],
+  obj: [["", "Rien"], ["talkie", "Talkie-walkie"], ["lampe", "Lampe torche"], ["extincteur", "Extincteur"], ["planchette", "Main courante"], ["cles", "Trousseau de clés"]],
+  emb: [["", "Aucun"], ["bouclier", "Bouclier"], ["flamme", "Flamme"], ["etoile", "Étoile"], ["tour", "Tour"], ["aigle", "Chevrons"]],
+  fit: [["#e63946", "Rouge"], ["#ff8a00", "Orange"], ["#ffd23f", "Jaune"], ["#06d6a0", "Vert"], ["#2ec4b6", "Turquoise"], ["#3a86ff", "Bleu"], ["#1d3a8a", "Bleu nuit"], ["#7b2cff", "Violet"], ["#2b2d42", "Anthracite"], ["#f4f1ea", "Blanc"], ["#8a5a33", "Marron"], ["#6b7a4a", "Kaki"], ["#b8c0cc", "Gris clair"], ["#c8ff2e", "Jaune fluo"]],
+  bnd: [["#ffd23f", "Jaune"], ["#ffffff", "Blanc"], ["#ff8a00", "Orange"], ["#cfd3dc", "Argent"], ["#e63946", "Rouge"], ["#3a86ff", "Bleu"], ["#06d6a0", "Vert"], ["#1b1228", "Noir"]],
+  pan: [["#2b2d42", "Anthracite"], ["#16213e", "Marine"], ["#5f5b78", "Gris"], ["#c8b48a", "Beige"], ["#6b7a4a", "Kaki"], ["#1b1228", "Noir"], ["#7a1e2c", "Bordeaux"], ["#f4f1ea", "Blanc"]],
+  chc: [["#ffffff", "Blanc"], ["#1b1228", "Noir"], ["#8a8fa0", "Gris"], ["#6b4028", "Marron"], ["#e63946", "Rouge"], ["#ffd23f", "Jaune"]],
   sh: [["#ff5d8f", "Rose"], ["#ffd23f", "Jaune"], ["#2ec4b6", "Turquoise"], ["#7b2cff", "Violet"], ["#3a86ff", "Bleu"], ["#ff8a00", "Orange"], ["#06d6a0", "Vert"], ["#e63946", "Rouge"]],
 };
+const JD = { haut: 0, bas: 0, chs: 0, obj: 0, emb: 0, bnd: 0, pan: 0, chc: 0, cc: -1 };
 const jL = (sk, hs, hc, ey, mo, fit, hat, ac, sh) => ({ sk, hs, hc, ey, mo, fit, hat, ac, sh });
 /* Les 8 personnages de départ (anciens avatars) */
 const JLOOKS = [
-  { n: "Flam", ...jL(1, 1, 1, 0, 0, 0, 1, 0, 0) }, { n: "Nova", ...jL(6, 4, 0, 1, 1, 4, 0, 1, 3) }, { n: "Kira", ...jL(2, 2, 7, 2, 3, 7, 2, 0, 1) }, { n: "Max", ...jL(4, 0, 1, 0, 1, 1, 1, 2, 2) },
-  { n: "Zoé", ...jL(0, 3, 4, 3, 0, 5, 0, 0, 7) }, { n: "Sam", ...jL(7, 5, 0, 1, 0, 3, 3, 0, 0) }, { n: "Léo", ...jL(1, 6, 3, 2, 3, 2, 0, 3, 4) }, { n: "Ayo", ...jL(5, 7, 1, 0, 1, 8, 2, 1, 6) },
+  { n: "Flam", ...jL(1, 1, 1, 0, 0, 0, 1, 0, 0) }, { n: "Nova", ...jL(6, 4, 0, 1, 1, 6, 0, 1, 3) }, { n: "Kira", ...jL(2, 2, 8, 2, 3, 7, 2, 0, 1) }, { n: "Max", ...jL(4, 0, 1, 0, 1, 1, 1, 3, 2) },
+  { n: "Zoé", ...jL(0, 3, 4, 3, 0, 5, 0, 0, 7) }, { n: "Sam", ...jL(7, 5, 0, 1, 0, 3, 3, 0, 0) }, { n: "Léo", ...jL(1, 6, 3, 2, 3, 2, 0, 4, 4) }, { n: "Ayo", ...jL(5, 7, 1, 0, 1, 8, 2, 1, 6) },
 ];
+/* Tenue de chaque métier (parcours) : haut, couvre-chef, couleurs */
 const JTENUE = {
-  ssiap1: { hat: "casque", fit: "#e63946", band: "#ffd23f" },
-  ssiap2: { hat: "casque2", fit: "#e63946", band: "#ffffff" },
-  ssiap3: { hat: "kepi", fit: "#1d3a8a", band: "#ffd23f" },
-  aps: { hat: "casquette", fit: "#2b2d42", band: "#3a86ff" },
-  sst: { hat: "", fit: "#06d6a0", band: "#ffffff", croix: 1 },
-  reglementation: { hat: "", fit: "#7b2cff", band: "#ffd23f", lun: 1 },
+  ssiap1: { haut: "blouson", hat: "casque", fit: "#e63946", band: "#ffd23f", bas: "pantalon", pan: "#2b2d42", chs: "securite", obj: "talkie" },
+  ssiap2: { haut: "blouson", hat: "casque2", fit: "#e63946", band: "#ffffff", bas: "pantalon", pan: "#2b2d42", chs: "securite", obj: "planchette" },
+  ssiap3: { haut: "costume", hat: "kepi", fit: "#1d3a8a", band: "#ffd23f", bas: "pantalon", pan: "#16213e", chs: "mocassins", obj: "" },
+  aps: { haut: "polo", hat: "casquette", fit: "#2b2d42", band: "#3a86ff", bas: "pantalon", pan: "#1b1228", chs: "rangers", obj: "talkie" },
+  sst: { haut: "secours", hat: "", fit: "#06d6a0", band: "#ffffff", bas: "pantalon", pan: "#2b2d42", chs: "baskets", obj: "" },
+  reglementation: { haut: "chemise", hat: "", fit: "#f4f1ea", band: "#7b2cff", bas: "pantalon", pan: "#16213e", chs: "mocassins", obj: "planchette", lun: 1 },
 };
 const jMix = (hex, k) => { const n = parseInt(hex.slice(1), 16), t = k < 0 ? 0 : 255, f = Math.abs(k), m = (c) => Math.round(c + (t - c) * f); return "#" + ((1 << 24) + (m(n >> 16) << 16) + (m((n >> 8) & 255) << 8) + m(n & 255)).toString(16).slice(1); };
-const jRandLook = () => { const r = (a) => Math.floor(Math.random() * a); return jL(r(JPAL.sk.length), r(JPAL.hs.length), r(JPAL.hc.length), r(4), r(4), r(JPAL.fit.length), r(5), r(5) === 0 ? 1 + r(4) : 0, r(8)); };
+const jRandLook = () => { const r = (a) => Math.floor(Math.random() * a), P = JPAL; return { ...jL(r(P.sk.length), r(P.hs.length), r(P.hc.length), r(4), r(4), r(P.fit.length), r(P.hat.length), r(5) === 0 ? 1 + r(P.ac.length - 1) : 0, r(8)), haut: r(8), bas: r(5), chs: r(5), obj: r(6), emb: r(6), bnd: r(8), pan: r(8), chc: r(6), cc: -1 }; };
 function jHairParts(hs, h) {
   const S = `stroke="${JINK}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`, hl = (d) => `<path d="${d}" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".38"/>`, dk = jMix(h, -0.25);
   const cap = `<path d="M20 38 C22 14 36 8 50 8 C64 8 78 14 80 38 C70 28 58 26 50 26 C42 26 30 28 20 38Z" fill="${h}" ${S}/>`;
@@ -8035,30 +8081,74 @@ function jHairParts(hs, h) {
     default: return { back: "", front: cap + hl("M28 22 C36 14 44 12 52 12") };
   }
 }
-function jHatSvg(t, fit, acc) {
+function jHatSvg(t, fit, cc, band) {
   const S = `stroke="${JINK}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
   switch (t) {
     case "casque": return `<path d="M19 36 C20 10 36 2 50 2 C64 2 80 10 81 36 Z" fill="#fff" ${S}/><path d="M30 12 C38 6 46 5 52 5" stroke="#bcd6ff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".8"/><path d="M19 36 L81 36 L84 42 L16 42Z" fill="${fit}" ${S}/><rect x="44" y="6" width="12" height="30" rx="5" fill="${fit}" ${S}/>`;
     case "casque2": return `<path d="M19 36 C20 10 36 2 50 2 C64 2 80 10 81 36 Z" fill="#ffd23f" ${S}/><path d="M30 12 C38 6 46 5 52 5" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".7"/><path d="M19 36 L81 36 L84 42 L16 42Z" fill="#e63946" ${S}/><rect x="31" y="8" width="8" height="28" rx="4" fill="#fff" ${S}/><rect x="61" y="8" width="8" height="28" rx="4" fill="#fff" ${S}/>`;
-    case "kepi": return `<path d="M20 32 C20 12 34 8 50 8 C66 8 80 12 80 32Z" fill="#1d3a8a" ${S}/><path d="M16 36 C30 28 70 28 84 36 L84 42 L16 42Z" fill="#102a66" ${S}/><circle cx="50" cy="20" r="6" fill="#ffd23f" ${S}/>`;
-    case "casquette": return `<path d="M20 34 C22 10 38 4 50 4 C64 4 78 10 80 34Z" fill="${fit}" ${S}/><path d="M46 34 C60 28 84 28 94 38 C80 42 62 40 46 38Z" fill="${jMix(fit, -0.2)}" ${S}/><path d="M24 26 H76" stroke="${acc}" stroke-width="5" stroke-linecap="round"/>`;
-    case "bonnet": return `<path d="M20 34 C20 8 36 2 50 2 C64 2 80 8 80 34Z" fill="${acc}" ${S}/><path d="M26 16 V32 M38 8 V32 M50 6 V32 M62 8 V32 M74 16 V32" stroke="${JINK}" stroke-width="1.6" opacity=".25"/><rect x="17" y="30" width="66" height="10" rx="5" fill="#fff" ${S}/><circle cx="50" cy="0" r="6" fill="#fff" ${S}/>`;
+    case "kepi": return `<path d="M20 32 C20 12 34 8 50 8 C66 8 80 12 80 32Z" fill="${cc}" ${S}/><path d="M16 36 C30 28 70 28 84 36 L84 42 L16 42Z" fill="${jMix(cc, -0.3)}" ${S}/><circle cx="50" cy="20" r="6" fill="${band}" ${S}/>`;
+    case "casquette": return `<path d="M20 34 C22 10 38 4 50 4 C64 4 78 10 80 34Z" fill="${cc}" ${S}/><path d="M46 34 C60 28 84 28 94 38 C80 42 62 40 46 38Z" fill="${jMix(cc, -0.2)}" ${S}/><path d="M24 26 H76" stroke="${band}" stroke-width="5" stroke-linecap="round"/>`;
+    case "bonnet": return `<path d="M20 34 C20 8 36 2 50 2 C64 2 80 8 80 34Z" fill="${cc}" ${S}/><path d="M26 16 V32 M38 8 V32 M50 6 V32 M62 8 V32 M74 16 V32" stroke="${JINK}" stroke-width="1.6" opacity=".25"/><rect x="17" y="30" width="66" height="10" rx="5" fill="${jMix(cc, 0.35)}" ${S}/>`;
+    case "beret": return `<path d="M14 36 C12 14 36 4 58 6 C80 8 90 22 86 36 C70 30 36 30 14 36Z" fill="${cc}" ${S}/><path d="M24 14 C34 8 46 6 56 7" stroke="#fff" stroke-width="3.4" stroke-linecap="round" fill="none" opacity=".25"/><rect x="48" y="0" width="5" height="8" rx="2.5" fill="${cc}" ${S}/><rect x="16" y="32" width="68" height="6" rx="3" fill="${jMix(cc, -0.3)}" ${S}/>`;
+    case "calot": return `<path d="M20 36 C22 16 38 12 50 24 C62 12 78 16 80 36Z" fill="${cc}" ${S}/><path d="M50 24 L50 36" stroke="${JINK}" stroke-width="2.4"/><path d="M22 32 H78" stroke="${band}" stroke-width="4" stroke-linecap="round"/>`;
     default: return "";
   }
 }
-/* o : { look | i, job, mood: "go"|"ok"|"ko", size, cls, label } */
+function jEmbSvg(e, x, y, col) {
+  const S = `stroke="${JINK}" stroke-width="1.8" stroke-linejoin="round"`, g = (d) => `<g transform="translate(${x} ${y}) scale(.9)"><path d="${d}" fill="${col}" ${S}/></g>`;
+  switch (e) {
+    case "bouclier": return g("M-5 -5 H5 V1 C5 5 0 7 0 8 C0 7 -5 5 -5 1Z");
+    case "flamme": return g("M0 -7 C1 -3 5 -2 5 2 C5 5 3 7 0 7 C-3 7 -5 5 -5 2 C-5 0 -3 -1 -2 -3 C-1 -2 0 -2 -0.5 -4Z");
+    case "etoile": return g("M0 -6 L1.8 -1.8 L6 -1.4 L2.8 1.4 L3.8 6 L0 3.6 L-3.8 6 L-2.8 1.4 L-6 -1.4 L-1.8 -1.8Z");
+    case "tour": return g("M-5 7 V-3 H-3 V-5 H-1 V-3 H1 V-5 H3 V-3 H5 V7Z");
+    case "aigle": return g("M-6 3 L0 -5 L6 3 L3.2 3 L0 -1 L-3.2 3Z");
+    default: return "";
+  }
+}
+function jShoe(t, shoe, sh, skin, x0, x1) {
+  const k = JINK, S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`, w = x1 - x0, lace = (cx) => `<path d="M${cx - 4} 106 l5 1.5" stroke="${k}" stroke-width="1.8" stroke-linecap="round"/>`;
+  switch (t) {
+    case "rangers": return `<rect x="${x0 + 3}" y="94" width="${w - 6}" height="18" rx="5" fill="${shoe}" ${S}/><path d="M${x0 - 1} 112 C${x0 - 1} 105 ${x1 - 4} 105 ${x1 + 1} 110 L${x1 + 2} 114.5 L${x0 - 1} 114.5Z" fill="${shoe}" ${S}/><path d="M${x0 + 4} 98 l${w - 8} 4 M${x0 + 4} 103 l${w - 8} 4" stroke="${jMix(shoe, 0.35)}" stroke-width="2" stroke-linecap="round"/><path d="M${x0 - 1} 113.2 H${x1 + 2}" stroke="#6b6880" stroke-width="3.2" stroke-linecap="round"/>`;
+    case "securite": return `<path d="M${x0 - 1} 111 C${x0 - 1} 103 ${x1 - 4} 103 ${x1 + 1} 108 L${x1 + 2} 114.5 L${x0 - 1} 114.5Z" fill="${shoe}" ${S}/><path d="M${x1 - 8} 107 C${x1 - 4} 106 ${x1} 108 ${x1 + 2} 110 L${x1 + 2} 114.5 L${x1 - 8} 114.5Z" fill="#ffd23f" ${S}/><path d="M${x0 - 1} 113.2 H${x1 + 2}" stroke="${k}" stroke-width="3" stroke-linecap="round"/>${lace((x0 + x1) / 2 - 3)}`;
+    case "bottes": return `<rect x="${x0 + 3}" y="92" width="${w - 6}" height="20" rx="5" fill="${shoe}" ${S}/><rect x="${x0 + 2}" y="92" width="${w - 4}" height="5" rx="2.5" fill="${jMix(shoe, 0.3)}" ${S}/><path d="M${x0 - 1} 112 C${x0 - 1} 105 ${x1 - 4} 105 ${x1 + 1} 110 L${x1 + 2} 114.5 L${x0 - 1} 114.5Z" fill="${shoe}" ${S}/><path d="M${x0 - 1} 113.2 H${x1 + 2}" stroke="${k}" stroke-width="3" stroke-linecap="round"/>`;
+    case "mocassins": return `<path d="M${x0} 112 C${x0} 106 ${x1 - 6} 106 ${x1 + 1} 111 L${x1 + 1} 114.5 L${x0} 114.5Z" fill="${shoe}" ${S}/><path d="M${x0 + 4} 109 C${x0 + 9} 107 ${x1 - 8} 108 ${x1 - 3} 110" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>`;
+    case "aucun": return `<ellipse cx="${(x0 + x1) / 2}" cy="112" rx="${w / 2 - 1}" ry="3.6" fill="${skin}" ${S}/>`;
+    default: return `<path d="M${x0 - 1} 111 C${x0 - 1} 103 ${x1 - 4} 103 ${x1 + 1} 108 L${x1 + 2} 114.5 L${x0 - 1} 114.5Z" fill="${shoe}" ${S}/><path d="M${x0 - 1} 113.2 H${x1 + 2}" stroke="${sh}" stroke-width="3.6" stroke-linecap="round"/>${lace((x0 + x1) / 2 - 3)}`;
+  }
+}
+function jObjSvg(t) {
+  const k = JINK, S = `stroke="${k}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
+  switch (t) {
+    case "talkie": return `<g><rect x="71" y="88" width="9" height="18" rx="2.5" fill="#2b2d42" ${S}/><rect x="73" y="91" width="5" height="5" rx="1" fill="#8fd3ff"/><path d="M78 88 V80" ${S} fill="none"/><circle cx="79" cy="102" r="1.2" fill="#e63946"/></g>`;
+    case "lampe": return `<g><rect x="70" y="94" width="9" height="14" rx="3" fill="#ffd23f" ${S}/><path d="M69 94 H80 L83 88 H66Z" fill="#cfd3dc" ${S}/><path d="M66 88 L58 80 M74 88 V80 M83 88 L90 80" stroke="#fff3a8" stroke-width="2.6" stroke-linecap="round" opacity=".8"/></g>`;
+    case "extincteur": return `<g><rect x="70" y="88" width="12" height="22" rx="5" fill="#e63946" ${S}/><rect x="73" y="82" width="6" height="7" rx="2" fill="#2b2d42" ${S}/><path d="M79 84 C86 84 88 92 84 98" fill="none" ${S}/><rect x="72" y="95" width="8" height="7" rx="1.5" fill="#fff"/></g>`;
+    case "planchette": return `<g><rect x="68" y="86" width="15" height="21" rx="2.5" fill="#d9c28a" ${S}/><rect x="71" y="84" width="9" height="5" rx="2" fill="#8a8fa0" ${S}/><path d="M71 94 H80 M71 98 H80 M71 102 H77" stroke="${k}" stroke-width="1.6" stroke-linecap="round"/></g>`;
+    case "cles": return `<g><circle cx="76" cy="92" r="5" fill="none" stroke="#cfd3dc" stroke-width="3"/><circle cx="76" cy="92" r="5" fill="none" stroke="${k}" stroke-width="1" opacity=".6"/><path d="M73 96 L70 104 M76 97 V106 M79 96 L82 104" stroke="#e0a526" stroke-width="3.4" stroke-linecap="round"/></g>`;
+    default: return "";
+  }
+}
+/* o : { look | i, job, mood: "go"|"ok"|"ko", size, cls, label, civil } */
 function jChar(o = {}) {
-  const lk = o.look || JLOOKS[(o.i || 0) % JLOOKS.length], T = o.job ? JTENUE[o.job] : null, P = JPAL;
-  const skin = P.sk[lk.sk % P.sk.length][0], hair = P.hc[lk.hc % P.hc.length][0], hs = P.hs[lk.hs % P.hs.length][0], sh = P.sh[lk.sh % P.sh.length][0];
-  const fit = T ? T.fit : P.fit[lk.fit % P.fit.length][0], hat = T ? T.hat : P.hat[lk.hat % P.hat.length][0], ac = (T && T.lun) ? "lunettes" : P.ac[lk.ac % P.ac.length][0], band = T ? T.band : "#ffd23f";
-  const ey = P.ey[lk.ey % 4][0], mo = P.mo[lk.mo % 4][0], k = JINK, mood = o.mood || "go", pant = "#2b2d42", sd = jMix(skin, -0.14), fd = jMix(fit, -0.22);
+  const lk0 = o.look || JLOOKS[(o.i || 0) % JLOOKS.length], lk = Object.assign({}, JD, lk0), T = o.job ? JTENUE[o.job] : null, P = JPAL, pk = (list, i) => list[((i % list.length) + list.length) % list.length];
+  const skin = pk(P.sk, lk.sk)[0], hair = pk(P.hc, lk.hc)[0], hs = pk(P.hs, lk.hs)[0], sh = pk(P.sh, lk.sh)[0];
+  const civil = o.civil || lk.civil;
+  let fit = T ? T.fit : pk(P.fit, lk.fit)[0], band = T ? T.band : pk(P.bnd, lk.bnd)[0], haut = T ? T.haut : pk(P.haut, lk.haut)[0], bas = T ? T.bas : pk(P.bas, lk.bas)[0], pant = T ? T.pan : pk(P.pan, lk.pan)[0], chs = T ? T.chs : pk(P.chs, lk.chs)[0], obj = T ? T.obj : pk(P.obj, lk.obj)[0], emb = T ? "" : pk(P.emb, lk.emb)[0], hat = T ? T.hat : pk(P.hat, lk.hat)[0];
+  if (T && lk0.hat && !T.hat && o.keepHat) hat = pk(P.hat, lk.hat)[0];
+  let shoe = chs === "rangers" ? "#1b1228" : chs === "securite" ? "#5f5b78" : chs === "bottes" ? "#1b1228" : chs === "mocassins" ? "#2a1a12" : pk(P.chc, lk.chc)[0];
+  if (!T && lk.chc && chs !== "aucun") shoe = pk(P.chc, lk.chc)[0];
+  let ac = (T && T.lun) ? "lunettes" : pk(P.ac, lk.ac)[0];
+  const cc = lk.cc >= 0 && !T ? pk(P.fit, lk.cc)[0] : hat === "kepi" ? "#1d3a8a" : fit;
+  if (civil === "peignoir") { haut = "peignoir"; bas = "aucun"; hat = ""; chs = "aucun"; obj = ""; emb = ""; }
+  if (civil === "civil") { haut = "polo"; fit = "#8a8fa0"; bas = "pantalon"; pant = "#3a4a6b"; chs = "baskets"; shoe = "#f4f1ea"; hat = ""; obj = ""; emb = ""; band = "#f4f1ea"; }
+  const ey = pk(P.ey, lk.ey)[0], mo = pk(P.mo, lk.mo)[0], k = JINK, mood = o.mood || "go", sd = jMix(skin, -0.14), fd = jMix(fit, -0.22);
   const S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
   const pup = (x, y) => (ey === "etoile" ? `<path transform="translate(${x} ${y}) scale(.55)" d="M0 -9 l2.6 6 6.4.6-4.9 4.2 1.5 6.3-5.6-3.4-5.6 3.4 1.5-6.3-4.9-4.2 6.4-.6z" fill="#ff5d8f" stroke="${k}" stroke-width="2.6" stroke-linejoin="round"/>` : `<circle cx="${x + (mood === "go" ? 1.5 : 0)}" cy="${y + 1}" r="4.6" fill="${k}"/><circle cx="${x + 3}" cy="${y - 2.5}" r="1.7" fill="#fff"/>`);
   const eye = (x) => {
-    if (ey === "joyeux" || mood === "ok" && ey === "rond") return `<path d="M${x - 9} 66 Q${x} 53 ${x + 9} 66" fill="none" stroke="${k}" stroke-width="4.4" stroke-linecap="round"/>`;
+    if (ey === "joyeux" || (mood === "ok" && ey === "rond")) return `<path d="M${x - 9} 66 Q${x} 53 ${x + 9} 66" fill="none" stroke="${k}" stroke-width="4.4" stroke-linecap="round"/>`;
     const sq = mood === "ko" ? 7 : 10, base = `<ellipse cx="${x}" cy="62" rx="9" ry="${sq}" fill="#fff" ${S}/>${pup(x, 62)}`;
     return ey === "cool" ? base + `<path d="M${x - 9.5} 62 a9.5 ${sq} 0 0 1 19 0Z" fill="${skin}" stroke="${k}" stroke-width="3"/>` : base;
   };
+  const noBrow = ac === "lunettes" || ac === "soleil";
   const brow = mood === "ko" ? `<path d="M29 50 L44 55 M71 50 L56 55" ${S} fill="none"/>` : ey === "cool" ? `<path d="M29 54 H44 M56 54 H71" ${S} fill="none"/>` : `<path d="M30 52 C34 47 40 47 44 50 M56 50 C60 47 66 47 70 52" ${S} fill="none"/>`;
   const m = mood === "ko" ? "ko" : mood === "ok" ? "grand" : mo;
   const mouth = { sourire: `<path d="M41 82 C46 90 54 90 59 82" fill="none" ${S}/>`, grand: `<path d="M38 80 C42 94 58 94 62 80Z" fill="#7a1e2c" ${S}/><path d="M41 80 H59 V84 H41Z" fill="#fff" opacity=".95"/><path d="M44 89 C48 92 52 92 56 89" stroke="#ff8fa3" stroke-width="3" fill="none" stroke-linecap="round"/>`, oh: `<ellipse cx="50" cy="85" rx="5.5" ry="6.5" fill="#7a1e2c" ${S}/>`, malin: `<path d="M41 84 C48 88 56 86 62 78" fill="none" ${S}/>`, ko: `<path d="M42 87 C46 80 54 80 58 87" fill="none" ${S}/>` }[m];
@@ -8067,16 +8157,37 @@ function jChar(o = {}) {
   if (ac === "barbe") beard = `<path d="M16 64 C18 98 82 98 84 64 C76 82 62 86 50 86 C38 86 24 82 16 64Z" fill="${hair}" ${S}/>`;
   if (ac === "moustache") extra = `<path d="M35 77 C42 70 48 74 50 77 C52 74 58 70 65 77 C58 83 52 79 50 79 C48 79 42 83 35 77Z" fill="${hair}" ${S}/>`;
   if (ac === "pansement") extra = `<g transform="rotate(-25 70 74)"><rect x="60" y="70" width="20" height="9" rx="4.5" fill="#ffd9b5" ${S}/><path d="M67 73 v3 M73 73 v3" stroke="#c88b5a" stroke-width="1.8"/></g>`;
-  if (ac === "lunettes") extra = `<g fill="rgba(170,225,255,.35)" ${S}><circle cx="35" cy="62" r="13.5"/><circle cx="65" cy="62" r="13.5"/><path d="M48.5 62 H51.5" fill="none"/></g><path d="M27 55 C30 52 34 51 38 52" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>`;
-  const body = `<ellipse cx="50" cy="116" rx="27" ry="4.4" fill="rgba(0,0,0,.3)"/>
-    <g class="jc-legs"><rect x="35" y="98" width="13" height="14" rx="5" fill="${pant}" ${S}/><rect x="52" y="98" width="13" height="14" rx="5" fill="${pant}" ${S}/>
-      <path d="M29 111 C29 103 46 103 50 108 L50 114.5 L29 114.5Z" fill="#fff" ${S}/><path d="M50 108 C54 103 71 103 71 111 L71 114.5 L50 114.5Z" fill="#fff" ${S}/><path d="M29 113.2 H50 M50 113.2 H71" stroke="${sh}" stroke-width="3.6" stroke-linecap="round"/><path d="M36 106 l5 1.5 M59 106 l5 1.5" stroke="${k}" stroke-width="1.8" stroke-linecap="round"/></g>
-    <g class="jc-arm l"><rect x="19" y="88" width="13" height="19" rx="6.5" fill="${fit}" ${S}/><circle cx="25.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
-    <g class="jc-arm r"><rect x="68" y="88" width="13" height="19" rx="6.5" fill="${fit}" ${S}/><circle cx="74.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
-    <rect x="30" y="84" width="40" height="23" rx="10" fill="${fit}" ${S}/><path d="M33 100 C33 104 38 106 42 106 H58 C62 106 67 104 67 100 V104 C67 106 62 107 58 107 H42 C38 107 33 106 33 104Z" fill="${fd}" opacity=".5"/>
-    <path d="M42 84 L50 94 L58 84" fill="${skin}" ${S}/><path d="M50 94 V106" stroke="${k}" stroke-width="2.4"/>
-    <rect x="30" y="96" width="40" height="5" fill="${band}" opacity=".95" stroke="${k}" stroke-width="2"/>
-    ${T && T.croix ? `<path d="M55 87 h6 v3.4 h3.4 v6 h-3.4 v3.4 h-6 v-3.4 h-3.4 v-6 h3.4z" fill="#fff" stroke="${k}" stroke-width="2"/>` : ""}`;
+  if (ac === "lunettes") extra = `<g fill="rgba(170,225,255,.18)" ${S}><circle cx="35" cy="62" r="13.5"/><circle cx="65" cy="62" r="13.5"/><path d="M48.5 62 H51.5" fill="none"/></g><path d="M27 55 C30 52 34 51 38 52" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>`;
+  if (ac === "soleil") extra = `<g fill="${k}" ${S}><path d="M20 54 H80 L76 66 C74 74 62 74 59 66 L58 62 H42 L41 66 C38 74 26 74 24 66Z"/></g><path d="M27 58 C31 56 36 56 40 57 M60 57 C64 56 69 56 73 58" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".45"/>`;
+  if (ac === "oreillette") extra = `<path d="M86 66 C94 74 90 88 80 92 C74 94 68 94 64 92" fill="none" stroke="${k}" stroke-width="2.4" stroke-linecap="round"/><circle cx="87" cy="64" r="4.2" fill="#2b2d42" stroke="${k}" stroke-width="2"/>`;
+  /* torse */
+  const emx = 38, emy = 92;
+  let arm = fit, back = "", tor = "";
+  const rectT = (c, x = 30, w = 40) => `<rect x="${x}" y="84" width="${w}" height="23" rx="10" fill="${c}" ${S}/>`;
+  switch (haut) {
+    case "peignoir": arm = "#f4f1ea"; tor = `<rect x="28" y="84" width="44" height="29" rx="10" fill="#f4f1ea" ${S}/><path d="M40 84 L50 100 L60 84" fill="${skin}" ${S}/><path d="M50 100 V112" stroke="${k}" stroke-width="2"/><rect x="28" y="99" width="44" height="5" fill="#cfd3dc" stroke="${k}" stroke-width="2"/><path d="M34 90 v10 M66 90 v10" stroke="#cfd3dc" stroke-width="2" opacity=".7"/>`; break;
+    case "polo": tor = `${rectT(fit)}<path d="M42 84 L47 92 L50 86Z M58 84 L53 92 L50 86Z" fill="${jMix(fit, 0.35)}" ${S}/><path d="M50 88 V100" stroke="${k}" stroke-width="2"/><circle cx="50" cy="94" r="1.2" fill="${k}"/><rect x="30" y="102" width="40" height="3" fill="${band}" opacity=".9"/>${jEmbSvg(emb, emx + 2, emy + 6, band)}`; break;
+    case "chemise": tor = `${rectT(fit)}<path d="M42 84 L50 94 L58 84Z" fill="${jMix(fit, 0.3)}" ${S}/><path d="M50 92 L46 98 L50 108 L54 98Z" fill="${band}" ${S}/><rect x="31" y="85" width="9" height="4" rx="1.5" fill="${band}" stroke="${k}" stroke-width="1.6"/><rect x="60" y="85" width="9" height="4" rx="1.5" fill="${band}" stroke="${k}" stroke-width="1.6"/><rect x="33" y="94" width="8" height="7" rx="1.5" fill="none" stroke="${k}" stroke-width="1.6"/>${jEmbSvg(emb, 62, 96, band)}`; break;
+    case "costume": tor = `${rectT(fit)}<path d="M42 84 L50 108 L58 84Z" fill="#f4f1ea" ${S}/><path d="M50 92 L47 97 L50 108 L53 97Z" fill="${band}" stroke="${k}" stroke-width="1.8"/><path d="M33 84 L48 106 L36 104 L30 92Z M67 84 L52 106 L64 104 L70 92Z" fill="${fd}" ${S}/>${jEmbSvg(emb, 36, 98, band)}`; break;
+    case "gilet": arm = "#f4f1ea"; tor = `${rectT("#f4f1ea")}<path d="M31 84 H44 V107 H34 C31 107 30 105 30 102Z M69 84 H56 V107 H66 C69 107 70 105 70 102Z" fill="${fit}" ${S}/><rect x="31" y="95" width="13" height="4.5" fill="${band}" opacity=".95" stroke="${k}" stroke-width="1.6"/><rect x="56" y="95" width="13" height="4.5" fill="${band}" opacity=".95" stroke="${k}" stroke-width="1.6"/><path d="M42 84 L50 92 L58 84" fill="${skin}" ${S}/>`; break;
+    case "parka": back = `<path d="M26 86 C26 76 36 72 50 72 C64 72 74 76 74 86Z" fill="${fd}" ${S}/>`; tor = `<rect x="29" y="84" width="42" height="24" rx="9" fill="${fit}" ${S}/><path d="M50 82 V108" stroke="${k}" stroke-width="2.6"/><rect x="33" y="97" width="10" height="7" rx="2" fill="${fd}" stroke="${k}" stroke-width="1.8"/><rect x="57" y="97" width="10" height="7" rx="2" fill="${fd}" stroke="${k}" stroke-width="1.8"/><rect x="30" y="92" width="40" height="3.6" fill="${band}" opacity=".9"/>${jEmbSvg(emb, 38, 88, band)}`; break;
+    case "secours": tor = `${rectT(fit)}<path d="M42 84 L50 93 L58 84" fill="${skin}" ${S}/><path d="M50 93 V106" stroke="${k}" stroke-width="2.4"/><rect x="30" y="98" width="40" height="4.6" fill="${band}" stroke="${k}" stroke-width="1.6"/><path d="M60 86.5 h5 v3 h3 v5 h-3 v3 h-5 v-3 h-3 v-5 h3z" fill="#fff" stroke="${k}" stroke-width="1.8"/>`; break;
+    case "blouson": tor = `${rectT(fit)}<path d="M42 84 L50 93 L58 84" fill="${skin}" ${S}/><path d="M50 93 V106" stroke="${k}" stroke-width="2.4"/><rect x="30" y="91" width="40" height="4" fill="${band}" stroke="${k}" stroke-width="1.6"/><rect x="30" y="99" width="40" height="4" fill="${band}" stroke="${k}" stroke-width="1.6"/>${jEmbSvg(emb, 38, 87.4, band)}`; break;
+    default: tor = `${rectT(fit)}<path d="M42 84 L50 93 L58 84" fill="${skin}" ${S}/><path d="M50 93 V106" stroke="${k}" stroke-width="2.4"/><rect x="30" y="96" width="40" height="5" fill="${band}" stroke="${k}" stroke-width="2"/>${jEmbSvg(emb, 38, 90, band)}`;
+  }
+  const armBands = haut === "blouson" ? `<rect x="19" y="95" width="13" height="4" fill="${band}" stroke="${k}" stroke-width="1.6"/><rect x="68" y="95" width="13" height="4" fill="${band}" stroke="${k}" stroke-width="1.6"/>` : "";
+  /* bas */
+  const leg = (x, c) => `<rect x="${x}" y="98" width="13" height="24" rx="5" fill="${c}" ${S}/>`;
+  let legs = "";
+  if (bas === "aucun") legs = `${leg(35, skin)}${leg(52, skin)}`;
+  else if (bas === "short") legs = `${leg(35, skin)}${leg(52, skin)}<rect x="34" y="97" width="15" height="9" rx="4" fill="${pant}" ${S}/><rect x="51" y="97" width="15" height="9" rx="4" fill="${pant}" ${S}/>`;
+  else if (bas === "jupe") legs = `${leg(35, skin)}${leg(52, skin)}<path d="M29 100 L33 104 H67 L71 100 L67 96 H33Z" fill="${pant}" ${S}/>`;
+  else { legs = `${leg(35, pant)}${leg(52, pant)}`; if (bas === "cargo") legs += `<rect x="36" y="102" width="8" height="6" rx="1.5" fill="${jMix(pant, -0.2)}" stroke="${k}" stroke-width="1.6"/><rect x="56" y="102" width="8" height="6" rx="1.5" fill="${jMix(pant, -0.2)}" stroke="${k}" stroke-width="1.6"/>`; if (bas === "jogging") legs += `<path d="M36 99 V111 M64 99 V111" stroke="${band}" stroke-width="3" stroke-linecap="round"/>`; }
+  const body = `<ellipse cx="50" cy="125.5" rx="27" ry="4.4" fill="rgba(0,0,0,.3)"/>${back}
+    <g class="jc-legs">${legs}<g transform="translate(0 9)">${jShoe(chs, shoe, sh, skin, 29, 50)}${jShoe(chs, shoe, sh, skin, 50, 71)}</g></g>
+    <g class="jc-arm l"><rect x="19" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/><circle cx="25.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
+    <g class="jc-arm r"><rect x="68" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/>${armBands}<circle cx="74.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
+    ${tor}${jObjSvg(obj)}`;
   const head = `<g class="jc-head">
     <path d="M30 94 v9 a3 3 0 0 0 6 0 v-9z" fill="${sh}" stroke="${k}" stroke-width="2.4" stroke-linejoin="round"/><path d="M82 90 v7 a2.6 2.6 0 0 0 5.2 0 v-7z" fill="${sh}" stroke="${k}" stroke-width="2.4" stroke-linejoin="round"/>
     <ellipse cx="50" cy="60" rx="38" ry="34" fill="${sh}" transform="translate(4 4)" stroke="${k}" stroke-width="3"/>
@@ -8084,15 +8195,15 @@ function jChar(o = {}) {
     <ellipse cx="14" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="86" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="14.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/><ellipse cx="85.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/>
     <ellipse cx="50" cy="58" rx="36" ry="32" fill="${sd}" ${S}/><ellipse cx="48" cy="55.5" rx="32.6" ry="28.6" fill="${skin}"/>
     <path d="M24 44 C30 34 40 30 50 30" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".4"/>
-    ${eye(35)}${eye(65)}${ac === "lunettes" ? "" : brow}
+    ${eye(35)}${eye(65)}${noBrow ? "" : brow}
     <ellipse cx="25" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/><ellipse cx="75" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/>
     <path d="M49 70 C46.5 74.5 51.5 76 53 72" fill="none" stroke="${k}" stroke-width="2.4" stroke-linecap="round"/><circle cx="48.2" cy="69.5" r="1.3" fill="#fff" opacity=".7"/>
     ${beard}${mouth}${extra}
-    ${hp.front}${jHatSvg(hat, fit, sh)}
-    ${ac === "lunettes" ? brow.replace(/stroke-width="3.2"/g, 'stroke-width="3.2" opacity=".0"') : ""}
+    ${hp.front}${jHatSvg(hat, fit, cc, band)}
   </g>`;
   const sz = o.size || 72;
-  return `<svg class="jc ${o.cls || ""}" viewBox="-6 -4 112 126" width="${sz}" height="${Math.round(sz * 1.125)}" role="img" aria-label="${o.label || "Personnage"}">${body}${head}<g fill="${sh}" opacity=".9"><circle cx="4" cy="22" r="2.4"/><circle cx="97" cy="32" r="2"/><circle cx="92" cy="12" r="1.6"/><circle cx="2" cy="44" r="1.6"/></g></svg>`;
+  const vb = o.vb || "-6 -4 112 178", vbs = vb.split(" ").map(Number);
+  return `<svg class="jc${o.vb ? " crop" : ""} ${o.cls || ""}" viewBox="${vb}" width="${sz}" height="${Math.round((sz * vbs[3]) / vbs[2])}" role="img" aria-label="${o.label || "Personnage"}"><g transform="translate(0 12) translate(50 84) scale(1.2 1.62) translate(-50 -84)">${body}</g>${head}<g fill="${sh}" opacity=".9"><circle cx="4" cy="22" r="2.4"/><circle cx="97" cy="32" r="2"/><circle cx="92" cy="12" r="1.6"/><circle cx="2" cy="44" r="1.6"/></g></svg>`;
 }
 
   const JTITRES = { ssiap1: "Agent de service de sécurité incendie", ssiap2: "Chef d’équipe de sécurité incendie", ssiap3: "Chef de service de sécurité incendie", reglementation: "Expert des textes et du règlement", aps: "Agent de prévention et de sécurité", sst: "Sauveteur secouriste du travail", h0b0: "Personnel habilité H0B0", terrain: "Agent aguerri du terrain" };
@@ -8312,7 +8423,7 @@ function jChar(o = {}) {
     const props = Array.from({ length: Math.ceil(n / 2) }, (_, i) => `<span class="jx-prop" style="left:${JW.X0 + i * JW.STEP * 2 + 60 + (i % 3) * 14}px">${jProp(i + (c.id.length))}</span>`).join("");
     const tags = Array.from({ length: Math.ceil(n / 5) }, (_, i) => `<span class="jx-tag t${i % 4}" style="left:${JW.X0 + i * JW.STEP * 5 + 30}px">${["FEU !", "SSIAP", "GO !", "ALERTE", "SÛR"][i % 5]}</span>`).join("");
     const from = hop != null ? P[hop] : P[Math.min(cur, n)], to = P[Math.min(cur, n)];
-    const me = `<div class="jx-me2" style="left:${from.x}px;top:${from.y + 8}px"${hop != null ? ` data-tx="${to.x}" data-ty="${to.y + 8}"` : ""}>${jMe({ job: c.id, size: 74, mood: cur >= n ? "ok" : "go", cls: "idle", label: jP.pseudo })}</div>`;
+    const me = `<div class="jx-me2" style="left:${from.x}px;top:${from.y + 8}px"${hop != null ? ` data-tx="${to.x}" data-ty="${to.y + 8}"` : ""}>${jMe({ job: c.id, size: 64, mood: cur >= n ? "ok" : "go", cls: "idle", label: jP.pseudo })}</div>`;
     const g = jGauge(c.id), fin = `<div class="jx-fin2${cur >= n ? " gold" : ""}" style="left:${P[n].x - 20}px">${jFinSvg(cur >= n)}<b>${tx(JTITRES[c.id] || c.t)}</b></div>${cur < n ? `<span class="jx-boss" style="left:${P[n].x - 78}px" aria-hidden="true">${jFlame(76, "fight")}</span>` : ""}`;
     return `<div class="jx-w" data-n="${n}" data-cur="${cur}" data-z="0">
       ${sky}<span class="jx-moon" aria-hidden="true"></span><span class="jx-cloud c1" aria-hidden="true"></span><span class="jx-cloud c2" aria-hidden="true"></span>
@@ -8348,7 +8459,7 @@ function jChar(o = {}) {
   function jCur(cat, mode) { const sts = jStages(cat, mode), s = jSt(cat, mode), c = sts.findIndex((_, k) => !(s.s[k] >= 1)); return { n: sts.length, cur: c < 0 ? sts.length : c }; }
   const jLet = ["A", "B", "C", "D"];
   function jScript() {
-    if (!jP || J.view === "creer" || J.view === "profil") return "Crée ton personnage. Choisis la peau, les cheveux, le visage, la tenue. Écris ton pseudo, puis touche Enregistrer. Le bouton dé choisit au hasard.";
+    if (!jP || J.view === "creer" || J.view === "profil") return "Vestiaire. Ton personnage arrive en tenue civile. Choisis son équipement : corps, visage, haut, bas, tête, pieds, matériel, ou un modèle d’agence. Puis ouvre le vestiaire. Écris ton pseudo et touche Enregistrer.";
     if (J.view === "equipe") return "Qui joue ? Touche un personnage pour jouer avec lui. Ou touche Nouveau personnage pour en créer un autre.";
     if (J.view === "cat") { const c = JCAT[J.cat], { n, cur } = jCur(c.id, J.mode); return `Parcours : devenir ${JTITRES[c.id] || c.t}. ${cur >= n ? "Bravo, tu es arrivé au diplôme !" : `Tu es à l’étape ${cur + 1} sur ${n}. Touche le bloc jaune qui brille pour éteindre le feu. Fais glisser vers la droite pour voir la suite.`}`; }
     if (J.view === "grand") return "La grande carte : un seul chemin du stagiaire au chef de service. Touche une étape pour jouer.";
@@ -8414,7 +8525,7 @@ function jChar(o = {}) {
     if (jP && jP.snd === false) return;
     try {
       jAC = jAC || new (window.AudioContext || window.webkitAudioContext)();
-      const ac = jAC, seq = { tap: [[660, 0.06]], ok: [[523, 0.09], [659, 0.09], [784, 0.16]], ko: [[220, 0.16], [165, 0.26]], win: [[523, 0.1], [659, 0.1], [784, 0.1], [1047, 0.3]], dip: [[523, 0.12], [659, 0.12], [784, 0.12], [1047, 0.14], [784, 0.1], [1047, 0.1], [1319, 0.45]], hop: [[400, 0.07], [620, 0.1]] }[t] || [];
+      const ac = jAC, seq = { door: [[300, 0.05], [220, 0.08], [160, 0.1]], tap: [[660, 0.06]], ok: [[523, 0.09], [659, 0.09], [784, 0.16]], ko: [[220, 0.16], [165, 0.26]], win: [[523, 0.1], [659, 0.1], [784, 0.1], [1047, 0.3]], dip: [[523, 0.12], [659, 0.12], [784, 0.12], [1047, 0.14], [784, 0.1], [1047, 0.1], [1319, 0.45]], hop: [[400, 0.07], [620, 0.1]] }[t] || [];
       let at = ac.currentTime;
       seq.forEach(([f, d]) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = t === "ko" ? "sawtooth" : "square"; o.frequency.value = f; g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.1, at + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, at + d); o.connect(g); g.connect(ac.destination); o.start(at); o.stop(at + d + 0.02); at += d; });
       if (t === "ko" && navigator.vibrate) navigator.vibrate(60);
@@ -8426,23 +8537,104 @@ function jChar(o = {}) {
   const jMe = (o) => jChar(Object.assign({ look: jLook(jP) }, o));
   const jRoster = () => [jP, ...jTeam.filter((x) => x.id !== jP.id)];
   const jRankName = (xp) => JRANKS.filter((r) => xp >= r[1]).pop()[0];
-  const JTABS = [["peau", "🎨", "Peau"], ["cheveux", "💇", "Cheveux"], ["visage", "🙂", "Visage"], ["tenue", "👕", "Tenue"], ["chapeau", "🧢", "Chapeau"], ["style", "✨", "Style"]];
+  const JTABS = [["corps", "🧍", "Corps"], ["visage", "🙂", "Visage"], ["haut", "👕", "Haut"], ["bas", "👖", "Bas"], ["tete", "🪖", "Tête"], ["pieds", "👟", "Pieds"], ["main", "🔦", "Matériel"], ["agence", "🏢", "Agences"]];
+  const JBODY = new Set(["sk", "hs", "hc", "ey", "mo", "ac", "sh"]);
+  const JEMO2 = { haut: "👕", fit: "🎨", bnd: "🎨", emb: "🏷️", bas: "👖", pan: "🎨", hat: "🧢", cc: "🎨", chs: "👟", chc: "🎨", obj: "🔦" };
+  const jX = (k, id) => Math.max(0, JPAL[k].findIndex((x) => x[0] === id));
+  /* Agences imaginaires : des modèles de tenues, toutes les couleurs restent modifiables */
+  const JAG = [
+    { ag: "Agence Bouclier", emb: "bouclier", fit: "#1d3a8a", bnd: "#ffd23f", t: [
+      { n: "Agent SSIAP 1", haut: "blouson", hat: "casque", bas: "pantalon", pan: "#2b2d42", chs: "securite", obj: "talkie" },
+      { n: "Chef d’équipe SSIAP 2", haut: "blouson", hat: "casque2", bas: "pantalon", pan: "#2b2d42", chs: "securite", obj: "planchette" },
+      { n: "Chef de service SSIAP 3", haut: "costume", hat: "kepi", bas: "pantalon", pan: "#16213e", chs: "mocassins", obj: "" }] },
+    { ag: "Agence Phénix", emb: "flamme", fit: "#e63946", bnd: "#ff8a00", t: [
+      { n: "Agent SSIAP 1", haut: "veste", hat: "casque", bas: "cargo", pan: "#2b2d42", chs: "rangers", obj: "lampe" },
+      { n: "Agent de poste de sécurité", haut: "chemise", hat: "", bas: "pantalon", pan: "#16213e", chs: "mocassins", obj: "", fit2: "#f4f1ea", ac: "oreillette" },
+      { n: "Équipier d’intervention", haut: "blouson", hat: "casque2", bas: "cargo", pan: "#1b1228", chs: "bottes", obj: "extincteur" }] },
+    { ag: "Agence Vigie", emb: "tour", fit: "#6b7a4a", bnd: "#ffffff", t: [
+      { n: "Agent de prévention (APS)", haut: "polo", hat: "casquette", bas: "cargo", pan: "#1b1228", chs: "rangers", obj: "talkie" },
+      { n: "Rondier de nuit", haut: "parka", hat: "bonnet", bas: "pantalon", pan: "#1b1228", chs: "rangers", obj: "lampe" },
+      { n: "Agent cynophile", haut: "veste", hat: "beret", bas: "cargo", pan: "#6b7a4a", chs: "rangers", obj: "" }] },
+    { ag: "Agence Atlas", emb: "etoile", fit: "#2b2d42", bnd: "#ff8a00", t: [
+      { n: "Sécurité événementielle", haut: "gilet", hat: "", bas: "pantalon", pan: "#1b1228", chs: "baskets", obj: "talkie", fit2: "#c8ff2e", ac: "oreillette" },
+      { n: "Accueil et filtrage", haut: "polo", hat: "", bas: "pantalon", pan: "#1b1228", chs: "mocassins", obj: "" },
+      { n: "Agent de sûreté", haut: "chemise", hat: "calot", bas: "pantalon", pan: "#2b2d42", chs: "mocassins", obj: "", fit2: "#f4f1ea" }] },
+    { ag: "Agence Sentinelle", emb: "aigle", fit: "#2b2d42", bnd: "#cfd3dc", t: [
+      { n: "Chef de poste", haut: "costume", hat: "", bas: "pantalon", pan: "#1b1228", chs: "mocassins", obj: "", ac: "oreillette" },
+      { n: "Agent de sécurité", haut: "veste", hat: "beret", bas: "pantalon", pan: "#1b1228", chs: "rangers", obj: "talkie" }] },
+    { ag: "Secours", emb: "", fit: "#06d6a0", bnd: "#ffffff", t: [
+      { n: "Sauveteur secouriste du travail", haut: "secours", hat: "", bas: "pantalon", pan: "#2b2d42", chs: "baskets", obj: "" }] },
+  ];
+  const jTenuePatch = (g, t) => ({ haut: jX("haut", t.haut), hat: jX("hat", t.hat), bas: jX("bas", t.bas), pan: jX("pan", t.pan), chs: jX("chs", t.chs), obj: jX("obj", t.obj), fit: jX("fit", t.fit2 || g.fit), bnd: jX("bnd", g.bnd), emb: jX("emb", g.emb), cc: -1, ac: t.ac ? jX("ac", t.ac) : 0, ag: g.ag });
+  const jCrDirect = () => store.get("cabine-direct", false) === true;
+  const jCrLive = () => J.view === "creer" && J.cr;
   function jCrOpen(id) {
     const p = id ? jTeam.find((x) => x.id === id) : null, lk = Object.assign({}, p ? jLook(p) : jRandLook());
     delete lk.n;
-    J.cr = { id: p ? p.id : null, look: lk, pseudo: p ? p.pseudo : "", tab: "peau", mood: "ok", fx: "" };
+    const dir = jCrDirect() && !!p;
+    J.cr = { id: p ? p.id : null, look: lk, vu: Object.assign({}, lk), pseudo: p ? p.pseudo : "", tab: "agence", mood: "go", fx: "", etape: dir ? "ouvert" : "arrive", tr: false, vole: null, clin: false, flash: false, card: dir, propose: false, n: 0 };
     J.view = "creer";
   }
-  const jCrKeep = () => { const e = $("#jx-pseudo"); if (J.cr && e) J.cr.pseudo = e.value; };
+  const jCrKeep = () => { const e = $("#jx-pseudo"), g = $("#jx-ag"); if (J.cr && e) J.cr.pseudo = e.value; if (J.cr && g) J.cr.look.ag = g.value.slice(0, 24); };
+  /* après chaque affichage : arrivée, puis on éteint les animations déjà jouées (pour qu'elles ne se rejouent pas) */
+  function jCrAfter() {
+    const c = J.cr;
+    if (!c) return;
+    if (c.etape === "arrive" && !c.t1) { c.t1 = setTimeout(() => { c.t1 = 0; if (jCrLive() && J.cr === c && c.etape === "arrive") { c.etape = "ferme"; jSfx("door"); rerender(); } }, 2400); }
+    if (c.tr || c.vole || c.flash || c.fx) { clearTimeout(c.t2); c.t2 = setTimeout(() => { c.tr = false; c.vole = null; c.flash = false; c.fx = ""; }, 1500); }
+  }
+  /* un changement de tenue : cabine fermée = surprise (elle tremble, la pièce s'envole dedans) ; ouverte = les portes se referment une seconde */
+  function jCrApply(patch, icon) {
+    const c = J.cr;
+    Object.assign(c.look, patch);
+    if (c.etape === "ouvert") {
+      c.clin = true; c.card = false; jSfx("door"); rerender();
+      setTimeout(() => { if (jCrLive() && J.cr === c) { c.vu = Object.assign({}, c.look); rerender(); } }, 380);
+      setTimeout(() => { if (jCrLive() && J.cr === c) { c.clin = false; c.fx = "jump"; c.mood = "go"; c.card = true; jSfx("tap"); rerender(); } }, 780);
+    } else { c.tr = true; c.vole = { e: icon || "👕", n: ++c.n }; jSfx("hop"); rerender(); }
+  }
+  function jCrBody(patch) { const c = J.cr; Object.assign(c.look, patch); Object.assign(c.vu, patch); c.fx = "jump"; c.mood = "go"; jSfx("tap"); rerender(); }
+  function jCrOuvrir() {
+    const c = J.cr;
+    jSfx("tap"); setTimeout(() => jSfx("tap"), 250);
+    setTimeout(() => {
+      if (!jCrLive() || J.cr !== c) return;
+      c.vu = Object.assign({}, c.look); c.etape = "ouvert"; c.flash = true; c.mood = "ok"; c.fx = "dance"; c.card = true; jSfx("win");
+      const n = (store.get("cabine-surprises", 0) || 0) + 1; store.set("cabine-surprises", n);
+      if (n === 5 && !jCrDirect()) c.propose = true;
+      rerender();
+    }, 650);
+  }
   function jCreer() {
     if (!J.cr) jCrOpen(null);
-    const c = J.cr, L = c.look, P = JPAL;
-    const sw = (key, list, name) => `<h3 class="lbl">${name}</h3><div class="jx-sws" role="group" aria-label="${name}">${list.map(([v, n], i) => `<button type="button" class="jx-sw" style="--c:${v}" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}" aria-label="${n}"></button>`).join("")}</div>`;
-    const tl = (key, list, name) => `<h3 class="lbl">${name}</h3><div class="jx-tls" role="group" aria-label="${name}">${list.map(([v, n], i) => `<button type="button" class="jx-tl" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}">${jChar({ look: Object.assign({}, L, key === "hat" ? {} : { hat: 0 }, { [key]: i }), size: 54, label: n })}<span>${n}</span></button>`).join("")}</div>`;
-    const tabs = { peau: sw("sk", P.sk, "Teinte de peau"), cheveux: tl("hs", P.hs, "Coiffure") + sw("hc", P.hc, "Couleur des cheveux"), visage: tl("ey", P.ey, "Les yeux") + tl("mo", P.mo, "La bouche"), tenue: sw("fit", P.fit, "Couleur de la veste") + sw("sh", P.sh, "Baskets et contour sticker"), chapeau: tl("hat", P.hat, "Couvre-chef") + `<p class="muted" style="margin:0">En parcours, tu portes la tenue du métier (casque, képi…). Ton look est pour le reste du jeu.</p>`, style: tl("ac", P.ac, "Accessoire") };
+    const c = J.cr, L = c.look, P = JPAL, closed = c.etape === "ferme" || c.clin;
+    const sw = (key, list, name, auto) => `<h3 class="lbl">${name}</h3><div class="jx-sws" role="group" aria-label="${name}">${auto ? `<button type="button" class="jx-sw auto" data-act="jx-cr-set" data-k="${key}" data-v="-1" aria-pressed="${L[key] === -1 || L[key] == null}" aria-label="Assortie à la tenue">A</button>` : ""}${list.map(([v, n], i) => `<button type="button" class="jx-sw" style="--c:${v}" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}" aria-label="${n}"></button>`).join("")}</div>`;
+    const VBS = { hs: "-6 -4 112 80", ey: "-6 -4 112 108", mo: "-6 -4 112 108", ac: "-6 -4 112 108", haut: "-6 62 112 88", bas: "6 118 88 48", chs: "6 132 88 34", obj: "40 90 66 56", hat: "-6 -4 112 62", emb: "-6 62 112 88" };
+    const tl = (key, list, name) => `<h3 class="lbl">${name}</h3><div class="jx-tls" role="group" aria-label="${name}">${list.map(([v, n], i) => `<button type="button" class="jx-tl" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}">${jChar({ look: Object.assign({}, L, key === "hat" ? {} : { hat: key === "hs" ? 0 : L.hat }, { [key]: i }), size: 54, vb: VBS[key], label: n })}<span>${n}</span></button>`).join("")}</div>`;
+    const agences = JAG.map((g, gi) => `<h3 class="lbl">${g.ag}</h3><div class="jx-tls" role="group" aria-label="${g.ag}">${g.t.map((t, ti) => `<button type="button" class="jx-tl" data-act="jx-cr-tenue" data-g="${gi}" data-t="${ti}">${jChar({ look: Object.assign({}, L, jTenuePatch(g, t)), size: 54, vb: "-6 -4 112 178", label: t.n })}<span>${t.n}</span></button>`).join("")}</div>`).join("");
+    const tabs = {
+      corps: sw("sk", P.sk, "Teinte de peau") + tl("hs", P.hs, "Coiffure") + sw("hc", P.hc, "Couleur des cheveux") + sw("sh", P.sh, "Contour et détails"),
+      visage: tl("ey", P.ey, "Les yeux") + tl("mo", P.mo, "L’expression") + tl("ac", P.ac, "Accessoire"),
+      haut: tl("haut", P.haut, "Le haut") + sw("fit", P.fit, "Couleur du haut") + sw("bnd", P.bnd, "Couleur des bandes et insignes") + tl("emb", P.emb, "Insigne de l’agence"),
+      bas: tl("bas", P.bas, "Le bas") + sw("pan", P.pan, "Couleur du bas"),
+      tete: tl("hat", P.hat, "Couvre-chef") + sw("cc", P.fit, "Couleur du couvre-chef", true),
+      pieds: tl("chs", P.chs, "Chaussures") + sw("chc", P.chc, "Couleur des chaussures"),
+      main: tl("obj", P.obj, "Matériel en main"),
+      agence: `<p class="muted" style="margin:0">Des modèles de tenues, d’agences imaginaires. Choisis-en un, puis change toutes les couleurs et pièces à ta guise.</p><label class="fld"><span>Nom de mon agence (facultatif)</span><input id="jx-ag" type="text" maxlength="24" autocomplete="off" value="${esc(L.ag || "")}" placeholder="Ex. Agence Horizon"></label>${agences}`,
+    };
+    const vu = c.etape === "ouvert" ? c.vu : L;
+    const civ = c.etape === "ouvert" ? undefined : "civil";
+    const dateTxt = new Date().toLocaleDateString("fr-FR");
+    const card = c.etape === "ouvert" && c.card && !c.clin ? `<div class="jx-idc" aria-label="Carte professionnelle"><div class="jx-idh"><b>Carte professionnelle</b><span>${esc(L.ag || "Indépendant")}</span></div><div class="jx-idb">${jChar({ look: c.vu, size: 64, vb: "-6 -4 112 80", mood: "ok", label: "Photo d’identité" })}<div><b>${tx(c.pseudo || "Mon personnage")}</b><small>Prise de poste · ${dateTxt}</small></div></div></div>` : "";
     return `<nav class="crumb"><button type="button" class="btn-link" data-act="${jP ? "jx-hub" : "jx-cr-cancel"}">Jeu</button></nav>
-      <div class="page-h"><h1>${c.id ? "Mon personnage" : jP ? "Nouveau personnage" : "Crée ton personnage"}</h1><p>Touche chaque détail : tout se voit tout de suite.</p></div>
-      <section class="jx-stage"><button type="button" class="jx-pv" data-act="jx-cr-jump" aria-label="Faire réagir mon personnage">${jChar({ look: L, size: 100, mood: c.mood, cls: c.fx || "idle", label: "Aperçu du personnage" })}</button><div class="jx-pvb"><button type="button" data-act="jx-cr-rnd"><span aria-hidden="true">🎲</span> Au hasard</button></div></section>
+      <div class="page-h"><h1>${c.id ? "Mon personnage" : jP ? "Nouveau personnage" : "Crée ton personnage"}</h1><p>${c.etape === "arrive" ? "Il arrive en tenue civile et passe au vestiaire." : c.etape === "ferme" ? "Équipement en cours : choisis les pièces ci-dessous, puis ouvre le vestiaire." : "Prise de poste. Tu peux encore tout ajuster."}</p></div>
+      <section class="jx-cab"><div class="jx-cabs"><div class="jx-cabin${c.tr && closed ? " tr" : ""}"><span class="jx-plate">VESTIAIRE</span><span class="jx-led" aria-hidden="true"></span>
+          <div class="jx-cin${c.etape === "arrive" ? " arrive" : ""}">${jChar({ look: vu, civil: civ, size: 70, mood: c.mood, cls: c.fx || "idle", label: "Aperçu du personnage" })}</div>
+          <div class="jx-door l${closed ? " on" : ""}"><span class="jx-hdl"></span></div><div class="jx-door r${closed ? " on" : ""}"><span class="jx-hdl"></span></div>
+          ${c.vole ? `<span class="jx-fly" aria-hidden="true">${c.vole.e}</span>` : ""}</div>${c.flash ? `<div class="jx-flash" aria-hidden="true"></div>` : ""}</div>
+        <div class="jx-cabb"><button type="button" data-act="jx-cr-de"><span aria-hidden="true">🎲</span> Tenue au hasard</button>${c.etape === "ferme" ? `<button type="button" class="go" data-act="jx-cr-open"><span aria-hidden="true">🔓</span> Ouvrir le vestiaire</button>` : c.etape === "ouvert" && !jCrDirect() ? `<button type="button" data-act="jx-cr-close"><span aria-hidden="true">↺</span> Refermer pour changer</button>` : ""}<button type="button" data-act="jx-cr-jump"><span aria-hidden="true">🙂</span> Humeur</button></div></section>
+      ${c.propose ? `<div class="jx-prop2"><b>Voir chaque pièce tout de suite ?</b><p>Au lieu de la surprise, le vestiaire se referme une seconde à chaque changement.</p><div class="signal-b"><button type="button" class="btn" data-act="jx-cr-dir" data-v="1">Oui, tout de suite</button><button type="button" class="btn ghost" data-act="jx-cr-dir" data-v="0">Non, garder la surprise</button></div></div>` : ""}
+      ${card}
       <label class="fld"><span>Pseudo (libre, il reste sur cet appareil)</span><input id="jx-pseudo" type="text" maxlength="20" autocomplete="off" value="${esc(c.pseudo)}" placeholder="Ex. Capitaine Feu"></label>
       <div class="jx-tabs" role="group" aria-label="Que veux-tu changer ?">${JTABS.map(([k, e, n]) => `<button type="button" data-act="jx-cr-tab" data-v="${k}" aria-pressed="${c.tab === k}"><span aria-hidden="true">${e}</span>${n}</button>`).join("")}</div>
       <section class="jx-opts">${tabs[c.tab]}</section>
@@ -8576,7 +8768,7 @@ function jChar(o = {}) {
     else if (J.view === "bsetup") body = jBSetup();
     else if (J.view === "bplay" && BT) body = jBPlay();
     else body = jHub();
-    return { html: jVoiceBar() + body, title: "Jeu", tab: "jeu", back: "accueil", after: () => { jAutoSay(); if (J.view === "cat") { J.focusHere = false; jWorldInit(); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
+    return { html: jVoiceBar() + body, title: "Jeu", tab: "jeu", back: "accueil", after: () => { jAutoSay(); if (J.view === "creer") jCrAfter(); if (J.view === "cat") { J.focusHere = false; jWorldInit(); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
   }
   function pageJeuImport() {
     return { html: `<nav class="crumb"><a href="#jeu">Jeu</a></nav><div class="page-h"><h1>Ajouter des questions</h1><p>Collez un lot de questions au format JSON, ou choisissez le fichier. Les questions sans source, avec une erreur de format ou déjà présentes sont écartées.</p></div>
@@ -8602,9 +8794,13 @@ function jChar(o = {}) {
       case "jx-cr-new": jCrOpen(null); jGo(); return true;
       case "jx-cr-edit": jCrOpen(b.dataset.id); jGo(); return true;
       case "jx-cr-cancel": J.cr = null; J.view = jP ? "hub" : "creer"; jGo(); return true;
-      case "jx-cr-tab": jCrKeep(); J.cr.tab = b.dataset.v; rerender(); return true;
-      case "jx-cr-set": jCrKeep(); J.cr.look[b.dataset.k] = +b.dataset.v; J.cr.mood = "ok"; J.cr.fx = J.cr.fx === "jump" ? "jump2" : "jump"; jSfx("tap"); rerender(); return true;
-      case "jx-cr-rnd": jCrKeep(); J.cr.look = jRandLook(); J.cr.fx = J.cr.fx === "jump" ? "jump2" : "jump"; J.cr.mood = "ok"; jSfx("hop"); rerender(); return true;
+      case "jx-cr-tab": jCrKeep(); J.cr.tab = b.dataset.v; J.cr.vole = null; rerender(); return true;
+      case "jx-cr-set": { jCrKeep(); const k = b.dataset.k, v = +b.dataset.v; if (JBODY.has(k)) jCrBody({ [k]: v }); else jCrApply({ [k]: v }, JEMO2[k]); return true; }
+      case "jx-cr-tenue": { jCrKeep(); const g = JAG[+b.dataset.g], t = g.t[+b.dataset.t], ag = $("#jx-ag"); const p = jTenuePatch(g, t); if (ag && ag.value.trim()) p.ag = ag.value.trim().slice(0, 24); jCrApply(p, "👔"); return true; }
+      case "jx-cr-de": { jCrKeep(); const r = jRandLook(); jCrApply({ haut: r.haut, fit: r.fit, bnd: r.bnd, emb: r.emb, bas: r.bas, pan: r.pan, hat: r.hat, chs: r.chs, chc: r.chc, obj: r.obj, cc: -1 }, "🎲"); return true; }
+      case "jx-cr-open": jCrKeep(); jCrOuvrir(); return true;
+      case "jx-cr-close": jCrKeep(); J.cr.etape = "ferme"; J.cr.card = false; jSfx("door"); rerender(); return true;
+      case "jx-cr-dir": store.set("cabine-direct", b.dataset.v === "1"); J.cr.propose = false; rerender(); return true;
       case "jx-cr-jump": { jCrKeep(); const o = ["go", "ok", "ko"]; J.cr.mood = o[(o.indexOf(J.cr.mood) + 1) % 3]; J.cr.fx = J.cr.mood === "ko" ? "shake" : J.cr.mood === "ok" ? "dance" : "jump"; jSfx(J.cr.mood === "ko" ? "ko" : "ok"); rerender(); return true; }
       case "jx-cr-save": {
         jCrKeep();
