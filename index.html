@@ -797,6 +797,31 @@ td:first-child { font-weight: 700; }
 .jx-vb button{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:99px;border:3px solid #1b1228;background:#ffd23f;color:#1b1228;font:700 .9rem/1 var(--font-d);box-shadow:0 3px 0 #1b1228;cursor:pointer}
 .jx-vb button[data-act="jx-auto"]{background:var(--surface);color:var(--ink);font-weight:600;font-size:.8rem}
 .jx-vb button:active{transform:translateY(3px);box-shadow:none}
+.jx-stage{position:sticky;top:56px;z-index:6;display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;border-radius:18px;border:3px solid #1b1228;box-shadow:0 4px 0 #1b1228;background:radial-gradient(circle at 50% 120%,#ff5d8f 0,transparent 55%),linear-gradient(#3a2370,#1b1040)}
+.jx-pv{border:0;background:none;padding:0;cursor:pointer;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3))}
+.jx-pvb button{display:inline-flex;gap:6px;align-items:center;padding:10px 14px;border-radius:99px;border:3px solid #1b1228;background:#ffd23f;color:#1b1228;font:700 .9rem/1 var(--font-d);box-shadow:0 3px 0 #1b1228;cursor:pointer}
+.jx-tabs{position:sticky;top:178px;z-index:5;background:var(--bg,#0f0d17);margin:0 -4px;padding:6px 4px;display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}.jx-tabs::-webkit-scrollbar{display:none}
+.jx-tabs button{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:60px;padding:8px 10px;border-radius:14px;border:2px solid var(--line-2);background:var(--surface);color:var(--ink);font:600 .72rem/1 var(--font-d);cursor:pointer}
+.jx-tabs button span{font-size:1.25rem}
+.jx-tabs button[aria-pressed="true"]{border-color:#1b1228;background:#ffd23f;color:#1b1228;box-shadow:0 3px 0 #1b1228}
+.jx-opts{display:flex;flex-direction:column;gap:8px}.jx-opts .lbl{margin:6px 0 0}
+.jx-sws{display:flex;flex-wrap:wrap;gap:10px}
+.jx-sw{width:44px;height:44px;border-radius:50%;background:var(--c);border:3px solid #1b1228;cursor:pointer;box-shadow:0 3px 0 #1b1228}
+.jx-sw[aria-pressed="true"]{outline:4px solid #fff;outline-offset:2px;transform:scale(1.08)}
+.jx-tls{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.jx-tl{display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 2px 6px;border-radius:14px;border:2px solid var(--line-2);background:var(--surface);color:var(--ink);font:600 .7rem/1.1 var(--font-d);cursor:pointer;text-align:center}
+.jx-tl[aria-pressed="true"]{border-color:#1b1228;background:#ffd23f;color:#1b1228;box-shadow:0 3px 0 #1b1228}
+.jx-team{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.jx-tc{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;border-radius:16px;border:3px solid var(--line-2);background:var(--surface)}
+.jx-tc.on{border-color:#1b1228;background:linear-gradient(#fff3b8,#ffd23f);color:#1b1228;box-shadow:0 4px 0 #1b1228}
+.jx-tcb{display:flex;flex-direction:column;align-items:center;gap:1px;border:0;background:none;color:inherit;font:inherit;cursor:pointer;width:100%}
+.jx-tcb b{font:700 .95rem/1.1 var(--font-d);overflow-wrap:anywhere}.jx-tcb small{font-size:.72rem;opacity:.8}
+.jx-tca{display:flex;gap:6px}.jx-tca button{padding:6px 10px;border-radius:99px;border:2px solid var(--line-2);background:transparent;color:inherit;font:600 .75rem/1 var(--font-d);cursor:pointer}
+.jx-tc.add{justify-content:center;min-height:150px;border-style:dashed;color:var(--ink-2);cursor:pointer;font:inherit}
+.jx-tc.add .pl{font-size:2.4rem;line-height:1}.jx-tc.add b{font:700 .9rem/1.1 var(--font-d)}
+.jx-tc .confirm{grid-column:1/-1}
+.jx-hb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.jx-hb button{padding:9px 14px;border-radius:99px;border:3px solid #1b1228;background:#fff;color:#1b1228;font:700 .82rem/1 var(--font-d);box-shadow:0 3px 0 #1b1228;cursor:pointer}
 /* Glossaire */
 .gl-letter { margin: 6px 0 0; font: 700 1.3rem/1 var(--font-d); color: var(--red); }
 .gl { display: flex; flex-direction: column; gap: 6px; }
@@ -7962,84 +7987,112 @@ const APP = (() => {
     { id: "terrain", t: "Sur le terrain", ic: "ronde", co: "green" },
   ];
   const JZONES = ["Le hall d’accueil", "Le poste de sécurité", "Les couloirs", "Les escaliers", "Le sous-sol", "La toiture", "Le grand ERP", "Le jour J"];
-/* Personnages « graffiti » : grosse tête, petit corps, contour épais au feutre, ombre décalée façon sticker.
+/* Personnages « graffiti » v2 : grosse tête, petit corps, contour épais au feutre, relief léger, ombre décalée façon sticker.
    Tout est dessiné en SVG dans l'appli : rien à télécharger, ça marche sans internet. */
 const JINK = "#1b1228";
-const JCHARS = [
-  { n: "Flam", skin: "#f6c9a0", hair: "#2a1a12", hs: "tuft", fit: "#e63946", pant: "#2b2d42", hat: "casque", acc: "#ffd23f", sh: "#ff5d8f" },
-  { n: "Nova", skin: "#8d5a3b", hair: "#120b0b", hs: "afro", fit: "#2ec4b6", pant: "#2b2d42", hat: "", acc: "#ffd23f", sh: "#7b2cff" },
-  { n: "Kira", skin: "#f1b98f", hair: "#ff5d8f", hs: "bob", fit: "#7b2cff", pant: "#1d1b3a", hat: "casquette", acc: "#2ec4b6", sh: "#ffd23f" },
-  { n: "Max", skin: "#c68a5c", hair: "#3a2415", hs: "short", fit: "#ff8a00", pant: "#2b2d42", hat: "casque", acc: "#ffffff", sh: "#2ec4b6" },
-  { n: "Zoé", skin: "#ffe0c2", hair: "#e0a526", hs: "pony", fit: "#3a86ff", pant: "#1d1b3a", hat: "", acc: "#ff5d8f", sh: "#ffd23f" },
-  { n: "Sam", skin: "#7a4a2e", hair: "#1b1228", hs: "dread", fit: "#06d6a0", pant: "#1d1b3a", hat: "bonnet", acc: "#ffd23f", sh: "#ff5d8f" },
-  { n: "Léo", skin: "#f6c9a0", hair: "#b5532a", hs: "spike", fit: "#ffd23f", pant: "#2b2d42", hat: "", acc: "#e63946", sh: "#3a86ff" },
-  { n: "Ayo", skin: "#a8734a", hair: "#2a1a12", hs: "curl", fit: "#ff5d8f", pant: "#2b2d42", hat: "casquette", acc: "#ffffff", sh: "#06d6a0" },
+const JPAL = {
+  sk: [["#ffe6cf", "Très clair"], ["#f6c9a0", "Clair"], ["#f1b98f", "Beige"], ["#d9a066", "Hâlé"], ["#c68a5c", "Caramel"], ["#a8734a", "Brun"], ["#8d5a3b", "Brun foncé"], ["#6b4028", "Chocolat"], ["#4a2a1c", "Ébène"]],
+  hc: [["#1b1228", "Noir"], ["#4a2e1e", "Châtain foncé"], ["#8a5a33", "Châtain"], ["#b5532a", "Roux"], ["#e0a526", "Blond foncé"], ["#f4d77a", "Blond"], ["#e8e8f0", "Blanc"], ["#ff5d8f", "Rose"], ["#7b2cff", "Violet"], ["#2ec4b6", "Turquoise"], ["#3a86ff", "Bleu"], ["#e63946", "Rouge"]],
+  hs: [["short", "Court"], ["tuft", "Mèche"], ["bob", "Carré"], ["pony", "Queue de cheval"], ["afro", "Afro"], ["dread", "Dreads"], ["spike", "Pics"], ["curl", "Boucles"], ["mohawk", "Crête"], ["bun", "Chignon"], ["long", "Longs"], ["bald", "Chauve"]],
+  ey: [["rond", "Ronds"], ["joyeux", "Joyeux"], ["cool", "Cool"], ["etoile", "Étoiles"]],
+  mo: [["sourire", "Sourire"], ["grand", "Grand rire"], ["oh", "Surpris"], ["malin", "Malin"]],
+  ac: [["", "Aucun"], ["lunettes", "Lunettes"], ["barbe", "Barbe"], ["moustache", "Moustache"], ["pansement", "Pansement"]],
+  hat: [["", "Aucun"], ["casque", "Casque"], ["casquette", "Casquette"], ["bonnet", "Bonnet"], ["kepi", "Képi"]],
+  fit: [["#e63946", "Rouge"], ["#ff8a00", "Orange"], ["#ffd23f", "Jaune"], ["#06d6a0", "Vert"], ["#2ec4b6", "Turquoise"], ["#3a86ff", "Bleu"], ["#1d3a8a", "Bleu nuit"], ["#7b2cff", "Violet"], ["#ff5d8f", "Rose"], ["#2b2d42", "Anthracite"], ["#f4f1ea", "Blanc"], ["#8a5a33", "Marron"]],
+  sh: [["#ff5d8f", "Rose"], ["#ffd23f", "Jaune"], ["#2ec4b6", "Turquoise"], ["#7b2cff", "Violet"], ["#3a86ff", "Bleu"], ["#ff8a00", "Orange"], ["#06d6a0", "Vert"], ["#e63946", "Rouge"]],
+};
+const jL = (sk, hs, hc, ey, mo, fit, hat, ac, sh) => ({ sk, hs, hc, ey, mo, fit, hat, ac, sh });
+/* Les 8 personnages de départ (anciens avatars) */
+const JLOOKS = [
+  { n: "Flam", ...jL(1, 1, 1, 0, 0, 0, 1, 0, 0) }, { n: "Nova", ...jL(6, 4, 0, 1, 1, 4, 0, 1, 3) }, { n: "Kira", ...jL(2, 2, 7, 2, 3, 7, 2, 0, 1) }, { n: "Max", ...jL(4, 0, 1, 0, 1, 1, 1, 2, 2) },
+  { n: "Zoé", ...jL(0, 3, 4, 3, 0, 5, 0, 0, 7) }, { n: "Sam", ...jL(7, 5, 0, 1, 0, 3, 3, 0, 0) }, { n: "Léo", ...jL(1, 6, 3, 2, 3, 2, 0, 3, 4) }, { n: "Ayo", ...jL(5, 7, 1, 0, 1, 8, 2, 1, 6) },
 ];
-/* tenue selon le métier : casque, képi, casquette, brassard… */
 const JTENUE = {
   ssiap1: { hat: "casque", fit: "#e63946", band: "#ffd23f" },
   ssiap2: { hat: "casque2", fit: "#e63946", band: "#ffffff" },
   ssiap3: { hat: "kepi", fit: "#1d3a8a", band: "#ffd23f" },
-  aps: { hat: "casquette", fit: "#1b1228", band: "#3a86ff" },
+  aps: { hat: "casquette", fit: "#2b2d42", band: "#3a86ff" },
   sst: { hat: "", fit: "#06d6a0", band: "#ffffff", croix: 1 },
-  reglementation: { hat: "lunettes", fit: "#7b2cff", band: "#ffd23f" },
+  reglementation: { hat: "", fit: "#7b2cff", band: "#ffd23f", lun: 1 },
 };
-function jHair(c) {
-  const h = c.hair, k = JINK, S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
-  switch (c.hs) {
-    case "afro": return `<circle cx="50" cy="30" r="30" fill="${h}" ${S}/>`;
-    case "bob": return `<path d="M18 52 C14 18 30 6 50 6 C70 6 86 18 82 52 C76 40 70 30 50 28 C30 30 24 40 18 52Z" fill="${h}" ${S}/>`;
-    case "pony": return `<path d="M20 38 C22 14 38 8 50 8 C64 8 80 14 80 38 C70 26 58 24 50 24 C40 24 30 26 20 38Z" fill="${h}" ${S}/><path d="M80 30 C96 30 98 52 86 62 C90 48 84 42 78 40Z" fill="${h}" ${S}/>`;
-    case "dread": return `<path d="M20 40 C20 14 36 8 50 8 C64 8 80 14 80 40 C70 28 58 26 50 26 C40 26 30 28 20 40Z" fill="${h}" ${S}/>${[16, 24, 76, 84].map((x, i) => `<rect x="${x - 4}" y="34" width="8" height="${24 + (i % 2) * 8}" rx="4" fill="${h}" ${S}/>`).join("")}`;
-    case "spike": return `<path d="M20 38 L24 12 L36 22 L44 4 L54 20 L66 6 L72 24 L84 14 L80 38 C68 26 58 24 50 24 C40 24 30 26 20 38Z" fill="${h}" ${S}/>`;
-    case "curl": return `<g fill="${h}" ${S}>${[26, 38, 50, 62, 74].map((x, i) => `<circle cx="${x}" cy="${i % 2 ? 14 : 18}" r="10"/>`).join("")}</g>`;
-    case "short": return `<path d="M20 38 C22 14 36 8 50 8 C64 8 78 14 80 38 C70 28 58 26 50 26 C42 26 30 28 20 38Z" fill="${h}" ${S}/>`;
-    default: return `<path d="M20 38 C22 14 36 8 50 8 C64 8 78 14 80 38 C70 28 58 26 50 26 C42 26 30 28 20 38Z" fill="${h}" ${S}/><path d="M46 10 C44 2 54 0 58 6 C56 8 52 8 50 12Z" fill="${h}" ${S}/>`;
+const jMix = (hex, k) => { const n = parseInt(hex.slice(1), 16), t = k < 0 ? 0 : 255, f = Math.abs(k), m = (c) => Math.round(c + (t - c) * f); return "#" + ((1 << 24) + (m(n >> 16) << 16) + (m((n >> 8) & 255) << 8) + m(n & 255)).toString(16).slice(1); };
+const jRandLook = () => { const r = (a) => Math.floor(Math.random() * a); return jL(r(JPAL.sk.length), r(JPAL.hs.length), r(JPAL.hc.length), r(4), r(4), r(JPAL.fit.length), r(5), r(5) === 0 ? 1 + r(4) : 0, r(8)); };
+function jHairParts(hs, h) {
+  const S = `stroke="${JINK}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`, hl = (d) => `<path d="${d}" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".38"/>`, dk = jMix(h, -0.25);
+  const cap = `<path d="M20 38 C22 14 36 8 50 8 C64 8 78 14 80 38 C70 28 58 26 50 26 C42 26 30 28 20 38Z" fill="${h}" ${S}/>`;
+  switch (hs) {
+    case "afro": return { back: `<circle cx="50" cy="30" r="31" fill="${h}" ${S}/><circle cx="26" cy="20" r="3" fill="${dk}" opacity=".5"/><circle cx="70" cy="16" r="3" fill="${dk}" opacity=".5"/>`, front: hl("M26 22 C32 12 42 8 52 8") };
+    case "curl": return { back: `<g fill="${h}" ${S}>${[24, 37, 50, 63, 76].map((x, i) => `<circle cx="${x}" cy="${i % 2 ? 14 : 18}" r="11"/>`).join("")}</g>`, front: hl("M26 20 C32 10 42 8 50 8") };
+    case "bob": return { back: `<path d="M14 66 C8 20 30 4 50 4 C70 4 92 20 86 66 C84 74 76 76 74 70 L26 70 C24 76 16 74 14 66Z" fill="${h}" ${S}/>`, front: `<path d="M20 40 C26 20 38 18 50 18 C62 18 74 20 80 40 C70 30 58 30 50 30 C42 30 30 30 20 40Z" fill="${h}" ${S}/>` + hl("M30 22 C38 18 46 18 54 19") };
+    case "long": return { back: `<path d="M12 62 C6 16 30 2 50 2 C70 2 94 16 88 62 L92 92 C80 90 80 74 78 66 L22 66 C20 74 20 90 8 92Z" fill="${h}" ${S}/>`, front: `<path d="M20 40 C24 18 38 14 50 14 C62 14 76 18 80 40 C70 30 58 26 50 26 C42 26 30 30 20 40Z" fill="${h}" ${S}/>` + hl("M28 22 C36 16 44 14 54 14") };
+    case "pony": return { back: `<path d="M78 28 C98 26 100 54 88 66 C92 50 86 44 80 42Z" fill="${h}" ${S}/>`, front: cap + hl("M28 22 C36 14 44 12 52 12") };
+    case "dread": return { back: `${[14, 24, 76, 86].map((x, i) => `<rect x="${x - 4.5}" y="30" width="9" height="${28 + (i % 2) * 10}" rx="4.5" fill="${h}" ${S}/>`).join("")}`, front: cap + hl("M28 20 C36 14 44 12 52 12") };
+    case "spike": return { back: "", front: `<path d="M20 38 L22 12 L36 22 L42 2 L54 20 L66 4 L72 24 L84 12 L80 38 C68 26 58 24 50 24 C40 24 30 26 20 38Z" fill="${h}" ${S}/>` };
+    case "mohawk": return { back: "", front: `<path d="M20 36 C24 24 34 22 40 28 L50 28 L60 28 C66 22 76 24 80 36 C70 28 58 26 50 26 C42 26 30 28 20 36Z" fill="${dk}" ${S}/><path d="M38 28 L40 6 L46 14 L50 0 L54 14 L60 6 L62 28Z" fill="${h}" ${S}/>` };
+    case "bun": return { back: `<circle cx="50" cy="4" r="12" fill="${h}" ${S}/>`, front: cap + hl("M28 22 C36 14 44 12 52 12") };
+    case "bald": return { back: "", front: `<path d="M30 24 C38 14 48 12 56 14" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".35"/>` };
+    case "tuft": return { back: "", front: cap + `<path d="M46 10 C42 0 54 -2 60 6 C56 8 52 8 50 12Z" fill="${h}" ${S}/>` + hl("M28 22 C36 14 44 12 52 12") };
+    default: return { back: "", front: cap + hl("M28 22 C36 14 44 12 52 12") };
   }
 }
-function jHat(t, c, band) {
-  const k = JINK, S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
+function jHatSvg(t, fit, acc) {
+  const S = `stroke="${JINK}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
   switch (t) {
-    case "casque": return `<path d="M19 36 C20 10 36 2 50 2 C64 2 80 10 81 36 Z" fill="#ffffff" ${S}/><path d="M19 36 L81 36 L84 42 L16 42Z" fill="${c.fit}" ${S}/><rect x="44" y="6" width="12" height="30" rx="5" fill="${c.fit}" ${S}/><circle cx="50" cy="20" r="0"/>`;
-    case "casque2": return `<path d="M19 36 C20 10 36 2 50 2 C64 2 80 10 81 36 Z" fill="#ffd23f" ${S}/><path d="M19 36 L81 36 L84 42 L16 42Z" fill="#e63946" ${S}/><rect x="31" y="8" width="8" height="28" rx="4" fill="#fff" ${S}/><rect x="61" y="8" width="8" height="28" rx="4" fill="#fff" ${S}/>`;
+    case "casque": return `<path d="M19 36 C20 10 36 2 50 2 C64 2 80 10 81 36 Z" fill="#fff" ${S}/><path d="M30 12 C38 6 46 5 52 5" stroke="#bcd6ff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".8"/><path d="M19 36 L81 36 L84 42 L16 42Z" fill="${fit}" ${S}/><rect x="44" y="6" width="12" height="30" rx="5" fill="${fit}" ${S}/>`;
+    case "casque2": return `<path d="M19 36 C20 10 36 2 50 2 C64 2 80 10 81 36 Z" fill="#ffd23f" ${S}/><path d="M30 12 C38 6 46 5 52 5" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".7"/><path d="M19 36 L81 36 L84 42 L16 42Z" fill="#e63946" ${S}/><rect x="31" y="8" width="8" height="28" rx="4" fill="#fff" ${S}/><rect x="61" y="8" width="8" height="28" rx="4" fill="#fff" ${S}/>`;
     case "kepi": return `<path d="M20 32 C20 12 34 8 50 8 C66 8 80 12 80 32Z" fill="#1d3a8a" ${S}/><path d="M16 36 C30 28 70 28 84 36 L84 42 L16 42Z" fill="#102a66" ${S}/><circle cx="50" cy="20" r="6" fill="#ffd23f" ${S}/>`;
-    case "casquette": return `<path d="M20 34 C22 10 38 4 50 4 C64 4 78 10 80 34Z" fill="${c.fit}" ${S}/><path d="M46 34 C60 28 84 28 94 38 C80 42 62 40 46 38Z" fill="${c.fit}" ${S}/><path d="M24 26 H76" stroke="${c.acc}" stroke-width="5" stroke-linecap="round"/>`;
-    case "bonnet": return `<path d="M20 34 C20 8 36 2 50 2 C64 2 80 8 80 34Z" fill="${c.acc}" ${S}/><rect x="17" y="30" width="66" height="10" rx="5" fill="#fff" ${S}/><circle cx="50" cy="0" r="6" fill="#fff" ${S}/>`;
+    case "casquette": return `<path d="M20 34 C22 10 38 4 50 4 C64 4 78 10 80 34Z" fill="${fit}" ${S}/><path d="M46 34 C60 28 84 28 94 38 C80 42 62 40 46 38Z" fill="${jMix(fit, -0.2)}" ${S}/><path d="M24 26 H76" stroke="${acc}" stroke-width="5" stroke-linecap="round"/>`;
+    case "bonnet": return `<path d="M20 34 C20 8 36 2 50 2 C64 2 80 8 80 34Z" fill="${acc}" ${S}/><path d="M26 16 V32 M38 8 V32 M50 6 V32 M62 8 V32 M74 16 V32" stroke="${JINK}" stroke-width="1.6" opacity=".25"/><rect x="17" y="30" width="66" height="10" rx="5" fill="#fff" ${S}/><circle cx="50" cy="0" r="6" fill="#fff" ${S}/>`;
     default: return "";
   }
 }
-/* o : { i: numéro du perso (0-7), job: id métier, mood: "ok" | "ko" | "go", size: px, cls } */
+/* o : { look | i, job, mood: "go"|"ok"|"ko", size, cls, label } */
 function jChar(o = {}) {
-  const c = Object.assign({}, JCHARS[(o.i || 0) % JCHARS.length]), T = o.job ? JTENUE[o.job] : null;
-  if (T) { c.fit = T.fit; c.hat = T.hat; }
-  const k = JINK, S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`, mood = o.mood || "go";
-  const eye = (x) => `<ellipse cx="${x}" cy="62" rx="9" ry="${mood === "ko" ? 7 : 10}" fill="#fff" ${S}/><circle cx="${x + (mood === "go" ? 1.5 : 0)}" cy="${mood === "ko" ? 64 : 63}" r="4.2" fill="${k}"/><circle cx="${x + 3}" cy="59.5" r="1.6" fill="#fff"/>`;
-  const mouth = mood === "ok" ? `<path d="M40 80 C44 92 56 92 60 80Z" fill="#7a1e2c" ${S}/><path d="M44 86 C48 90 52 90 56 86" stroke="#ff8fa3" stroke-width="3" fill="none" stroke-linecap="round"/>` : mood === "ko" ? `<path d="M42 86 C46 80 54 80 58 86" fill="none" ${S}/>` : `<path d="M41 82 C46 90 54 90 59 82" fill="none" ${S}/>`;
-  const brow = mood === "ko" ? `<path d="M30 50 L44 54 M70 50 L56 54" ${S} fill="none"/>` : `<path d="M30 52 C34 47 40 47 44 50 M56 50 C60 47 66 47 70 52" ${S} fill="none"/>`;
-  const body = `<ellipse cx="50" cy="116" rx="26" ry="4" fill="rgba(0,0,0,.28)"/>
-    <g class="jc-legs"><rect x="35" y="98" width="13" height="14" rx="5" fill="${c.pant}" ${S}/><rect x="52" y="98" width="13" height="14" rx="5" fill="${c.pant}" ${S}/>
-      <path d="M30 110 C30 104 46 104 50 108 L50 114 L30 114Z" fill="#fff" ${S}/><path d="M50 108 C54 104 70 104 70 110 L70 114 L50 114Z" fill="#fff" ${S}/><path d="M30 113 H50 M50 113 H70" stroke="${c.sh}" stroke-width="3.4" stroke-linecap="round"/></g>
-    <g class="jc-arm l"><rect x="20" y="88" width="12" height="18" rx="6" fill="${c.fit}" ${S}/><circle cx="26" cy="108" r="6" fill="${c.skin}" ${S}/></g>
-    <g class="jc-arm r"><rect x="68" y="88" width="12" height="18" rx="6" fill="${c.fit}" ${S}/><circle cx="74" cy="108" r="6" fill="${c.skin}" ${S}/></g>
-    <rect x="30" y="84" width="40" height="22" rx="10" fill="${c.fit}" ${S}/>
-    <rect x="30" y="95" width="40" height="5" fill="${T ? T.band : c.acc}" opacity=".95" stroke="${k}" stroke-width="2"/>
-    ${T && T.croix ? `<path d="M46 87 h8 v4 h4 v4 h-4 v4 h-8 v-4 h-4 v-4 h4z" fill="#fff" stroke="${k}" stroke-width="2"/>` : ""}`;
+  const lk = o.look || JLOOKS[(o.i || 0) % JLOOKS.length], T = o.job ? JTENUE[o.job] : null, P = JPAL;
+  const skin = P.sk[lk.sk % P.sk.length][0], hair = P.hc[lk.hc % P.hc.length][0], hs = P.hs[lk.hs % P.hs.length][0], sh = P.sh[lk.sh % P.sh.length][0];
+  const fit = T ? T.fit : P.fit[lk.fit % P.fit.length][0], hat = T ? T.hat : P.hat[lk.hat % P.hat.length][0], ac = (T && T.lun) ? "lunettes" : P.ac[lk.ac % P.ac.length][0], band = T ? T.band : "#ffd23f";
+  const ey = P.ey[lk.ey % 4][0], mo = P.mo[lk.mo % 4][0], k = JINK, mood = o.mood || "go", pant = "#2b2d42", sd = jMix(skin, -0.14), fd = jMix(fit, -0.22);
+  const S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
+  const pup = (x, y) => (ey === "etoile" ? `<path transform="translate(${x} ${y}) scale(.55)" d="M0 -9 l2.6 6 6.4.6-4.9 4.2 1.5 6.3-5.6-3.4-5.6 3.4 1.5-6.3-4.9-4.2 6.4-.6z" fill="#ff5d8f" stroke="${k}" stroke-width="2.6" stroke-linejoin="round"/>` : `<circle cx="${x + (mood === "go" ? 1.5 : 0)}" cy="${y + 1}" r="4.6" fill="${k}"/><circle cx="${x + 3}" cy="${y - 2.5}" r="1.7" fill="#fff"/>`);
+  const eye = (x) => {
+    if (ey === "joyeux" || mood === "ok" && ey === "rond") return `<path d="M${x - 9} 66 Q${x} 53 ${x + 9} 66" fill="none" stroke="${k}" stroke-width="4.4" stroke-linecap="round"/>`;
+    const sq = mood === "ko" ? 7 : 10, base = `<ellipse cx="${x}" cy="62" rx="9" ry="${sq}" fill="#fff" ${S}/>${pup(x, 62)}`;
+    return ey === "cool" ? base + `<path d="M${x - 9.5} 62 a9.5 ${sq} 0 0 1 19 0Z" fill="${skin}" stroke="${k}" stroke-width="3"/>` : base;
+  };
+  const brow = mood === "ko" ? `<path d="M29 50 L44 55 M71 50 L56 55" ${S} fill="none"/>` : ey === "cool" ? `<path d="M29 54 H44 M56 54 H71" ${S} fill="none"/>` : `<path d="M30 52 C34 47 40 47 44 50 M56 50 C60 47 66 47 70 52" ${S} fill="none"/>`;
+  const m = mood === "ko" ? "ko" : mood === "ok" ? "grand" : mo;
+  const mouth = { sourire: `<path d="M41 82 C46 90 54 90 59 82" fill="none" ${S}/>`, grand: `<path d="M38 80 C42 94 58 94 62 80Z" fill="#7a1e2c" ${S}/><path d="M41 80 H59 V84 H41Z" fill="#fff" opacity=".95"/><path d="M44 89 C48 92 52 92 56 89" stroke="#ff8fa3" stroke-width="3" fill="none" stroke-linecap="round"/>`, oh: `<ellipse cx="50" cy="85" rx="5.5" ry="6.5" fill="#7a1e2c" ${S}/>`, malin: `<path d="M41 84 C48 88 56 86 62 78" fill="none" ${S}/>`, ko: `<path d="M42 87 C46 80 54 80 58 87" fill="none" ${S}/>` }[m];
+  const hp = jHairParts(hs, hair);
+  let beard = "", extra = "";
+  if (ac === "barbe") beard = `<path d="M16 64 C18 98 82 98 84 64 C76 82 62 86 50 86 C38 86 24 82 16 64Z" fill="${hair}" ${S}/>`;
+  if (ac === "moustache") extra = `<path d="M35 77 C42 70 48 74 50 77 C52 74 58 70 65 77 C58 83 52 79 50 79 C48 79 42 83 35 77Z" fill="${hair}" ${S}/>`;
+  if (ac === "pansement") extra = `<g transform="rotate(-25 70 74)"><rect x="60" y="70" width="20" height="9" rx="4.5" fill="#ffd9b5" ${S}/><path d="M67 73 v3 M73 73 v3" stroke="#c88b5a" stroke-width="1.8"/></g>`;
+  if (ac === "lunettes") extra = `<g fill="rgba(170,225,255,.35)" ${S}><circle cx="35" cy="62" r="13.5"/><circle cx="65" cy="62" r="13.5"/><path d="M48.5 62 H51.5" fill="none"/></g><path d="M27 55 C30 52 34 51 38 52" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>`;
+  const body = `<ellipse cx="50" cy="116" rx="27" ry="4.4" fill="rgba(0,0,0,.3)"/>
+    <g class="jc-legs"><rect x="35" y="98" width="13" height="14" rx="5" fill="${pant}" ${S}/><rect x="52" y="98" width="13" height="14" rx="5" fill="${pant}" ${S}/>
+      <path d="M29 111 C29 103 46 103 50 108 L50 114.5 L29 114.5Z" fill="#fff" ${S}/><path d="M50 108 C54 103 71 103 71 111 L71 114.5 L50 114.5Z" fill="#fff" ${S}/><path d="M29 113.2 H50 M50 113.2 H71" stroke="${sh}" stroke-width="3.6" stroke-linecap="round"/><path d="M36 106 l5 1.5 M59 106 l5 1.5" stroke="${k}" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g class="jc-arm l"><rect x="19" y="88" width="13" height="19" rx="6.5" fill="${fit}" ${S}/><circle cx="25.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
+    <g class="jc-arm r"><rect x="68" y="88" width="13" height="19" rx="6.5" fill="${fit}" ${S}/><circle cx="74.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
+    <rect x="30" y="84" width="40" height="23" rx="10" fill="${fit}" ${S}/><path d="M33 100 C33 104 38 106 42 106 H58 C62 106 67 104 67 100 V104 C67 106 62 107 58 107 H42 C38 107 33 106 33 104Z" fill="${fd}" opacity=".5"/>
+    <path d="M42 84 L50 94 L58 84" fill="${skin}" ${S}/><path d="M50 94 V106" stroke="${k}" stroke-width="2.4"/>
+    <rect x="30" y="96" width="40" height="5" fill="${band}" opacity=".95" stroke="${k}" stroke-width="2"/>
+    ${T && T.croix ? `<path d="M55 87 h6 v3.4 h3.4 v6 h-3.4 v3.4 h-6 v-3.4 h-3.4 v-6 h3.4z" fill="#fff" stroke="${k}" stroke-width="2"/>` : ""}`;
   const head = `<g class="jc-head">
-    <ellipse cx="50" cy="60" rx="38" ry="34" fill="${c.sh}" opacity=".95" transform="translate(4 4)" stroke="${k}" stroke-width="3"/>
-    ${c.hs === "afro" || c.hs === "curl" ? jHair(c) : ""}
-    <ellipse cx="14" cy="64" rx="6" ry="8" fill="${c.skin}" ${S}/><ellipse cx="86" cy="64" rx="6" ry="8" fill="${c.skin}" ${S}/>
-    <ellipse cx="50" cy="58" rx="36" ry="32" fill="${c.skin}" ${S}/>
-    <path d="M24 44 C30 34 40 30 50 30" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".45"/>
-    ${c.hs !== "afro" && c.hs !== "curl" ? jHair(c) : ""}
-    ${eye(35)}${eye(65)}${brow}
-    <ellipse cx="26" cy="76" rx="6" ry="3.4" fill="#ff7b9c" opacity=".55"/><ellipse cx="74" cy="76" rx="6" ry="3.4" fill="#ff7b9c" opacity=".55"/>
-    <path d="M49 70 C47 74 51 75 52 72" fill="none" stroke="${k}" stroke-width="2.4" stroke-linecap="round"/>
-    ${mouth}
-    ${jHat(c.hat, c, T && T.band)}
-    ${c.hat === "lunettes" ? `<g fill="rgba(160,220,255,.4)" ${S}><circle cx="35" cy="62" r="13"/><circle cx="65" cy="62" r="13"/><path d="M48 62 H52"/></g>` : ""}
+    <path d="M30 94 v9 a3 3 0 0 0 6 0 v-9z" fill="${sh}" stroke="${k}" stroke-width="2.4" stroke-linejoin="round"/><path d="M82 90 v7 a2.6 2.6 0 0 0 5.2 0 v-7z" fill="${sh}" stroke="${k}" stroke-width="2.4" stroke-linejoin="round"/>
+    <ellipse cx="50" cy="60" rx="38" ry="34" fill="${sh}" transform="translate(4 4)" stroke="${k}" stroke-width="3"/>
+    ${hp.back}
+    <ellipse cx="14" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="86" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="14.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/><ellipse cx="85.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/>
+    <ellipse cx="50" cy="58" rx="36" ry="32" fill="${sd}" ${S}/><ellipse cx="48" cy="55.5" rx="32.6" ry="28.6" fill="${skin}"/>
+    <path d="M24 44 C30 34 40 30 50 30" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".4"/>
+    ${eye(35)}${eye(65)}${ac === "lunettes" ? "" : brow}
+    <ellipse cx="25" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/><ellipse cx="75" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/>
+    <path d="M49 70 C46.5 74.5 51.5 76 53 72" fill="none" stroke="${k}" stroke-width="2.4" stroke-linecap="round"/><circle cx="48.2" cy="69.5" r="1.3" fill="#fff" opacity=".7"/>
+    ${beard}${mouth}${extra}
+    ${hp.front}${jHatSvg(hat, fit, sh)}
+    ${ac === "lunettes" ? brow.replace(/stroke-width="3.2"/g, 'stroke-width="3.2" opacity=".0"') : ""}
   </g>`;
   const sz = o.size || 72;
-  return `<svg class="jc ${o.cls || ""}" viewBox="0 0 100 120" width="${sz}" height="${Math.round(sz * 1.2)}" role="img" aria-label="${o.label || "Personnage"}">${body}${head}<g fill="${c.acc}" opacity=".9"><circle cx="8" cy="20" r="2.4"/><circle cx="94" cy="30" r="2"/><circle cx="90" cy="12" r="1.6"/></g></svg>`;
+  return `<svg class="jc ${o.cls || ""}" viewBox="-6 -4 112 126" width="${sz}" height="${Math.round(sz * 1.125)}" role="img" aria-label="${o.label || "Personnage"}">${body}${head}<g fill="${sh}" opacity=".9"><circle cx="4" cy="22" r="2.4"/><circle cx="97" cy="32" r="2"/><circle cx="92" cy="12" r="1.6"/><circle cx="2" cy="44" r="1.6"/></g></svg>`;
 }
 
   const JTITRES = { ssiap1: "Agent de service de sécurité incendie", ssiap2: "Chef d’équipe de sécurité incendie", ssiap3: "Chef de service de sécurité incendie", reglementation: "Expert des textes et du règlement", aps: "Agent de prévention et de sécurité", sst: "Sauveteur secouriste du travail", h0b0: "Personnel habilité H0B0", terrain: "Agent aguerri du terrain" };
@@ -8057,7 +8110,12 @@ function jChar(o = {}) {
   const J = { view: "hub", cat: null, mode: "examen", run: null, av: JAV[0], pseudo: "", reset: false };
   const B = { n: 2, names: [], rounds: 5, timer: true, cat: "all", mode: "examen", kind: "points", goal: 8 };
   let BT = null, jTimer = null;
-  const jSave = () => store.set("jeu", jP);
+  /* ===== Plusieurs personnages sur un même appareil + créateur ===== */
+  let jTeam = store.get("jeu-equipe", []);
+  jTeam = Array.isArray(jTeam) ? jTeam.filter((p) => p && typeof p === "object" && p.id && p.pseudo) : [];
+  const jNewId = () => "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  if (jP) { if (!jP.id) jP.id = jNewId(); const ix = jTeam.findIndex((x) => x.id === jP.id); if (ix >= 0) jTeam[ix] = jP; else jTeam.push(jP); }
+  const jSave = () => { store.set("jeu", jP); if (jP) { const ix = jTeam.findIndex((x) => x.id === jP.id); if (ix < 0) jTeam.push(jP); else jTeam[ix] = jP; } store.set("jeu-equipe", jTeam); };
   const jDay = (t) => new Date(t || Date.now()).toISOString().slice(0, 10);
   function jRank() { let i = 0; JRANKS.forEach((r, k) => { if (jP.xp >= r[1]) i = k; }); const nx = JRANKS[i + 1]; return { t: JRANKS[i][0], from: JRANKS[i][1], nx: nx ? nx[1] : null, nxt: nx ? nx[0] : null }; }
   function jGain(xp) {
@@ -8155,7 +8213,7 @@ function jChar(o = {}) {
     const course = B.kind === "course", rounds = course ? B.goal + 4 : B.rounds, total = B.n * rounds, qs = [];
     let bag = [];
     while (qs.length < total) { if (!bag.length) bag = shuffle(pool.slice()); qs.push(jPrep(bag.pop())); }
-    BT = { course, goal: B.goal, rounds, players: Array.from({ length: B.n }, (_, i) => ({ name: B.names[i] || (i === 0 && jP ? jP.pseudo : "Joueur " + (i + 1)), score: 0, ok: 0 })), qs, t: 0, step: "ready", pick: -1, gain: 0 };
+    BT = { course, goal: B.goal, rounds, players: Array.from({ length: B.n }, (_, i) => { const nm = B.names[i] || (i === 0 && jP ? jP.pseudo : "Joueur " + (i + 1)), rr = jRoster().find((x) => x.pseudo === nm); return { name: nm, look: rr ? jLook(rr) : JLOOKS[i % JLOOKS.length], score: 0, ok: 0 }; }), qs, t: 0, step: "ready", pick: -1, gain: 0 };
     J.view = "bplay";
     return true;
   }
@@ -8189,7 +8247,7 @@ function jChar(o = {}) {
   const jRing = (p, big) => `<span class="jx-ring${big ? " big" : ""}" style="--p:${p == null ? 0 : p}"><b>${p == null ? "–" : p + "%"}</b></span>`;
   function jHeader() {
     const rk = jRank(), pct = rk.nx ? Math.min(100, ((jP.xp - rk.from) / (rk.nx - rk.from)) * 100) : 100;
-    return `<section class="jx-hero"><span class="jx-av" aria-hidden="true">${jAv(jP.av, { size: 56, mood: "ok" })}</span><div class="jx-me"><b>${tx(jP.pseudo)}</b><span>${tx(rk.t)} · ${jP.xp} points</span><div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${pct}%"></i></div><small>${rk.nx ? `Encore ${rk.nx - jP.xp} points pour devenir ${tx(rk.nxt)}` : "Rang maximum atteint"}</small></div>${jP.serie.n > 0 && jP.serie.d >= jDay(Date.now() - 864e5) ? `<span class="jx-flame" title="Jours de suite">🔥<b>${jP.serie.n}</b></span>` : ""}</section>`;
+    return `<section class="jx-hero"><span class="jx-av" aria-hidden="true">${jMe({ size: 56, mood: "ok" })}</span><div class="jx-me"><b>${tx(jP.pseudo)}</b><span>${tx(rk.t)} · ${jP.xp} points</span><div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${pct}%"></i></div><small>${rk.nx ? `Encore ${rk.nx - jP.xp} points pour devenir ${tx(rk.nxt)}` : "Rang maximum atteint"}</small></div>${jP.serie.n > 0 && jP.serie.d >= jDay(Date.now() - 864e5) ? `<span class="jx-flame" title="Jours de suite">🔥<b>${jP.serie.n}</b></span>` : ""}</section><div class="jx-hb"><button type="button" data-act="jx-eq"><span aria-hidden="true">👥</span> Qui joue ?${jTeam.length > 1 ? " (" + jTeam.length + ")" : ""}</button><button type="button" data-act="jx-cr-edit" data-id="${jP.id}"><span aria-hidden="true">🎭</span> Mon personnage</button></div>`;
   }
   function jProfile() {
     const first = !jP;
@@ -8203,7 +8261,7 @@ function jChar(o = {}) {
   function jHub() {
     const cards = JCATS.map((c) => {
       const n = jPool(c.id, "examen").length + jPool(c.id, "culture").length, g = jGauge(c.id);
-      return `<button type="button" class="jx-job-card" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}><span class="e" aria-hidden="true">${jChar({ i: Math.max(0, JAV.indexOf(jP.av)), job: c.id, size: 56, mood: "ok" })}</span><small>Devenir</small><b>${tx(JTITRES[c.id] || c.t)}</b><span class="m">${jRing(g)}<span>${n ? n + " question" + (n > 1 ? "s" : "") : "Bientôt disponible"}</span></span></button>`;
+      return `<button type="button" class="jx-job-card" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}><span class="e" aria-hidden="true">${jMe({ job: c.id, size: 56, mood: "ok" })}</span><small>Devenir</small><b>${tx(JTITRES[c.id] || c.t)}</b><span class="m">${jRing(g)}<span>${n ? n + " question" + (n > 1 ? "s" : "") : "Bientôt disponible"}</span></span></button>`;
     }).join("");
     return `<div class="page-h"><h1>Jeu</h1><p>Prépare ton diplôme en jouant, seul ou à plusieurs.</p></div>${jHeader()}
       <div class="jx-modes"><button type="button" class="jx-mode" data-act="jx-goto" data-t="jx-parcours"><span class="e">🗺️</span><b>Parcours</b><span>Seul, étape par étape sur la carte</span></button><button type="button" class="jx-mode b" data-act="jx-bsetup"><span class="e">🏁</span><b>Course et combat</b><span>De 2 à 10 joueurs, on se passe le téléphone</span></button></div>
@@ -8254,7 +8312,7 @@ function jChar(o = {}) {
     const props = Array.from({ length: Math.ceil(n / 2) }, (_, i) => `<span class="jx-prop" style="left:${JW.X0 + i * JW.STEP * 2 + 60 + (i % 3) * 14}px">${jProp(i + (c.id.length))}</span>`).join("");
     const tags = Array.from({ length: Math.ceil(n / 5) }, (_, i) => `<span class="jx-tag t${i % 4}" style="left:${JW.X0 + i * JW.STEP * 5 + 30}px">${["FEU !", "SSIAP", "GO !", "ALERTE", "SÛR"][i % 5]}</span>`).join("");
     const from = hop != null ? P[hop] : P[Math.min(cur, n)], to = P[Math.min(cur, n)];
-    const me = `<div class="jx-me2" style="left:${from.x}px;top:${from.y + 8}px"${hop != null ? ` data-tx="${to.x}" data-ty="${to.y + 8}"` : ""}>${jChar({ i: Math.max(0, JAV.indexOf(jP.av)), job: c.id, size: 74, mood: cur >= n ? "ok" : "go", cls: "idle", label: jP.pseudo })}</div>`;
+    const me = `<div class="jx-me2" style="left:${from.x}px;top:${from.y + 8}px"${hop != null ? ` data-tx="${to.x}" data-ty="${to.y + 8}"` : ""}>${jMe({ job: c.id, size: 74, mood: cur >= n ? "ok" : "go", cls: "idle", label: jP.pseudo })}</div>`;
     const g = jGauge(c.id), fin = `<div class="jx-fin2${cur >= n ? " gold" : ""}" style="left:${P[n].x - 20}px">${jFinSvg(cur >= n)}<b>${tx(JTITRES[c.id] || c.t)}</b></div>${cur < n ? `<span class="jx-boss" style="left:${P[n].x - 78}px" aria-hidden="true">${jFlame(76, "fight")}</span>` : ""}`;
     return `<div class="jx-w" data-n="${n}" data-cur="${cur}" data-z="0">
       ${sky}<span class="jx-moon" aria-hidden="true"></span><span class="jx-cloud c1" aria-hidden="true"></span><span class="jx-cloud c2" aria-hidden="true"></span>
@@ -8290,7 +8348,8 @@ function jChar(o = {}) {
   function jCur(cat, mode) { const sts = jStages(cat, mode), s = jSt(cat, mode), c = sts.findIndex((_, k) => !(s.s[k] >= 1)); return { n: sts.length, cur: c < 0 ? sts.length : c }; }
   const jLet = ["A", "B", "C", "D"];
   function jScript() {
-    if (!jP || J.view === "profil") return "Crée ton profil. Choisis ton personnage, écris un pseudo, puis touche C’est parti.";
+    if (!jP || J.view === "creer" || J.view === "profil") return "Crée ton personnage. Choisis la peau, les cheveux, le visage, la tenue. Écris ton pseudo, puis touche Enregistrer. Le bouton dé choisit au hasard.";
+    if (J.view === "equipe") return "Qui joue ? Touche un personnage pour jouer avec lui. Ou touche Nouveau personnage pour en créer un autre.";
     if (J.view === "cat") { const c = JCAT[J.cat], { n, cur } = jCur(c.id, J.mode); return `Parcours : devenir ${JTITRES[c.id] || c.t}. ${cur >= n ? "Bravo, tu es arrivé au diplôme !" : `Tu es à l’étape ${cur + 1} sur ${n}. Touche le bloc jaune qui brille pour éteindre le feu. Fais glisser vers la droite pour voir la suite.`}`; }
     if (J.view === "grand") return "La grande carte : un seul chemin du stagiaire au chef de service. Touche une étape pour jouer.";
     if (J.view === "play" && J.run) {
@@ -8363,6 +8422,43 @@ function jChar(o = {}) {
   }
 
   const jAv = (av, o) => jChar(Object.assign({ i: Math.max(0, JAV.indexOf(av)) }, o));
+  const jLook = (p) => (p && p.look) || JLOOKS[Math.max(0, JAV.indexOf(p && p.av))];
+  const jMe = (o) => jChar(Object.assign({ look: jLook(jP) }, o));
+  const jRoster = () => [jP, ...jTeam.filter((x) => x.id !== jP.id)];
+  const jRankName = (xp) => JRANKS.filter((r) => xp >= r[1]).pop()[0];
+  const JTABS = [["peau", "🎨", "Peau"], ["cheveux", "💇", "Cheveux"], ["visage", "🙂", "Visage"], ["tenue", "👕", "Tenue"], ["chapeau", "🧢", "Chapeau"], ["style", "✨", "Style"]];
+  function jCrOpen(id) {
+    const p = id ? jTeam.find((x) => x.id === id) : null, lk = Object.assign({}, p ? jLook(p) : jRandLook());
+    delete lk.n;
+    J.cr = { id: p ? p.id : null, look: lk, pseudo: p ? p.pseudo : "", tab: "peau", mood: "ok", fx: "" };
+    J.view = "creer";
+  }
+  const jCrKeep = () => { const e = $("#jx-pseudo"); if (J.cr && e) J.cr.pseudo = e.value; };
+  function jCreer() {
+    if (!J.cr) jCrOpen(null);
+    const c = J.cr, L = c.look, P = JPAL;
+    const sw = (key, list, name) => `<h3 class="lbl">${name}</h3><div class="jx-sws" role="group" aria-label="${name}">${list.map(([v, n], i) => `<button type="button" class="jx-sw" style="--c:${v}" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}" aria-label="${n}"></button>`).join("")}</div>`;
+    const tl = (key, list, name) => `<h3 class="lbl">${name}</h3><div class="jx-tls" role="group" aria-label="${name}">${list.map(([v, n], i) => `<button type="button" class="jx-tl" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}">${jChar({ look: Object.assign({}, L, key === "hat" ? {} : { hat: 0 }, { [key]: i }), size: 54, label: n })}<span>${n}</span></button>`).join("")}</div>`;
+    const tabs = { peau: sw("sk", P.sk, "Teinte de peau"), cheveux: tl("hs", P.hs, "Coiffure") + sw("hc", P.hc, "Couleur des cheveux"), visage: tl("ey", P.ey, "Les yeux") + tl("mo", P.mo, "La bouche"), tenue: sw("fit", P.fit, "Couleur de la veste") + sw("sh", P.sh, "Baskets et contour sticker"), chapeau: tl("hat", P.hat, "Couvre-chef") + `<p class="muted" style="margin:0">En parcours, tu portes la tenue du métier (casque, képi…). Ton look est pour le reste du jeu.</p>`, style: tl("ac", P.ac, "Accessoire") };
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="${jP ? "jx-hub" : "jx-cr-cancel"}">Jeu</button></nav>
+      <div class="page-h"><h1>${c.id ? "Mon personnage" : jP ? "Nouveau personnage" : "Crée ton personnage"}</h1><p>Touche chaque détail : tout se voit tout de suite.</p></div>
+      <section class="jx-stage"><button type="button" class="jx-pv" data-act="jx-cr-jump" aria-label="Faire réagir mon personnage">${jChar({ look: L, size: 100, mood: c.mood, cls: c.fx || "idle", label: "Aperçu du personnage" })}</button><div class="jx-pvb"><button type="button" data-act="jx-cr-rnd"><span aria-hidden="true">🎲</span> Au hasard</button></div></section>
+      <label class="fld"><span>Pseudo (libre, il reste sur cet appareil)</span><input id="jx-pseudo" type="text" maxlength="20" autocomplete="off" value="${esc(c.pseudo)}" placeholder="Ex. Capitaine Feu"></label>
+      <div class="jx-tabs" role="group" aria-label="Que veux-tu changer ?">${JTABS.map(([k, e, n]) => `<button type="button" data-act="jx-cr-tab" data-v="${k}" aria-pressed="${c.tab === k}"><span aria-hidden="true">${e}</span>${n}</button>`).join("")}</div>
+      <section class="jx-opts">${tabs[c.tab]}</section>
+      <div class="signal-b"><button type="button" class="btn" data-act="jx-cr-save">Enregistrer</button>${jP ? `<button type="button" class="btn ghost" data-act="jx-cr-cancel">Annuler</button>` : ""}</div>`;
+  }
+  function jEquipe() {
+    const ros = jRoster();
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>
+      <div class="page-h"><h1>Qui joue ?</h1><p>Chaque personnage garde sa propre progression. Jusqu’à 8 sur cet appareil.</p></div>
+      <div class="jx-team">${ros.map((p) => `<div class="jx-tc${p.id === jP.id ? " on" : ""}"><button type="button" class="jx-tcb" data-act="jx-who" data-id="${p.id}" aria-label="Jouer avec ${esc(p.pseudo)}">${jChar({ look: jLook(p), size: 84, mood: p.id === jP.id ? "ok" : "go", cls: p.id === jP.id ? "idle" : "" })}<b>${tx(p.pseudo)}</b><small>${jRankName(p.xp || 0)} · ${p.xp || 0} points</small></button>
+        <div class="jx-tca"><button type="button" data-act="jx-cr-edit" data-id="${p.id}">✏️ Modifier</button><button type="button" data-act="jx-del" data-id="${p.id}" aria-label="Supprimer ${esc(p.pseudo)}">🗑</button></div>
+        ${J.del === p.id ? `<div class="confirm"><button class="yes" data-act="jx-del-yes" data-id="${p.id}">Supprimer ${tx(p.pseudo)} et sa progression</button><button data-act="jx-del-no">Annuler</button></div>` : ""}</div>`).join("")}
+        ${ros.length < 8 ? `<button type="button" class="jx-tc add" data-act="jx-cr-new"><span class="pl" aria-hidden="true">＋</span><b>Nouveau personnage</b></button>` : ""}</div>
+      ${J.reset ? `<div class="confirm"><button class="yes" data-act="jx-reset-yes">Effacer la progression de ${tx(jP.pseudo)}</button><button data-act="jx-reset-no">Annuler</button></div>` : `<p style="margin:0"><button type="button" class="btn-link" data-act="jx-reset">Effacer la progression de ${tx(jP.pseudo)}</button></p>`}`;
+  }
+
   function jCat() {
     const c = JCAT[J.cat], mode = J.mode, sts = jStages(c.id, mode), s = jSt(c.id, mode), g = jGauge(c.id);
     let cur = sts.findIndex((_, k) => !(s.s[k] >= 1));
@@ -8371,7 +8467,7 @@ function jChar(o = {}) {
     J.hop = null;
     const msg = g === 100 ? `${jConf()}<div class="jx-dipl"><b>🎓 Diplômé à 100 %… dans le jeu !</b><p>D’après l’appli, vous avez tellement bien répondu que vous ne pouvez plus rater. C’est un clin d’œil 😄 : l’examen, lui, se prépare avec votre centre de formation et les textes officiels.</p></div>` : (mode === "examen" && g != null ? `<p class="muted" style="margin:0">${JMSG.filter((m) => g >= m[0] && g < 100).pop()[1]}</p>` : "");
     return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>
-      <section class="jx-job">${jChar({ i: Math.max(0, JAV.indexOf(jP.av)), job: c.id, size: 66, mood: "ok", cls: "idle", label: "Ton personnage" })}<div style="flex:1;display:flex;flex-direction:column"><small style="opacity:.85;font-size:.78rem">Parcours : devenir</small><b style="font:700 1.1rem/1.15 var(--font-d)">${tx(JTITRES[c.id] || c.t)}</b></div>${jRing(g, true)}</section>
+      <section class="jx-job">${jMe({ job: c.id, size: 66, mood: "ok", cls: "idle", label: "Ton personnage" })}<div style="flex:1;display:flex;flex-direction:column"><small style="opacity:.85;font-size:.78rem">Parcours : devenir</small><b style="font:700 1.1rem/1.15 var(--font-d)">${tx(JTITRES[c.id] || c.t)}</b></div>${jRing(g, true)}</section>
       <div class="filters" role="group" aria-label="Type de questions"><button type="button" data-act="jx-mode" data-v="examen" aria-pressed="${mode === "examen"}">Examen</button><button type="button" data-act="jx-mode" data-v="culture" aria-pressed="${mode === "culture"}">Culture, pour aller plus loin</button></div>
       ${mode === "examen" ? `<p class="muted" style="margin:0">${jPool(c.id, "examen").filter((q) => s.ok[q.id]).length} questions maîtrisées sur ${jPool(c.id, "examen").length}.</p>` : `<p class="muted" style="margin:0">Questions bonus : elles ne comptent pas dans la jauge du diplôme.</p>`}
       ${msg}
@@ -8381,7 +8477,7 @@ function jChar(o = {}) {
     const first = JGRAND.findIndex((id) => (jGauge(id) || 0) < 100);
     const st = JGRAND.map((id, i) => {
       const c = JCAT[id], g = jGauge(id), n = jPool(id, "examen").length + jPool(id, "culture").length;
-      return `<div class="jx-gs">${i === first ? `<span class="jx-here" aria-hidden="true">${jAv(jP.av, { size: 40 })}</span>` : ""}<button type="button" class="jx-gbtn${g === 100 ? " done" : ""}" data-act="jx-cat" data-c="${id}"${n ? "" : " disabled"}><span class="e">${JEMO[id]}</span><span class="t"><small>Étape ${i + 1}</small><b>${tx(JTITRES[id])}</b><span>${tx(c.t)} · ${n} questions</span></span>${jRing(g)}</button></div>`;
+      return `<div class="jx-gs">${i === first ? `<span class="jx-here" aria-hidden="true">${jMe({ size: 40 })}</span>` : ""}<button type="button" class="jx-gbtn${g === 100 ? " done" : ""}" data-act="jx-cat" data-c="${id}"${n ? "" : " disabled"}><span class="e">${JEMO[id]}</span><span class="t"><small>Étape ${i + 1}</small><b>${tx(JTITRES[id])}</b><span>${tx(c.t)} · ${n} questions</span></span>${jRing(g)}</button></div>`;
     }).join('<div class="jx-glink" aria-hidden="true"></div>');
     const side = JCATS.filter((c) => !JGRAND.includes(c.id)).map((c) => { const n = jPool(c.id, "examen").length + jPool(c.id, "culture").length; return `<button type="button" class="jx-side" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}><span class="e">${JEMO[c.id]}</span><b>${tx(c.t)}</b><span>${n ? n + " questions" : "Bientôt"}</span></button>`; }).join("");
     return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>La grande carte</h1><p>Un seul chemin, du stagiaire au chef de service. Aperçu : dites-moi si vous préférez cette vue ou un parcours par métier.</p></div>
@@ -8407,12 +8503,12 @@ function jChar(o = {}) {
       fb = `<div class="qfb"><p><b class="${ok ? "g" : "r"}">${ok ? "Bonne réponse !" : "Pas tout à fait."}</b>${ok ? " +10 points" : ""}</p>${good}${q.x ? `<p>${tx(q.x)}</p>` : ""}${q.f && FI[q.f] ? `<p><a href="#f-${q.f}">Voir la fiche : ${tx(FI[q.f].titre)}</a></p>` : ""}${srcL}${signalBtn("Jeu : " + q.q.slice(0, 70))}</div>
         <button type="button" class="btn" data-act="jx-next">${r.i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button>`;
     }
-    const ok0 = answered ? r.res[r.i] : null, coach = `<div class="jx-coach">${jAv(jP.av, { size: 58, mood: answered ? (ok0 ? "ok" : "ko") : "go", cls: answered ? (ok0 ? "jump" : "shake") : "idle" })}<div class="bub">${answered ? (ok0 ? "Bien joué !" : "Aïe… lis la correction.") : "À toi de jouer !"}</div></div>`;
+    const ok0 = answered ? r.res[r.i] : null, coach = `<div class="jx-coach">${jMe({ size: 58, mood: answered ? (ok0 ? "ok" : "ko") : "go", cls: answered ? (ok0 ? "jump" : "shake") : "idle" })}<div class="bub">${answered ? (ok0 ? "Bien joué !" : "Aïe… lis la correction.") : "À toi de jouer !"}</div></div>`;
     return `<div class="quiz">${coach}${head}${body}${fb}<p style="margin:0"><button type="button" class="btn-link" data-act="jx-quit">Arrêter cette étape</button></p></div>`;
   }
   function jResult() {
     const r = J.run, n = r.qs.length, next = jStages(r.cat, r.mode)[r.k + 1];
-    return `${r.stars === 3 ? jConf() : ""}<div class="score jx-res"><div class="jx-podium">${jAv(jP.av, { size: 110, mood: r.stars ? "ok" : "ko", cls: r.stars ? "dance" : "sad" })}</div><span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
+    return `${r.stars === 3 ? jConf() : ""}<div class="score jx-res"><div class="jx-podium">${jMe({ size: 110, mood: r.stars ? "ok" : "ko", cls: r.stars ? "dance" : "sad" })}</div><span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
       <b>${r.sc} / ${n}</b>
       <p>${r.stars ? (r.stars === 3 ? "Sans faute, bravo !" : "Étape réussie !") : "Il manque un peu pour valider l’étape."} ${r.stars ? `+${r.xp} points de bonus.` : "Relisez les corrections et réessayez."}</p>
       ${r.stars && next ? `<button type="button" class="btn" data-act="jx-stage" data-k="${r.k + 1}">Étape suivante</button>` : ""}
@@ -8423,6 +8519,7 @@ function jChar(o = {}) {
     const chip = (act, v, label, on) => `<button type="button" data-act="${act}" data-v="${v}" aria-pressed="${on}">${label}</button>`;
     while (B.names.length < 10) B.names.push("");
     if (!B.names[0] && jP) B.names[0] = jP.pseudo;
+    jRoster().forEach((p, i) => { if (i > 0 && i < 10 && B.names[i] == null) B.names[i] = p.pseudo; });
     const cats = [["all", "Toutes"], ...JCATS.filter((c) => c.id !== "terrain" && jPool(c.id, B.mode).some((q) => q.type === "qcm")).map((c) => [c.id, c.t])];
     return `<div class="jx-setup"><nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav><div class="page-h"><h1>Course et combat</h1><p>Chacun son tour, avec une question différente. Un seul téléphone, on se le passe.</p></div>
       <section class="sec"><h2 class="lbl a">Style de partie</h2><div class="filters" role="group" aria-label="Style de partie">${chip("jx-bk", "course", "🎓 Course au diplôme", B.kind === "course")}${chip("jx-bk", "points", "⚔️ Combat aux points", B.kind === "points")}</div>
@@ -8437,7 +8534,7 @@ function jChar(o = {}) {
         <div class="filters" role="group" aria-label="Catégorie">${cats.map(([v, l]) => chip("jx-bc", v, tx(l), B.cat === v)).join("")}</div></section>
       <button type="button" class="btn" data-act="jx-bgo">${B.kind === "course" ? "Lancer la course" : "Lancer le combat"}</button></div>`;
   }
-  const jTrack = () => `<div class="jx-track" aria-label="La course">${BT.players.map((p, i) => { const pc = Math.min(100, (p.ok / BT.goal) * 100); return `<div class="jx-lane${BT.step !== "end" && i === BT.t % B.n ? " on" : ""}"><b>${tx(p.name)}</b><div class="rail"><i style="width:${pc}%"></i><span class="runner" style="left:${pc}%">${jAv(JAV[i % JAV.length], { size: 34 })}</span><span class="goal">🎓</span></div><small>${p.ok}/${BT.goal}</small></div>`; }).join("")}</div>`;
+  const jTrack = () => `<div class="jx-track" aria-label="La course">${BT.players.map((p, i) => { const pc = Math.min(100, (p.ok / BT.goal) * 100); return `<div class="jx-lane${BT.step !== "end" && i === BT.t % B.n ? " on" : ""}"><b>${tx(p.name)}</b><div class="rail"><i style="width:${pc}%"></i><span class="runner" style="left:${pc}%">${jChar({ look: p.look, size: 34 })}</span><span class="goal">🎓</span></div><small>${p.ok}/${BT.goal}</small></div>`; }).join("")}</div>`;
   const jScores = () => BT.course ? jTrack() : `<div class="jx-sc">${BT.players.map((p, i) => `<span class="${BT.step !== "end" && i === BT.t % B.n ? "on" : ""}"><b>${tx(p.name)}</b>${p.score}</span>`).join("")}</div>`;
   function jBPlay() {
     const q = BT.qs[BT.t], p = BT.players[BT.t % B.n], round = Math.floor(BT.t / B.n) + 1, RN = BT.rounds;
@@ -8470,7 +8567,9 @@ function jChar(o = {}) {
   }
   function pageJeu() {
     let body;
-    if (!jP || J.view === "profil") body = jProfile();
+    if (!jP) { if (J.view !== "creer") jCrOpen(null); body = jCreer(); }
+    else if (J.view === "profil" || J.view === "creer") body = jCreer();
+    else if (J.view === "equipe") body = jEquipe();
     else if (J.view === "cat") body = jCat();
     else if (J.view === "grand") body = jGrand();
     else if (J.view === "play") body = J.run ? (J.run.done ? jResult() : jPlay()) : jHub();
@@ -8497,7 +8596,31 @@ function jChar(o = {}) {
         if (!jP) jP = { pseudo: v, av: J.av, xp: 0, serie: { d: "", n: 0 }, st: {} }; else { jP.pseudo = v; jP.av = J.av; }
         jSave(); J.view = "hub"; J.pseudo = ""; jGo(); return true;
       }
-      case "jx-pedit": J.pseudo = jP.pseudo; J.av = jP.av; J.view = "profil"; jGo(); return true;
+      case "jx-pedit": jCrOpen(jP.id); jGo(); return true;
+      case "jx-eq": J.view = "equipe"; J.del = null; J.reset = false; jGo(); return true;
+      case "jx-who": { const p = jTeam.find((x) => x.id === b.dataset.id); if (p) { jSave(); jP = p; store.set("jeu", jP); J.view = "hub"; jSfx("tap"); toast("Salut " + p.pseudo + " !"); } jGo(); return true; }
+      case "jx-cr-new": jCrOpen(null); jGo(); return true;
+      case "jx-cr-edit": jCrOpen(b.dataset.id); jGo(); return true;
+      case "jx-cr-cancel": J.cr = null; J.view = jP ? "hub" : "creer"; jGo(); return true;
+      case "jx-cr-tab": jCrKeep(); J.cr.tab = b.dataset.v; rerender(); return true;
+      case "jx-cr-set": jCrKeep(); J.cr.look[b.dataset.k] = +b.dataset.v; J.cr.mood = "ok"; J.cr.fx = J.cr.fx === "jump" ? "jump2" : "jump"; jSfx("tap"); rerender(); return true;
+      case "jx-cr-rnd": jCrKeep(); J.cr.look = jRandLook(); J.cr.fx = J.cr.fx === "jump" ? "jump2" : "jump"; J.cr.mood = "ok"; jSfx("hop"); rerender(); return true;
+      case "jx-cr-jump": { jCrKeep(); const o = ["go", "ok", "ko"]; J.cr.mood = o[(o.indexOf(J.cr.mood) + 1) % 3]; J.cr.fx = J.cr.mood === "ko" ? "shake" : J.cr.mood === "ok" ? "dance" : "jump"; jSfx(J.cr.mood === "ko" ? "ko" : "ok"); rerender(); return true; }
+      case "jx-cr-save": {
+        jCrKeep();
+        const v = (J.cr.pseudo || "").trim().slice(0, 20);
+        if (!v) { toast("Choisis un pseudo, même inventé."); return true; }
+        if (J.cr.id) { const p = jTeam.find((x) => x.id === J.cr.id); if (p) { p.pseudo = v; p.look = J.cr.look; } }
+        else { jP = { id: jNewId(), pseudo: v, look: J.cr.look, xp: 0, serie: { d: "", n: 0 }, st: {} }; }
+        jSave(); J.cr = null; J.view = "hub"; jSfx("win"); toast("Personnage enregistré."); jGo(); return true;
+      }
+      case "jx-del": J.del = b.dataset.id; rerender(); return true;
+      case "jx-del-no": J.del = null; rerender(); return true;
+      case "jx-del-yes": {
+        const id = b.dataset.id; jTeam = jTeam.filter((x) => x.id !== id); J.del = null;
+        if (jP && jP.id === id) { jP = jTeam[0] || null; store.set("jeu", jP); }
+        store.set("jeu-equipe", jTeam); toast("Personnage supprimé."); if (!jP) { J.cr = null; J.view = "creer"; } jGo(); return true;
+      }
       case "jx-reset": J.reset = true; rerender(); return true;
       case "jx-reset-no": J.reset = false; rerender(); return true;
       case "jx-reset-yes": jP.st = {}; jP.xp = 0; jP.serie = { d: "", n: 0 }; jSave(); J.reset = false; J.view = "hub"; toast("Progression effacée."); jGo(); return true;
