@@ -719,7 +719,7 @@ td:first-child { font-weight: 700; }
 .jx-setup .filters{flex-wrap:wrap;overflow:visible}
 /* ===== Jeu : monde graffiti ===== */
 .jc{display:block;overflow:visible}
-.jc.crop{overflow:hidden}
+.jc.jcrop{overflow:hidden}
 .jc.idle .jc-head{animation:jc-bob 1.6s ease-in-out infinite;transform-origin:50% 90%;transform-box:fill-box}
 @keyframes jc-bob{50%{transform:translateY(-3px) rotate(-2deg)}}
 .jc.jump{animation:jc-jump .6s ease-out}
@@ -858,6 +858,47 @@ td:first-child { font-weight: 700; }
 .jx-sw.auto{display:grid;place-items:center;background:repeating-linear-gradient(45deg,#fff 0 6px,#cfd3dc 6px 12px);color:#14171f;font:800 .8rem/1 var(--font-d)}
 @media (max-height:700px){.jx-cab{position:static}.jx-tabs{top:56px!important}}
 @media (prefers-reduced-motion: reduce){.jx-cin.arrive,.jx-cabin.tr,.jx-fly,.jx-flash{animation:none}.jx-door{transition:none}}
+/* ===== Salle d'examen ===== */
+.jx-cls{position:relative;height:140px;border-radius:16px;overflow:hidden;border:2px solid #0e1118;box-shadow:0 4px 0 #0e1118,inset 0 0 0 2px rgba(255,255,255,.06);background:linear-gradient(#dfe4ee 0 62%,#b9a07a 62%);margin-top:10px}
+.jx-cls.big{height:250px;position:relative}
+.jx-quiz-s{margin:2px 0}
+.jx-res .jx-cls{width:100%;align-self:stretch;box-sizing:border-box}
+.quiz .qc button{padding-top:10px;padding-bottom:10px}
+.jx-wall{position:absolute;inset:0 0 38% 0;background:linear-gradient(#eef1f7,#d3d9e6);border-bottom:6px solid #8a93a6}
+.jx-brd{position:absolute;left:6%;top:12%;padding:4px 10px;border-radius:5px;border:3px solid #6b4a28;background:linear-gradient(#1f4a3a,#16372b);color:#e8f3ee;font:600 .62rem/1 "Segoe Print","Comic Sans MS",cursive;letter-spacing:.06em;box-shadow:inset 0 0 8px rgba(0,0,0,.4)}
+.jx-win{position:absolute;right:30%;top:10%;width:34px;height:30px;border-radius:3px;border:3px solid #6b7283;background:linear-gradient(#9fd7ff,#d8f0ff)}
+.jx-clk{position:absolute;right:10%;top:10%;width:20px;height:20px;border-radius:50%;border:3px solid #1b1228;background:#fff}
+.jx-clk::after{content:"";position:absolute;left:7px;top:3px;width:2px;height:8px;background:#1b1228;box-shadow:3px 4px 0 #1b1228}
+.jx-flr{position:absolute;inset:62% 0 0 0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 38px),linear-gradient(#c9ae85,#a98a62)}
+.jx-trn{position:absolute;right:5%;bottom:6px;z-index:2}
+.jx-std{position:absolute;left:10%;bottom:20px;z-index:2}
+.jx-cls.big .jx-std{bottom:30px;left:12%}
+.jx-std.arrive{animation:jx-sit 1.6s cubic-bezier(.3,.7,.4,1) both}
+@keyframes jx-sit{0%{transform:translateX(-260%)}30%{transform:translateX(-170%) translateY(-5px)}55%{transform:translateX(-90%)}75%{transform:translateX(-40%) translateY(-4px)}100%{transform:none}}
+.jx-desk{position:absolute;left:3%;width:58%;bottom:0;height:34px;z-index:3;border-radius:6px 6px 0 0;background:linear-gradient(#e3c79a 0 22%,#b88a52 22%,#8f6636);border:2px solid #0e1118;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),0 -3px 8px rgba(0,0,0,.2)}
+.jx-cls.big .jx-desk{height:46px}
+.jx-pap{position:absolute;left:16%;top:-6px;width:30px;height:9px;background:#fff;border:2px solid #0e1118;border-radius:2px;transform:skewX(-30deg)}
+.jx-pen{position:absolute;left:52%;top:-5px;width:16px;height:4px;background:#e63946;border:1.5px solid #0e1118;border-radius:2px;transform:rotate(-12deg)}
+.jx-say{position:absolute;z-index:6;right:7%;top:8px;max-width:48%;padding:6px 10px;border-radius:10px;background:#fff;color:#14171f;border:2px solid #0e1118;font:700 .74rem/1.2 var(--font-d);box-shadow:0 3px 0 #0e1118;animation:jx-pop .35s cubic-bezier(.2,.9,.3,1.3) both}
+.jx-say::after{content:"";position:absolute;right:20px;bottom:-9px;border:6px solid transparent;border-top-color:#0e1118;border-bottom:0}
+.jx-say.ko{background:#ffe9e9}
+@keyframes jx-pop{from{transform:scale(.6);opacity:0}}
+.jx-dip{position:absolute;z-index:5;left:44%;top:18%;width:96px;padding:8px 6px;text-align:center;border-radius:4px;background:linear-gradient(#fffdf6,#f1e6c8);border:2px solid #0e1118;color:#14171f;box-shadow:0 4px 8px rgba(0,0,0,.35);transform:rotate(-5deg);animation:jx-give 1.2s cubic-bezier(.3,.8,.4,1) both}
+.jx-dip small{display:block;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:#6b6350}.jx-dip b{display:block;font:800 .95rem/1.1 var(--font-d);letter-spacing:.12em}.jx-dip span{display:block;font:700 .62rem/1.2 var(--font-d)}.jx-dip em{display:block;font-size:.5rem;font-style:normal;color:#4a4636}
+.jx-dip.gold{background:linear-gradient(#fff3c2,#f0cf6a)}
+.jx-seal{position:absolute;right:-8px;bottom:-8px;width:24px;height:24px;border-radius:50%;background:radial-gradient(#ff6b6b,#b3131f);color:#ffe9a8;display:grid;place-items:center;font-style:normal;font-size:.8rem;border:2px solid #0e1118}
+@keyframes jx-give{from{transform:translateX(70px) rotate(8deg);opacity:0}}
+@media (prefers-reduced-motion: reduce){.jx-std.arrive,.jx-dip,.jx-say{animation:none}}
+/* ===== Relief : boutons et tuiles du jeu ===== */
+.quiz .qc button{border:2px solid var(--line-2);border-bottom-width:5px;border-radius:14px;background:linear-gradient(var(--surface-2,#231d1e),var(--surface,#1c1718));box-shadow:inset 0 1px 0 rgba(255,255,255,.1);transition:transform .08s,border-bottom-width .08s}
+.quiz .qc button:active:not(:disabled){transform:translateY(3px);border-bottom-width:2px}
+.quiz .qc button.good{border-color:#06a67a;background:linear-gradient(#0f3d30,#0a2a21)}.quiz .qc button.bad{border-color:#c0394a;background:linear-gradient(#4a1620,#33101a)}
+.jx-mode,.jx-job-card,.jx-tc,.jx-tl,.jx-tabs button{border-bottom-width:4px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 12px rgba(0,0,0,.25);transition:transform .08s}
+.jx-mode:active,.jx-job-card:active,.jx-tl:active{transform:translateY(2px)}
+.jx-hero{border:2px solid #0e1118;border-bottom-width:5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px rgba(0,0,0,.35);background:linear-gradient(135deg,#c4162a,#7d0c16 70%)}
+.jx-job{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 0 #0e1118,0 12px 18px rgba(0,0,0,.3)}
+.jx-hb button{box-shadow:0 4px 0 #0e1118}
+.jx-w{box-shadow:0 6px 0 #0e1118,0 14px 22px rgba(0,0,0,.35)}
 /* Glossaire */
 .gl-letter { margin: 6px 0 0; font: 700 1.3rem/1 var(--font-d); color: var(--red); }
 .gl { display: flex; flex-direction: column; gap: 6px; }
@@ -8128,6 +8169,7 @@ function jObjSvg(t) {
   }
 }
 /* o : { look | i, job, mood: "go"|"ok"|"ko", size, cls, label, civil } */
+let jUid = 0;
 function jChar(o = {}) {
   const lk0 = o.look || JLOOKS[(o.i || 0) % JLOOKS.length], lk = Object.assign({}, JD, lk0), T = o.job ? JTENUE[o.job] : null, P = JPAL, pk = (list, i) => list[((i % list.length) + list.length) % list.length];
   const skin = pk(P.sk, lk.sk)[0], hair = pk(P.hc, lk.hc)[0], hs = pk(P.hs, lk.hs)[0], sh = pk(P.sh, lk.sh)[0];
@@ -8142,6 +8184,8 @@ function jChar(o = {}) {
   if (civil === "civil") { haut = "polo"; fit = "#8a8fa0"; bas = "pantalon"; pant = "#3a4a6b"; chs = "baskets"; shoe = "#f4f1ea"; hat = ""; obj = ""; emb = ""; band = "#f4f1ea"; }
   const ey = pk(P.ey, lk.ey)[0], mo = pk(P.mo, lk.mo)[0], k = JINK, mood = o.mood || "go", sd = jMix(skin, -0.14), fd = jMix(fit, -0.22);
   const S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
+  const uid = ++jUid, pose = o.pose || "";
+  const defs = `<defs><radialGradient id="hg${uid}" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="${jMix(skin, 0.2)}"/><stop offset=".55" stop-color="${skin}"/><stop offset="1" stop-color="${jMix(skin, -0.17)}"/></radialGradient><linearGradient id="tg${uid}" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="${jMix(fit, 0.24)}"/><stop offset=".55" stop-color="${fit}"/><stop offset="1" stop-color="${jMix(fit, -0.26)}"/></linearGradient></defs>`;
   const pup = (x, y) => (ey === "etoile" ? `<path transform="translate(${x} ${y}) scale(.55)" d="M0 -9 l2.6 6 6.4.6-4.9 4.2 1.5 6.3-5.6-3.4-5.6 3.4 1.5-6.3-4.9-4.2 6.4-.6z" fill="#ff5d8f" stroke="${k}" stroke-width="2.6" stroke-linejoin="round"/>` : `<circle cx="${x + (mood === "go" ? 1.5 : 0)}" cy="${y + 1}" r="4.6" fill="${k}"/><circle cx="${x + 3}" cy="${y - 2.5}" r="1.7" fill="#fff"/>`);
   const eye = (x) => {
     if (ey === "joyeux" || (mood === "ok" && ey === "rond")) return `<path d="M${x - 9} 66 Q${x} 53 ${x + 9} 66" fill="none" stroke="${k}" stroke-width="4.4" stroke-linecap="round"/>`;
@@ -8163,7 +8207,7 @@ function jChar(o = {}) {
   /* torse */
   const emx = 38, emy = 92;
   let arm = fit, back = "", tor = "";
-  const rectT = (c, x = 30, w = 40) => `<rect x="${x}" y="84" width="${w}" height="23" rx="10" fill="${c}" ${S}/>`;
+  const rectT = (c, x = 30, w = 40) => `<rect x="${x}" y="84" width="${w}" height="23" rx="10" fill="${c === fit ? `url(#tg${uid})` : c}" ${S}/>`;
   switch (haut) {
     case "peignoir": arm = "#f4f1ea"; tor = `<rect x="28" y="84" width="44" height="29" rx="10" fill="#f4f1ea" ${S}/><path d="M40 84 L50 100 L60 84" fill="${skin}" ${S}/><path d="M50 100 V112" stroke="${k}" stroke-width="2"/><rect x="28" y="99" width="44" height="5" fill="#cfd3dc" stroke="${k}" stroke-width="2"/><path d="M34 90 v10 M66 90 v10" stroke="#cfd3dc" stroke-width="2" opacity=".7"/>`; break;
     case "polo": tor = `${rectT(fit)}<path d="M42 84 L47 92 L50 86Z M58 84 L53 92 L50 86Z" fill="${jMix(fit, 0.35)}" ${S}/><path d="M50 88 V100" stroke="${k}" stroke-width="2"/><circle cx="50" cy="94" r="1.2" fill="${k}"/><rect x="30" y="102" width="40" height="3" fill="${band}" opacity=".9"/>${jEmbSvg(emb, emx + 2, emy + 6, band)}`; break;
@@ -8183,17 +8227,19 @@ function jChar(o = {}) {
   else if (bas === "short") legs = `${leg(35, skin)}${leg(52, skin)}<rect x="34" y="97" width="15" height="9" rx="4" fill="${pant}" ${S}/><rect x="51" y="97" width="15" height="9" rx="4" fill="${pant}" ${S}/>`;
   else if (bas === "jupe") legs = `${leg(35, skin)}${leg(52, skin)}<path d="M29 100 L33 104 H67 L71 100 L67 96 H33Z" fill="${pant}" ${S}/>`;
   else { legs = `${leg(35, pant)}${leg(52, pant)}`; if (bas === "cargo") legs += `<rect x="36" y="102" width="8" height="6" rx="1.5" fill="${jMix(pant, -0.2)}" stroke="${k}" stroke-width="1.6"/><rect x="56" y="102" width="8" height="6" rx="1.5" fill="${jMix(pant, -0.2)}" stroke="${k}" stroke-width="1.6"/>`; if (bas === "jogging") legs += `<path d="M36 99 V111 M64 99 V111" stroke="${band}" stroke-width="3" stroke-linecap="round"/>`; }
+  const PA = { up: [128, -128], thumbup: [0, -100], thumbdown: [0, -100], offer: [100, 0], hang: [-12, 12], hold: [0, 0] }[pose] || [0, 0];
+  const armT = (side) => { const a = PA[side === "l" ? 0 : 1]; return a ? ` transform="rotate(${a} ${side === "l" ? 25.5 : 74.5} 90)"` : ""; };
+  const thumb = pose === "thumbup" || pose === "thumbdown" ? `<ellipse cx="92.6" cy="${pose === "thumbup" ? 78.6 : 94.6}" rx="3.2" ry="6" fill="${skin}" ${S}/>` : "";
   const body = `<ellipse cx="50" cy="125.5" rx="27" ry="4.4" fill="rgba(0,0,0,.3)"/>${back}
-    <g class="jc-legs">${legs}<g transform="translate(0 9)">${jShoe(chs, shoe, sh, skin, 29, 50)}${jShoe(chs, shoe, sh, skin, 50, 71)}</g></g>
-    <g class="jc-arm l"><rect x="19" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/><circle cx="25.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
-    <g class="jc-arm r"><rect x="68" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/>${armBands}<circle cx="74.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
-    ${tor}${jObjSvg(obj)}`;
-  const head = `<g class="jc-head">
-    <path d="M30 94 v9 a3 3 0 0 0 6 0 v-9z" fill="${sh}" stroke="${k}" stroke-width="2.4" stroke-linejoin="round"/><path d="M82 90 v7 a2.6 2.6 0 0 0 5.2 0 v-7z" fill="${sh}" stroke="${k}" stroke-width="2.4" stroke-linejoin="round"/>
-    <ellipse cx="50" cy="60" rx="38" ry="34" fill="${sh}" transform="translate(4 4)" stroke="${k}" stroke-width="3"/>
+    ${o.sit ? "" : `<g class="jc-legs">${legs}<g transform="translate(0 9)">${jShoe(chs, shoe, sh, skin, 29, 50)}${jShoe(chs, shoe, sh, skin, 50, 71)}</g></g>`}
+    <g class="jc-arm l"${armT("l")}><rect x="19" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/><circle cx="25.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
+    <g class="jc-arm r"${armT("r")}><rect x="68" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/>${armBands}<circle cx="74.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
+    ${tor}<rect x="31.5" y="86" width="5" height="18" rx="2.5" fill="#fff" opacity=".14"/>${thumb}${o.noObj ? "" : jObjSvg(obj)}`;
+  const headT = pose === "hang" || o.slump ? ` transform="translate(0 30) rotate(18 50 92)"` : "";
+  const head = `<g class="jc-head"${headT}>
     ${hp.back}
     <ellipse cx="14" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="86" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="14.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/><ellipse cx="85.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/>
-    <ellipse cx="50" cy="58" rx="36" ry="32" fill="${sd}" ${S}/><ellipse cx="48" cy="55.5" rx="32.6" ry="28.6" fill="${skin}"/>
+    <ellipse cx="50" cy="58" rx="36" ry="32" fill="${sd}" ${S}/><ellipse cx="48" cy="55.5" rx="32.6" ry="28.6" fill="url(#hg${uid})"/>
     <path d="M24 44 C30 34 40 30 50 30" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".4"/>
     ${eye(35)}${eye(65)}${noBrow ? "" : brow}
     <ellipse cx="25" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/><ellipse cx="75" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/>
@@ -8203,7 +8249,7 @@ function jChar(o = {}) {
   </g>`;
   const sz = o.size || 72;
   const vb = o.vb || "-6 -4 112 178", vbs = vb.split(" ").map(Number);
-  return `<svg class="jc${o.vb ? " crop" : ""} ${o.cls || ""}" viewBox="${vb}" width="${sz}" height="${Math.round((sz * vbs[3]) / vbs[2])}" role="img" aria-label="${o.label || "Personnage"}"><g transform="translate(0 12) translate(50 84) scale(1.2 1.62) translate(-50 -84)">${body}</g>${head}<g fill="${sh}" opacity=".9"><circle cx="4" cy="22" r="2.4"/><circle cx="97" cy="32" r="2"/><circle cx="92" cy="12" r="1.6"/><circle cx="2" cy="44" r="1.6"/></g></svg>`;
+  return `<svg class="jc${o.vb ? " jcrop" : ""} ${o.cls || ""}" viewBox="${vb}" width="${sz}" height="${Math.round((sz * vbs[3]) / vbs[2])}" role="img" aria-label="${o.label || "Personnage"}">${defs}<g transform="translate(0 12) translate(50 84) scale(1.2 1.62) translate(-50 -84)">${body}</g>${head}</svg>`;
 }
 
   const JTITRES = { ssiap1: "Agent de service de sécurité incendie", ssiap2: "Chef d’équipe de sécurité incendie", ssiap3: "Chef de service de sécurité incendie", reglementation: "Expert des textes et du règlement", aps: "Agent de prévention et de sécurité", sst: "Sauveteur secouriste du travail", h0b0: "Personnel habilité H0B0", terrain: "Agent aguerri du terrain" };
@@ -8613,7 +8659,7 @@ function jChar(o = {}) {
     const tl = (key, list, name) => `<h3 class="lbl">${name}</h3><div class="jx-tls" role="group" aria-label="${name}">${list.map(([v, n], i) => `<button type="button" class="jx-tl" data-act="jx-cr-set" data-k="${key}" data-v="${i}" aria-pressed="${L[key] === i}">${jChar({ look: Object.assign({}, L, key === "hat" ? {} : { hat: key === "hs" ? 0 : L.hat }, { [key]: i }), size: 54, vb: VBS[key], label: n })}<span>${n}</span></button>`).join("")}</div>`;
     const agences = JAG.map((g, gi) => `<h3 class="lbl">${g.ag}</h3><div class="jx-tls" role="group" aria-label="${g.ag}">${g.t.map((t, ti) => `<button type="button" class="jx-tl" data-act="jx-cr-tenue" data-g="${gi}" data-t="${ti}">${jChar({ look: Object.assign({}, L, jTenuePatch(g, t)), size: 54, vb: "-6 -4 112 178", label: t.n })}<span>${t.n}</span></button>`).join("")}</div>`).join("");
     const tabs = {
-      corps: sw("sk", P.sk, "Teinte de peau") + tl("hs", P.hs, "Coiffure") + sw("hc", P.hc, "Couleur des cheveux") + sw("sh", P.sh, "Contour et détails"),
+      corps: sw("sk", P.sk, "Teinte de peau") + tl("hs", P.hs, "Coiffure") + sw("hc", P.hc, "Couleur des cheveux") + sw("sh", P.sh, "Couleur d’accent (semelles, détails)"),
       visage: tl("ey", P.ey, "Les yeux") + tl("mo", P.mo, "L’expression") + tl("ac", P.ac, "Accessoire"),
       haut: tl("haut", P.haut, "Le haut") + sw("fit", P.fit, "Couleur du haut") + sw("bnd", P.bnd, "Couleur des bandes et insignes") + tl("emb", P.emb, "Insigne de l’agence"),
       bas: tl("bas", P.bas, "Le bas") + sw("pan", P.pan, "Couleur du bas"),
@@ -8649,6 +8695,29 @@ function jChar(o = {}) {
         ${J.del === p.id ? `<div class="confirm"><button class="yes" data-act="jx-del-yes" data-id="${p.id}">Supprimer ${tx(p.pseudo)} et sa progression</button><button data-act="jx-del-no">Annuler</button></div>` : ""}</div>`).join("")}
         ${ros.length < 8 ? `<button type="button" class="jx-tc add" data-act="jx-cr-new"><span class="pl" aria-hidden="true">＋</span><b>Nouveau personnage</b></button>` : ""}</div>
       ${J.reset ? `<div class="confirm"><button class="yes" data-act="jx-reset-yes">Effacer la progression de ${tx(jP.pseudo)}</button><button data-act="jx-reset-no">Annuler</button></div>` : `<p style="margin:0"><button type="button" class="btn-link" data-act="jx-reset">Effacer la progression de ${tx(jP.pseudo)}</button></p>`}`;
+  }
+
+  /* ===== La salle d'examen : le formateur, le bureau, le personnage qui passe l'examen blanc ===== */
+  const JTRAIN = [
+    { sk: 2, hs: 0, hc: 7, ey: 0, mo: 0, fit: 9, hat: 0, ac: 1, sh: 4, haut: 3, bas: 0, pan: 1, chs: 4, obj: 4, bnd: 4, emb: 0, chc: 0, cc: -1 },
+    { sk: 5, hs: 2, hc: 1, ey: 0, mo: 0, fit: 6, hat: 0, ac: 0, sh: 0, haut: 4, bas: 0, pan: 5, chs: 4, obj: 4, bnd: 0, emb: 1, chc: 0, cc: -1 },
+  ];
+  const JSAY = { ok: ["Exact !", "Bien vu.", "C’est ça !", "Parfait."], ko: ["Pas tout à fait…", "Relis la correction.", "Attention à ce point."] };
+  const jPick = (a, n) => a[(n || 0) % a.length];
+  function jClassScene(o) {
+    const trLook = JTRAIN[(o.k || 0) % 2], sl = jLook(jP);
+    let tp = "", sp = "", tm = "go", sm = "go", tc = "idle", sc = "idle", say = "", dip = "", big = !!o.big;
+    if (o.t === "intro") { say = "Installe-toi. C’est parti pour l’examen blanc."; sc = "idle"; }
+    else if (o.t === "ok") { sp = "thumbup"; sm = "ok"; sc = "jump"; tm = "ok"; tp = "thumbup"; tc = "jump"; say = jPick(JSAY.ok, o.n); }
+    else if (o.t === "ko") { sm = "ko"; sc = "shake"; tm = "ko"; tc = "shake"; say = jPick(JSAY.ko, o.n); }
+    else if (o.t === "win") { tp = "offer"; tm = "ok"; sp = "up"; sm = "ok"; sc = "dance"; say = o.stars === 3 ? "Sans faute. Félicitations !" : "Félicitations, c’est validé !"; dip = `<div class="jx-dip${o.stars === 3 ? " gold" : ""}"><i class="jx-seal" aria-hidden="true">★</i><small>Examen blanc</small><b>DIPLÔME</b><span>${tx(jP.pseudo)}</span><em>${tx(JTITRES[o.cat] || "")}</em></div>`; }
+    else if (o.t === "fail") { tp = "thumbdown"; tm = "ko"; tc = "idle"; sp = "hang"; sm = "ko"; sc = "sad"; say = "Courage, on recommence."; }
+    return `<div class="jx-cls${big ? " big" : ""}${o.t === "intro" ? " intro" : ""}" role="img" aria-label="Salle d’examen : le formateur et ${esc(jP.pseudo)} à son bureau">
+      <div class="jx-wall"><span class="jx-brd">EXAMEN BLANC</span><span class="jx-win" aria-hidden="true"></span><span class="jx-clk" aria-hidden="true"></span></div><div class="jx-flr"></div>
+      <div class="jx-trn ${tc}">${jChar({ look: trLook, size: big ? 92 : 70, pose: tp, mood: tm, cls: tc === "idle" ? "idle" : tc, noObj: tp === "offer", label: "Le formateur" })}</div>
+      <div class="jx-std${o.t === "intro" ? " arrive" : ""}">${jChar({ look: sl, job: o.cat, sit: true, vb: "-6 -4 112 134", size: big ? 104 : 80, pose: sp, mood: sm, cls: sc, slump: o.t === "fail", label: jP.pseudo })}</div>
+      <div class="jx-desk"><i class="jx-pap"></i><i class="jx-pen"></i></div>${dip}
+      ${say ? `<div class="jx-say ${o.t === "ko" || o.t === "fail" ? "ko" : ""}">${say}</div>` : ""}</div>`;
   }
 
   function jCat() {
@@ -8695,12 +8764,12 @@ function jChar(o = {}) {
       fb = `<div class="qfb"><p><b class="${ok ? "g" : "r"}">${ok ? "Bonne réponse !" : "Pas tout à fait."}</b>${ok ? " +10 points" : ""}</p>${good}${q.x ? `<p>${tx(q.x)}</p>` : ""}${q.f && FI[q.f] ? `<p><a href="#f-${q.f}">Voir la fiche : ${tx(FI[q.f].titre)}</a></p>` : ""}${srcL}${signalBtn("Jeu : " + q.q.slice(0, 70))}</div>
         <button type="button" class="btn" data-act="jx-next">${r.i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button>`;
     }
-    const ok0 = answered ? r.res[r.i] : null, coach = `<div class="jx-coach">${jMe({ size: 58, mood: answered ? (ok0 ? "ok" : "ko") : "go", cls: answered ? (ok0 ? "jump" : "shake") : "idle" })}<div class="bub">${answered ? (ok0 ? "Bien joué !" : "Aïe… lis la correction.") : "À toi de jouer !"}</div></div>`;
-    return `<div class="quiz">${coach}${head}${body}${fb}<p style="margin:0"><button type="button" class="btn-link" data-act="jx-quit">Arrêter cette étape</button></p></div>`;
+    const ok0 = answered ? r.res[r.i] : null, scene = `<div class="jx-quiz-s">${jClassScene({ t: answered ? (ok0 ? "ok" : "ko") : (r.i === 0 && !r.seen ? "intro" : ""), n: r.i + r.k, k: r.k, cat: r.cat })}</div>`;
+    return `<div class="quiz">${head}${body}${scene}${fb}<p style="margin:0"><button type="button" class="btn-link" data-act="jx-quit">Arrêter cette étape</button></p></div>`;
   }
   function jResult() {
     const r = J.run, n = r.qs.length, next = jStages(r.cat, r.mode)[r.k + 1];
-    return `${r.stars === 3 ? jConf() : ""}<div class="score jx-res"><div class="jx-podium">${jMe({ size: 110, mood: r.stars ? "ok" : "ko", cls: r.stars ? "dance" : "sad" })}</div><span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
+    return `${r.stars === 3 ? jConf() : ""}<div class="score jx-res">${jClassScene({ t: r.stars ? "win" : "fail", big: true, stars: r.stars, k: r.k, cat: r.cat })}<span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
       <b>${r.sc} / ${n}</b>
       <p>${r.stars ? (r.stars === 3 ? "Sans faute, bravo !" : "Étape réussie !") : "Il manque un peu pour valider l’étape."} ${r.stars ? `+${r.xp} points de bonus.` : "Relisez les corrections et réessayez."}</p>
       ${r.stars && next ? `<button type="button" class="btn" data-act="jx-stage" data-k="${r.k + 1}">Étape suivante</button>` : ""}
@@ -8768,7 +8837,7 @@ function jChar(o = {}) {
     else if (J.view === "bsetup") body = jBSetup();
     else if (J.view === "bplay" && BT) body = jBPlay();
     else body = jHub();
-    return { html: jVoiceBar() + body, title: "Jeu", tab: "jeu", back: "accueil", after: () => { jAutoSay(); if (J.view === "creer") jCrAfter(); if (J.view === "cat") { J.focusHere = false; jWorldInit(); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
+    return { html: jVoiceBar() + body, title: "Jeu", tab: "jeu", back: "accueil", after: () => { jAutoSay(); if (J.view === "creer") jCrAfter(); if (J.view === "play" && J.run && !J.run.seen) setTimeout(() => { if (J.run) J.run.seen = true; }, 2000); if (J.view === "cat") { J.focusHere = false; jWorldInit(); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
   }
   function pageJeuImport() {
     return { html: `<nav class="crumb"><a href="#jeu">Jeu</a></nav><div class="page-h"><h1>Ajouter des questions</h1><p>Collez un lot de questions au format JSON, ou choisissez le fichier. Les questions sans source, avec une erreur de format ou déjà présentes sont écartées.</p></div>
