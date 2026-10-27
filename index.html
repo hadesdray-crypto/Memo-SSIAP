@@ -720,6 +720,15 @@ td:first-child { font-weight: 700; }
 /* ===== Jeu : monde graffiti ===== */
 .jc{display:block;overflow:visible}
 .jc.jcrop{overflow:hidden}
+.jc-eyes{transform-box:fill-box;transform-origin:center;animation:jc-blink 5.2s infinite}
+@keyframes jc-blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+.jc-pup{transform:translate(calc(var(--jx,0) * 2.8px),calc(var(--jy,0) * 2.2px));transition:transform .14s ease-out}
+.jc-blush{animation:jc-bl 3.4s ease-in-out infinite}
+@keyframes jc-bl{50%{transform:translateY(-.6px);filter:saturate(1.5) brightness(1.08)}}
+.jc-mouth{transform-box:fill-box;transform-origin:center}
+.jc.talk .jc-mouth{animation:jc-talk .28s ease-in-out infinite alternate}
+@keyframes jc-talk{to{transform:scaleY(.45)}}
+@media (prefers-reduced-motion: reduce){.jc-eyes,.jc-blush,.jc.talk .jc-mouth{animation:none}}
 .jc.idle .jc-head{animation:jc-bob 1.6s ease-in-out infinite;transform-origin:50% 90%;transform-box:fill-box}
 @keyframes jc-bob{50%{transform:translateY(-3px) rotate(-2deg)}}
 .jc.jump{animation:jc-jump .6s ease-out}
@@ -889,6 +898,28 @@ td:first-child { font-weight: 700; }
 .jx-seal{position:absolute;right:-8px;bottom:-8px;width:24px;height:24px;border-radius:50%;background:radial-gradient(#ff6b6b,#b3131f);color:#ffe9a8;display:grid;place-items:center;font-style:normal;font-size:.8rem;border:2px solid #0e1118}
 @keyframes jx-give{from{transform:translateX(70px) rotate(8deg);opacity:0}}
 @media (prefers-reduced-motion: reduce){.jx-std.arrive,.jx-dip,.jx-say{animation:none}}
+/* Péter un câble */
+.jx-rs{position:absolute;left:8%;bottom:20px;z-index:3;animation:rg-run .6s ease-in .9s forwards,rg-hide .01s 1.5s forwards}
+.jx-cls.big .jx-rs{bottom:30px}
+@keyframes rg-run{to{left:30%}}@keyframes rg-hide{to{opacity:0;visibility:hidden}}
+.jx-rl{position:absolute;left:24%;bottom:8px;z-index:3;opacity:0;transform-origin:50% 80%;animation:rg-fall .45s cubic-bezier(.3,1.4,.5,1) 1.5s forwards}
+.jx-cls.big .jx-rl{bottom:14px}
+@keyframes rg-fall{from{opacity:1;transform:rotate(0) translateY(-30px)}to{opacity:1;transform:rotate(-86deg) translateY(30px)}}
+.jx-rt1,.jx-rt2{position:absolute;right:6%;bottom:6px;z-index:2}
+.jx-rt1{animation:rg-hide .01s 1.45s forwards}
+.jx-rt2{opacity:0;animation:rg-show .01s 1.45s forwards}
+@keyframes rg-show{to{opacity:1}}
+.jx-rg.pied .jx-foot{position:absolute;left:-26px;bottom:2px;width:30px;height:10px;border-radius:6px 10px 10px 6px;background:#1c2029;border:2px solid #0e1118;transform:rotate(-8deg);animation:rg-foot .3s ease-out 1.4s both}
+@keyframes rg-foot{from{transform:translateX(18px) scaleX(.2);opacity:0}}
+.jx-kit{position:absolute;left:-52px;bottom:34px;font-size:1.5rem;font-style:normal;opacity:0;animation:rg-show .3s 3.2s forwards,jx-pop .35s 3.2s both}
+.jx-bam{position:absolute;z-index:7;left:38%;top:44%;font-size:2.2rem;font-style:normal;opacity:0;animation:rg-bam .5s 1.5s ease-out both}
+@keyframes rg-bam{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.4) rotate(-12deg)}100%{opacity:0;transform:scale(1.7)}}
+.jx-b1{left:4%;right:auto;max-width:44%;top:6px;opacity:0;animation:rg-b1 1.2s .1s both}
+.jx-b1::after{right:auto;left:22px}
+@keyframes rg-b1{0%{opacity:0;transform:scale(.6)}15%,80%{opacity:1;transform:scale(1)}100%{opacity:0}}
+.jx-b2{max-width:56%;opacity:0;right:3%;animation:rg-show .01s 2.1s forwards,jx-pop .4s cubic-bezier(.2,.9,.3,1.3) 2.1s both}
+.jx-rg.big .jx-b2{font-size:.82rem}
+@media (prefers-reduced-motion: reduce){.jx-rs{animation:rg-hide .01s 0s forwards}.jx-rl,.jx-rt2,.jx-b2,.jx-kit,.jx-bam{animation:none;opacity:1}.jx-rl{transform:rotate(-86deg) translateY(30px)}.jx-rt1,.jx-b1,.jx-bam{display:none}}
 /* ===== Relief : boutons et tuiles du jeu ===== */
 .quiz .qc button{border:2px solid var(--line-2);border-bottom-width:5px;border-radius:14px;background:linear-gradient(var(--surface-2,#231d1e),var(--surface,#1c1718));box-shadow:inset 0 1px 0 rgba(255,255,255,.1);transition:transform .08s,border-bottom-width .08s}
 .quiz .qc button:active:not(:disabled){transform:translateY(3px);border-bottom-width:2px}
@@ -8186,8 +8217,9 @@ function jChar(o = {}) {
   const S = `stroke="${k}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
   const uid = ++jUid, pose = o.pose || "";
   const defs = `<defs><radialGradient id="hg${uid}" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="${jMix(skin, 0.2)}"/><stop offset=".55" stop-color="${skin}"/><stop offset="1" stop-color="${jMix(skin, -0.17)}"/></radialGradient><linearGradient id="tg${uid}" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="${jMix(fit, 0.24)}"/><stop offset=".55" stop-color="${fit}"/><stop offset="1" stop-color="${jMix(fit, -0.26)}"/></linearGradient></defs>`;
-  const pup = (x, y) => (ey === "etoile" ? `<path transform="translate(${x} ${y}) scale(.55)" d="M0 -9 l2.6 6 6.4.6-4.9 4.2 1.5 6.3-5.6-3.4-5.6 3.4 1.5-6.3-4.9-4.2 6.4-.6z" fill="#ff5d8f" stroke="${k}" stroke-width="2.6" stroke-linejoin="round"/>` : `<circle cx="${x + (mood === "go" ? 1.5 : 0)}" cy="${y + 1}" r="4.6" fill="${k}"/><circle cx="${x + 3}" cy="${y - 2.5}" r="1.7" fill="#fff"/>`);
+  const pup = (x, y) => `<g class="jc-pup">${ey === "etoile" ? `<path transform="translate(${x} ${y}) scale(.55)" d="M0 -9 l2.6 6 6.4.6-4.9 4.2 1.5 6.3-5.6-3.4-5.6 3.4 1.5-6.3-4.9-4.2 6.4-.6z" fill="#ff5d8f" stroke="${k}" stroke-width="2.6" stroke-linejoin="round"/>` : `<circle cx="${x + (mood === "go" ? 1.5 : 0)}" cy="${y + 1}" r="4.6" fill="${k}"/><circle cx="${x + 3}" cy="${y - 2.5}" r="1.7" fill="#fff"/>`}</g>`;
   const eye = (x) => {
+    if (o.dizzy) return `<path d="M${x - 7} 55 L${x + 7} 69 M${x + 7} 55 L${x - 7} 69" stroke="${k}" stroke-width="4.6" stroke-linecap="round" fill="none"/>`;
     if (ey === "joyeux" || (mood === "ok" && ey === "rond")) return `<path d="M${x - 9} 66 Q${x} 53 ${x + 9} 66" fill="none" stroke="${k}" stroke-width="4.4" stroke-linecap="round"/>`;
     const sq = mood === "ko" ? 7 : 10, base = `<ellipse cx="${x}" cy="62" rx="9" ry="${sq}" fill="#fff" ${S}/>${pup(x, 62)}`;
     return ey === "cool" ? base + `<path d="M${x - 9.5} 62 a9.5 ${sq} 0 0 1 19 0Z" fill="${skin}" stroke="${k}" stroke-width="3"/>` : base;
@@ -8227,26 +8259,26 @@ function jChar(o = {}) {
   else if (bas === "short") legs = `${leg(35, skin)}${leg(52, skin)}<rect x="34" y="97" width="15" height="9" rx="4" fill="${pant}" ${S}/><rect x="51" y="97" width="15" height="9" rx="4" fill="${pant}" ${S}/>`;
   else if (bas === "jupe") legs = `${leg(35, skin)}${leg(52, skin)}<path d="M29 100 L33 104 H67 L71 100 L67 96 H33Z" fill="${pant}" ${S}/>`;
   else { legs = `${leg(35, pant)}${leg(52, pant)}`; if (bas === "cargo") legs += `<rect x="36" y="102" width="8" height="6" rx="1.5" fill="${jMix(pant, -0.2)}" stroke="${k}" stroke-width="1.6"/><rect x="56" y="102" width="8" height="6" rx="1.5" fill="${jMix(pant, -0.2)}" stroke="${k}" stroke-width="1.6"/>`; if (bas === "jogging") legs += `<path d="M36 99 V111 M64 99 V111" stroke="${band}" stroke-width="3" stroke-linecap="round"/>`; }
-  const PA = { up: [128, -128], thumbup: [0, -100], thumbdown: [0, -100], offer: [100, 0], hang: [-12, 12], hold: [0, 0] }[pose] || [0, 0];
+  const PA = { up: [128, -128], thumbup: [0, -100], thumbdown: [0, -100], offer: [100, 0], hang: [-12, 12], cross: [-52, 52], hold: [0, 0] }[pose] || [0, 0];
   const armT = (side) => { const a = PA[side === "l" ? 0 : 1]; return a ? ` transform="rotate(${a} ${side === "l" ? 25.5 : 74.5} 90)"` : ""; };
   const thumb = pose === "thumbup" || pose === "thumbdown" ? `<ellipse cx="92.6" cy="${pose === "thumbup" ? 78.6 : 94.6}" rx="3.2" ry="6" fill="${skin}" ${S}/>` : "";
   const body = `<ellipse cx="50" cy="125.5" rx="27" ry="4.4" fill="rgba(0,0,0,.3)"/>${back}
     ${o.sit ? "" : `<g class="jc-legs">${legs}<g transform="translate(0 9)">${jShoe(chs, shoe, sh, skin, 29, 50)}${jShoe(chs, shoe, sh, skin, 50, 71)}</g></g>`}
     <g class="jc-arm l"${armT("l")}><rect x="19" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/><circle cx="25.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
     <g class="jc-arm r"${armT("r")}><rect x="68" y="88" width="13" height="19" rx="6.5" fill="${arm}" ${S}/>${armBands}<circle cx="74.5" cy="108.5" r="6.4" fill="${skin}" ${S}/></g>
-    ${tor}<rect x="31.5" y="86" width="5" height="18" rx="2.5" fill="#fff" opacity=".14"/>${thumb}${o.noObj ? "" : jObjSvg(obj)}`;
-  const headT = pose === "hang" || o.slump ? ` transform="translate(0 30) rotate(18 50 92)"` : "";
-  const head = `<g class="jc-head"${headT}>
+    <rect x="43" y="76" width="14" height="14" rx="5" fill="${sd}" ${S}/>${tor}<rect x="31.5" y="86" width="5" height="18" rx="2.5" fill="#fff" opacity=".14"/>${thumb}${o.noObj ? "" : jObjSvg(obj)}`;
+  const headT = pose === "hang" || o.slump ? ` transform="translate(0 36) rotate(18 50 92)"` : ` transform="translate(0 6)"`;
+  const head = `<g${headT}><g class="jc-head">
     ${hp.back}
     <ellipse cx="14" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="86" cy="64" rx="6" ry="8" fill="${skin}" ${S}/><ellipse cx="14.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/><ellipse cx="85.5" cy="65" rx="2.4" ry="3.6" fill="${sd}"/>
     <ellipse cx="50" cy="58" rx="36" ry="32" fill="${sd}" ${S}/><ellipse cx="48" cy="55.5" rx="32.6" ry="28.6" fill="url(#hg${uid})"/>
     <path d="M24 44 C30 34 40 30 50 30" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".4"/>
-    ${eye(35)}${eye(65)}${noBrow ? "" : brow}
-    <ellipse cx="25" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/><ellipse cx="75" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c" opacity=".5"/>
+    <g class="jc-eyes" style="animation-delay:-${(uid % 7) * 0.7}s">${eye(35)}${eye(65)}</g>${noBrow ? "" : brow}
+    <g class="jc-blush" style="animation-delay:-${(uid % 5) * 0.6}s" opacity="${mood === "ok" ? 0.75 : mood === "ko" ? 0.18 : 0.5}"><ellipse cx="25" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c"/><ellipse cx="75" cy="76" rx="6.4" ry="3.6" fill="#ff7b9c"/></g>
     <path d="M49 70 C46.5 74.5 51.5 76 53 72" fill="none" stroke="${k}" stroke-width="2.4" stroke-linecap="round"/><circle cx="48.2" cy="69.5" r="1.3" fill="#fff" opacity=".7"/>
-    ${beard}${mouth}${extra}
+    ${beard}<g class="jc-mouth">${o.dizzy ? `<path d="M40 86 q4 -5 7 0 t7 0 t7 0" fill="none" ${S}/>` : mouth}</g>${extra}
     ${hp.front}${jHatSvg(hat, fit, cc, band)}
-  </g>`;
+  </g></g>`;
   const sz = o.size || 72;
   const vb = o.vb || "-6 -4 112 178", vbs = vb.split(" ").map(Number);
   return `<svg class="jc${o.vb ? " jcrop" : ""} ${o.cls || ""}" viewBox="${vb}" width="${sz}" height="${Math.round((sz * vbs[3]) / vbs[2])}" role="img" aria-label="${o.label || "Personnage"}">${defs}<g transform="translate(0 12) translate(50 84) scale(1.2 1.62) translate(-50 -84)">${body}</g>${head}</svg>`;
@@ -8337,6 +8369,7 @@ function jChar(o = {}) {
 
   /* ----- Jeu solo ----- */
   function jStart(cat, mode, k) {
+    J.rage = 0;
     const st = jStages(cat, mode)[k];
     if (!st) return;
     J.run = { cat, mode, k, qs: shuffle(st.slice()).map(jPrep), i: 0, picked: [], res: [], seq: [], done: false };
@@ -8704,7 +8737,26 @@ function jChar(o = {}) {
   ];
   const JSAY = { ok: ["Exact !", "Bien vu.", "C’est ça !", "Parfait."], ko: ["Pas tout à fait…", "Relis la correction.", "Attention à ce point."] };
   const jPick = (a, n) => a[(n || 0) % a.length];
+  /* « Péter un câble » : l'examinateur est un professionnel (clé de bras ou croche-pied, avec une touche d'humour) */
+  const JRAGE = [
+    { id: "bras", say: "Reviens quand tu auras grandi, petit loulou." },
+    { id: "pied", say: "Je crois bien que cette personne a besoin de soins. Heureusement que je suis formé pour ça." },
+  ];
+  const jRageV = (o) => (/^(sst|ssiap)/.test(o.cat || "") ? (o.n % 2 ? 0 : 1) : o.n % 2);
+  function jRageScene(o) {
+    const v = JRAGE[jRageV(o)], trLook = JTRAIN[(o.k || 0) % 2], sl = jLook(jP), big = !!o.big, sz = big ? 118 : 88, tz = big ? 100 : 76;
+    return `<div class="jx-cls jx-rg${big ? " big" : ""} ${v.id}" role="img" aria-label="Scène humoristique : ${esc(jP.pseudo)} perd son calme, le formateur le maîtrise. ${esc(v.say)}">
+      <div class="jx-wall"><span class="jx-brd">EXAMEN BLANC</span><span class="jx-win" aria-hidden="true"></span><span class="jx-clk" aria-hidden="true"></span></div><div class="jx-flr"></div>
+      <div class="jx-rs">${jChar({ look: sl, job: o.cat, size: sz, pose: "up", mood: "ko", cls: "shake", label: jP.pseudo })}</div>
+      <div class="jx-rl">${jChar({ look: sl, job: o.cat, size: sz, mood: "ko", dizzy: true, pose: "hang", label: jP.pseudo })}</div>
+      <div class="jx-rt1">${jChar({ look: trLook, size: tz, mood: "go", cls: "idle", label: "Le formateur" })}</div>
+      <div class="jx-rt2">${jChar({ look: trLook, size: tz, mood: "ok", pose: v.id === "bras" ? "offer" : "", cls: "talk", noObj: v.id === "bras", label: "Le formateur" })}${v.id === "pied" ? '<i class="jx-foot" aria-hidden="true"></i><i class="jx-kit" aria-hidden="true">⛑️</i>' : ""}</div>
+      <i class="jx-bam" aria-hidden="true">💥</i>
+      <div class="jx-say jx-b1 ko">Je vais lui régler son compte !</div>
+      <div class="jx-say jx-b2">${v.say}</div></div>`;
+  }
   function jClassScene(o) {
+    if (o.t === "rage") return jRageScene(o);
     const trLook = JTRAIN[(o.k || 0) % 2], sl = jLook(jP);
     let tp = "", sp = "", tm = "go", sm = "go", tc = "idle", sc = "idle", say = "", dip = "", big = !!o.big;
     if (o.t === "intro") { say = "Installe-toi. C’est parti pour l’examen blanc."; sc = "idle"; }
@@ -8769,10 +8821,11 @@ function jChar(o = {}) {
   }
   function jResult() {
     const r = J.run, n = r.qs.length, next = jStages(r.cat, r.mode)[r.k + 1];
-    return `${r.stars === 3 ? jConf() : ""}<div class="score jx-res">${jClassScene({ t: r.stars ? "win" : "fail", big: true, stars: r.stars, k: r.k, cat: r.cat })}<span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
+    return `${r.stars === 3 ? jConf() : ""}<div class="score jx-res">${jClassScene({ t: r.stars ? "win" : (J.rage ? "rage" : "fail"), n: J.rage || 0, big: true, stars: r.stars, k: r.k, cat: r.cat })}<span class="jx-stars" aria-label="${r.stars} étoile${r.stars > 1 ? "s" : ""} sur 3">${[1, 2, 3].map((i) => `<i class="${i <= r.stars ? "on" : ""}" style="--d:${i * 0.18}s">★</i>`).join("")}</span>
       <b>${r.sc} / ${n}</b>
       <p>${r.stars ? (r.stars === 3 ? "Sans faute, bravo !" : "Étape réussie !") : "Il manque un peu pour valider l’étape."} ${r.stars ? `+${r.xp} points de bonus.` : "Relisez les corrections et réessayez."}</p>
       ${r.stars && next ? `<button type="button" class="btn" data-act="jx-stage" data-k="${r.k + 1}">Étape suivante</button>` : ""}
+      ${r.stars ? "" : `<button type="button" class="btn ghost" data-act="jx-rage">😤 ${J.rage ? "Revoir la scène" : "Péter un câble"}</button>`}
       <button type="button" class="btn ghost" data-act="jx-stage" data-k="${r.k}">Rejouer cette étape</button>
       <button type="button" class="btn ghost" data-act="jx-cat" data-c="${r.cat}">Retour à la carte</button></div>`;
   }
@@ -8886,6 +8939,9 @@ function jChar(o = {}) {
         if (jP && jP.id === id) { jP = jTeam[0] || null; store.set("jeu", jP); }
         store.set("jeu-equipe", jTeam); toast("Personnage supprimé."); if (!jP) { J.cr = null; J.view = "creer"; } jGo(); return true;
       }
+      case "jx-rage": J.rage = (J.rage || 0) + 1; jSfx("dip"); rerender(); setTimeout(() => jSfx("ko"), 1650);
+        if (VX && VX.ttsOk && VX.status().v) setTimeout(() => { try { VX.speak(JRAGE[jRageV({ cat: J.run && J.run.cat, n: J.rage })].say, {}); } catch (e) { /* rien */ } }, 2300);
+        return true;
       case "jx-reset": J.reset = true; rerender(); return true;
       case "jx-reset-no": J.reset = false; rerender(); return true;
       case "jx-reset-yes": jP.st = {}; jP.xp = 0; jP.serie = { d: "", n: 0 }; jSave(); J.reset = false; J.view = "hub"; toast("Progression effacée."); jGo(); return true;
@@ -9710,6 +9766,18 @@ function jChar(o = {}) {
     applySize();
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     document.addEventListener("click", onClick);
+    (function () {
+      let raf = 0;
+      const look = (e) => {
+        if (raf) return; const x = e.clientX, y = e.clientY;
+        raf = requestAnimationFrame(() => { raf = 0;
+          document.querySelectorAll(".jc").forEach((c) => { const r = c.getBoundingClientRect(); if (!r.width) return;
+            const dx = Math.max(-1, Math.min(1, (x - (r.left + r.width / 2)) / 160)), dy = Math.max(-1, Math.min(1, (y - (r.top + r.height * 0.3)) / 160));
+            c.style.setProperty("--jx", dx.toFixed(2)); c.style.setProperty("--jy", dy.toFixed(2)); });
+        });
+      };
+      document.addEventListener("pointermove", look, { passive: true });
+    })();
     document.addEventListener("input", onInput);
     document.addEventListener("change", onInput);
     document.addEventListener("submit", onSubmit);
