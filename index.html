@@ -1440,9 +1440,9 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "1.5.0",
-    verifie: "21 octobre 2026",
-    verifieCourt: "21/10/2026",
+    version: "1.6.0",
+    verifie: "30 octobre 2026",
+    verifieCourt: "30/10/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
        ajouter un statut dans MENTIONS (plus bas, dans l’appli) et changer cette valeur : les textes se mettent à jour partout. */
     statut: "soutien",
@@ -2367,9 +2367,13 @@ D.fiches.push(
       "Ne pas interrompre le massage plus de **10 secondes**. Continuer jusqu’à la relève par les secours.",
     ] },
     { t: "info", x: "Selon la Fédération française de cardiologie, chaque minute perdue fait baisser les chances de survie d’environ 10 %." },
+    { t: "kv", x: [
+      ["Enfant (1 à 8 ans)", "Référentiel SST : débuter si possible par les insufflations, puis des cycles de **15 compressions / 2 insufflations**, en enfonçant d’environ **5 cm** (un tiers de l’épaisseur du thorax), avec le talon d’une seule main."],
+      ["Nourrisson (moins de 1 an)", "Compressions avec **2 doigts** au milieu de la poitrine, environ **4 cm** (un tiers de l’épaisseur du thorax), même rythme de 100 à 120 par minute."],
+    ] },
   ],
   retenir: ["Appeler, masser, défibriller.", "30 compressions / 2 insufflations, 100 à 120 par minute, 5 à 6 cm."],
-  src: ["psc1", "fedecardio"],
+  src: ["psc1", "fedecardio", "inrsSstV5"],
 },
 {
   id: "pls", r: "secours", titre: "Personne inconsciente qui respire (PLS)", niv: ["1", "2"],
@@ -2446,6 +2450,29 @@ D.fiches.push(
     ] },
   ],
   src: ["psc1"],
+},
+{
+  id: "sst-certificat", r: "secours", titre: "Le SST : certificat et plan d’intervention", niv: ["1", "2"],
+  mc: "SST sauveteur secouriste du travail certificat 14 heures 24 mois MAC maintien actualisation des competences 7 heures INRS proteger examiner faire alerter secourir plan d intervention PSC1 equivalence degagement d urgence",
+  clair: "Le SST est le secouriste de l’entreprise. Sa formation dure 2 jours et son certificat se renouvelle tous les 2 ans. Devant un accident, il suit toujours le même plan : protéger, examiner, faire alerter, secourir.",
+  b: [
+    { t: "kv", x: [
+      ["Formation initiale", "**14 heures** au minimum (2 jours), selon le référentiel de l’INRS (guide V5, édition 2024). Ouverte à tout salarié volontaire, sans prérequis."],
+      ["Validité", "Le certificat est valable **24 mois**."],
+      ["Renouvellement", "Un **MAC** (maintien et actualisation des compétences) de **7 heures**, à refaire **tous les 24 mois**."],
+      ["Équivalence", "Le certificat SST vaut l’unité d’enseignement « Premiers secours citoyen » (PSC). Pour les SSIAP et les APS, un SST **en cours de validité** répond à l’exigence de secourisme à jour."],
+    ] },
+    { t: "h", x: "Le plan d’intervention du SST : 4 actions, toujours dans l’ordre" },
+    { t: "ol", x: [
+      "**Protéger** : repérer les dangers persistants, supprimer le danger (si on peut le faire sans risque), l’isoler, ou soustraire la victime. Le **dégagement d’urgence** est une manœuvre exceptionnelle, réservée à une victime menacée par un danger réel, immédiat et non contrôlable.",
+      "**Examiner** la victime, dans l’ordre des urgences vitales : 1. saigne-t-elle abondamment ? 2. s’étouffe-t-elle ? 3. répond-elle ? 4. si elle ne répond pas, respire-t-elle ? (vérifier la respiration pendant **10 secondes** au plus).",
+      "**Faire alerter ou alerter** : 15 (SAMU), 18 (pompiers), 112 (numéro européen), 114 (SMS et visio pour les personnes sourdes ou malentendantes). Donner le lieu précis, la nature du problème, le nombre et l’état des victimes ; **ne jamais raccrocher le premier**.",
+      "**Secourir** : faire le geste adapté au résultat de l’examen, puis surveiller la victime jusqu’à l’arrivée des secours.",
+    ] },
+    { t: "info", x: "En entreprise, le Code du travail impose un membre du personnel formé aux premiers secours dans chaque atelier où sont accomplis des travaux dangereux et sur chaque chantier de 20 personnes et plus pendant plus de 15 jours avec travaux dangereux ; l’INRS recommande des SST dans tous les établissements." },
+    { t: "links", x: ["reflexes-secours", "arret-cardiaque", "pls", "etouffement", "hemorragie", "alerte-secours"] },
+  ],
+  src: ["inrsSstV5", "psc1"],
 }
 );
 
@@ -2508,12 +2535,18 @@ D.fiches.push(
     ] },
     { t: "kv", x: [
       ["Durée", "70 heures minimum, 12 stagiaires au plus."],
-      ["Examen", "Trois épreuves (art. 5)."],
-      ["Programme", "Rôles et missions du chef d’équipe, manipulation du SSI, hygiène et sécurité en matière de sécurité incendie, chef du poste central de sécurité en situation de crise."],
+      ["Programme (annexe III)", "1. Rôles et missions du chef d’équipe (management, formation du personnel, permis de feu). 2. Manipulation du système de sécurité incendie. 3. Hygiène et sécurité du travail en matière de sécurité incendie. 4. Chef du poste central de sécurité en situation de crise."],
     ] },
+    { t: "h", x: "L’examen SSIAP 2 : trois épreuves (annexe IX)" },
+    { t: "kv", x: [
+      ["1. Écrit (QCM)", "**40 questions** sur tout le programme, environ 40 minutes. Il faut **12 sur 20** au moins."],
+      ["2. Animation pédagogique", "Après **15 minutes de préparation**, animer devant le jury une **séquence pédagogique de 15 minutes** sur un sujet de sécurité incendie, comme si on formait son équipe. Résultat : apte ou inapte."],
+      ["3. Gestion du PC en crise", "Pendant **20 minutes**, tenir le poste central de sécurité pendant un exercice de crise avec plusieurs événements (alarmes, anomalies, appels). On dirige, on rend compte, puis on remet sa **main courante** au jury. Résultat : apte ou inapte."],
+    ] },
+    { t: "info", x: "Il faut réussir les trois épreuves. En cas d’échec à une épreuve, celles qui sont réussies restent acquises : on ne repasse que l’épreuve manquée (dans le délai prévu par l’arrêté)." },
     { t: "links", x: ["permis-de-feu", "tableau-ssi", "recyclage"] },
   ],
-  src: ["a2005", "memento", "prog2", "fc5642"],
+  src: ["a2005", "memento", "prog2", "fc5642", "exSsiap2"],
 },
 {
   id: "ssiap3", r: "metier", titre: "SSIAP 3 : chef de service", niv: ["3"],
@@ -2535,13 +2568,20 @@ D.fiches.push(
     ] },
     { t: "kv", x: [
       ["Durée", "216 heures minimum, 10 stagiaires au plus."],
-      ["Examen", "Trois épreuves (art. 6)."],
+      ["Programme (annexe IV)", "1. Le feu et ses conséquences. 2. La sécurité incendie et les bâtiments (matériaux, lecture de plans, SSI). 3. La réglementation incendie (ERP, IGH, Code du travail). 4. La gestion des risques (PC de sécurité, travaux, documents). 5. Le conseil au chef d’établissement et la veille réglementaire. 6. Le management de l’équipe de sécurité (droit du travail, organisation). 7. Le budget du service (achats, maintenance)."],
       ["Équivalences", "Certains officiers et sous-officiers de sapeurs-pompiers (avec PRV 2 ou brevet de prévention), certains DUT du domaine de la sécurité ou l’AP 2 permettent d’obtenir le SSIAP 3 après un module complémentaire."],
       ["IGH", "Le service de sécurité incendie d’un IGH est placé sous la direction d’un chef de service SSIAP 3 (GH 62)."],
     ] },
+    { t: "h", x: "L’examen SSIAP 3 : trois épreuves (annexe IX)" },
+    { t: "kv", x: [
+      ["1. Écrit (QCM)", "**40 questions** sur tout le programme, environ 40 minutes. Il faut **12 sur 20** au moins."],
+      ["2. Notice technique", "En **2 h 30**, rédiger une **notice technique de sécurité** à partir de plans, portant sur un groupement d’établissements non isolés de 1re ou 2e catégorie. C’est l’épreuve la plus longue de tous les SSIAP."],
+      ["3. Oral devant jury", "Un entretien d’environ **15 minutes** avec le jury, qui interroge sur tout le programme."],
+    ] },
+    { t: "info", x: "En cas d’échec à une partie de l’examen, les épreuves réussies restent acquises : on ne repasse que ce qui a été manqué (dans le délai prévu par l’arrêté)." },
     { t: "links", x: ["commission-securite", "registre-securite", "verifications"] },
   ],
-  src: ["a2005", "memento", "ighFormation"],
+  src: ["a2005", "memento", "ighFormation", "progSsiap3", "exSsiap3"],
 },
 {
   id: "recyclage", r: "metier", titre: "Recyclage, remise à niveau et secourisme", niv: ["1", "2", "3"],
@@ -2625,6 +2665,28 @@ D.fiches.push(
     ] },
   ],
   src: ["qe111762", "ighFormation"],
+},
+{
+  id: "devenir-pompier", r: "metier", titre: "Devenir sapeur-pompier (volontaire, professionnel, Paris, Marseille)", niv: ["1", "2", "3"],
+  mc: "sapeur pompier volontaire SPV professionnel SPP concours caporal BSPP brigade de sapeurs pompiers de Paris militaires armee de terre marins pompiers Marseille BMPM CIRFA engagement 18 25 ans brevet des colleges equivalences SSIAP PRV AP",
+  clair: "Il y a plusieurs façons de devenir pompier : volontaire (en plus de son métier), professionnel (par concours), ou militaire à Paris (BSPP) et à Marseille (BMPM). Et d’anciens pompiers peuvent obtenir des diplômes SSIAP par équivalence.",
+  b: [
+    { t: "kv", x: [
+      ["Sapeur-pompier volontaire (SPV)", "Dès **16 ans** (avec accord du représentant légal) et jusqu’à 60 ans ; il faut résider en France, mais la nationalité française n’est pas exigée. Près de **200 000 SPV** en France : **78 %** des sapeurs-pompiers. On garde son métier et on intervient en plus, avec une formation adaptée aux missions."],
+      ["Sapeur-pompier professionnel (SPP)", "Fonctionnaire territorial d’un SDIS, recruté **par concours** (caporal pour les non-officiers), puis formé. L’expérience de SPV est un vrai atout pour le concours."],
+      ["Sapeurs-pompiers de Paris (BSPP)", "Des **militaires de l’armée de terre** (environ 8 600 personnes). Recrutement de **18 à 25 ans**, nationalité française, casier vierge, au minimum le **brevet des collèges**, bonne condition physique. Candidature en **CIRFA**, tests de l’armée de terre (médical, psychotechnique, sport, entretien), puis sélection spécifique à Paris. Formation initiale d’environ **4 mois** à l’école de Limeil-Brévannes / Valenton, puis prise de poste en centre de secours."],
+      ["Marins-pompiers de Marseille (BMPM)", "Des **militaires de la Marine nationale**. 18 à 25 ans, nationalité française, JDC faite, savoir **nager**, permis B apprécié. Engagement initial de 4 ans, formation à Saint-Mandrier puis à l’école du bataillon."],
+    ] },
+    { t: "h", x: "Les passerelles avec le SSIAP" },
+    { t: "ul", x: [
+      "D’anciens sapeurs-pompiers (professionnels, volontaires ou militaires) peuvent obtenir le **SSIAP 1** par équivalence après un module complémentaire (arrêté du 2 mai 2005, art. 4).",
+      "Un **sous-officier** titulaire du PRV 1 / AP 1 peut obtenir le **SSIAP 2** par équivalence ; un **adjudant** titulaire du PRV 2 / AP 2, le **SSIAP 3** (art. 5 et 6).",
+      "À l’inverse, le SSIAP est une belle porte d’entrée vers ces métiers : mêmes bases (le feu, les ERP, le secourisme), et l’habitude des rondes et du PC de sécurité.",
+    ] },
+    { t: "warn", x: "Les épreuves physiques (sport, natation) et l’aptitude médicale font partie de la sélection des pompiers : l’appli prépare les connaissances, pas la condition physique — entraînez-vous aussi sur ce plan." },
+    { t: "links", x: ["ssiap1", "ssiap2", "ssiap3", "sst-certificat"] },
+  ],
+  src: ["spvGouv", "bsppEtudiant", "bsppMatmut", "a2005"],
 }
 );
 
@@ -3116,6 +3178,13 @@ D.fiches.push(
 /* data/98-procedures.js */
 Object.assign(D.sources, {
   niortColis: { t: "Fiche réflexe : colis ou bagage suspect (grands rassemblements)", o: "Ville de Niort", u: "https://cdn.vivre-a-niort.com/fileadmin/ville/archives/fichiers/Docpdf/etat_d_urgence/fiche_reflexe_colis_suspect.pdf", k: "officiel" },
+  inrsSstV5: { t: "Sauvetage secourisme du travail : guide des données techniques et conduites à tenir (V5, 01/2024) et dispositif de formation SST", o: "INRS", u: "https://www.inrs.fr/services/formation/demultiplication/sauveteur-secouriste-travail.html", k: "officiel" },
+  spvGouv: { t: "Devenir sapeur-pompier volontaire", o: "Gouvernement (info.gouv.fr)", u: "https://www.info.gouv.fr/actualite/devenir-sapeur-pompier-volontaire", k: "officiel" },
+  bsppEtudiant: { t: "Sapeur-pompier de Paris : recrutement et formation", o: "L’Étudiant", u: "https://www.letudiant.fr/metiers/secteur/armee/sapeur-pompier-de-paris.html", k: "reference" },
+  bsppMatmut: { t: "Intégrer les sapeurs-pompiers de Paris ou les marins-pompiers de Marseille", o: "Matmut (conseils agents publics)", u: "https://www.matmut.fr/agents-publics/conseils/integrer-sapeurs-pompiers-paris-marins-pompiers-marseille", k: "reference" },
+  exSsiap2: { t: "Déroulement de l’examen SSIAP 2 (QCM, animation pédagogique, gestion du PC)", o: "Revolys (organisme de formation)", u: "https://revolys.fr/comment-se-deroule-lexamen-ssiap-2/", k: "reference" },
+  exSsiap3: { t: "Épreuves de l’examen SSIAP 3 (QCM, notice technique, oral)", o: "Prépa Sécu (organisme de formation)", u: "https://prepasecu.fr/ssiap-3/formation-initiale/examen", k: "reference" },
+  progSsiap3: { t: "Programme de la formation SSIAP 3 (annexe IV de l’arrêté du 2 mai 2005)", o: "AFTRAL (organisme de formation)", u: "https://www.aftral.com/sites/default/files/formations/PSFE26.pdf", k: "reference" },
 });
 /* Conduites à tenir (onglet Urgence). Les étapes sont cochables. */
 D.procedures.push(
@@ -3685,6 +3754,30 @@ D.quiz = [
   // Nouveautés
   Q("La loi n° 2026-798 du 18 août 2026 a notamment…", ["Créé l’article L613-2-1 sur l’inspection visuelle des véhicules", "Supprimé le SSIAP", "Créé un SSIAP 4", "Interdit les extincteurs à poudre"], "nouveautes", "Elle prévoit aussi une expérimentation de caméras individuelles, qui attend un décret.");
   Q("Le texte de référence des SSIAP reste…", ["L’arrêté du 2 mai 2005 modifié", "Une loi de 2026", "L’arrêté du 25 juin 1980", "Le Code de la route"], "nouveautes", "Aucune réforme du diplôme n’a été trouvée en octobre 2026.");
+  // Examens SSIAP 2 et 3
+  Q("Le QCM de l’examen SSIAP 2 comporte…", ["40 questions, 12/20 au minimum", "30 questions, 10/20 au minimum", "60 questions, sans note minimale", "20 questions, 15/20 au minimum"], "ssiap2", "C’est 10 questions de plus que le QCM du SSIAP 1, avec la même note minimale de 12/20.");
+  Q("À l’examen SSIAP 2, l’épreuve d’animation pédagogique consiste à…", ["Animer devant le jury une séquence de formation de 15 minutes, après 15 minutes de préparation", "Rédiger une notice technique", "Faire une ronde avec anomalies", "Réciter l’arrêté du 2 mai 2005"], "ssiap2", "Le chef d’équipe forme le personnel : il doit prouver qu’il sait transmettre.");
+  Q("À l’examen SSIAP 2, l’épreuve pratique consiste à…", ["Gérer le PC de sécurité pendant une crise de 20 minutes, puis remettre sa main courante", "Éteindre un vrai feu de local", "Démonter un extincteur", "Rédiger une notice technique sur plans"], "ssiap2", "Plusieurs événements s’enchaînent : il faut diriger, rendre compte et tout noter en main courante.");
+  Q("La partie « manipulation » du programme SSIAP 2 porte sur…", ["Le système de sécurité incendie (SSI)", "Les extincteurs uniquement", "Le standard téléphonique", "Les caméras de vidéosurveillance"], "ssiap2", "Le chef d’équipe doit savoir lire et manipuler les tableaux de signalisation du SSI.");
+  Q("L’épreuve écrite longue de l’examen SSIAP 3 est…", ["Une notice technique de sécurité rédigée en 2 h 30 à partir de plans", "Une dissertation d’histoire", "Un rapport de ronde", "Un QCM de 100 questions"], "ssiap3", "Elle porte sur un groupement d’établissements non isolés de 1re ou 2e catégorie.");
+  Q("L’examen SSIAP 3 comprend…", ["Un QCM de 40 questions, une notice technique de 2 h 30 et un oral devant jury", "Un QCM de 30 questions seulement", "Deux épreuves sportives", "Une seule épreuve orale"], "ssiap3", "Trois épreuves : écrit QCM, notice technique, entretien avec le jury (environ 15 minutes).");
+  Q("Le programme SSIAP 3 dure au minimum…", ["216 heures", "70 heures", "67 heures", "14 heures"], "ssiap3", "C’est la plus longue des trois formations SSIAP : management, réglementation, budget, gestion des risques.");
+  Q("En cas d’échec à une seule épreuve d’un examen SSIAP…", ["Les épreuves réussies restent acquises, on ne repasse que l’épreuve manquée", "Il faut tout repasser immédiatement", "Le diplôme est quand même délivré", "On est interdit d’examen pendant 5 ans"], "ssiap2", "Le rattrapage se fait dans le délai prévu par l’arrêté.");
+  // SST
+  Q("La formation initiale SST dure au minimum…", ["14 heures", "7 heures", "35 heures", "3 heures"], "sst-certificat", "Deux jours de formation, selon le référentiel INRS.");
+  Q("Le certificat SST est valable…", ["24 mois", "5 ans", "12 mois", "À vie"], "sst-certificat", "Il se renouvelle par un MAC de 7 heures tous les 24 mois.");
+  Q("Le renouvellement du certificat SST s’appelle…", ["Le MAC : maintien et actualisation des compétences, 7 heures tous les 24 mois", "Le recyclage triennal", "La remise à niveau", "Le stage d’adaptation"], "sst-certificat", "À ne pas confondre avec le MAC des agents de sécurité privée ni avec le recyclage SSIAP.");
+  Q("Le plan d’intervention du SST, dans l’ordre, c’est…", ["Protéger, examiner, faire alerter, secourir", "Alerter, protéger, secourir, examiner", "Secourir, alerter, protéger, examiner", "Examiner, secourir, protéger, alerter"], "sst-certificat", "Toujours dans cet ordre : on se protège avant de s’occuper de la victime.");
+  Q("À l’examen de la victime, le SST recherche en premier…", ["Un saignement abondant", "La température", "La tension artérielle", "Les papiers d’identité"], "sst-certificat", "L’ordre des urgences vitales : saignement abondant, étouffement, conscience, respiration.");
+  Q("Si la victime ne répond pas, le SST vérifie sa respiration pendant…", ["10 secondes au plus", "1 minute", "30 secondes exactement", "5 minutes"], "sst-certificat", "Aucun souffle, aucun bruit, ni ventre ni poitrine qui se soulèvent : elle ne respire pas, c’est un arrêt cardiaque.");
+  Q("Le dégagement d’urgence d’une victime est…", ["Une manœuvre exceptionnelle, réservée à un danger réel, immédiat et non contrôlable", "Le premier geste systématique", "Interdit dans tous les cas", "Réservé aux médecins"], "sst-certificat", "Sinon, on ne déplace pas la victime : on supprime ou on isole le danger.");
+  Q("Le 114, c’est le numéro d’urgence…", ["Pour les personnes sourdes et malentendantes (SMS, visio)", "Des pompiers de Paris", "De la police municipale", "Des urgences vétérinaires"], "sst-certificat", "Il est aussi utilisable, en silence, par une personne en danger qui ne peut pas parler.");
+  // Pompiers
+  Q("Les sapeurs-pompiers de Paris (BSPP) sont…", ["Des militaires de l’armée de terre", "Des fonctionnaires territoriaux", "Des bénévoles", "Des agents de sécurité privée"], "devenir-pompier", "Comme les marins-pompiers de Marseille, qui relèvent eux de la Marine nationale.");
+  Q("Pour s’engager à la BSPP, il faut avoir…", ["Entre 18 et 25 ans et au minimum le brevet des collèges", "Plus de 30 ans", "Obligatoirement le bac", "Moins de 18 ans"], "devenir-pompier", "Plus la nationalité française, un casier vierge et une bonne condition physique.");
+  Q("On peut devenir sapeur-pompier volontaire (SPV) dès…", ["16 ans, avec l’accord du représentant légal", "21 ans", "25 ans", "14 ans"], "devenir-pompier", "Les SPV représentent 78 % des sapeurs-pompiers de France : près de 200 000 personnes.");
+  Q("Un ancien sous-officier de sapeurs-pompiers titulaire du PRV 1 peut obtenir par équivalence…", ["Le SSIAP 2, après un module complémentaire", "Le SSIAP 3 directement", "La carte professionnelle APS", "Le permis poids lourd"], "devenir-pompier", "Et un adjudant titulaire du PRV 2 peut obtenir le SSIAP 3 (arrêté du 2 mai 2005).");
+  Q("Le sapeur-pompier professionnel (SPP) non officier est recruté…", ["Par concours (caporal), dans un SDIS", "Sur simple lettre de motivation", "Par tirage au sort", "Uniquement par la BSPP"], "devenir-pompier", "C’est un fonctionnaire territorial ; l’expérience de volontaire est un atout pour le concours.");
 })();
 
 /* schemas.js */

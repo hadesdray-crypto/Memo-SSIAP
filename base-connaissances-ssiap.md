@@ -1087,6 +1087,27 @@ Numéros : 15 (SAMU), 18 (Sapeurs-pompiers), 112 (Numéro d’urgence européen)
 **Sources :**
 - [Livret PSC 1 : conduites à tenir de premiers secours](https://securite-civile.gouv.nc/sites/default/files/documents/Livret_PSC1.pdf) (Direction de la sécurité civile (gouvernement de la Nouvelle-Calédonie), source officielle)
 
+### Le SST : certificat et plan d’intervention
+
+*Niveaux : SSIAP 1, SSIAP 2.*
+
+**En clair :** Le SST est le secouriste de l’entreprise. Sa formation dure 2 jours et son certificat se renouvelle tous les 2 ans. Devant un accident, il suit toujours le même plan : protéger, examiner, faire alerter, secourir.
+
+- **Formation initiale** : **14 heures** au minimum (2 jours), selon le référentiel de l’INRS (guide V5, édition 2024). Ouverte à tout salarié volontaire, sans prérequis.
+- **Validité** : le certificat est valable **24 mois**.
+- **Renouvellement** : un **MAC** (maintien et actualisation des compétences) de **7 heures**, tous les **24 mois**.
+- **Équivalence** : le certificat SST vaut l’unité d’enseignement « Premiers secours citoyen » (PSC). Pour les SSIAP et les APS, un SST **en cours de validité** répond à l’exigence de secourisme à jour.
+
+#### Le plan d’intervention du SST : 4 actions, toujours dans l’ordre
+
+1. **Protéger** : repérer les dangers persistants, supprimer le danger (si on peut le faire sans risque), l’isoler, ou soustraire la victime. Le **dégagement d’urgence** est une manœuvre exceptionnelle, réservée à une victime menacée par un danger réel, immédiat et non contrôlable.
+2. **Examiner** la victime, dans l’ordre des urgences vitales : 1. saigne-t-elle abondamment ? 2. s’étouffe-t-elle ? 3. répond-elle ? 4. si elle ne répond pas, respire-t-elle ? (vérifier la respiration pendant **10 secondes** au plus).
+3. **Faire alerter ou alerter** : 15 (SAMU), 18 (pompiers), 112 (numéro européen), 114 (SMS et visio pour les personnes sourdes ou malentendantes). Donner le lieu précis, la nature du problème, le nombre et l’état des victimes ; **ne jamais raccrocher le premier**.
+4. **Secourir** : faire le geste adapté au résultat de l’examen, puis surveiller la victime jusqu’à l’arrivée des secours.
+
+**Sources :**
+- [Sauvetage secourisme du travail : dispositif de formation SST et guide des données techniques (V5, 01/2024)](https://www.inrs.fr/services/formation/demultiplication/sauveteur-secouriste-travail.html) (INRS, source officielle)
+
 # Règles
 
 ## Mon métier SSIAP
@@ -1155,8 +1176,15 @@ Voir aussi : Prise de poste, tenue et habilitations, Recyclage, remise à niveau
 - Certificat médical de moins de 3 mois.
 
 - **Durée** : 70 heures minimum, 12 stagiaires au plus.
-- **Examen** : Trois épreuves (art. 5).
-- **Programme** : Rôles et missions du chef d’équipe, manipulation du SSI, hygiène et sécurité en matière de sécurité incendie, chef du poste central de sécurité en situation de crise.
+- **Programme (annexe III)** : 1. Rôles et missions du chef d’équipe (management, formation du personnel, permis de feu). 2. Manipulation du système de sécurité incendie. 3. Hygiène et sécurité du travail en matière de sécurité incendie. 4. Chef du poste central de sécurité en situation de crise.
+
+#### L’examen SSIAP 2 : trois épreuves (annexe IX)
+
+- **1. Écrit (QCM)** : **40 questions** sur tout le programme, environ 40 minutes. Il faut **12 sur 20** au moins.
+- **2. Animation pédagogique** : après **15 minutes de préparation**, animer devant le jury une **séquence pédagogique de 15 minutes** sur un sujet de sécurité incendie, comme si on formait son équipe. Résultat : apte ou inapte.
+- **3. Gestion du PC en crise** : pendant **20 minutes**, tenir le poste central de sécurité pendant un exercice de crise avec plusieurs événements (alarmes, anomalies, appels). On dirige, on rend compte, puis on remet sa **main courante** au jury. Résultat : apte ou inapte.
+
+Il faut réussir les trois épreuves. En cas d’échec à une épreuve, celles qui sont réussies restent acquises : on ne repasse que l’épreuve manquée (dans le délai prévu par l’arrêté).
 
 Voir aussi : Travaux par points chauds et permis de feu, Lire le tableau du poste de sécurité, Recyclage, remise à niveau et secourisme.
 
@@ -1186,9 +1214,17 @@ Voir aussi : Travaux par points chauds et permis de feu, Lire le tableau du post
 - Et un secourisme à jour.
 
 - **Durée** : 216 heures minimum, 10 stagiaires au plus.
-- **Examen** : Trois épreuves (art. 6).
+- **Programme (annexe IV)** : 1. Le feu et ses conséquences. 2. La sécurité incendie et les bâtiments (matériaux, lecture de plans, SSI). 3. La réglementation incendie (ERP, IGH, Code du travail). 4. La gestion des risques (PC de sécurité, travaux, documents). 5. Le conseil au chef d’établissement et la veille réglementaire. 6. Le management de l’équipe de sécurité (droit du travail, organisation). 7. Le budget du service (achats, maintenance).
 - **Équivalences** : Certains officiers et sous-officiers de sapeurs-pompiers (avec PRV 2 ou brevet de prévention), certains DUT du domaine de la sécurité ou l’AP 2 permettent d’obtenir le SSIAP 3 après un module complémentaire.
 - **IGH** : Le service de sécurité incendie d’un IGH est placé sous la direction d’un chef de service SSIAP 3 (GH 62).
+
+#### L’examen SSIAP 3 : trois épreuves (annexe IX)
+
+- **1. Écrit (QCM)** : **40 questions** sur tout le programme, environ 40 minutes. Il faut **12 sur 20** au moins.
+- **2. Notice technique** : en **2 h 30**, rédiger une **notice technique de sécurité** à partir de plans, portant sur un groupement d’établissements non isolés de 1re ou 2e catégorie. C’est l’épreuve la plus longue de tous les SSIAP.
+- **3. Oral devant jury** : un entretien d’environ **15 minutes** avec le jury, qui interroge sur tout le programme.
+
+En cas d’échec à une partie de l’examen, les épreuves réussies restent acquises : on ne repasse que ce qui a été manqué (dans le délai prévu par l’arrêté).
 
 Voir aussi : La commission de sécurité et ses visites, Le registre de sécurité, Vérifications périodiques des installations.
 
@@ -1286,6 +1322,27 @@ Voir aussi : outil de l’appli.
 **Sources :**
 - [Réponse ministérielle n° 111762 : agents de sécurité incendie et carte professionnelle](https://www.assemblee-nationale.fr/dyn/13/questions/QANR5L13QE111762.pdf) (Assemblée nationale, source officielle)
 - [IGH : classement, obligations et place du SSIAP (articles R.146-3, R.146-4 et GH 62 cités)](https://www.formation-cqp-ssiap-paris.fr/igh-securite-incendie/) (Centre de formation SSIAP (Paris), source secondaire recoupée)
+
+### Devenir sapeur-pompier (volontaire, professionnel, Paris, Marseille)
+
+*Niveaux : SSIAP 1, SSIAP 2, SSIAP 3.*
+
+**En clair :** Il y a plusieurs façons de devenir pompier : volontaire (en plus de son métier), professionnel (par concours), ou militaire à Paris (BSPP) et à Marseille (BMPM). Et d’anciens pompiers peuvent obtenir des diplômes SSIAP par équivalence.
+
+- **Sapeur-pompier volontaire (SPV)** : dès **16 ans** (avec accord du représentant légal) et jusqu’à 60 ans ; il faut résider en France, mais la nationalité française n’est pas exigée. Près de **200 000 SPV** en France : **78 %** des sapeurs-pompiers.
+- **Sapeur-pompier professionnel (SPP)** : fonctionnaire territorial d’un SDIS, recruté **par concours** (caporal pour les non-officiers). L’expérience de SPV est un atout.
+- **Sapeurs-pompiers de Paris (BSPP)** : des **militaires de l’armée de terre** (environ 8 600 personnes). Recrutement de **18 à 25 ans**, nationalité française, casier vierge, au minimum le **brevet des collèges**, bonne condition physique. Candidature en **CIRFA**, tests de l’armée de terre, puis sélection spécifique. Formation initiale d’environ **4 mois** à Limeil-Brévannes / Valenton.
+- **Marins-pompiers de Marseille (BMPM)** : des **militaires de la Marine nationale**. 18 à 25 ans, nationalité française, JDC faite, savoir **nager**. Engagement initial de 4 ans.
+
+#### Les passerelles avec le SSIAP
+
+- D’anciens sapeurs-pompiers peuvent obtenir le **SSIAP 1** par équivalence après un module complémentaire (arrêté du 2 mai 2005, art. 4).
+- Un **sous-officier** titulaire du PRV 1 / AP 1 peut obtenir le **SSIAP 2** par équivalence ; un **adjudant** titulaire du PRV 2 / AP 2, le **SSIAP 3** (art. 5 et 6).
+
+**Sources :**
+- [Devenir sapeur-pompier volontaire](https://www.info.gouv.fr/actualite/devenir-sapeur-pompier-volontaire) (Gouvernement, source officielle)
+- [Sapeur-pompier de Paris : recrutement et formation](https://www.letudiant.fr/metiers/secteur/armee/sapeur-pompier-de-paris.html) (L’Étudiant, source de référence)
+- [Intégrer les sapeurs-pompiers de Paris ou les marins-pompiers de Marseille](https://www.matmut.fr/agents-publics/conseils/integrer-sapeurs-pompiers-paris-marins-pompiers-marseille) (Matmut, source de référence)
 
 ## ERP et IGH
 
