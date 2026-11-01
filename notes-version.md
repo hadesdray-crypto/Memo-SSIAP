@@ -1,0 +1,8 @@
+- Entraînement : 284 nouvelles questions vérifiées (489 au total) — règlement ERP, SSIAP 2 et 3, IGH, APS, SST et secourisme, habilitation électrique H0B0, et 18 mises en situation « Sur le terrain »
+- Chaque question certifiée en double vérification contre les textes officiels, avec sa source et sa date de vérification
+- L'examen blanc SSIAP 1 et « Revoir mes erreurs » puisent maintenant aussi dans les questions vérifiées du jeu
+- Nouveau sur l'accueil : « Objectif du jour » (10 questions, série de jours), « Reprendre où j'en étais » et le mode « Ronde de nuit » (écran assombri, texte agrandi)
+- Réglages : boutons de réponse très grands, pour répondre avec des gants
+- Corrections du cours : classement ERP (arrêté par le maire ou le préfet après avis de la commission), durées de fonctionnement des extincteurs, colonnes sèches (cheminement réel, stabilité au feu), examen SSIAP 3 (moyenne des épreuves écrites), arrêtés gaz 2025-2026
+- La veille réglementaire fonctionne maintenant aussi dans l'application Android, et surveille 74 sources (dont la fiche SSIAP 3 de France compétences)
+- La mise à jour affiche désormais la liste de ce qui change, avec un bouton « Plus tard »
