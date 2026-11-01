@@ -1,8 +1,8 @@
-# Mentions légales
+# Mentions légales — Mémo SSIAP (modèle à compléter)
 
-*(Obligatoires pour tout service en ligne — article 6 III de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, dite LCEN.)*
+*(Obligatoires pour tout service en ligne — article 6 III de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, dite LCEN. Pour un éditeur non professionnel, la loi admet de ne publier que l'identité de l'hébergeur, à condition de lui avoir transmis ses coordonnées.)*
 
-## Éditeur et vendeur
+## Éditeur (et vendeur le cas échéant)
 
 - Nom / raison sociale : **[À COMPLÉTER]**
 - Forme juridique : [À COMPLÉTER — ex. entrepreneur individuel / micro-entrepreneur / SAS…]
@@ -14,13 +14,15 @@
 
 ## Hébergement
 
-- Fichiers d'installation et mises à jour : **GitHub, Inc.**, 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis — https://github.com
+- Application web (GitHub Pages) et fichiers d'installation Android (GitHub Releases) : **GitHub, Inc.**, 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis — https://github.com
 - [Autre hébergeur le cas échéant : À COMPLÉTER]
 
 ## Propriété intellectuelle
 
-L'application, son interface, ses textes et ses visuels sont protégés par le Code de la propriété intellectuelle (articles L111-1 et suivants ; logiciels : L112-2 13° et L122-6). Toute reproduction ou diffusion non autorisée est interdite (art. L335-2 et L335-3 CPI). Les composants tiers restent soumis à leurs licences propres (voir le fichier `LICENSE` et les notices incluses dans l'application).
+- Les textes, schémas, questions d'entraînement et le code du Mémo SSIAP ont été créés pour l'application. Toute reproduction ou réutilisation hors de ce que la loi permet nécessite l'accord de l'éditeur.
+- Les textes officiels cités (lois, arrêtés, codes) sont des actes publics, librement consultables, notamment sur [Légifrance](https://www.legifrance.gouv.fr).
+- « SSIAP » désigne une qualification définie par l'arrêté du 2 mai 2005 modifié ; l'application est un outil de révision **non officiel**, sans lien avec l'administration.
 
-## Marques et services tiers
+## Signalement d'un contenu
 
-Les noms de services tiers cités dans l'application (YouTube, chaînes de télévision, etc.) sont la propriété de leurs titulaires. L'application n'est ni affiliée ni approuvée par eux.
+Un contenu paraissant inexact ou illicite peut être signalé depuis l'application (bouton « Signaler une erreur ») ou au contact ci-dessus.

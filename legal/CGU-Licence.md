@@ -1,45 +1,39 @@
-# Conditions d'utilisation et licence
+# Conditions générales d'utilisation et licence — Mémo SSIAP (modèle à compléter)
 
-*Projet — à faire relire par un avocat.*
+*(Version commerciale des conditions déjà affichées dans l'application. À faire relire par un juriste avant activation. Tant que l'application n'est pas vendue, la page « Conditions d'utilisation » de l'appli fait référence.)*
 
-**Éditeur** : [À COMPLÉTER] — **Application** : [NOM] — **Version des CGU** : [1.0] — **Date** : [date]
+## 1. Objet
 
-## 1. Acceptation
+Le Mémo SSIAP est un **outil de révision et un aide-mémoire** destiné aux agents de sécurité incendie (SSIAP 1, 2 et 3) et aux agents de sécurité privée (APS) : fiches, schémas, conduites à tenir, questions d'entraînement, outils de calcul, rapports et planning personnels.
 
-L'utilisation de l'Application vaut acceptation des présentes. L'acceptation est recueillie au premier lancement (voir `Acceptation.md`).
+## 2. Ce que l'application n'est pas
 
-## 2. Licence d'utilisation
+- Elle n'est **pas une application officielle** : ni certifiée, ni agréée, ni recommandée par une administration, un service de secours ou un organisme de formation.
+- Elle ne délivre aucun diplôme et ne remplace **ni la formation** dispensée par un organisme agréé, **ni les textes en vigueur**, **ni les consignes du site**, **ni les ordres de la hiérarchie et des secours**.
+- En cas de différence entre l'application et un texte officiel, **le texte officiel fait foi**.
+- L'utilisateur, diplômé ou non, **reste responsable de ses actes et de ses décisions**.
 
-L'Éditeur concède à l'Utilisateur une licence **personnelle, non exclusive, non transférable**, pour installer et utiliser l'Application sur **un (1) appareil Android** par code d'activation, à des fins privées. Le code d'activation est lié à l'appareil ; un nouvel appareil nécessite un nouveau code, délivré sur demande [gratuitement / conditions : À COMPLÉTER].
+## 3. Licence d'utilisation
 
-Il est interdit, sauf autorisation écrite de l'Éditeur ou dans les limites de l'article L122-6-1 du Code de la propriété intellectuelle : de copier, transmettre, revendre, prêter ou louer l'Application ou ses codes d'activation ; de contourner le mécanisme d'activation ; de modifier, décompiler ou désassembler l'Application (hors interopérabilité prévue par la loi) ; de retirer les mentions de propriété.
+- Licence **personnelle, non exclusive et non cessible**, pour un usage sur les appareils de l'utilisateur.
+- Il est interdit de revendre, louer ou redistribuer l'application, ou d'en extraire le contenu pour un autre produit, hors de ce que la loi permet.
+- [Si vente : nombre d'appareils, durée, conditions de transfert — À COMPLÉTER.]
 
-Les composants tiers inclus restent soumis à leurs licences (voir `LICENSE` et les notices dans l'application). Lorsqu'un composant est sous licence libre (ex. GPL), les droits accordés par cette licence sur ce composant prévalent, et le code source correspondant est disponible à [À COMPLÉTER : adresse].
+## 4. Mises à jour
 
-## 3. Utilisation loyale et services tiers
+- L'application propose les mises à jour **avec la liste de ce qui change** ; rien ne s'installe sans l'accord de l'utilisateur (version Android) ; la version navigateur se met à jour après confirmation.
+- [Si vente : durée pendant laquelle les mises à jour sont garanties — À COMPLÉTER ; garantie légale de conformité des contenus et services numériques, art. L224-25-1 et suivants du Code de la consommation.]
 
-L'Utilisateur s'engage à utiliser l'Application dans le respect des lois et des conditions des services tiers auxquels elle accède. L'Application ne fournit aucun contenu : elle lit des contenus diffusés publiquement par des tiers, sous leur responsabilité. L'Utilisateur est seul responsable de l'usage qu'il fait de ces contenus et des éventuelles restrictions applicables dans son pays.
+## 5. Sources et exactitude
 
-## 4. Fonctionnement et mises à jour
+Chaque fiche cite ses sources et sa date de vérification ; une veille surveille les textes cités. L'éditeur s'efforce de fournir des informations exactes et à jour, sans garantir l'absence d'erreur. Les limites de responsabilité s'appliquent dans la mesure permise par la loi et ne retirent aucun droit reconnu au consommateur.
 
-L'Application peut vérifier l'existence de mises à jour et proposer de les installer. Certaines fonctions nécessitent une connexion Internet. L'Éditeur s'efforce de maintenir l'Application en état de fonctionnement mais ne garantit pas la disponibilité des services tiers.
+## 6. Données personnelles
 
-## 5. Contenus créés par l'Utilisateur
+Voir `Confidentialite.md` : tout fonctionne sur l'appareil ; aucun envoi sans action volontaire de l'utilisateur.
 
-Les images, styles ou réglages créés par l'Utilisateur (par ex. consoles personnalisées) restent sa propriété et sont stockés sur son appareil. L'Utilisateur garantit disposer des droits sur les images qu'il importe.
+## 7. Droit applicable
 
-## 6. Responsabilité
+Droit français. [Médiateur de la consommation : À COMPLÉTER avant toute vente.]
 
-Dans les limites permises par la loi, l'Éditeur n'est pas responsable des dommages indirects ni de ceux résultant d'un usage contraire aux présentes. Les garanties légales (contenus et services numériques, art. L224-25-12 et s. du Code de la consommation) restent applicables aux Utilisateurs consommateurs ayant acheté l'Application.
-
-## 7. Résiliation
-
-En cas de manquement grave (partage de codes, contournement, revente), l'Éditeur peut désactiver le code d'activation concerné après information de l'Utilisateur, sans préjudice des sanctions prévues par le Code de la propriété intellectuelle (art. L335-3).
-
-## 8. Modification des CGU
-
-L'Éditeur peut modifier les présentes ; la nouvelle version est présentée à l'Utilisateur dans l'Application et doit être acceptée pour continuer à l'utiliser. Les versions sont datées et numérotées.
-
-## 9. Droit applicable
-
-Droit français. Voir les CGV pour la médiation de la consommation.
+*Éditeur : voir `Mentions-legales.md` (identité à compléter via `Fiche-editeur-a-completer.md`).*

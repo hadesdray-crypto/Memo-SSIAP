@@ -1371,7 +1371,7 @@ Sont considérées comme faisant partie du public toutes les personnes admises d
 
 - 1er groupe : l’effectif compté comprend le **public et le personnel** (hors personnel occupant des locaux indépendants).
 - 5e catégorie : seul le **public** est compté.
-- Le classement est proposé par l’exploitant et validé par la commission de sécurité.
+- Le classement est proposé par l’exploitant et arrêté par l’autorité de police (maire ou préfet), après avis de la commission de sécurité.
 
 #### Les types
 

@@ -1,34 +1,24 @@
-# Acceptation des conditions dans l'application
+# Acceptation des conditions — Mémo SSIAP (modèle, inactif)
 
-*Projet — à faire relire. Non actif : à brancher au premier lancement lorsque la vente sera lancée.*
+*(Comment recueillir et prouver l'acceptation des conditions au moment d'une diffusion commerciale.)*
 
-## 1. Texte à afficher (écran de premier lancement)
+## Ce que l'application fait déjà
 
-> **Bienvenue dans [NOM]**
->
-> Avant de commencer, merci de lire et d'accepter :
-> - ☐ J'ai lu et j'accepte les **Conditions d'utilisation et la licence** (lien).
-> - ☐ J'ai lu la **Politique de confidentialité** (lien). Mes données restent sur mon téléphone.
-> - ☐ *(acheteur uniquement)* Je demande la **fourniture immédiate** de l'application et je reconnais perdre ainsi mon **droit de rétractation** (art. L221-28 13° du Code de la consommation).
->
-> [ Refuser et quitter ]   [ **J'accepte et je continue** ]
+- Au premier lancement, un **écran d'avertissement bloquant** s'affiche : il faut le faire défiler jusqu'au bout avant de pouvoir accepter (fonction `avisOuvrir` d'`index.html`).
+- Il rappelle que l'application est un outil de révision non officiel, qu'elle ne remplace ni la formation, ni les textes, ni les consignes, et renvoie vers les Conditions d'utilisation complètes.
+- La version du texte accepté (`avisVersion` dans `D.meta`) est enregistrée sur l'appareil ; si le texte change de version, l'écran se représente.
 
-Règles d'affichage : les cases ne sont **pas pré-cochées** ; le bouton « J'accepte » n'est actif qu'une fois les cases obligatoires cochées ; les documents complets sont consultables **avant** d'accepter, depuis cet écran, et à tout moment depuis l'écran d'aide ; une nouvelle version des CGU redemande l'acceptation.
+## À faire au moment de la vente
 
-## 2. Preuve de l'acceptation (à enregistrer)
+1. Mettre à jour le texte de l'écran d'acceptation pour renvoyer aux CGV/CGU commerciales (ce dossier) une fois complétées.
+2. Recueillir, au moment de l'achat (avant téléchargement) :
+   - l'acceptation des CGV et CGU : case à cocher non pré-cochée ;
+   - pour la fourniture immédiate du contenu numérique : l'**accord exprès** pour l'exécution immédiate **et la renonciation expresse au droit de rétractation** (art. L221-28 13° Code de la consommation), par une case distincte.
+3. Envoyer la **confirmation sur support durable** (e-mail récapitulatif : produit, prix, date, mention de la renonciation, lien vers CGV/CGU, formulaire de rétractation).
+4. Conserver la preuve : date/heure d'acceptation, version des textes acceptés, référence de commande. [Durée de conservation : À COMPLÉTER — usuellement 5 ans.]
 
-Pour pouvoir prouver l'acceptation (art. 1366 et 1367 du Code civil sur l'écrit et la signature électroniques ; art. L221-13 sur la confirmation sur support durable), l'application enregistre, au moment de l'appui sur « J'accepte » :
+## Texte court proposé pour la case à cocher (achat)
 
-- date et heure (UTC) ;
-- version de l'application et **numéro de version des CGU** acceptées ;
-- identifiant de l'appareil (code à 6 lettres) et, le cas échéant, le code d'activation ;
-- l'empreinte (SHA-256) du texte exact des CGU affichées ;
-- la liste des cases cochées.
+> « J'ai lu et j'accepte les Conditions générales de vente et d'utilisation (version du [DATE]). Je comprends que le Mémo SSIAP est un outil de révision non officiel qui ne remplace ni la formation, ni les textes en vigueur, ni les consignes. »
 
-Conservation : sur l'appareil (fichier `acceptation.json` dans les données privées de l'application) **et**, lorsque le vendeur disposera d'un point de collecte (formulaire ou serveur), copie envoyée au vendeur avec accusé de réception e-mail au client (support durable). À défaut de serveur, le client reçoit par e-mail, avec son code d'activation, une copie des CGV/CGU acceptées.
-
-## 3. Emplacement dans le code (à faire lors de l'activation)
-
-- Afficher cet écran avant `LockActivity` / l'écran d'activation.
-- Ajouter dans l'écran d'aide : « Conditions d'utilisation », « Confidentialité », « Mentions légales » (ouverture des fichiers `legal/*.md` embarqués dans les assets).
-- Ne jamais bloquer l'accès aux documents derrière l'acceptation.
+> « Je demande l'accès immédiat au contenu numérique et je renonce expressément à mon droit de rétractation (article L221-28 13° du Code de la consommation). »

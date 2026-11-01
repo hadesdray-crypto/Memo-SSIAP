@@ -28,7 +28,8 @@ jobs:
       - name: Construire la page
         run: |
           mkdir dist
-          cp index.html manifest.webmanifest icon-192.png icon-512.png maskable-512.png apple-touch-icon.png favicon-32.png dist/
+          # veille.json : état de la veille au moment de la fabrication, pour que la page Veille ait un contenu même hors ligne.
+          cp index.html manifest.webmanifest icon-192.png icon-512.png maskable-512.png apple-touch-icon.png favicon-32.png veille.json dist/
           # Numéro de version de l'application (sert à savoir si une mise à jour existe).
           sed -i "s/const APK_VERSION = 0;/const APK_VERSION = ${{ github.run_number }};/" dist/index.html
           grep -q "const APK_VERSION = ${{ github.run_number }};" dist/index.html
@@ -77,9 +78,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Ce qui change : le contenu de notes-version.md (lignes à puces), affiché par l'appli dans la proposition de mise à jour.
+          NOTES=""
+          [ -f notes-version.md ] && NOTES="$(cat notes-version.md)"
           gh release create "android-${{ github.run_number }}" memo-ssiap.apk web.zip \
             --title "Mémo SSIAP, application Android, version 1.${{ github.run_number }}" \
-            --notes "Ouvrir memo-ssiap.apk sur le téléphone Android et toucher Installer. Tout est dans l'application : elle marche sans Internet. Les mises à jour de contenu se font ensuite dans l'application, avec une barre de progression.
+            --notes "$NOTES
+
+          Ouvrir memo-ssiap.apk sur le téléphone Android et toucher Installer. Tout est dans l'application : elle marche sans Internet. Les mises à jour de contenu se font ensuite dans l'application, avec une barre de progression.
 
           web.zip sha256 : $(sha256sum web.zip | cut -d' ' -f1)" \
             --latest
