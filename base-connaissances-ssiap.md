@@ -130,7 +130,7 @@ Schémas, fonctionnement, mode d’emploi, RIA, colonnes, sprinkleurs.
 
 *Niveaux : SSIAP 1, SSIAP 2.*
 
-**En clair :** Un extincteur est une bouteille qui contient un produit qui éteint le feu (eau, mousse, poudre ou CO2) et un gaz sous pression qui pousse ce produit dehors. On retire la goupille, on appuie sur la poignée et on vise le bas des flammes. Il se vide vite : en 6 à 15 secondes.
+**En clair :** Un extincteur est une bouteille qui contient un produit qui éteint le feu (eau, mousse, poudre ou CO2) et un gaz sous pression qui pousse ce produit dehors. On retire la goupille, on appuie sur la poignée et on vise le bas des flammes. Il se vide très vite : souvent moins de 20 secondes.
 
 #### Extincteur à pression permanente
 
@@ -173,13 +173,13 @@ Le CO2 est à la fois le produit et le gaz qui pousse. Il sort par un **diffuseu
 | CO2 | B | Propre, utilisable sous tension | Gelures, aérer après usage, les braises peuvent repartir |
 | Agent F | F | Huiles et graisses de cuisson | Réservé aux cuisines |
 
-> **Bon à savoir :** Un extincteur portatif se vide en **6 à 15 secondes** environ. Il sert à éteindre un **début** de feu.
+> **Bon à savoir :** La norme impose un temps **minimum** de fonctionnement de **6 à 15 secondes** selon la charge ; en pratique, un portatif se vide en quelques secondes à un peu plus d’une minute pour les plus gros (environ 19 s pour une poudre de 6 kg). Il sert à éteindre un **début** de feu.
 
 Voir aussi : Utiliser un extincteur pas à pas, Lire l’étiquette d’un extincteur, Combien d’extincteurs, où et quels contrôles, outil de l’appli.
 
 **À retenir :**
 - Goupille, (percuter), poignée, base des flammes.
-- 6 à 15 secondes : un extincteur, c’est pour un feu naissant.
+- Quelques secondes de fonctionnement : un extincteur, c’est pour un feu naissant.
 
 **Sources :**
 - [ED 6054 : Les extincteurs d’incendie portatifs, mobiles et fixes (2e édition)](https://www.inrs.fr/dms/inrs/CataloguePapier/ED/TI-ED-6054/ed6054.pdf) (INRS (Institut national de recherche et de sécurité), source officielle)
@@ -327,13 +327,13 @@ Voir aussi : outil de l’appli.
 #### Colonne sèche
 
 - Exigée dès que des locaux à risques importants sont situés à un étage dont le plancher bas est à plus de **18 m** du niveau de la voie accessible aux engins de secours (MS 18).
-- Raccord d’alimentation en façade, accessible, signalé par une pancarte, à **60 m au plus** d’une bouche ou d’un poteau d’incendie (MS 19).
+- Raccord d’alimentation en façade, accessible, signalé par une pancarte, à **60 m au plus** d’une bouche ou d’un poteau d’incendie, en suivant le **cheminement réel** des tuyaux (MS 19).
 - Prises d’incendie aux étages, dans les cages d’escaliers ou leurs accès (MS 20).
 - Dispositif de vidange et de purge d’air obligatoire (MS 21).
 
 #### Colonne en charge (humide)
 
-- Toujours en eau. Elle doit fournir à tout niveau **60 m³/h** sous une pression statique de **4,5 à 8,5 bars**, pendant au moins **1 heure** (MS 23).
+- Toujours en eau. Elle doit fournir à tout niveau **60 m³/h** sous une pression statique de **4,5 à 8,5 bars**, pendant le temps exigé pour la stabilité au feu du bâtiment, avec un minimum d’**1 heure** (MS 23).
 - Réalimentation par les pompiers grâce à **2 orifices de 65 mm**, à moins de 60 m d’une bouche ou d’un poteau, signalés (MS 24).
 
 > **Bon réflexe :** Rôle de l’agent : en ronde, vérifier que le raccord en façade est dégagé et signalé, que les prises d’étage ne sont pas encombrées et que les portillons sont fermés. Signaler toute dégradation. À l’arrivée des pompiers, leur indiquer le raccord.
@@ -1220,9 +1220,9 @@ Voir aussi : Travaux par points chauds et permis de feu, Lire le tableau du post
 
 #### L’examen SSIAP 3 : trois épreuves (annexe IX)
 
-- **1. Écrit (QCM)** : **40 questions** sur tout le programme, environ 40 minutes. Il faut **12 sur 20** au moins.
+- **1. Écrit (QCM)** : **40 questions** sur tout le programme, environ 40 minutes. La note compte avec celle de la notice : il faut **12 sur 20 de moyenne aux épreuves écrites**, sinon ajournement (fiche RS 5643).
 - **2. Notice technique** : en **2 h 30**, rédiger une **notice technique de sécurité** à partir de plans, portant sur un groupement d’établissements non isolés de 1re ou 2e catégorie. C’est l’épreuve la plus longue de tous les SSIAP.
-- **3. Oral devant jury** : un entretien d’environ **15 minutes** avec le jury, qui interroge sur tout le programme.
+- **3. Oral devant jury** : après **15 minutes de préparation**, un entretien avec le jury, qui interroge sur tout le programme.
 
 En cas d’échec à une partie de l’examen, les épreuves réussies restent acquises : on ne repasse que ce qui a été manqué (dans le délai prévu par l’arrêté).
 
@@ -1938,7 +1938,7 @@ Les textes qui ont changé récemment.
 **En clair :** Les règles bougent. Voici, par date, les changements récents qui concernent les agents de sécurité incendie et les agents de sécurité privée.
 
 - **Août 2026 : Sécurité privée : loi n° 2026-798 du 18 août 2026 (loi RIPOST).** L’inspection visuelle des véhicules et de leurs coffres passe dans un nouvel article L613-2-1 du Code de la sécurité intérieure et s’étend à d’autres lieux : à la demande du gestionnaire (grands événements, enceintes de plus de 300 spectateurs, certains sites sensibles) ou sur autorisation du préfet en cas de menaces graves, toujours avec l’accord exprès du conducteur, sans fouille ni palpation. La loi prévoit aussi une expérimentation de 3 ans des caméras individuelles pour les agents privés de sécurité : elle ne pourra commencer qu’après la publication d’un décret en Conseil d’État, qui n’était pas encore paru lors de la vérification de l’appli. Le Conseil constitutionnel a jugé ces deux mesures conformes à la Constitution (décision n° 2026-915 DC du 14 août 2026). (sources : Légifrance, Conseil constitutionnel, CNAPS, CNAPS)
-- **Juillet 2026 : ERP de 5e catégorie : vérifications des installations.** Depuis le 1er juillet 2026, les installations de gaz et d’électricité en exploitation des ERP de 5e catégorie doivent être vérifiées au moins tous les 3 ans, et toute installation de gaz neuve ou modifiée est vérifiée à la réception des travaux, dans tous les ERP (arrêté du 1er décembre 2025, articles PE 4 et PE 10). (sources : AP-HP, veille juridique, L’Officiel des métiers)
+- **Juillet 2026 : ERP de 5e catégorie : vérifications des installations.** Depuis le 1er juillet 2026, les installations de gaz et d’électricité en exploitation des ERP de 5e catégorie doivent être vérifiées au moins tous les 3 ans, et toute installation de gaz neuve ou modifiée est vérifiée à la réception des travaux, dans tous les ERP (5e catégorie : arrêté du 1er décembre 2025, art. PE 4 et PE 10 ; 1re à 4e catégories : arrêté du 23 février 2025, art. GZ 14 et GZ 15). (sources : AP-HP, veille juridique, L’Officiel des métiers)
 - **Juin 2026 : Réponse du ministère de l’Intérieur sur le décret n° 2025-1100.** Le ministère précise que le décret n’a pas supprimé de contrôle : les ERP de 5e catégorie sans locaux d’hébergement étaient déjà dispensés d’autorisation de travaux au titre de l’incendie. Ils doivent désormais informer l’autorité de police des travaux par une description succincte. Après l’incendie mortel de Crans-Montana (Suisse, 1er janvier 2026), les préfets ont été invités à multiplier les visites inopinées, notamment dans les établissements de nuit disposant d’un sous-sol où le public danse. (sources : Assemblée nationale)
 - **Mars 2026 : Loi n° 2026-201 du 20 mars 2026 (Jeux olympiques 2030).** Son article 43 a autorisé pour la première fois l’inspection visuelle des véhicules et de leurs coffres par les agents de sécurité privée, pour certains grands événements, avec l’accord du conducteur. Ce dispositif a été repris et élargi en août 2026. (sources : CNAPS)
 - **Janvier 2026 : Nouvelle réglementation du gaz dans les ERP.** L’arrêté du 23 février 2025 s’applique depuis le 1er janvier 2026 : exigences de sécurité recentrées sur des objectifs, solutions techniques décrites dans des guides approuvés. Les opérations d’entretien et de vérification suivent les articles GZ 14 et GZ 15 (1re à 4e catégorie) et PE 4 (5e catégorie) à partir du 1er juillet 2026. (sources : Fédération française du bâtiment)
