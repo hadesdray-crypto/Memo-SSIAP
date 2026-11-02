@@ -1,3 +1,5 @@
+- Son : l'appli vérifie une seule fois, au premier lancement, que la lecture à voix haute marche. S'il n'y a pas de son, elle explique pourquoi et comment le remettre, avec un bouton « Tester le son » (aussi dans Réglages)
+- La lecture à voix haute utilise maintenant la voix du téléphone, plus fiable que celle du navigateur intégré
 - Entraînement : 284 nouvelles questions vérifiées (489 au total) — règlement ERP, SSIAP 2 et 3, IGH, APS, SST et secourisme, habilitation électrique H0B0, et 18 mises en situation « Sur le terrain »
 - Chaque question certifiée en double vérification contre les textes officiels, avec sa source et sa date de vérification
 - L'examen blanc SSIAP 1 et « Revoir mes erreurs » puisent maintenant aussi dans les questions vérifiées du jeu

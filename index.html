@@ -31,6 +31,11 @@
 .sig-merci { font-weight: 700; color: var(--green, var(--ink)); margin: 6px 0; }
 .signal-box { max-width: 560px; padding: 22px 18px 16px; }
 .maj-notes { max-height: 32vh; max-height: 32dvh; overflow: auto; overscroll-behavior: contain; padding-right: 4px; }
+/* Fenêtre « Vérification du son » : le texte défile, les boutons restent toujours visibles en bas. */
+.overlay .box.son-box { display: flex; flex-direction: column; overflow: hidden; max-height: 100%; }
+.son-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; flex: 1 1 auto; padding-right: 4px; margin: 0 0 10px; }
+.son-box .signal-b { flex: 0 0 auto; }
+.son-scroll ol { margin: 0 0 8px; padding-left: 1.3em; display: grid; gap: 8px; }
 #nuit-voile { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 300; transition: opacity .3s; }
 :root[data-nuit] #nuit-voile { opacity: .34; }
 :root[data-xl] .qc button { min-height: 76px; font-size: 1.07em; }
@@ -5192,7 +5197,16 @@ const ANALYSE = (() => {
 function VOIX(h) {
   const { $, $$, esc, tx, icon, store, toast } = h;
   const SS = typeof speechSynthesis !== "undefined" ? speechSynthesis : null;
-  const ttsOk = !!(SS && typeof SpeechSynthesisUtterance !== "undefined");
+  const webOk = !!(SS && typeof SpeechSynthesisUtterance !== "undefined");
+  /* Voix native d'Android (module TextToSpeech de l'APK) : plus fiable que la voix du navigateur intégré, qui reste muette sur certains téléphones. */
+  const capa = () => window.Capacitor;
+  const natOk = () => { const c = capa(); try { return !!(c && typeof c.isNativePlatform === "function" && c.isNativePlatform() && ((c.Plugins && c.Plugins.TextToSpeech) || (c.isPluginAvailable && c.isPluginAvailable("TextToSpeech")))); } catch (e) { return false; } };
+  const natCall = (m, o) => { const c = capa(), d = c && c.Plugins && c.Plugins.TextToSpeech; if (d && typeof d[m] === "function") return d[m](o || {}); if (c && c.nativePromise) return c.nativePromise("TextToSpeech", m, o || {}); return Promise.reject(new Error("Module TextToSpeech absent")); };
+  const codeOf = (e) => String((e && (e.code || e.error || e.message)) || e || "erreur");
+  const NAT = natOk();
+  const isApp = (() => { const c = capa(); try { return !!(c && typeof c.isNativePlatform === "function" && c.isNativePlatform()); } catch (e) { return false; } })();
+  const nat = { sonde: false, moteur: true, fr: false };
+  const ttsOk = NAT || webOk;
   /* Vitesse de la voix : de 0,5 à 2, réglable au dixième près, avec quelques raccourcis. */
   const RATE_MIN = 0.5, RATE_MAX = 2, PRESETS = [0.75, 1, 1.25, 1.5, 2];
   const okRate = (r) => typeof r === "number" && isFinite(r) && r >= RATE_MIN && r <= RATE_MAX;
@@ -5207,7 +5221,7 @@ function VOIX(h) {
   /* ---------- Voix disponibles ---------- */
   let voices = [];
   const load = () => { try { voices = (SS.getVoices() || []).slice(); } catch (e) { voices = []; } };
-  if (ttsOk) {
+  if (webOk) {
     load();
     try { SS.addEventListener("voiceschanged", load); } catch (e) { SS.onvoiceschanged = load; }
     try { SS.cancel(); } catch (e) { /* rien */ }
@@ -5358,6 +5372,23 @@ function VOIX(h) {
     const c = Q[qi];
     highlight(c.el);
     bar();
+    if (NAT) {
+      /* Voix du téléphone. Une phrase « lue » en un clin d'œil, sans erreur, veut dire que le moteur n'a rien dit : après 3 fois, on prévient. */
+      const t0 = Date.now();
+      natCall("speak", { text: c.t, lang: "fr-FR", rate: prefs.rate, pitch: 1, volume: 1, queueStrategy: 0 })
+        .then(() => {
+          if (my !== gen) return;
+          if (c.t.length > 25 && Date.now() - t0 < 150) { errs++; if (errs >= 3) { stop(); helpToast("silence"); return; } } else errs = 0;
+          qi++; speakCur();
+        })
+        .catch((e) => {
+          if (my !== gen) return;
+          errs++;
+          if (errs >= 3) { stop(); helpToast(codeOf(e)); return; }
+          qi++; speakCur();
+        });
+      return;
+    }
     let u;
     try { u = new SpeechSynthesisUtterance(c.t); } catch (e) { stop(); helpToast(); return; }
     const v = voice();
@@ -5390,7 +5421,11 @@ function VOIX(h) {
     speakCur();
     return true;
   }
-  const cancelNow = () => { gen++; clearTimeout(timer); try { SS && SS.cancel(); } catch (e) { /* rien */ } };
+  const cancelNow = () => {
+    gen++; clearTimeout(timer);
+    try { SS && SS.cancel(); } catch (e) { /* rien */ }
+    if (NAT) { try { natCall("stop").catch(() => {}); } catch (e) { /* rien */ } }
+  };
   function finish() {
     const cb = opt.onEnd;
     active = false; paused = false; Q = []; highlight(null); bar();
@@ -5458,13 +5493,52 @@ function VOIX(h) {
 
   /* ---------- Aide quand la voix manque ---------- */
   const inApp = /; wv\)|FBAN|FBAV|Instagram|Line\//.test(navigator.userAgent || "");
-  const ABSENT = `La lecture à voix haute ne marche pas ici : ce navigateur intégré${inApp ? " (aperçu dans une autre appli)" : ""} n’a pas de voix. Ouvrez l’appli dans Chrome sur Android, ou dans Safari sur iPhone.`;
+  const ABSENT = isApp
+    ? "La voix du téléphone n’est pas disponible dans cette version de l’appli. Ouvrez Réglages, puis « Vérifier le son », ou installez la dernière version."
+    : `La lecture à voix haute ne marche pas ici : ce navigateur intégré${inApp ? " (aperçu dans une autre appli)" : ""} n’a pas de voix. Ouvrez l’appli dans Chrome sur Android, ou dans Safari sur iPhone.`;
   function helpToast(code) {
     if (code === "absent") toast(ABSENT);
     else if (code === "network" || code === "synthesis-unavailable") toast("Cette voix demande internet. Choisissez une voix du téléphone dans Réglages.");
+    else if (isApp) toast("Pas de son. Ouvrez Réglages, puis « Vérifier le son » : l’appli vous explique quoi faire.");
     else toast("La voix ne répond pas. Vérifiez le volume, puis la voix française dans Réglages.");
   }
+  /* Sonde : le moteur de voix du téléphone est-il là, et a-t-il le français ? */
+  async function probe() {
+    if (NAT) {
+      let moteur = true, fr = false, err = "";
+      try { const r = await natCall("isLanguageSupported", { lang: "fr-FR" }); fr = !!(r && r.supported); } catch (e) { moteur = false; err = codeOf(e); }
+      if (moteur && !fr) { try { const l = await natCall("getSupportedLanguages"); fr = !!(l && (l.languages || []).some((x) => /^fr/i.test(String(x)))); } catch (e) { /* rien */ } }
+      nat.sonde = true; nat.moteur = moteur; nat.fr = fr;
+      return { moteur, fr, err };
+    }
+    return { moteur: webOk, fr: webOk && frVoices().length > 0, err: webOk ? "" : "absent" };
+  }
+  /* Essai court avec un résultat : { ok } ou { ok: false, code } */
+  function essai(texte) {
+    cancelNow(); active = false; paused = false; Q = []; highlight(null); bar();
+    const t0 = Date.now();
+    if (NAT) return natCall("speak", { text: texte, lang: "fr-FR", rate: 1, pitch: 1, volume: 1, queueStrategy: 0 }).then(() => ({ ok: true, ms: Date.now() - t0 }), (e) => ({ ok: false, code: codeOf(e) }));
+    if (!webOk) return Promise.resolve({ ok: false, code: "absent" });
+    return new Promise((res) => {
+      let u, fini = false, tm = null;
+      const fin = (r) => { if (fini) return; fini = true; clearTimeout(tm); res(r); };
+      try { u = new SpeechSynthesisUtterance(texte); } catch (e) { fin({ ok: false, code: "absent" }); return; }
+      const v = voice();
+      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "fr-FR";
+      u.onend = () => fin({ ok: true, ms: Date.now() - t0 });
+      u.onerror = (e) => fin({ ok: false, code: (e && e.error) || "erreur" });
+      keep.push(u); if (keep.length > 6) keep.shift();
+      tm = setTimeout(() => fin({ ok: false, code: "silence" }), 9000);
+      try { if (SS.paused) SS.resume(); SS.speak(u); } catch (e) { fin({ ok: false, code: "erreur" }); }
+    });
+  }
+  /* Ouvre l'installation des données vocales (Android, module natif) */
+  function installer() { return NAT ? natCall("openInstall") : Promise.reject(new Error("absent")); }
   function status() {
+    if (NAT) {
+      const ok = !nat.sonde || (nat.moteur && nat.fr);
+      return { ok: true, n: ok ? 1 : 0, v: ok ? { name: "Voix du téléphone", lang: "fr-FR", localService: true } : null, local: true, list: [], native: true };
+    }
     const list = frVoices(), v = voice();
     return { ok: ttsOk, n: list.length, v, local: v ? !!v.localService : false, list };
   }
@@ -5590,7 +5664,7 @@ function VOIX(h) {
 
   return {
     ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, status, voiceLabel, setVoice, setRate, stepRate, setQuiz,
-    speedHTML, updSpeed, ratePop, popOpen, rateTxt, rateWord,
+    speedHTML, updSpeed, ratePop, popOpen, rateTxt, rateWord, probe, essai, installer, natif: NAT, isApp,
     get prefs() { return prefs; }, get active() { return active; }, get paused() { return paused; },
     listen, stopMic, toggleMic, micHTML, sttMsg,
   };
@@ -7555,8 +7629,8 @@ const APP = (() => {
   }
   function pageReglages() {
     const vs = VX.status(), ia = IAX.cfg;
-    const voiceSel = vs.n
-      ? `<label class="field"><span>Voix</span><select data-set="voice"><option value="">Automatique</option>${vs.list.map((v) => `<option value="${esc(v.voiceURI)}"${VX.prefs.uri === v.voiceURI ? " selected" : ""}>${esc(VX.voiceLabel(v))}</option>`).join("")}</select></label>`
+    const voiceSel = vs.n && vs.list.length
+      ?`<label class="field"><span>Voix</span><select data-set="voice"><option value="">Automatique</option>${vs.list.map((v) => `<option value="${esc(v.voiceURI)}"${VX.prefs.uri === v.voiceURI ? " selected" : ""}>${esc(VX.voiceLabel(v))}</option>`).join("")}</select></label>`
       : "";
     const voiceSt = !vs.ok ? VX.ABSENT
       : !vs.n ? "Aucune voix française n’est installée sur cet appareil pour le moment : voir ci-dessous comment l’ajouter."
@@ -7570,7 +7644,7 @@ const APP = (() => {
         ${voiceSel}
         ${vs.ok ? `<div class="field spd-box">${VX.speedHTML()}</div>
         <label class="tick"><input type="checkbox" data-set="quizvoice"${VX.prefs.quiz ? " checked" : ""}><span>Lire les questions du quiz à voix haute</span></label>
-        <div class="chips"><button type="button" class="btn" data-act="vx-test">${icon("hautparleur")}Essayer la voix</button></div>` : ""}
+        <div class="chips"><button type="button" class="btn" data-act="vx-test">${icon("hautparleur")}Essayer la voix</button><button type="button" class="btn ghost" data-act="son-ouvrir">Vérifier le son</button></div>` : `<div class="chips"><button type="button" class="btn ghost" data-act="son-ouvrir">Vérifier le son</button></div>`}
         <details><summary><strong>Ajouter ou changer la voix française du téléphone</strong></summary><ul style="margin-top:8px">
           <li><strong>Android</strong> : Paramètres, puis Accessibilité (ou Système, Langues), Synthèse vocale. Moteur « Services Google », puis Paramètres, Installer les données vocales, Français (France).</li>
           <li><strong>iPhone</strong> : Réglages, Accessibilité, Contenu énoncé, Voix, Français : téléchargez une voix (par exemple Thomas ou Amélie).</li>
@@ -9468,6 +9542,12 @@ function jChar(o = {}) {
       case "maj-redem": majRedemarrer(); break;
       case "maj-plus-tard": $("#maj").hidden = true; break;
       case "maj-verif": majVerifier(true); break;
+      case "son-ouvrir": sonOuvrir(); break;
+      case "son-test": sonTester(); break;
+      case "son-ok": sonOk(); break;
+      case "son-non": sonNon(); break;
+      case "son-install": sonInstaller(); break;
+      case "son-plus-tard": sonPlusTard(); break;
       case "dev-set": devSet(b.dataset.id, b.dataset.e); break;
       case "dev-tap": { const n = Date.now(); devTaps = n - devT < 1500 ? devTaps + 1 : 1; devT = n; if (devTaps >= 5) { devTaps = 0; go("dev"); } break; }
       case "sig-del": store.set("signalements", sigs().filter((q) => q.id !== b.dataset.id)); rerender(); toast("Signalement supprimé."); break;
@@ -9842,6 +9922,87 @@ function jChar(o = {}) {
   }
   const majBloc = () => `<section class="sec about"><h2 class="lbl b">Mises à jour de l’application</h2><p id="maj-etat">${EST_APK ? "Vérification…" : ""}</p>${EST_APK ? `<p><button type="button" class="btn ghost" data-act="maj-verif">Vérifier maintenant</button></p>` : ""}</section>`;
 
+  /* ---------- Vérification du son : au premier lancement de l'appli Android (une seule fois), et à la demande dans Réglages ---------- */
+  const SON = { phase: "test", code: "", sonde: null, occupe: false };
+  const SON_PHRASE = "Bonjour, je suis la voix du Mémo SSIAP. Si vous m’entendez, touchez : j’entends bien.";
+  function sonCause() {
+    const s = SON.sonde || {}, c = String(SON.code || "");
+    if (s.moteur === false || (/absent|unavail|not.?supported|init/i.test(c) && s.fr !== true)) return "Le téléphone n’a pas de moteur de synthèse vocale utilisable : il est absent, désactivé ou bloqué.";
+    if (s.fr === false || c === "fr") return "La voix française n’est pas installée sur ce téléphone : le moteur de voix est là, mais sans le français.";
+    if (/silence|muet/.test(c)) return "La voix a été lancée, mais aucun son n’est sorti : le volume « média » est peut-être à zéro, ou le mode silencieux est actif.";
+    return "La voix du téléphone a répondu par une erreur (" + esc(c || "inconnue") + ").";
+  }
+  function sonDessiner() {
+    const c = $("#son-c");
+    if (!c) return;
+    const natif = VX.natif, p = SON.phase;
+    let titre = "Vérification du son", corps = "", btns = "";
+    if (p === "test") {
+      corps = `<p>L’appli peut lire à voix haute les fiches, les questions et vos rapports. On vérifie <strong>une seule fois</strong> que le son marche sur ce téléphone.</p><p>Touchez « Tester le son » : vous devez entendre une phrase.</p><p class="signal-mini">Si vous n’entendez rien, regardez d’abord le volume « média » (touches de volume sur le côté du téléphone) et coupez le mode silencieux.</p>`;
+      btns = `<button type="button" class="btn" data-act="son-test"${SON.occupe ? " disabled" : ""}>${SON.occupe ? "Lecture en cours…" : "Tester le son"}</button><button type="button" class="btn ghost" data-act="son-plus-tard">Plus tard</button>`;
+    } else if (p === "demande") {
+      corps = `<p><strong>La phrase a été lue.</strong> L’avez-vous entendue ?</p>`;
+      btns = `<button type="button" class="btn" data-act="son-ok">J’entends bien</button><button type="button" class="btn ghost" data-act="son-non">Je n’entends rien</button><button type="button" class="btn ghost" data-act="son-test">Réécouter</button>`;
+    } else {
+      titre = "Pas de son : voici pourquoi";
+      corps = `<p><strong>Pourquoi :</strong> ${sonCause()}</p>
+        <p class="lbl b" style="margin:6px 0 4px">Comment le régler (une seule fois)</p>
+        <ol>
+          <li>Montez le volume « média » avec les touches sur le côté du téléphone, et coupez le mode silencieux.</li>
+          ${natif ? `<li>Touchez « Installer la voix française » ci-dessous, puis choisissez « Français (France) ».</li>` : ""}
+          <li>Sinon, à la main : <strong>Paramètres</strong>, puis <strong>Accessibilité</strong> (ou <strong>Système</strong>, puis <strong>Langues et saisie</strong>), puis <strong>Synthèse vocale</strong>. Moteur : <strong>Services Google</strong>. Touchez la roue dentée, puis <strong>Installer les données vocales</strong>, puis <strong>Français (France)</strong>.</li>
+          <li>Si « Services Google » n’existe pas : installez « Synthèse vocale Google » depuis le Play Store, puis refaites l’étape précédente.</li>
+          <li>Revenez dans l’appli et touchez « Tester le son ».</li>
+        </ol>
+        ${EST_APK ? `<p class="signal-mini">Si rien ne marche après tout cela, votre version de l’appli est peut-être trop ancienne pour la voix du téléphone. <a href="${esc(LIEN_APK)}">Télécharger la dernière version</a>, puis l’ouvrir pour l’installer par-dessus : vos données sont conservées.</p>` : ""}`;
+      btns = `${natif ? `<button type="button" class="btn ghost" data-act="son-install">Installer la voix française</button>` : ""}<button type="button" class="btn" data-act="son-test"${SON.occupe ? " disabled" : ""}>${SON.occupe ? "Lecture en cours…" : "Tester le son"}</button><button type="button" class="btn ghost" data-act="son-plus-tard">Plus tard</button>`;
+    }
+    c.innerHTML = `<h2 id="son-t">${titre}</h2><div class="son-scroll">${corps}</div><div class="signal-b">${btns}</div>`;
+  }
+  async function sonOuvrir() {
+    const o = $("#son");
+    if (!o) return;
+    SON.phase = "test"; SON.code = ""; SON.occupe = false;
+    let s = null;
+    try { s = await VX.probe(); } catch (e) { s = null; }
+    SON.sonde = s;
+    if (s && (!s.moteur || !s.fr)) { SON.phase = "probleme"; SON.code = s.moteur ? "fr" : (s.err || "absent"); }
+    o.hidden = false;
+    sonDessiner();
+  }
+  async function sonTester() {
+    if (SON.occupe) return;
+    SON.occupe = true; sonDessiner();
+    let r;
+    try { r = await VX.essai(SON_PHRASE); } catch (e) { r = { ok: false, code: String(e && e.message || e) }; }
+    SON.occupe = false;
+    if (r && r.ok && !(r.ms < 150)) SON.phase = "demande";
+    else {
+      SON.phase = "probleme"; SON.code = r && r.ok ? "silence" : String((r && r.code) || "erreur");
+      try { SON.sonde = await VX.probe(); } catch (e) { /* rien */ }
+    }
+    sonDessiner();
+  }
+  function sonOk() { store.set("son-ok", 1); $("#son").hidden = true; try { VX.stop(); } catch (e) { /* rien */ } toast("Parfait : le son est actif. Vous n’aurez pas à le refaire."); }
+  function sonNon() { SON.phase = "probleme"; SON.code = "silence"; sonDessiner(); }
+  function sonPlusTard() { store.set("son-plus-tard", Date.now()); $("#son").hidden = true; try { VX.stop(); } catch (e) { /* rien */ } }
+  async function sonInstaller() {
+    try { await VX.installer(); toast("Si rien ne s’ouvre, suivez les étapes écrites dans la fenêtre."); }
+    catch (e) { toast("Impossible d’ouvrir l’installation depuis l’appli : suivez les étapes écrites dans la fenêtre."); }
+  }
+  /* Au démarrage de l'appli Android : si le son n'a jamais été confirmé, on le vérifie (après les autres fenêtres : avis, connexion, mise à jour) */
+  function sonDemarrer(essais) {
+    if (!EST_APK || Number(store.get("son-ok", 0)) === 1) return;
+    const d = Number(store.get("son-plus-tard", 0)) || 0;
+    if (d && Date.now() - d < 24 * 3600e3) return;
+    const n = essais || 0;
+    setTimeout(() => {
+      if (!$("#son") || !$("#son").hidden) return;
+      if (!$("#avis").hidden || !$("#priv").hidden || !$("#maj").hidden) { if (n < 30) sonDemarrer(n + 1); return; }
+      sonOuvrir();
+    }, 6000);
+  }
+
   /* ---------- Confidentialité : icône, panneau et questions ---------- */
   const IC_WIFI = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/>';
   function privBouton() {
@@ -9938,6 +10099,7 @@ function jChar(o = {}) {
       <div class="overlay" id="signal" role="dialog" aria-modal="true" aria-labelledby="signal-t" hidden><div class="box signal-box"><button class="close" data-act="signal-close" aria-label="Fermer">${icon("fermer")}</button><div id="signal-c"></div></div></div>
       <div class="overlay" id="priv" role="dialog" aria-modal="true" aria-labelledby="priv-t" hidden><div class="box signal-box" id="priv-c"></div></div>
       <div class="overlay" id="maj" role="dialog" aria-modal="true" aria-labelledby="maj-t" hidden><div class="box signal-box" id="maj-c"></div></div>
+      <div class="overlay" id="son" role="dialog" aria-modal="true" aria-labelledby="son-t" hidden><div class="box signal-box son-box" id="son-c"></div></div>
       <div class="overlay" id="avis" role="dialog" aria-modal="true" aria-labelledby="avis-t" hidden><div class="box signal-box" id="avis-c"></div></div>
       <div class="toast" id="toast" role="status" hidden></div>
       <div id="nuit-voile" aria-hidden="true"></div>
@@ -10002,6 +10164,7 @@ function jChar(o = {}) {
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
     setTimeout(synchro, 2500);
     majDemarrer();
+    sonDemarrer();
     window.addEventListener("online", () => synchro());
     if (PWA) {
       window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredPrompt = e; if (cur && (cur.home || curTok === "apropos")) rerender(); });

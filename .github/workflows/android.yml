@@ -50,6 +50,10 @@ jobs:
           done
           grep -n "uses-permission" android/app/src/main/AndroidManifest.xml
           grep -q RECORD_AUDIO android/app/src/main/AndroidManifest.xml
+          # Depuis Android 11, une appli doit déclarer qu'elle veut utiliser le moteur de synthèse vocale du téléphone (sinon la lecture à voix haute reste muette sur certains téléphones).
+          grep -q "android.intent.action.TTS_SERVICE" android/app/src/main/AndroidManifest.xml || sed -i 's#</manifest>#    <queries>\n        <intent>\n            <action android:name="android.intent.action.TTS_SERVICE" />\n        </intent>\n        <intent>\n            <action android:name="android.speech.tts.engine.INSTALL_TTS_DATA" />\n        </intent>\n    </queries>\n</manifest>#' android/app/src/main/AndroidManifest.xml
+          grep -q "android.intent.action.TTS_SERVICE" android/app/src/main/AndroidManifest.xml
+          grep -n -A8 "<queries>" android/app/src/main/AndroidManifest.xml
           echo "Modules du téléphone inclus :"; cat android/app/src/main/assets/capacitor.plugins.json
           # Sécurité : on s'arrête si un module attendu manque.
           grep -q CapacitorUpdater android/app/src/main/assets/capacitor.plugins.json
