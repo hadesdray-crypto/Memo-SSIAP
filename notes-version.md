@@ -1,3 +1,6 @@
+- Nouvelles fiches pas à pas, vérifiées sur textes officiels et sources techniques : rayons X (contrôles avant service, mise en route, arrêt d'urgence, pièce test, sécurité autour du tunnel, obligations de l'exploitant), portiques, détecteur manuel, palpation, extincteur, RIA, colonnes, poteaux d'incendie, sprinkleurs, SSI, secourisme (PLS, défibrillateur, garrot, étouffement), ATEX, habilitation électrique et agent de sécurité privée
+- Plus de 55 nouveaux modules d'apprentissage avec mises en situation
+- Plusieurs précisions de sécurité ajoutées (placement devant le feu, accident électrique, PLS après un traumatisme)
 - Nouveau : bouton « Apprentissage » dans chaque rubrique (extincteurs, rayons X, portiques, détecteurs, ATEX, habilitation électrique, secours, SSI, agent de sécurité privée…) : pour chaque module, les étapes dans l'ordre, ce qu'il faut faire et ne pas faire, les erreurs fréquentes, puis des mises en situation corrigées ; ta progression reste sur ton appareil
 - Un bouton « Apprendre à le faire » apparaît aussi en haut des fiches concernées
 - Nouvelles fiches : règles de l'opérateur d'un appareil à rayons X, gestes de l'extincteur, mise en œuvre du RIA (uniquement les points confirmés par au moins 3 sources)
