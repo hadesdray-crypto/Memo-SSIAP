@@ -1,3 +1,6 @@
+- Nouveau : bouton « Apprentissage » dans chaque rubrique (extincteurs, rayons X, portiques, détecteurs, ATEX, habilitation électrique, secours, SSI, agent de sécurité privée…) : pour chaque module, les étapes dans l'ordre, ce qu'il faut faire et ne pas faire, les erreurs fréquentes, puis des mises en situation corrigées ; ta progression reste sur ton appareil
+- Un bouton « Apprendre à le faire » apparaît aussi en haut des fiches concernées
+- Nouvelles fiches : règles de l'opérateur d'un appareil à rayons X, gestes de l'extincteur, mise en œuvre du RIA (uniquement les points confirmés par au moins 3 sources)
 - Nouvelle section « Matériel de sûreté » : rayons X (principe, appareils, lecture de l'image, cadre légal, radioprotection, rôle de l'opérateur, normes, contrôles) et portiques, détecteurs de métaux et autres détecteurs (types, réglages, détecteurs manuels, alarme et conduite à tenir, normes, santé et implants)
 - Nouvelle section « Atmosphères explosives (ATEX) » : bases, sources d'inflammation, zones, marquage du matériel, modes de protection, réglementation, ce que doit et ne doit pas faire l'agent, conduite à tenir sur le terrain
 - Nouvelle section « Habilitation électrique (B0, H0, H0V) » : explications simples, symboles, titre d'habilitation, zones et distances, accident électrique, situations de l'agent, textes
