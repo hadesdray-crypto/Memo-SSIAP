@@ -1,10 +1,6 @@
-- Son : l'appli vérifie une seule fois, au premier lancement, que la lecture à voix haute marche. S'il n'y a pas de son, elle explique pourquoi et comment le remettre, avec un bouton « Tester le son » (aussi dans Réglages)
-- La lecture à voix haute utilise maintenant la voix du téléphone, plus fiable que celle du navigateur intégré
-- Entraînement : 284 nouvelles questions vérifiées (489 au total) — règlement ERP, SSIAP 2 et 3, IGH, APS, SST et secourisme, habilitation électrique H0B0, et 18 mises en situation « Sur le terrain »
-- Chaque question certifiée en double vérification contre les textes officiels, avec sa source et sa date de vérification
-- L'examen blanc SSIAP 1 et « Revoir mes erreurs » puisent maintenant aussi dans les questions vérifiées du jeu
-- Nouveau sur l'accueil : « Objectif du jour » (10 questions, série de jours), « Reprendre où j'en étais » et le mode « Ronde de nuit » (écran assombri, texte agrandi)
-- Réglages : boutons de réponse très grands, pour répondre avec des gants
-- Corrections du cours : classement ERP (arrêté par le maire ou le préfet après avis de la commission), durées de fonctionnement des extincteurs, colonnes sèches (cheminement réel, stabilité au feu), examen SSIAP 3 (moyenne des épreuves écrites), arrêtés gaz 2025-2026
-- La veille réglementaire fonctionne maintenant aussi dans l'application Android, et surveille 74 sources (dont la fiche SSIAP 3 de France compétences)
-- La mise à jour affiche désormais la liste de ce qui change, avec un bouton « Plus tard »
+- Nouvelle section « Matériel de sûreté » : rayons X (principe, appareils, lecture de l'image, cadre légal, radioprotection, rôle de l'opérateur, normes, contrôles) et portiques, détecteurs de métaux et autres détecteurs (types, réglages, détecteurs manuels, alarme et conduite à tenir, normes, santé et implants)
+- Nouvelle section « Atmosphères explosives (ATEX) » : bases, sources d'inflammation, zones, marquage du matériel, modes de protection, réglementation, ce que doit et ne doit pas faire l'agent, conduite à tenir sur le terrain
+- Nouvelle section « Habilitation électrique (B0, H0, H0V) » : explications simples, symboles, titre d'habilitation, zones et distances, accident électrique, situations de l'agent, textes
+- SST : nouvelle fiche de révision ultra simple (4 temps, chiffres clés, pièges d'examen)
+- Entraînement et jeu : plus de 160 nouvelles questions vérifiées avec leur source (rayons X, portiques, ATEX, H0B0, SST) ; glossaire élargi
+- Chaque fiche cite ses sources avec la date de vérification ; ce qui n'a pas pu être confirmé par au moins 3 sources n'a pas été mis
