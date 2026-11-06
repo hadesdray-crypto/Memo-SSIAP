@@ -100,5 +100,5 @@ jobs:
         run: |
           gh release create "essai-${{ github.run_number }}" memo-ssiap-essai.apk \
             --title "Mémo SSIAP, version d'essai 24 h (${{ github.run_number }})" \
-            --notes "Version d'essai : s'installe à côté de la vraie application et demande un code. Ouvrir memo-ssiap-essai.apk sur le téléphone Android et toucher Installer." \
+            --notes "Version d'essai, elle s'installe à côté de la vraie application et demande un code. Ouvrir memo-ssiap-essai.apk sur le téléphone Android et toucher Installer." \
             --prerelease --latest=false
