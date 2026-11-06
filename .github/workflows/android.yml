@@ -60,6 +60,30 @@ jobs:
           grep -q TextToSpeech android/app/src/main/assets/capacitor.plugins.json
           grep -q SpeechRecognition android/app/src/main/assets/capacitor.plugins.json
           grep -q '"App"\|capacitor-app\|AppPlugin' android/app/src/main/assets/capacitor.plugins.json
+      - name: Capteurs de la ronde (baromètre et NFC)
+        run: |
+          PK=$(grep -o '"appId": *"[^"]*"' capacitor.config.json | sed 's/.*: *"//; s/"//')
+          D=android/app/src/main/java/$(echo "$PK" | tr . /)
+          mkdir -p "$D"
+          sed "s/PACKAGE_ICI/$PK/" android-ressources/RondeCapteursPlugin.java > "$D/RondeCapteursPlugin.java"
+          cat > "$D/MainActivity.java" <<JAVA
+          package $PK;
+
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  registerPlugin(RondeCapteursPlugin.class);
+                  super.onCreate(savedInstanceState);
+              }
+          }
+          JAVA
+          M=android/app/src/main/AndroidManifest.xml
+          grep -q "android.permission.NFC" $M || sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.NFC" />\n    <uses-feature android:name="android.hardware.nfc" android:required="false" />\n    <uses-feature android:name="android.hardware.sensor.barometer" android:required="false" />#' $M
+          grep -q "android.permission.NFC" $M
+          grep -q registerPlugin "$D/MainActivity.java"
       - name: Compiler
         run: cd android && ./gradlew assembleRelease --no-daemon -q
       - name: Signer

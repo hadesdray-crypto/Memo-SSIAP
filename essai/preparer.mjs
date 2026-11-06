@@ -3,6 +3,7 @@
 // Les codes sont affichés une seule fois à l'écran ; seuls leurs « cadenas » (codes.json) sont gardés.
 import { readFileSync, writeFileSync } from "node:fs";
 import { webcrypto as c } from "node:crypto";
+const GARDER = process.argv[2] === "--garder"; // mise à jour du contenu avec les MÊMES codes : node essai/preparer.mjs --garder <un code existant>
 const N = Math.min(32, Number(process.argv[2] || 10)), JOURS = Number(process.argv[3] || 14), HEURES = Number(process.argv[4] || 24);
 const ALPHA = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 const alea = (n) => Array.from(c.getRandomValues(new Uint8Array(n)), (x) => ALPHA[x % 32]).join("");
@@ -15,11 +16,23 @@ html = html.replace(a, a + " return;");
 html = html.replace(/const API_REL = "[^"]*";/, 'const API_REL = "about:blank";').replace(/const LIEN_APK = [^;]*;/, 'const LIEN_APK = "about:blank";');
 if (!html.includes('const API_REL = "about:blank"')) throw new Error("API_REL non neutralisé");
 // 2. Chiffrement du contenu avec une clé unique.
-const K = c.getRandomValues(new Uint8Array(32)), iv = c.getRandomValues(new Uint8Array(12));
+let K = c.getRandomValues(new Uint8Array(32));
+if (GARDER) {
+  const code = String(process.argv[3] || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+  const ex = JSON.parse(readFileSync(new URL("./codes.json", import.meta.url), "utf8")).find((x) => x.id === code[0]);
+  if (!ex) throw new Error("Code inconnu");
+  const un = (t) => new Uint8Array(Buffer.from(t, "base64"));
+  const base = await c.subtle.importKey("raw", new TextEncoder().encode(code.slice(1)), "PBKDF2", false, ["deriveKey"]);
+  const wk = await c.subtle.deriveKey({ name: "PBKDF2", salt: un(ex.s), iterations: 600000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const d = JSON.parse(new TextDecoder().decode(await c.subtle.decrypt({ name: "AES-GCM", iv: un(ex.i) }, wk, un(ex.w))));
+  K = un(d.k);
+}
+const iv = c.getRandomValues(new Uint8Array(12));
 const kc = await c.subtle.importKey("raw", K, "AES-GCM", false, ["encrypt"]);
 const ct = new Uint8Array(await c.subtle.encrypt({ name: "AES-GCM", iv }, kc, new TextEncoder().encode(html)));
 const out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12);
 writeFileSync(new URL("./contenu.enc", import.meta.url), out);
+if (GARDER) { console.log("Contenu mis à jour avec la même clé : les codes existants restent valables."); process.exit(0); }
 // 3. Un cadenas par code : seule la personne qui a le code peut récupérer la clé.
 const avant = Date.now() + JOURS * 86400000, cadenas = [], codes = [], ids = new Set();
 for (let i = 0; i < N; i++) {

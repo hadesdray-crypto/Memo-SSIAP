@@ -77,6 +77,16 @@ jobs:
           grep -q TextToSpeech android/app/src/main/assets/capacitor.plugins.json
           grep -q SpeechRecognition android/app/src/main/assets/capacitor.plugins.json
           ! grep -q CapacitorUpdater android/app/src/main/assets/capacitor.plugins.json
+      - name: Capteurs de la ronde (baromètre et NFC)
+        run: |
+          D=b/android/app/src/main/java/fr/memossiap/essai
+          sed "s/PACKAGE_ICI/fr.memossiap.essai/" android-ressources/RondeCapteursPlugin.java > "$D/RondeCapteursPlugin.java"
+          sed -i 's#super.onCreate(savedInstanceState);#registerPlugin(RondeCapteursPlugin.class);\n        super.onCreate(savedInstanceState);#' "$D/MainActivity.java"
+          grep -q registerPlugin "$D/MainActivity.java"
+          grep -q FLAG_SECURE "$D/MainActivity.java"
+          M=b/android/app/src/main/AndroidManifest.xml
+          grep -q "android.permission.NFC" $M || sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.NFC" />\n    <uses-feature android:name="android.hardware.nfc" android:required="false" />#' $M
+          grep -q "android.permission.NFC" $M
       - name: Compiler
         run: cd b/android && ./gradlew assembleRelease --no-daemon -q
       - name: Signer
