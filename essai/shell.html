@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b3121f">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https: data: blob:">
+<title>Mémo SSIAP, essai</title>
+<style>
+html,body{margin:0;height:100%;background:#b3121f;color:#fff;font:16px system-ui,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body{display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,0)}
+main{width:100%;max-width:420px;text-align:center}
+img{width:96px;height:96px;border-radius:22px}
+h1{font-size:1.4rem;margin:14px 0 6px}p{margin:8px 0;line-height:1.4}
+input{width:100%;box-sizing:border-box;font:700 1.15rem monospace;letter-spacing:.06em;text-align:center;text-transform:uppercase;padding:14px 10px;border-radius:12px;border:0;margin:14px 0 8px;color:#222;background:#fff;-webkit-user-select:text;user-select:text}
+button{width:100%;font:700 1.05rem system-ui;padding:14px;border-radius:12px;border:0;background:#fff;color:#b3121f}
+button[disabled]{opacity:.6}
+.m{min-height:2.6em;font-weight:600}.p{font-size:.85rem;opacity:.85}
+</style></head><body>
+<main>
+<img src="icon-192.png" alt="">
+<h1>Mémo SSIAP, essai de 24 h</h1>
+<div id="v"></div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var CLE = "essai-ssiap", REV = "https://hadesdray-crypto.github.io/memo-ssiap/essai-revoques.json";
+  var $v = document.getElementById("v");
+  function lire() { try { return JSON.parse(localStorage.getItem(CLE)); } catch (e) { return null; } }
+  function ecrire(s) { try { localStorage.setItem(CLE, JSON.stringify(s)); } catch (e) {} }
+  function purger(etat) {
+    var s = lire() || {};
+    try { localStorage.clear(); sessionStorage.clear(); } catch (e) {}
+    ecrire({ id: s.id, etat: etat || "fini", dernier: Date.now() });
+  }
+  function ecran(t) {
+    if (t === "code") {
+      $v.innerHTML = '<p>Saisissez le code d’essai que vous avez reçu.</p><input id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"><div class="m" id="m"></div><button id="b" type="button">Activer l’essai</button><p class="p">L’essai dure 24 heures à partir de l’activation, sur ce téléphone uniquement. Le code ne marche qu’une fois.</p>';
+      document.getElementById("b").onclick = activer;
+      document.getElementById("c").onkeydown = function (e) { if (e.key === "Enter") activer(); };
+    } else if (t === "fini") {
+      $v.innerHTML = '<p><strong>Votre essai est terminé.</strong></p><p>Merci de l’avoir testé. Pour continuer à utiliser Mémo SSIAP, contactez la personne qui vous l’a envoyé.</p>';
+    } else if (t === "horloge") {
+      $v.innerHTML = '<p><strong>L’heure du téléphone a été modifiée.</strong></p><p>Remettez l’heure automatique dans les réglages du téléphone, puis rouvrez l’application.</p>';
+    } else if (t === "revoque") {
+      $v.innerHTML = '<p><strong>Cet essai a été arrêté.</strong></p><p>Contactez la personne qui vous l’a envoyé.</p>';
+    } else {
+      $v.innerHTML = '<p>Ouverture…</p>';
+    }
+  }
+  function msg(t) { var m = document.getElementById("m"); if (m) m.textContent = t; }
+  var b64 = function (t) { var s = atob(t), u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; };
+  async function deverrouiller(id, secret) {
+    var cad = await (await fetch("codes.json")).json();
+    var c = cad.filter(function (x) { return x.id === id; })[0];
+    if (!c) throw new Error("code");
+    var S = crypto.subtle;
+    var base = await S.importKey("raw", new TextEncoder().encode(secret), "PBKDF2", false, ["deriveKey"]);
+    var wk = await S.deriveKey({ name: "PBKDF2", salt: b64(c.s), iterations: 150000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    var meta;
+    try { meta = JSON.parse(new TextDecoder().decode(await S.decrypt({ name: "AES-GCM", iv: b64(c.i) }, wk, b64(c.w)))); } catch (e) { throw new Error("code"); }
+    return meta;
+  }
+  async function contenu(meta) {
+    var S = crypto.subtle, buf = new Uint8Array(await (await fetch("contenu.enc")).arrayBuffer());
+    var k = await S.importKey("raw", b64(meta.k), "AES-GCM", false, ["decrypt"]);
+    return new TextDecoder().decode(await S.decrypt({ name: "AES-GCM", iv: buf.slice(0, 12) }, k, buf.slice(12)));
+  }
+  /* Script glissé dans la page : compte à rebours, arrêt à l'heure, pas de copie, pas de partage. */
+  function garde(id) {
+    var f = function (id, CLE) {
+      var lire = function () { try { return JSON.parse(localStorage.getItem(CLE)); } catch (e) { return null; } };
+      var st = document.createElement("style");
+      st.textContent = "*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}input,textarea{-webkit-user-select:text!important;user-select:text!important}" +
+        "#essai-fil{position:fixed;inset:0;z-index:2147483000;pointer-events:none;background:url(\"data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='260' height='180'><text x='20' y='110' transform='rotate(-28 130 90)' font-family='sans-serif' font-size='16' fill='rgba(120,120,120,.10)'>ESSAI " + id + "</text></svg>") + "\")}" +
+        "#essai-b{position:fixed;left:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:2147483001;pointer-events:none;background:rgba(0,0,0,.62);color:#fff;font:600 12px system-ui,sans-serif;padding:4px 9px;border-radius:12px}";
+      var ajouter = function () {
+        document.head.appendChild(st);
+        var w = document.createElement("div"); w.id = "essai-fil"; document.body.appendChild(w);
+        var b = document.createElement("div"); b.id = "essai-b"; document.body.appendChild(b);
+        var tic = function () {
+          var s = lire(), n = Date.now();
+          if (!s || s.etat !== "actif" || n >= s.fin || n < s.dernier - 300000) { location.reload(); return; }
+          s.dernier = Math.max(s.dernier, n); try { localStorage.setItem(CLE, JSON.stringify(s)); } catch (e) {}
+          var r = Math.max(0, Math.floor((s.fin - n) / 60000));
+          b.textContent = "Essai : il reste " + Math.floor(r / 60) + " h " + ("0" + (r % 60)).slice(-2) + " min";
+        };
+        tic(); setInterval(tic, 15000);
+      };
+      if (document.body) ajouter(); else document.addEventListener("DOMContentLoaded", ajouter);
+      var ok = function (e) { var t = e.target; return t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA"); };
+      ["copy", "cut", "contextmenu", "dragstart", "selectstart"].forEach(function (ev) { document.addEventListener(ev, function (e) { if (!ok(e)) e.preventDefault(); }, true); });
+      try { Object.defineProperty(navigator, "share", { value: undefined, configurable: true }); } catch (e) {}
+      try { Object.defineProperty(navigator, "canShare", { value: undefined, configurable: true }); } catch (e) {}
+      try { navigator.clipboard.writeText = function () { return Promise.reject(new Error("bloqué")); }; } catch (e) {}
+      try { window.print = function () {}; } catch (e) {}
+    };
+    return "<script>(" + f.toString() + ")(" + JSON.stringify(id) + "," + JSON.stringify(CLE) + ");<\/script>";
+  }
+  function afficher(html, id) {
+    var g = garde(id), i = html.indexOf("<head>");
+    html = i >= 0 ? html.slice(0, i + 6) + g + html.slice(i + 6) : g + html;
+    document.open(); document.write(html); document.close();
+  }
+  async function verifier(id) { /* en ligne seulement : essai arrêté à distance, heure du téléphone */
+    try {
+      var ac = new AbortController(), t = setTimeout(function () { ac.abort(); }, 4000);
+      var r = await fetch(REV + "?t=" + Date.now(), { cache: "no-store", signal: ac.signal }); clearTimeout(t);
+      var d = r.headers.get("Date"), ecart = d ? Math.abs(new Date(d).getTime() - Date.now()) : 0;
+      var j = r.ok ? await r.json() : { ids: [] };
+      return { revoque: (j.ids || []).indexOf(id) >= 0, ecart: ecart };
+    } catch (e) { return { revoque: false, ecart: 0 }; }
+  }
+  async function activer() {
+    var saisie = String(document.getElementById("c").value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (saisie.length !== 20) { msg("Le code doit comporter 20 caractères."); return; }
+    var b = document.getElementById("b"); b.disabled = true; msg("Vérification…");
+    var vieux = lire(); if (vieux && vieux.etat) { msg("Un essai a déjà été utilisé sur ce téléphone."); b.disabled = false; return; }
+    var id = saisie.slice(0, 4), secret = saisie.slice(4), meta;
+    try { meta = await deverrouiller(id, secret); } catch (e) { msg("Code incorrect."); b.disabled = false; return; }
+    var n = Date.now(), v = await verifier(id);
+    if (v.revoque) { msg("Ce code n’est plus valable."); b.disabled = false; return; }
+    if (v.ecart > 600000) { msg("L’heure du téléphone est fausse. Mettez l’heure automatique puis réessayez."); b.disabled = false; return; }
+    if (n > meta.avant) { msg("Ce code a expiré. Demandez-en un nouveau."); b.disabled = false; return; }
+    ecrire({ id: id, s: secret, etat: "actif", debut: n, fin: n + meta.h * 3600000, dernier: n });
+    demarrer();
+  }
+  async function demarrer() {
+    var s = lire();
+    if (!s || !s.etat) return ecran("code");
+    if (s.etat === "revoque") return ecran("revoque");
+    if (s.etat === "fini") return ecran("fini");
+    var n = Date.now();
+    if (n < s.dernier - 300000) return ecran("horloge");
+    if (n >= s.fin) { purger("fini"); return ecran("fini"); }
+    ecran("ouv");
+    try {
+      var meta = await deverrouiller(s.id, s.s), html = await contenu(meta);
+      s.dernier = Math.max(s.dernier, n); ecrire(s);
+      afficher(html, s.id);
+      verifier(s.id).then(function (v) { if (v.revoque) { purger("revoque"); location.reload(); } });
+    } catch (e) { $v.innerHTML = '<p>Impossible d’ouvrir l’application. Fermez-la puis rouvrez-la.</p>'; }
+  }
+  demarrer();
+})();
+</script></body></html>

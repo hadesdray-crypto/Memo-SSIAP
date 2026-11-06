@@ -1,0 +1,104 @@
+name: Application Android, version d'essai
+
+on:
+  push:
+    branches: [main]
+    paths: ["essai/**", ".github/workflows/essai.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: essai
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Préparer le projet d'essai (le contenu y est chiffré, jamais en clair)
+        run: |
+          mkdir -p b/dist && cd b
+          cp ../essai/shell.html dist/index.html
+          cp ../essai/codes.json ../essai/contenu.enc ../manifest.webmanifest ../icon-192.png ../icon-512.png ../maskable-512.png ../apple-touch-icon.png ../favicon-32.png dist/
+          cp ../icon-512.png ../maskable-512.png ../android-ressources/remplacer.py .
+          test ! -e dist/sw.js
+          ! grep -q "Mémo SSIAP est un" dist/index.html
+          cat > capacitor.config.json <<'JSON'
+          {
+            "appId": "fr.memossiap.essai",
+            "appName": "Mémo SSIAP essai",
+            "webDir": "dist",
+            "backgroundColor": "#b3121f",
+            "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false }
+          }
+          JSON
+          npm init -y > /dev/null
+          npm install --save --no-audit --no-fund @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capacitor-community/text-to-speech@6 @capacitor-community/speech-recognition@7
+          npx cap add android
+          pip install pillow
+          python remplacer.py
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"essai.${{ github.run_number }}\"/" android/app/build.gradle
+          npx cap sync android
+          for P in ACCESS_NETWORK_STATE RECORD_AUDIO MODIFY_AUDIO_SETTINGS VIBRATE; do
+            grep -q "android.permission.$P" android/app/src/main/AndroidManifest.xml || sed -i "s#<uses-permission android:name=\"android.permission.INTERNET\" />#<uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.$P\" />#" android/app/src/main/AndroidManifest.xml
+          done
+          grep -q "android.intent.action.TTS_SERVICE" android/app/src/main/AndroidManifest.xml || sed -i 's#</manifest>#    <queries>\n        <intent>\n            <action android:name="android.intent.action.TTS_SERVICE" />\n        </intent>\n        <intent>\n            <action android:name="android.speech.tts.engine.INSTALL_TTS_DATA" />\n        </intent>\n    </queries>\n</manifest>#' android/app/src/main/AndroidManifest.xml
+          # Pas de copie de sauvegarde de l'application, et écran protégé : pas de capture d'écran ni d'enregistrement d'écran.
+          sed -i 's/android:allowBackup="true"/android:allowBackup="false"/' android/app/src/main/AndroidManifest.xml
+          grep -q 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
+          F=$(find android/app/src/main/java -name MainActivity.java)
+          cat > "$F" <<'JAVA'
+          package fr.memossiap.essai;
+
+          import android.os.Bundle;
+          import android.view.WindowManager;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+              }
+          }
+          JAVA
+          grep -q FLAG_SECURE "$F"
+          cat android/app/src/main/assets/capacitor.plugins.json
+          grep -q TextToSpeech android/app/src/main/assets/capacitor.plugins.json
+          grep -q SpeechRecognition android/app/src/main/assets/capacitor.plugins.json
+          ! grep -q CapacitorUpdater android/app/src/main/assets/capacitor.plugins.json
+      - name: Compiler
+        run: cd b/android && ./gradlew assembleRelease --no-daemon -q
+      - name: Signer
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          BT=$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)
+          APK=b/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          $ANDROID_HOME/build-tools/$BT/zipalign -f -p 4 $APK aligne.apk
+          test -n "$KEYSTORE_BASE64" && test -n "$KEYSTORE_PASSWORD" || { echo "::error::Secrets manquants"; exit 1; }
+          echo "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/cle.jks"
+          $ANDROID_HOME/build-tools/$BT/apksigner sign --ks "$RUNNER_TEMP/cle.jks" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out memo-ssiap-essai.apk aligne.apk
+          rm -f "$RUNNER_TEMP/cle.jks"
+          ls -la memo-ssiap-essai.apk
+          # Contrôle : le contenu de l'appli n'est pas en clair dans l'APK.
+          unzip -p memo-ssiap-essai.apk 'assets/public/*' 2>/dev/null | grep -c "Conditions d’utilisation" | grep -q '^0$'
+      - name: Publier (version préliminaire : ne touche pas aux mises à jour de la vraie application)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "essai-${{ github.run_number }}" memo-ssiap-essai.apk \
+            --title "Mémo SSIAP, version d'essai 24 h (${{ github.run_number }})" \
+            --notes "Version d'essai : s'installe à côté de la vraie application et demande un code. Ouvrir memo-ssiap-essai.apk sur le téléphone Android et toucher Installer." \
+            --prerelease --latest=false
