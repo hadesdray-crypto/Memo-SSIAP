@@ -9214,7 +9214,7 @@ D.fiches.push(
 );
 
 (function(){
-const Q = (f,q,good,bad,x)=>{ D.quiz.push({ q, c:[good,...bad], a:0, f, x }); };
+const Q = (f,q,good,bad,x)=>{ if (Array.isArray(good)) { x = bad; D.quiz.push({ q, c:good, a:0, f, x }); } else D.quiz.push({ q, c:[good,...bad], a:0, f, x }); };
 // p.39
 Q("lsst-39-douleur-mouvements","Douleur du cou après un traumatisme : où placer les deux mains ?",["De chaque côté de la tête de la victime","Sous les épaules de la victime","Sur la nuque, en bascule arrière","Sur la poitrine de la victime"],"Placer les deux mains de chaque côté de sa tête pour la maintenir dans la position où elle se trouve.");
 Q("lsst-39-douleur-mouvements","Si la victime présente une fracture de membre déplacée, que faut-il faire ?",["Ne pas tenter de la réaligner","La réaligner doucement","La masser pour calmer la douleur","Lui demander de bouger le membre"],"Si la victime présente une fracture de membre déplacée, ne pas tenter de la réaligner.");
@@ -31765,7 +31765,7 @@ const APP = (() => {
   function examPick() {
     /* L'examen blanc SSIAP 1 tire dans les questions des fiches ET dans les questions d'examen vérifiées du jeu (catégorie ssiap1 + règlement). */
     const by = {};
-    qpool("1").concat(LOTSQ.filter((q) => q.cat === "ssiap1" || q.cat === "reglementation")).forEach((q) => { const t = q.th || "lot-" + (q.lotTheme || "divers"); (by[t] = by[t] || []).push(q); });
+    qpool("1").filter((q) => !String(q.th).startsWith("lsst-")).concat(LOTSQ.filter((q) => q.cat === "ssiap1" || q.cat === "reglementation")).forEach((q) => { const t = q.th || "lot-" + (q.lotTheme || "divers"); (by[t] = by[t] || []).push(q); });
     const ths = shuffle(Object.keys(by));
     ths.forEach((t) => shuffle(by[t]));
     const out = [];
