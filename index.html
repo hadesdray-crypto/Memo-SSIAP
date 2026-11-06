@@ -56,6 +56,29 @@ button.card { font: inherit; text-align: left; cursor: pointer; border: 0; width
 .signal-b { display: flex; flex-wrap: wrap; gap: 8px; }
 #avis { z-index: 90; }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* ronde */
+.rd-dlg { position: fixed; inset: 0; z-index: 120; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 12px; }
+.rd-box { background: var(--surface); color: var(--ink); border-radius: 16px; padding: 18px; width: 100%; max-width: 440px; max-height: 88vh; max-height: 88dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.rd-box h2 { margin: 0; font-size: 1.25rem; }
+.rd-box p { margin: 0; }
+.rd-btns { display: flex; flex-direction: column; gap: 8px; position: sticky; bottom: -18px; background: var(--surface); padding: 8px 0 4px; }
+.rd-live { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.rd-live div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; min-width: 0; }
+.rd-live b { font-size: 1.35rem; } .rd-live span { font-size: .75rem; color: var(--ink-2); }
+.rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rd-grid .btn { min-height: 64px; justify-content: center; text-align: center; }
+.btn.vert { background: var(--green-bg); color: #fff; border-color: var(--green-bg); }
+.rd-3d { width: 100%; height: 300px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; touch-action: none; display: block; }
+.rd-3d-s { height: 220px; }
+.rd-cons { background: var(--surface); border: 2px solid var(--red-bg); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+#rd-cons { font: 700 1.5rem/1.25 var(--font-d, system-ui); }
+.rd-bar { height: 10px; border-radius: 6px; background: var(--line); overflow: hidden; } .rd-bar i { display: block; height: 100%; width: 0; background: var(--green-bg); transition: width .4s; }
+.rd-ul, .rd-log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rd-li { display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: var(--surface); }
+.rd-li > div:first-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; } .rd-li span { font-size: .85rem; color: var(--ink-2); }
+.rd-pre { white-space: pre-wrap; overflow-wrap: anywhere; font: .9rem/1.45 system-ui; margin: 0; background: var(--surface-2); padding: 12px; border-radius: 12px; }
+.rd-3dbar .btn { min-height: 44px; }
 </style>
 <style>
 /* ===== Mémo SSIAP : feuille de style ===== */
@@ -23104,6 +23127,776 @@ Texte dicté :
 /* planning.js */
 /* Planning : heures de la semaine (photo du planning lue par Gemini, voix, clavier), lieu, motif, affaire, totaux,
    relevé du mois. Tout reste sur l'appareil ; seule la lecture d'une photo passe par Gemini, si vous l'activez. */
+/* ronde-core:debut — moteur de la ronde : pas, cap, étages, trait fixe, points automatiques, redressement, rejeu guidé. Aucun accès à la page : testable seul. */
+function RONDE_CORE() {
+  const D2R = Math.PI / 180;
+  const norm = (a) => ((a % 360) + 360) % 360;
+  const dif = (a, b) => { const d = norm(a - b); return d > 180 ? d - 360 : d; };
+  const moyCap = (arr) => { let s = 0, c = 0; arr.forEach((a) => { s += Math.sin(a * D2R); c += Math.cos(a * D2R); }); return norm(Math.atan2(s, c) / D2R); };
+  const alt = (hpa, p0) => 44330 * (1 - Math.pow(hpa / p0, 1 / 5.255));
+
+  /* Cap (direction de marche) à partir de l'orientation du téléphone : appareil photo vers l'avant, ou téléphone à plat. */
+  function capDepuis(alpha, beta, gamma, boussoleIos) {
+    if (boussoleIos != null && isFinite(boussoleIos)) return norm(boussoleIos);
+    if (alpha == null || beta == null || gamma == null) return null;
+    const a = alpha * D2R, b = beta * D2R, g = gamma * D2R;
+    const cA = Math.cos(a), sA = Math.sin(a), cB = Math.cos(b), sB = Math.sin(b), cG = Math.cos(g), sG = Math.sin(g);
+    const vx = -cA * sG - sA * sB * cG, vy = -sA * sG + cA * sB * cG;   /* direction de l'appareil photo, à l'horizontale */
+    if (Math.hypot(vx, vy) > 0.5) return norm(Math.atan2(vx, vy) / D2R);
+    return norm(Math.atan2(-sA * cB, cA * cB) / D2R);                     /* haut du téléphone, à plat */
+  }
+
+  /* Détecteur de pas : pics de l'accélération, seuil qui s'adapte à la marche de la personne. */
+  function Pas() {
+    let base = 9.81, lis = 9.81, haut = false, pic = 0, tPic = 0, dernier = -1e9, seuil = 1.1; const amp = [];
+    return {
+      push(t, mag) {
+        lis += 0.25 * (mag - lis); base += 0.01 * (lis - base);
+        const dyn = lis - base;
+        if (!haut) { if (dyn > seuil) { haut = true; pic = dyn; tPic = t; } return false; }
+        if (dyn > pic) { pic = dyn; tPic = t; }
+        if (dyn < seuil * 0.35) {
+          haut = false; amp.push(pic); if (amp.length > 12) amp.shift();
+          seuil = Math.max(0.7, Math.min(2.5, (amp.reduce((a, b) => a + b, 0) / amp.length) * 0.5));
+          if (tPic - dernier >= 280) { dernier = tPic; return true; }
+        }
+        return false;
+      },
+    };
+  }
+
+  /* Suivi en direct : position estimée (x est, y nord, z hauteur), distance, étage par la pression. */
+  function Suivi(opt) {
+    const o = Object.assign({ foulee: 0.72, hEtage: 3.0 }, opt || {});
+    const S = { x: 0, y: 0, z: 0, cap: null, dist: 0, pas: 0 };
+    const pd = Pas(); let p0 = null, p0n = 0, p0s = 0, zr = 0, tz = null, zPlat = 0, grimpe = null, stable = 0, tStab = null, zStab = 0;
+    const hist = []; let tCalme = 0, tFin = 0;
+    const debutA = (tc) => { let r = null; for (const h of hist) { if (h.t <= tc) r = h; } return r || hist[0] || { x: S.x, y: S.y, d: S.dist, cap: S.cap }; };
+    const api = {
+      etat: S, o, hist,
+      cap(deg) { if (deg == null) return; if (S.cap == null) S.cap = deg; else S.cap = norm(S.cap + dif(deg, S.cap) * 0.12); },
+      accel(t, mag) {
+        if (!pd.push(t, mag) || S.cap == null) return null;
+        const L = o.foulee; S.pas++;
+        S.x += L * Math.sin(S.cap * D2R); S.y += L * Math.cos(S.cap * D2R); S.dist += L;
+        const ev = { x: S.x, y: S.y, z: S.z, d: S.dist, cap: S.cap, t, n: S.pas };
+        hist.push(ev); if (hist.length > 80) hist.shift();
+        return ev;
+      },
+      /* Pression en hectopascals. Renvoie un événement d'étage quand la hauteur change durablement. */
+      pression(t, hpa) {
+        if (!(hpa > 300 && hpa < 1100)) return null;
+        if (p0 == null) { p0s += hpa; p0n++; if (p0n < 8) return null; p0 = p0s / p0n; }
+        const z = alt(hpa, p0);
+        if (tz == null) { zr = z; zPlat = z; tz = t; zStab = z; tStab = t; return null; }
+        const a = 1 - Math.exp(-(t - tz) / (Math.abs(z - zr) > 3 ? 300 : 1500)); tz = t; zr += a * (z - zr);
+        S.z = zr;
+        if (!grimpe) {
+          if (Math.abs(zr - zPlat) < 0.15) tCalme = t;
+          if (Math.abs(zr - zPlat) > 0.7) { grimpe = { t0: t, dir: Math.sign(zr - zPlat), z0: zPlat, debut: debutA(tCalme) }; tStab = t; zStab = zr; }
+          else {
+            if (Math.abs(zr - zStab) > 0.08) { zStab = zr; tStab = t; }
+            else if (t - tStab > 2000 && Math.abs(zr - zPlat) < 0.35) zPlat += 0.05 * (zr - zPlat);
+          }
+          return null;
+        }
+        if (Math.abs(zr - zStab) > 0.12) { zStab = zr; tStab = t; tFin = t; return null; }
+        if (t - tStab < 2500) return null;
+        const dz = zr - grimpe.z0, n = Math.round(dz / o.hEtage), g = grimpe;
+        grimpe = null; zPlat = zr; zStab = zr; tStab = t;
+        if (n === 0) return null;
+        return { type: "etage", n, z0: g.z0, debut: g.debut, fin: debutA(tFin), t };
+      },
+      /* Après un changement d'étage : la hauteur de départ est celle de l'étage, pas celle du capteur. */
+      calerZ(z) { S.z = z; },
+      get debug() { return { grimpe, zPlat, zStab, tStab, zr, p0 }; },
+    };
+    return api;
+  }
+
+  /* Détecteur de virages : un virage est validé quand le cap reste stable sur 3 pas dans une autre direction. */
+  function Virages(o) {
+    const c = Object.assign({ seuil: 35, pasStable: 3 }, o || {});
+    let segCaps = [], segCap = null, cand = null, candCaps = [], n = 0, ignore = 0;
+    return {
+      get cap() { return segCap; },
+      reset(ign, capInit) { segCaps = []; segCap = capInit == null ? null : capInit; cand = null; candCaps = []; ignore = ign || 0; },
+      push(cap) {
+        n++;
+        if (ignore > 0) { ignore--; return null; }
+        if (segCap == null) { segCaps.push(cap); if (segCaps.length >= 3) segCap = moyCap(segCaps); return null; }
+        const dv = dif(cap, segCap);
+        if (!cand) {
+          if (Math.abs(dv) > c.seuil) { cand = { debut: n }; candCaps = [cap]; } else { segCaps.push(cap); if (segCaps.length > 40) segCaps.shift(); }
+          return null;
+        }
+        const mc = moyCap(candCaps);
+        if (Math.abs(dif(cap, mc)) < 25 && Math.abs(dv) > c.seuil * 0.8) {
+          candCaps.push(cap);
+          if (candCaps.length >= c.pasStable) {
+            const nouveau = moyCap(candCaps), ang = Math.round(dif(nouveau, segCap) / 5) * 5, evt = { ang, ancien: segCap, cap: nouveau, coin: cand.debut - 1, n };
+            segCap = nouveau; segCaps = candCaps.slice(); cand = null; candCaps = [];
+            return evt;
+          }
+        } else if (Math.abs(dv) <= c.seuil * 0.6) { cand = null; candCaps = []; segCaps.push(cap); }
+        else candCaps = [cap];
+        return null;
+      },
+    };
+  }
+
+  const typeVirage = (ang) => (Math.abs(ang) > 150 ? "demi-tour" : ang > 0 ? "droite" : "gauche");
+
+  /* ---- Géométrie : le trait fixe. Les sommets portent la distance cumulée d, le cap du tronçon qui suit, et l'étage. ---- */
+  function geometrie(trace, opt) {
+    const o = Object.assign({ rectif: true, fermer: false }, opt || {});
+    const v = trace.verts.map((s) => Object.assign({}, s));
+    const n = v.length;
+    for (let i = 0; i < n - 1; i++) v[i].len = Math.max(0, v[i + 1].d - v[i].d);
+    if (n) v[n - 1].len = 0;
+    const caps = v.map((s) => s.cap);
+    /* Redresser les angles : les murs d'un bâtiment sont presque toujours à angle droit. */
+    if (o.rectif) {
+      const base = caps.find((c) => c != null);
+      if (base != null) for (let i = 0; i < n - 1; i++) {
+        if (caps[i] == null) continue;
+        const rel = dif(caps[i], base), q = Math.round(rel / 90) * 90;
+        if (Math.abs(rel - q) <= 14) caps[i] = norm(base + q);
+        else { const q4 = Math.round(rel / 45) * 45; if (Math.abs(rel - q4) <= 7) caps[i] = norm(base + q4); }
+      }
+    }
+    let cx = v.length ? v[0].x0 || 0 : 0, cy = v.length ? v[0].y0 || 0 : 0, cz = v.length ? v[0].z0 || 0 : 0;
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const s = v[i];
+      if (s.type === "etage-fin") cz = s.z;
+      else if (s.type === "etage-debut") cz = s.z;
+      else if (s.z != null && i === 0) cz = s.z;
+      pts.push({ x: cx, y: cy, z: cz });
+      if (i < n - 1) {
+        const c = caps[i] == null ? (i > 0 ? caps[i - 1] : 0) : caps[i];
+        caps[i] = c;
+        cx += v[i].len * Math.sin(c * D2R); cy += v[i].len * Math.cos(c * D2R);
+      }
+    }
+    /* Fermer la boucle : la ronde revient au point de départ, l'écart est réparti sur le trajet. */
+    if (o.fermer && n > 2) {
+      const ex = pts[n - 1].x - pts[0].x, ey = pts[n - 1].y - pts[0].y;
+      const total = v[n - 1].d - v[0].d || 1;
+      for (let i = 0; i < n; i++) { const f = (v[i].d - v[0].d) / total; pts[i].x -= ex * f; pts[i].y -= ey * f; }
+    }
+    v.forEach((s, i) => { s.px = pts[i].x; s.py = pts[i].y; s.pz = pts[i].z; s.pcap = caps[i]; });
+    const total = n ? v[n - 1].d - v[0].d : 0;
+    return { v, total, pos: (D) => positionA(v, D) };
+  }
+  function positionA(v, D) {
+    const n = v.length; if (!n) return { x: 0, y: 0, z: 0, seg: 0, cap: 0 };
+    const d0 = v[0].d;
+    D = Math.max(0, Math.min(D, v[n - 1].d - d0));
+    let i = 0; while (i < n - 2 && v[i + 1].d - d0 <= D) i++;
+    if (n === 1) return { x: v[0].px, y: v[0].py, z: v[0].pz, seg: 0, cap: v[0].pcap || 0 };
+    const a = v[i], b = v[i + 1], len = b.d - a.d, f = len > 0 ? (D - (a.d - d0)) / len : 0;
+    return { x: a.px + (b.px - a.px) * f, y: a.py + (b.py - a.py) * f, z: a.pz + (b.pz - a.pz) * f, seg: i, cap: a.pcap };
+  }
+
+  /* ---- Enregistrement : le trait se pose tout seul à chaque virage, chaque escalier. ---- */
+  function Enregistrement(opt) {
+    const o = Object.assign({ hEtage: 3.0 }, opt || {});
+    const T = { verts: [], pointeaux: [], defauts: [] }; const vir = Virages(); const steps = []; let manuelEtage = null;
+    function insererEtage(n, dv, df) {
+      const mk = (type, d) => ({ type, n, x: 0, y: 0, z: 0, d, cap: null });
+      const ins = (v) => { let i = T.verts.length; while (i > 1 && T.verts[i - 1].d > v.d) i--; T.verts.splice(i, 0, v); };
+      ins(mk("etage-debut", dv)); ins(mk("etage-fin", df));
+      /* le début doit précéder la fin, puis on recalcule les hauteurs dans l'ordre du trait */
+      let z = T.verts[0].z || 0;
+      for (let i = 1; i < T.verts.length; i++) { const v = T.verts[i]; if (v.type === "etage-fin") z += v.n * o.hEtage; v.z = z; }
+    }
+    const api = {
+      trace: T, steps,
+      demarrer(x, y, z) { T.verts = [{ type: "depart", x0: x, y0: y, z0: z, z, d: 0, cap: null, ang: 0 }]; vir.reset(0, null); steps.length = 0; },
+      get distance() { return steps.length ? steps[steps.length - 1].d : 0; },
+      get segDepart() { return T.verts[T.verts.length - 1]; },
+      /* Un pas a été fait. Renvoie un événement si un virage a été posé. */
+      pas(ev) {
+        steps.push(ev);
+        const dernier = T.verts[T.verts.length - 1];
+        const e = vir.push(ev.cap);
+        if (dernier.cap == null && vir.cap != null) dernier.cap = vir.cap;
+        if (!e) return null;
+        const c = steps[Math.max(0, Math.min(steps.length - 1, e.coin - 1))];
+        const s = { type: "virage", sens: typeVirage(e.ang), ang: e.ang, x: c.x, y: c.y, z: dernier.z, d: c.d, cap: e.cap };
+        T.verts.push(s);
+        return s;
+      },
+      /* Virage ou repère posé à la main : le bouton « gauche », « droite », « demi-tour ». */
+      virageManuel(sens) {
+        const d = api.distance, dernier = T.verts[T.verts.length - 1];
+        const s = { type: "virage", sens, ang: sens === "gauche" ? -90 : sens === "droite" ? 90 : 180, manuel: true, x: 0, y: 0, z: dernier.z, d, cap: null };
+        T.verts.push(s); vir.reset(2, null);
+        return s;
+      },
+      /* Escalier détecté par le baromètre. */
+      etage(ev) {
+        const dv = ev.debut && ev.debut.d != null ? ev.debut.d : api.distance;
+        const df = ev.fin && ev.fin.d != null ? Math.max(dv, ev.fin.d) : api.distance;
+        insererEtage(ev.n, dv, df);
+        return T.verts.find(v => v.type === "etage-fin" && v.d === df) || T.verts[T.verts.length - 1];
+      },
+      /* Escalier signalé à la main : un appui au début, un appui à l'arrivée. */
+      etageManuel(n) { manuelEtage = { n, d: api.distance, z0: T.verts[T.verts.length - 1].z }; return manuelEtage; },
+      etageManuelFin() {
+        if (!manuelEtage) return null; const m = manuelEtage; manuelEtage = null;
+        insererEtage(m.n, m.d, api.distance);
+        return T.verts[T.verts.length - 1];
+      },
+      etageManuelN(n) { if (manuelEtage && n) manuelEtage.n = n; return manuelEtage ? manuelEtage.n : 0; },
+      get etageManuelEnCours() { return !!manuelEtage; },
+      terminer() {
+        const d = api.distance, dernier = T.verts[T.verts.length - 1];
+        T.verts.push({ type: "fin", x: 0, y: 0, z: dernier.z, d, cap: null });
+        if (T.verts.length >= 2 && T.verts[T.verts.length - 2].cap == null) T.verts[T.verts.length - 2].cap = T.verts.length > 2 ? T.verts[T.verts.length - 3].cap : 0;
+        return T;
+      },
+    };
+    return api;
+  }
+
+  /* ---- Rejeu : l'agent suit le trait. Consignes, recalage aux virages, pointeaux. ---- */
+  function Rejeu(trace, geo, opt) {
+    const o = Object.assign({ foulee: 0.72 }, opt || {});
+    const v = geo.v, n = v.length; const vir = Virages(); const G = { seg: 0, s: 0, depart: null, decalage: null, horsTrajet: 0, fini: false, pas: 0 };
+    let capsDebut = [];
+    const d0 = v[0] ? v[0].d : 0;
+    const lenSeg = (i) => (v[i + 1] ? v[i + 1].d - v[i].d : 0);
+    const D = () => v[G.seg].d - d0 + G.s;
+    const api = {
+      G, geo,
+      get D() { return D(); },
+      get progression() { return geo.total ? Math.min(1, D() / geo.total) : 0; },
+      /* Pas de l'agent : avance sur le trait (on reste toujours sur le trait, jamais à travers un mur). */
+      pas(cap) {
+        if (G.fini || !n) return null;
+        G.pas++;
+        if (G.decalage == null) { capsDebut.push(cap); if (capsDebut.length === 3) { const c0 = v[0].pcap != null ? v[0].pcap : v[0].cap; G.decalage = c0 == null ? 0 : dif(moyCap(capsDebut), c0); vir.reset(0, null); } }
+        G.s += o.foulee;
+        const L = lenSeg(G.seg);
+        let message = null;
+        if (G.seg >= n - 1 || (G.seg === n - 2 && v[n - 1].type === "fin" && G.s >= L)) { G.s = Math.min(G.s, L); if (G.seg === n - 2 && G.s >= L - 0.5) { G.fini = true; message = { type: "fin" }; } }
+        else if (G.s > L + 3 + L * 0.15 && v[G.seg + 1].type !== "fin") { if (G.retardSeg !== G.seg) { message = { type: "retard" }; G.retardSeg = G.seg; } G.s = L + 3 + L * 0.15; }
+        const e = G.decalage == null ? null : vir.push(cap);
+        if (e) message = Object.assign(message || {}, api._virageDetecte(e));
+        return message;
+      },
+      _virageDetecte(e) {
+        const sv = v[G.seg + 1];
+        if (!sv) return null;
+        let attendu = sv.type === "virage" ? sv : null, cible = G.seg + 1;
+        /* Dans un escalier, le virage du palier peut tomber avant ou après le repère d'escalier : on regarde les sommets voisins. */
+        if (!attendu) for (let k = G.seg + 1; k <= Math.min(n - 1, G.seg + 3); k++) { if (v[k].type === "virage" && Math.sign(v[k].ang || 1) === Math.sign(e.ang) && v[k - 1].type.startsWith("etage")) { attendu = v[k]; cible = k; break; } if (v[k].type !== "etage-debut" && v[k].type !== "etage-fin") break; }
+        const reste = (v[cible].d - d0) - D(), tol = Math.max(4, (v[cible].d - v[G.seg].d) * 0.25);
+        if (attendu && Math.sign(e.ang) === Math.sign(attendu.ang || 1) && Math.abs(reste) <= tol) { api.allerAuSommet(cible); return { type: "virage-ok", sommet: G.seg }; }
+        /* Un virage inattendu ne déplace jamais le trait : on prévient l'agent. */
+        G.horsTrajet++;
+        return { type: "virage-inattendu", ang: e.ang, attendu: attendu ? attendu.sens : "tout droit", reste };
+      },
+      /* Recalage : l'agent est au sommet numéro i (virage fait, escalier fait, ou choisi à la main). */
+      allerAuSommet(i) {
+        i = Math.max(0, Math.min(n - 1, i));
+        G.seg = i >= n - 1 ? Math.max(0, n - 2) : i; G.s = i >= n - 1 ? lenSeg(G.seg) : 0; G.horsTrajet = 0;
+        vir.reset(2, v[G.seg].pcap != null && G.decalage != null ? norm(v[G.seg].pcap + G.decalage) : null);
+        if (i >= n - 1) G.fini = true;
+        return G.seg;
+      },
+      virageFait() { return api.allerAuSommet(G.seg + 1); },
+      /* Étage détecté (ou bouton) : on passe à la fin de l'escalier. */
+      etageFait() {
+        let i = G.seg; while (i < n && !(v[i].type === "etage-fin" && i > G.seg - 1)) i++;
+        if (i >= n) return null; return api.allerAuSommet(i);
+      },
+      /* Consigne à afficher. */
+      consigne() {
+        if (!n || n < 2) return { texte: "Ronde vide.", dist: 0, sens: null };
+        if (G.fini) return { texte: "Fin de la ronde.", dist: 0, sens: "fin" };
+        const i = G.seg, reste = Math.max(0, Math.round(lenSeg(i) - G.s)), sv = v[i + 1];
+        const m = reste <= 1 ? "Maintenant" : "Dans " + reste + " m";
+        if (sv.type === "virage") return { texte: sv.sens === "demi-tour" ? m + " : faites demi-tour" : m + " : tournez à " + sv.sens, dist: reste, sens: sv.sens };
+        if (sv.type === "etage-debut") { const nn = sv.n; return { texte: m + " : escalier, " + (nn > 0 ? "montez de " : "descendez de ") + Math.abs(nn) + (Math.abs(nn) > 1 ? " étages" : " étage"), dist: reste, sens: nn > 0 ? "monter" : "descendre" }; }
+        if (sv.type === "etage-fin") return { texte: "Continuez dans l’escalier, jusqu’à l’étage voulu.", dist: reste, sens: "escalier" };
+        if (sv.type === "fin") return { texte: m + " : fin de la ronde", dist: reste, sens: "fin" };
+        return { texte: m + " : continuez tout droit", dist: reste, sens: "droit" };
+      },
+    };
+    return api;
+  }
+
+  return { D2R, norm, dif, moyCap, alt, capDepuis, Pas, Suivi, Virages, Enregistrement, Rejeu, geometrie, positionA, typeVirage };
+}
+/* ronde-core:fin */
+/* ronde-ui:debut — écrans de la ronde (liste, enregistrement, guidage, vue 3D, pointeaux, défauts, rapport). Tout reste sur le téléphone. */
+function RONDE(h) {
+  const { $, $$, esc, tx, icon, store, toast, VX, copy } = h;
+  const C = RONDE_CORE();
+  const KEY = "rd:data";
+  const load = () => { const d = store.get(KEY, null); return d && Array.isArray(d.rondes) ? d : { rondes: [], runs: [] }; };
+  const save = (d) => store.set(KEY, d);
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const p2 = (n) => String(n).padStart(2, "0");
+  const hms = (t) => { const d = new Date(t); return p2(d.getHours()) + ":" + p2(d.getMinutes()); };
+  const dfr = (t) => { const d = new Date(t); return p2(d.getDate()) + "/" + p2(d.getMonth() + 1) + "/" + d.getFullYear(); };
+  const cfg = () => ({ foulee: Math.max(0.4, Math.min(1.1, (+store.get("rd:foulee", 70) || 70) / 100)), hEtage: Math.max(2.2, Math.min(5, +store.get("rd:hetage", 3) || 3)) });
+  const rondeDe = (id) => load().rondes.find((r) => r.id === id);
+  const majRonde = (id, fn) => { const d = load(); const r = d.rondes.find((x) => x.id === id); if (r) { fn(r); save(d); } return r; };
+  const COTES = ["à gauche", "à droite", "en face", "en haut", "en bas", "sur place"];
+  let REC = null, RUN = null, mediaOK = false, wl = null;
+  const vib = (n) => { try { navigator.vibrate && navigator.vibrate(n || 60); } catch (e) { /* rien */ } };
+  const dire = (t) => { try { if (VX && VX.speak) VX.speak(t); } catch (e) { /* voix absente */ } };
+
+  /* ---------- Fenêtre de validation : défile, boutons toujours visibles ---------- */
+  function dlg(html) {
+    closeDlg();
+    const d = document.createElement("div"); d.id = "rd-dlg"; d.className = "rd-dlg"; d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true");
+    d.innerHTML = `<div class="rd-box">${html}</div>`;
+    document.body.appendChild(d);
+    const f = d.querySelector("button"); if (f) f.focus({ preventScroll: true });
+  }
+  function closeDlg() { const d = document.getElementById("rd-dlg"); if (d) d.remove(); }
+
+  /* ---------- Médias (IndexedDB) ---------- */
+  const IDB = {
+    open() { return new Promise((ok, ko) => { try { const r = indexedDB.open("memo-ssiap-ronde", 1); r.onupgradeneeded = () => r.result.createObjectStore("med"); r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error); } catch (e) { ko(e); } }); },
+    async put(id, blob) { const db = await IDB.open(); return new Promise((ok, ko) => { const t = db.transaction("med", "readwrite"); t.objectStore("med").put(blob, id); t.oncomplete = ok; t.onerror = () => ko(t.error); }); },
+    async get(id) { const db = await IDB.open(); return new Promise((ok, ko) => { const q = db.transaction("med").objectStore("med").get(id); q.onsuccess = () => ok(q.result); q.onerror = () => ko(q.error); }); },
+    async del(id) { try { const db = await IDB.open(); db.transaction("med", "readwrite").objectStore("med").delete(id); } catch (e) { /* rien */ } },
+  };
+  function avertMedia(cb) {
+    if (mediaOK) { cb(); return; }
+    dlg(`<h2>Photo ou vidéo</h2><p>Vérifiez que le site <strong>autorise</strong> les photos et les vidéos avant de continuer.</p><p>Cette appli <strong>n’est pas une application officielle</strong>. Les médias restent sur ce téléphone.</p>
+      <div class="rd-btns"><button type="button" class="btn" data-act="rd-media-ok">${icon("check")}J’ai vérifié, continuer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`);
+    pendingMedia = cb;
+  }
+  let pendingMedia = null;
+  function prendreMedia(kind, cb) {
+    avertMedia(() => {
+      const inp = document.createElement("input"); inp.type = "file"; inp.accept = kind === "video" ? "video/*" : "image/*"; inp.setAttribute("capture", "environment"); inp.style.display = "none";
+      inp.onchange = async () => {
+        const f = inp.files && inp.files[0]; inp.remove(); if (!f) return;
+        const id = "m" + uid();
+        try { await IDB.put(id, f); cb({ id, kind, nom: f.name, taille: f.size, t: Date.now() }); toast(kind === "video" ? "Vidéo enregistrée sur le téléphone." : "Photo enregistrée sur le téléphone."); }
+        catch (e) { toast("Impossible d’enregistrer : mémoire pleine ou accès refusé."); }
+      };
+      document.body.appendChild(inp); inp.click();
+    });
+  }
+  async function voirMedia(id, kind) {
+    try {
+      const b = await IDB.get(id); if (!b) { toast("Média introuvable."); return; }
+      const u = URL.createObjectURL(b);
+      dlg(`<h2>${kind === "video" ? "Vidéo" : "Photo"}</h2>${kind === "video" ? `<video src="${u}" controls playsinline style="width:100%;max-height:60vh"></video>` : `<img src="${u}" alt="Photo de la ronde" style="width:100%;max-height:60vh;object-fit:contain">`}<div class="rd-btns"><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Fermer</button></div>`);
+    } catch (e) { toast("Média illisible."); }
+  }
+
+  /* ---------- Capteurs ---------- */
+  const plugin = () => { try { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.RondeCapteurs; } catch (e) { return null; } };
+  function capteurs(onAcc, onCap, onHpa, etat) {
+    const off = [];
+    const mot = (e) => { const a = e.accelerationIncludingGravity; if (!a || a.x == null) return; onAcc(e.timeStamp || performance.now(), Math.hypot(a.x, a.y, a.z)); etat.acc = true; };
+    const ori = (e) => { const c = C.capDepuis(e.alpha, e.beta, e.gamma, e.webkitCompassHeading); if (c != null) { onCap(c); etat.cap = true; } };
+    window.addEventListener("devicemotion", mot); off.push(() => window.removeEventListener("devicemotion", mot));
+    const ev = "ondeviceorientationabsolute" in window ? "deviceorientationabsolute" : "deviceorientation";
+    window.addEventListener(ev, ori); off.push(() => window.removeEventListener(ev, ori));
+    const pl = plugin();
+    if (pl && pl.demarrerPression) {
+      try { pl.demarrerPression().catch(() => {}); const w = pl.addListener("pression", (d) => { if (d && d.hpa) { onHpa(performance.now(), d.hpa); etat.hpa = true; } }); off.push(() => { try { w.then ? w.then((x) => x.remove()) : w.remove(); pl.arreterPression(); } catch (e) { /* rien */ } }); } catch (e) { /* pas de baromètre */ }
+    }
+    return () => off.forEach((f) => { try { f(); } catch (e) { /* rien */ } });
+  }
+  async function permissions() {
+    try { if (typeof DeviceMotionEvent !== "undefined" && DeviceMotionEvent.requestPermission) { const r = await DeviceMotionEvent.requestPermission(); if (r !== "granted") return false; } } catch (e) { return false; }
+    try { if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission) { const r = await DeviceOrientationEvent.requestPermission(); if (r !== "granted") return false; } } catch (e) { return false; }
+    return true;
+  }
+  async function veille(on) { try { if (on) { if (navigator.wakeLock && !wl) wl = await navigator.wakeLock.request("screen"); } else if (wl) { await wl.release(); wl = null; } } catch (e) { wl = null; } }
+
+  /* ---------- Vue 3D dessinée à la main (aucune bibliothèque) ---------- */
+  function vue3d(canvas, get) {
+    const g = canvas.getContext("2d"); let yaw = -0.7, pitch = 0.95, zoom = 1, ptr = new Map(), last = null, d0 = 0;
+    const css = (n, f) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || f;
+    function proj(p, B) { const c = Math.cos(yaw), s = Math.sin(yaw); const x1 = (p.x - B.cx) * c - (p.y - B.cy) * s, y1 = (p.x - B.cx) * s + (p.y - B.cy) * c; return { X: x1, Y: y1 * Math.sin(pitch) + (p.z - B.cz) * Math.cos(pitch) }; }
+    function draw() {
+      const D = get(); const w = canvas.clientWidth || 300, hh = canvas.clientHeight || 300, r = window.devicePixelRatio || 1;
+      if (canvas.width !== Math.round(w * r)) { canvas.width = Math.round(w * r); canvas.height = Math.round(hh * r); }
+      g.setTransform(r, 0, 0, r, 0, 0); g.clearRect(0, 0, w, hh);
+      const pts = D.pts; if (!pts.length) return;
+      let xs = pts.map((p) => p.x), ys = pts.map((p) => p.y), zs = pts.map((p) => p.z);
+      const B = { cx: (Math.min(...xs) + Math.max(...xs)) / 2, cy: (Math.min(...ys) + Math.max(...ys)) / 2, cz: (Math.min(...zs) + Math.max(...zs)) / 2 };
+      const P = pts.map((p) => proj(p, B));
+      const rx = Math.max(...P.map((p) => Math.abs(p.X))) || 1, ry = Math.max(...P.map((p) => Math.abs(p.Y))) || 1;
+      const k = Math.min((w / 2 - 28) / rx, (hh / 2 - 28) / ry, 40) * zoom;
+      const T = (p) => { const q = proj(p, B); return [w / 2 + q.X * k, hh / 2 - q.Y * k]; };
+      const ink = css("--ink", "#222"), line = css("--line-2", "#ccc"), red = css("--red", "#b3121f"), grn = css("--green", "#12703c");
+      /* sol de chaque niveau */
+      const niv = [...new Set(zs.map((z) => Math.round(z * 2) / 2))].sort((a, b) => a - b);
+      g.lineWidth = 1; g.strokeStyle = line; g.fillStyle = css("--ink-3", "#777"); g.font = "12px system-ui";
+      niv.slice(0, 40).forEach((z) => { const a = T({ x: B.cx - rx / k * 0 - 10, y: B.cy, z }); g.beginPath(); g.moveTo(a[0] - 18, a[1]); g.lineTo(a[0] + 18, a[1]); g.stroke(); });
+      /* trait : une couleur par niveau, piquets vers le sol pour la profondeur */
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = T(pts[i]), b = T(pts[i + 1]); const hue = (Math.round(pts[i + 1].z / 3) * 47 + 200) % 360;
+        g.strokeStyle = `hsl(${hue},65%,45%)`; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+      }
+      g.lineWidth = 1; g.strokeStyle = line; pts.forEach((p) => { const a = T(p), b = T({ x: p.x, y: p.y, z: Math.min(...zs) }); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+      const pt = (p, col, rad, label, dy) => { const a = T(p); g.fillStyle = col; g.beginPath(); g.arc(a[0], a[1], rad, 0, 7); g.fill(); if (label) { g.fillStyle = ink; g.font = "600 12px system-ui"; g.fillText(label, a[0] + rad + 3, a[1] + 4 + (dy || 0)); } };
+      pt(pts[0], grn, 6, "Départ", 16); pt(pts[pts.length - 1], ink, 6, "Fin", 16);
+      (D.pointeaux || []).forEach((q) => pt(q, "#1769c2", 5, q.nom, -9)); (D.defauts || []).forEach((q) => pt(q, red, 5, "!"));
+      if (D.pos) pt(D.pos, "#f59e0b", 8, "Vous");
+    }
+    const dn = (e) => { ptr.set(e.pointerId, [e.clientX, e.clientY]); canvas.setPointerCapture(e.pointerId); last = [e.clientX, e.clientY]; if (ptr.size === 2) { const [a, b] = [...ptr.values()]; d0 = Math.hypot(a[0] - b[0], a[1] - b[1]); } };
+    const mv = (e) => {
+      if (!ptr.has(e.pointerId)) return; ptr.set(e.pointerId, [e.clientX, e.clientY]);
+      if (ptr.size === 2) { const [a, b] = [...ptr.values()]; const dd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (d0) zoom = Math.max(0.3, Math.min(6, zoom * dd / d0)); d0 = dd; }
+      else if (last) { yaw += (e.clientX - last[0]) * 0.01; pitch = Math.max(0.1, Math.min(1.5, pitch + (e.clientY - last[1]) * 0.01)); last = [e.clientX, e.clientY]; }
+      draw();
+    };
+    const up = (e) => { ptr.delete(e.pointerId); last = null; d0 = 0; };
+    canvas.addEventListener("pointerdown", dn); canvas.addEventListener("pointermove", mv); canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
+    canvas.addEventListener("wheel", (e) => { e.preventDefault(); zoom = Math.max(0.3, Math.min(6, zoom * (e.deltaY < 0 ? 1.15 : 0.87))); draw(); }, { passive: false });
+    return { draw, zoom(f) { zoom = Math.max(0.3, Math.min(6, zoom * f)); draw(); }, tourner(d) { yaw += d; draw(); }, haut() { pitch = 1.5; draw(); }, perspective() { pitch = 0.95; yaw = -0.7; draw(); } };
+  }
+  let V3 = null;
+  const ptsDe = (r) => { const geo = C.geometrie(r.trace); return { geo, pts: geo.v.map((s) => ({ x: s.px, y: s.py, z: s.pz })) }; };
+  const posD = (geo, d) => { const q = geo.pos(d); return { x: q.x, y: q.y, z: q.z }; };
+  const marqueurs = (r, geo) => ({
+    pointeaux: (r.pointeaux || []).map((q) => Object.assign(posD(geo, q.d), { nom: q.nom })),
+    defauts: (r.defauts || []).map((q) => posD(geo, q.d)),
+  });
+  function monter3d(r, posFn) {
+    const cv = $("#rd-3d"); if (!cv) return;
+    const { geo, pts } = ptsDe(r); const m = marqueurs(r, geo);
+    V3 = vue3d(cv, () => Object.assign({ pts }, m, { pos: posFn ? posFn(geo) : null }));
+    V3.draw();
+  }
+  const barre3d = `<div class="chips rd-3dbar"><button type="button" class="btn ghost" data-act="rd-3d" data-v="zoom+">${icon("plus")}Zoom</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="zoom-">Zoom −</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="g">${icon("precedent")}Tourner</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="d">Tourner${icon("suivant")}</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="haut">Vue du dessus</button></div>`;
+
+  /* ---------- Libellé d'un endroit (pour les défauts et le rapport) ---------- */
+  function lieuA(r, geo, d) {
+    const q = geo.pos(d); const etage = Math.round(q.z / (cfg().hEtage));
+    const niv = etage === 0 ? "rez-de-chaussée" : etage > 0 ? "étage " + etage : "sous-sol " + Math.abs(etage);
+    let proche = null, md = 1e9; (r.pointeaux || []).forEach((p) => { const dd = Math.abs(p.d - d); if (dd < md) { md = dd; proche = p; } });
+    return niv + (proche && md < 15 ? ", près de « " + proche.nom + " »" : "") + ", à " + Math.round(d) + " m du départ";
+  }
+
+  /* ================= Pages ================= */
+  const lien = (href, ic, co, t, s) => `<a class="card" href="#${href}"><span class="ico ${co || ""}">${icon(ic)}</span><span class="t"><b>${tx(t)}</b>${s ? `<span>${tx(s)}</span>` : ""}</span>${icon("chevron")}</a>`;
+
+  function pageListe() {
+    const d = load(); const g = {};
+    d.rondes.slice().sort((a, b) => (b.date || 0) - (a.date || 0)).forEach((r) => { const k = (r.site || "Sans site") + " — " + (r.bat || "Sans bâtiment"); (g[k] = g[k] || []).push(r); });
+    const blocs = Object.keys(g).sort().map((k) => `<section class="sec"><h2 class="lbl b">${esc(k)}</h2>${g[k].map((r) => lien(r.enCours ? "rd-rec-" + r.id : "rd-v-" + r.id, "ronde", r.enCours ? "amber" : "blue", r.nom || "Ronde", r.enCours ? "Interrompue : touchez pour terminer ou refaire" : Math.round(((r.trace.verts[r.trace.verts.length - 1] || {}).d || 0)) + " m · " + (r.pointeaux || []).length + " pointeau(x) · " + dfr(r.date))).join("")}</section>`).join("");
+    const html = `<nav class="crumb"><a href="#outils">Outils</a></nav>
+      <div class="page-h"><h1>Ronde</h1><p>Faites la ronde une fois : l’appli pose le trait tout seule (virages, escaliers). Ensuite elle vous guide le long du trait, même sans connexion.</p></div>
+      <div class="chips"><a class="btn" href="#rd-new">${icon("plus")}Nouvelle ronde</a><a class="btn ghost" href="#rd-aide">${icon("info")}Comment tenir le téléphone</a></div>
+      ${blocs || `<div class="result"><p>Aucune ronde enregistrée. Touchez « Nouvelle ronde » pour commencer.</p></div>`}
+      <section class="sec about"><h2 class="lbl a">Réglages de la ronde</h2>
+        <label class="field"><span>Longueur d’un pas (cm)</span><input id="rd-foulee" type="number" inputmode="numeric" min="40" max="110" value="${esc(String(store.get("rd:foulee", 70)))}"><small>Marchez 10 m en comptant vos pas : 1000 ÷ nombre de pas.</small></label>
+        <label class="field"><span>Hauteur d’un étage (m)</span><input id="rd-hetage" type="number" inputmode="decimal" step="0.1" min="2.2" max="5" value="${esc(String(store.get("rd:hetage", 3)))}"></label>
+        <div class="chips"><button type="button" class="btn ghost" data-act="rd-cfg">${icon("check")}Enregistrer</button></div>
+      </section>
+      <p class="disc">${icon("info")}<span>Cette appli n’est pas une application officielle. Photos et vidéos : vérifiez que le site les autorise.</span></p>`;
+    return { html, title: "Ronde", tab: "outils", back: "outils" };
+  }
+
+  function pageAide() {
+    const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>Comment tenir le téléphone</h1></div>
+      <section class="sec about"><ul>
+        <li>Tenez le téléphone <strong>devant vous</strong>, écran vers vous, <strong>appareil photo vers l’avant</strong>, comme pour filmer devant vous.</li>
+        <li>Marchez <strong>normalement</strong>. Ne secouez pas le téléphone.</li>
+        <li>Éloignez-vous des gros blocs de métal quand c’est possible : ils faussent la boussole.</li>
+        <li>L’appli pose un repère à chaque <strong>virage</strong> et à chaque <strong>escalier</strong>. Vous pouvez aussi toucher « Gauche », « Droite » ou « Monter » vous-même.</li>
+        <li>Le <strong>baromètre</strong> (s’il existe sur le téléphone) détecte les étages. Sinon, touchez « Monter » / « Descendre ».</li>
+        <li>Le GPS ne marche pas dans un bâtiment : il sert seulement à retrouver la ronde du site où vous êtes.</li>
+        <li>L’écran reste allumé pendant la ronde.</li>
+      </ul></section>`;
+    return { html, title: "Comment tenir le téléphone", tab: "outils", back: "ronde" };
+  }
+
+  function pageNouvelle() {
+    const d = load(); const sites = [...new Set(d.rondes.map((r) => r.site).filter(Boolean))];
+    const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>Nouvelle ronde</h1><p>Choisissez des noms simples. Aucun nom de personne n’est demandé.</p></div>
+      <section class="sec about">
+        <label class="field"><span>Site</span><input id="rd-site" list="rd-sites" autocomplete="off" placeholder="Nom du site"><datalist id="rd-sites">${sites.map((s) => `<option value="${esc(s)}">`).join("")}</datalist></label>
+        <label class="field"><span>Bâtiment</span><input id="rd-bat" autocomplete="off" placeholder="Bâtiment A"></label>
+        <label class="field"><span>Nom de la ronde</span><input id="rd-nom" autocomplete="off" placeholder="Ronde de nuit"></label>
+        <div class="chips"><button type="button" class="btn" data-act="rd-creer">${icon("suivant")}Continuer</button><a class="btn ghost" href="#ronde">${icon("retour")}Retour</a></div>
+      </section>`;
+    return { html, title: "Nouvelle ronde", tab: "outils", back: "ronde" };
+  }
+
+  /* ----- Enregistrement ----- */
+  function pageRec(id) {
+    const r = rondeDe(id); if (!r) return null;
+    const actif = REC && REC.id === id;
+    if (!actif) {
+      const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>${esc(r.nom)}</h1><p>${r.enCours ? "Cette ronde a été interrompue." : "Prêt à enregistrer."}</p></div>
+        <section class="sec about"><p>Tenez le téléphone devant vous, appareil photo vers l’avant, puis marchez normalement. Le départ est l’endroit où vous êtes maintenant.</p>
+        <label class="tick"><input type="checkbox" id="rd-gps" checked><span>Noter la position GPS du départ (sert à retrouver la ronde du site)</span></label>
+        <div class="chips"><button type="button" class="btn" data-act="rd-start" data-id="${esc(id)}">${icon("lecture")}Démarrer la ronde</button>${r.enCours && r.trace.verts.length > 1 ? `<button type="button" class="btn ghost" data-act="rd-finir-vieux" data-id="${esc(id)}">${icon("check")}Garder ce qui est enregistré</button>` : ""}<button type="button" class="btn ghost" data-act="rd-suppr" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button></div></section>`;
+      return { html, title: "Enregistrer", tab: "outils", back: "ronde" };
+    }
+    const html = `<div class="page-h"><h1>${esc(r.nom)}</h1><p id="rd-etat" role="status">Capteurs en démarrage…</p></div>
+      <div class="rd-live"><div><b id="rd-pas">0</b><span>pas</span></div><div><b id="rd-dist">0</b><span>mètres</span></div><div><b id="rd-niv">0</b><span>niveau</span></div><div><b id="rd-cap">–</b><span>cap</span></div></div>
+      <div class="rd-grid">
+        <button type="button" class="btn vert" data-act="rd-pt">${icon("check")}Pointeau ici</button>
+        <button type="button" class="btn red" data-act="rd-def">${icon("alerte")}Défaut ici</button>
+        <button type="button" class="btn ghost" data-act="rd-vg">${icon("precedent")}Virage gauche</button>
+        <button type="button" class="btn ghost" data-act="rd-vd">Virage droite${icon("suivant")}</button>
+        <button type="button" class="btn ghost" data-act="rd-vu">${icon("recommencer")}Demi-tour</button>
+        <button type="button" class="btn ghost" data-act="rd-ph">${icon("photo")}Photo</button>
+        <button type="button" class="btn ghost" data-act="rd-es" data-n="1">${icon("ascenseur")}Je monte</button>
+        <button type="button" class="btn ghost" data-act="rd-es" data-n="-1">${icon("bas")}Je descends</button>
+      </div>
+      <div id="rd-esc" class="result" hidden><p><strong>Escalier en cours :</strong> <span id="rd-esn"></span></p><div class="chips"><button type="button" class="btn ghost" data-act="rd-esp">${icon("plus")}Un étage de plus</button><button type="button" class="btn" data-act="rd-esf">${icon("check")}J’y suis</button></div></div>
+      <div class="chips"><button type="button" class="btn ghost" data-act="rd-vid">${icon("photo")}Vidéo</button><button type="button" class="btn ghost" data-act="rd-fermer">${icon("recommencer")}Boucler sur le départ</button><button type="button" class="btn" data-act="rd-stop">${icon("stop")}Terminer la ronde</button></div>
+      <section class="sec about"><h2 class="lbl b">Derniers repères</h2><ul id="rd-log" class="rd-log"></ul></section>`;
+    return { html, title: "Ronde en cours", tab: "outils", back: "ronde", after: () => { majLive(); } };
+  }
+  function logRec(t) { if (!REC) return; REC.log.unshift(hms(Date.now()) + " — " + t); REC.log.length = Math.min(REC.log.length, 8); const u = $("#rd-log"); if (u) u.innerHTML = REC.log.map((x) => `<li>${esc(x)}</li>`).join(""); }
+  function majLive() {
+    if (!REC) return; const S = REC.S.etat, set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    set("rd-pas", S.pas); set("rd-dist", Math.round(S.dist)); set("rd-niv", REC.niv); set("rd-cap", S.cap == null ? "–" : Math.round(S.cap) + "°");
+    const et = REC.etat, ok = et.acc && et.cap;
+    set("rd-etat", !ok ? "Capteurs en attente… bougez un peu le téléphone." : (et.hpa ? "Capteurs : pas, boussole et baromètre actifs." : "Capteurs : pas et boussole actifs. Étages : boutons « Je monte / Je descends »."));
+  }
+  async function demarrer(id, avecGps) {
+    try { await demarrer2(id, avecGps); } catch (e) { console.error("ronde", e); REC = null; toast("La ronde n’a pas pu démarrer : " + (e && e.message ? e.message : "erreur")); }
+  }
+  async function demarrer2(id, avecGps) {
+    if (REC) return;
+    if (!(await permissions())) { toast("Accès aux capteurs de mouvement refusé. Autorisez-les dans les réglages du téléphone."); return; }
+    const c = cfg(); const r = rondeDe(id); if (!r) return;
+    const S = C.Suivi({ foulee: c.foulee, hEtage: c.hEtage }), R = C.Enregistrement({ hEtage: c.hEtage }); R.demarrer(0, 0, 0);
+    REC = { id, S, R, c, niv: 0, etat: {}, log: [], stairs: null, t0: Date.now(), off: null };
+    REC.off = capteurs(
+      (t, m) => { const p = S.accel(t, m); if (p) { const v = R.pas(p); if (v) { vib(40); logRec("Virage " + v.sens + " posé"); sauveBrouillon(); } if (!(p.n % 4)) majLive(); } },
+      (cap) => S.cap(cap),
+      (t, hpa) => { const e = S.pression(t, hpa); if (e) { if (REC.stairs) return; R.etage(e); REC.niv += e.n; vib([50, 40, 50]); logRec((e.n > 0 ? "Montée de " : "Descente de ") + Math.abs(e.n) + " étage(s) détectée"); sauveBrouillon(); majLive(); } },
+      REC.etat);
+    majRonde(id, (x) => { x.enCours = true; x.trace = R.trace; x.date = Date.now(); x.foulee = c.foulee; x.hEtage = c.hEtage; x.trace.verts = R.trace.verts; });
+    if (avecGps && navigator.geolocation) { try { navigator.geolocation.getCurrentPosition((p) => majRonde(id, (x) => (x.gps = { lat: Math.round(p.coords.latitude * 1e4) / 1e4, lon: Math.round(p.coords.longitude * 1e4) / 1e4 })), () => {}, { timeout: 8000, maximumAge: 60000 }); } catch (e) { /* GPS indisponible */ } }
+    veille(true); dire("Ronde démarrée. Marchez normalement."); h.rerender(); REC.timer = setInterval(majLive, 700);
+  }
+  function sauveBrouillon() { if (!REC) return; const R = REC.R; majRonde(REC.id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = true; }); }
+  function finirRec(garde) {
+    if (!REC) return; const R = REC.R; R.terminer(); const id = REC.id;
+    clearInterval(REC.timer); REC.off && REC.off(); veille(false);
+    majRonde(id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = false; x.fin = Date.now(); if (garde) x.date = Date.now(); });
+    REC = null; return id;
+  }
+  function ajoutRepere(type, extra) { const R = REC.R; return Object.assign({ id: uid(), d: Math.round(R.distance * 10) / 10, t: Date.now() }, extra || {}); }
+
+  /* ----- Vue d'une ronde ----- */
+  function pageVue(id) {
+    const r = rondeDe(id); if (!r) return null; const { geo } = ptsDe(r);
+    const tot = Math.round(geo.total);
+    const pts = (r.pointeaux || []).slice().sort((a, b) => a.d - b.d).map((q, i) => `<li class="rd-li"><div><b>${esc(q.nom)}</b><span>${esc(q.cote)} · à ${Math.round(q.d)} m · ${q.nfc ? "étiquette NFC" : "position simulée"}</span></div>
+      <div class="chips"><button type="button" class="btn ghost" data-act="rd-pt-edit" data-id="${esc(id)}" data-p="${esc(q.id)}">${icon("texte")}Modifier</button></div></li>`).join("");
+    const dfs = (r.defauts || []).slice().sort((a, b) => a.d - b.d).map((q) => `<li class="rd-li"><div><b>${esc(q.txt || "Défaut")}</b><span>${esc(lieuA(r, geo, q.d))}</span></div><div class="chips">${(q.med || []).map((m) => `<button type="button" class="btn ghost" data-act="rd-med" data-m="${esc(m.id)}" data-k="${esc(m.kind)}">${icon("photo")}${m.kind === "video" ? "Vidéo" : "Photo"}</button>`).join("")}<button type="button" class="btn ghost" data-act="rd-def-suppr" data-id="${esc(id)}" data-p="${esc(q.id)}">${icon("poubelle")}</button></div></li>`).join("");
+    const runs = load().runs.filter((x) => x.ronde === id).slice(-5).reverse().map((x) => lien("rd-rap-" + x.id, "registre", "blue", "Passage du " + dfr(x.debut) + " à " + hms(x.debut), (x.ok || []).length + " pointeau(x) validé(s), " + (x.defauts || []).length + " défaut(s)")).join("");
+    const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>${esc(r.nom)}</h1><p>${esc(r.site || "")} · ${esc(r.bat || "")} · ${tot} m · ${(geo.v.filter((s) => s.type === "virage").length)} virage(s) · ${(geo.v.filter((s) => s.type === "etage-fin").length)} escalier(s)</p></div>
+      <div class="chips"><a class="btn" href="#rd-go-${esc(id)}">${icon("lecture")}Faire la ronde guidée</a></div>
+      <section class="sec about"><h2 class="lbl b">Plan en 3D</h2><canvas id="rd-3d" class="rd-3d" aria-label="Plan en trois dimensions de la ronde"></canvas>${barre3d}</section>
+      <section class="sec about"><h2 class="lbl g">Pointeaux</h2><ul class="rd-ul">${pts || `<li class="muted">Aucun pointeau.</li>`}</ul><div class="chips"><button type="button" class="btn ghost" data-act="rd-pt-add" data-id="${esc(id)}">${icon("plus")}Ajouter un pointeau</button></div>
+        <p class="small muted">Chaque pointeau est placé à une distance sur le trait : si vous le déplacez ou le supprimez, tout le guidage se recalcule tout seul.</p></section>
+      <section class="sec about"><h2 class="lbl">Défauts</h2><ul class="rd-ul">${dfs || `<li class="muted">Aucun défaut noté.</li>`}</ul></section>
+      ${runs ? `<section class="sec"><h2 class="lbl b">Derniers passages</h2>${runs}</section>` : ""}
+      <section class="sec about"><h2 class="lbl a">Gérer</h2>
+        <label class="field"><span>Nom</span><input id="rd-ren" value="${esc(r.nom)}"></label>
+        <div class="chips"><button type="button" class="btn ghost" data-act="rd-ren-ok" data-id="${esc(id)}">${icon("check")}Renommer</button><button type="button" class="btn ghost" data-act="rd-redo" data-id="${esc(id)}">${icon("recommencer")}Refaire le trait</button><button type="button" class="btn ghost" data-act="rd-suppr" data-id="${esc(id)}">${icon("poubelle")}Supprimer la ronde</button></div></section>`;
+    return { html, title: r.nom, tab: "outils", back: "ronde", after: () => monter3d(r) };
+  }
+  function formPointeau(id, p) {
+    const r = rondeDe(id); const nfcOK = ("NDEFReader" in window) || !!(plugin() && plugin().nfcLire);
+    dlg(`<h2>${p ? "Modifier le pointeau" : "Nouveau pointeau"}</h2>
+      <label class="field"><span>Nom du pointeau</span><input id="rd-pn" value="${esc(p ? p.nom : "")}" placeholder="Local technique"></label>
+      <label class="field"><span>Position</span><select id="rd-pc">${COTES.map((c) => `<option${p && p.cote === c ? " selected" : ""}>${c}</option>`).join("")}</select></label>
+      <label class="field"><span>Distance sur le trait (m)</span><input id="rd-pd" type="number" inputmode="decimal" value="${p ? Math.round(p.d * 10) / 10 : ""}" placeholder="12"><small>Déplacer un pointeau recalcule le guidage.</small></label>
+      <p class="small muted" id="rd-nfc-st">${p && p.nfc ? "Étiquette NFC liée." : nfcOK ? "Vous pouvez lier une étiquette NFC." : "NFC indisponible sur ce téléphone : le pointeau est simulé (vous le validez à sa position)."}</p>
+      <div class="rd-btns"><button type="button" class="btn" data-act="rd-pt-ok" data-id="${esc(id)}" data-p="${p ? esc(p.id) : ""}">${icon("check")}Enregistrer</button>${nfcOK ? `<button type="button" class="btn ghost" data-act="rd-nfc" data-id="${esc(id)}">${icon("badge")}Lire une étiquette NFC</button>` : ""}${p ? `<button type="button" class="btn ghost" data-act="rd-pt-suppr" data-id="${esc(id)}" data-p="${esc(p.id)}">${icon("poubelle")}Supprimer</button>` : ""}<button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`);
+    nfcTmp = p && p.nfc ? p.nfc : null;
+  }
+  let nfcTmp = null;
+  async function lireNfc() {
+    const st = $("#rd-nfc-st"); const say = (t) => { if (st) st.textContent = t; };
+    try {
+      const pl = plugin();
+      if (pl && pl.nfcLire) { say("Approchez l’étiquette du dos du téléphone…"); const r = await pl.nfcLire(); if (r && r.uid) { nfcTmp = r.uid; say("Étiquette lue et liée."); vib(80); return; } }
+      if ("NDEFReader" in window) { const n = new NDEFReader(); await n.scan(); say("Approchez l’étiquette du dos du téléphone…"); n.onreading = (e) => { nfcTmp = e.serialNumber || null; say(nfcTmp ? "Étiquette lue et liée." : "Étiquette sans identifiant."); vib(80); }; return; }
+      say("NFC indisponible : pointeau simulé.");
+    } catch (e) { say("Lecture NFC impossible : le pointeau reste simulé."); }
+  }
+
+  /* ----- Guidage ----- */
+  function pageGo(id) {
+    const r = rondeDe(id); if (!r || r.trace.verts.length < 2) return null;
+    const actif = RUN && RUN.id === id;
+    if (!actif) {
+      const html = `<nav class="crumb"><a href="#rd-v-${esc(id)}">${esc(r.nom)}</a></nav><div class="page-h"><h1>Ronde guidée</h1><p>Placez-vous au point de départ, téléphone devant vous, appareil photo vers l’avant. L’appli vous suit le long du trait et vous annonce virages, escaliers et pointeaux. Rien n’a besoin d’internet.</p></div>
+        <div class="chips"><button type="button" class="btn" data-act="rd-go" data-id="${esc(id)}">${icon("lecture")}Je suis au départ : commencer</button><a class="btn ghost" href="#rd-v-${esc(id)}">${icon("retour")}Retour</a></div>`;
+      return { html, title: "Ronde guidée", tab: "outils", back: "rd-v-" + id };
+    }
+    const html = `<div class="page-h"><h1>${esc(r.nom)}</h1><p id="rd-etat" role="status"></p></div>
+      <div class="rd-cons"><div id="rd-cons" aria-live="polite">…</div><div class="rd-bar"><i id="rd-prog"></i></div><small id="rd-pnext"></small></div>
+      <canvas id="rd-3d" class="rd-3d rd-3d-s" aria-label="Plan de la ronde avec votre position"></canvas>
+      <div class="rd-grid">
+        <button type="button" class="btn vert" data-act="rd-ok-pt">${icon("check")}Pointeau validé</button>
+        <button type="button" class="btn red" data-act="rd-g-def">${icon("alerte")}Signaler un défaut</button>
+        <button type="button" class="btn ghost" data-act="rd-g-vir">${icon("suivant")}J’ai tourné</button>
+        <button type="button" class="btn ghost" data-act="rd-g-esc">${icon("ascenseur")}Escalier fait</button>
+      </div>
+      <div class="chips"><button type="button" class="btn ghost" data-act="rd-g-voix">${icon("hautparleur")}Répéter la consigne</button><button type="button" class="btn" data-act="rd-g-fin">${icon("stop")}Terminer</button></div>`;
+    return { html, title: "Ronde guidée", tab: "outils", back: "rd-v-" + id, after: () => { monter3d(r, (geo) => (RUN ? posD(geo, RUN.J.D) : null)); majGo(); } };
+  }
+  function majGo() {
+    if (!RUN) return; const J = RUN.J, c = J.consigne(), set = (i, v) => { const e = document.getElementById(i); if (e) e.textContent = v; };
+    set("rd-cons", c.texte); const pr = document.getElementById("rd-prog"); if (pr) pr.style.width = Math.round(J.progression * 100) + "%";
+    const et = RUN.etat; set("rd-etat", !(et.acc && et.cap) ? "Capteurs en attente… bougez un peu le téléphone." : "Suivi actif · " + Math.round(J.D) + " m sur " + Math.round(J.geo.total) + " m");
+    const nx = prochainPt(); set("rd-pnext", nx ? "Prochain pointeau : « " + nx.nom + " », " + nx.cote + ", dans " + Math.max(0, Math.round(nx.d - J.D)) + " m" : "Plus de pointeau sur ce trajet.");
+    if (c.texte !== RUN.derniere) { RUN.derniere = c.texte; if (c.dist <= 12 || RUN.premiere) { dire(c.texte); } RUN.premiere = false; }
+    if (nx && !nx.annonce && nx.d - J.D < 3) { nx.annonce = true; vib([80, 50, 80]); dire("Pointeau " + nx.nom + ", " + nx.cote); }
+    RUN.pts.forEach((q) => { if (!q.fait && !q.manque && J.D > q.d + 6) { q.manque = true; logRun("Pointeau « " + q.nom + " » dépassé sans validation"); } });
+    if (V3) V3.draw();
+    if (J.G.fini && !RUN.finiDit) { RUN.finiDit = true; dire("Fin de la ronde."); vib([100, 60, 100]); }
+  }
+  const prochainPt = () => RUN && RUN.pts.filter((q) => !q.fait && !q.manque).sort((a, b) => a.d - b.d)[0];
+  function logRun(t) { if (RUN) RUN.log.push({ t: Date.now(), x: t }); }
+  async function lancerGo(id) {
+    if (RUN) return; if (!(await permissions())) { toast("Accès aux capteurs de mouvement refusé."); return; }
+    const r = rondeDe(id); if (!r) return; const c = { foulee: r.foulee || cfg().foulee, hEtage: r.hEtage || cfg().hEtage };
+    const geo = C.geometrie(r.trace), J = C.Rejeu(r.trace, geo, { foulee: c.foulee }), S = C.Suivi({ foulee: c.foulee, hEtage: c.hEtage });
+    RUN = { id, J, S, geo, etat: {}, log: [], ok: [], defauts: [], debut: Date.now(), pts: (r.pointeaux || []).map((q) => Object.assign({}, q, { fait: false, manque: false })), premiere: true };
+    RUN.off = capteurs(
+      (t, m) => { const p = S.accel(t, m); if (p) { const msg = J.pas(p.cap); if (msg) { if (msg.type === "virage-ok") vib(40); if (msg.type === "virage-inattendu") { dire("Virage inattendu, restez sur le trait."); logRun("Virage inattendu"); } if (msg.type === "retard") { dire("Vous êtes en retard sur le trait. Touchez « J’ai tourné » quand vous avez tourné."); } } majGo(); } },
+      (cap) => S.cap(cap),
+      (t, hpa) => { const e = S.pression(t, hpa); if (e) { J.etageFait(); vib([50, 40, 50]); majGo(); } },
+      RUN.etat);
+    veille(true); h.rerender(); RUN.timer = setInterval(majGo, 900);
+  }
+  function finirGo(rap) {
+    if (!RUN) return null; clearInterval(RUN.timer); RUN.off && RUN.off(); veille(false);
+    const r = rondeDe(RUN.id); const geo = RUN.geo; const run = { id: uid(), ronde: RUN.id, nom: r ? r.nom : "Ronde", site: r ? r.site : "", bat: r ? r.bat : "", debut: RUN.debut, fin: Date.now(), ok: RUN.pts.filter((q) => q.fait).map((q) => ({ nom: q.nom, cote: q.cote, t: q.tFait, mode: q.mode })), manques: RUN.pts.filter((q) => !q.fait).map((q) => ({ nom: q.nom, cote: q.cote })), defauts: RUN.defauts, log: RUN.log, complete: !!RUN.J.G.fini, distance: Math.round(RUN.J.D) };
+    const d = load(); d.runs.push(run); if (d.runs.length > 200) d.runs.splice(0, d.runs.length - 200); save(d); RUN = null; return run.id;
+  }
+  function texteRapport(x) {
+    const L = ["RAPPORT DE RONDE", (x.site || "") + (x.bat ? " — " + x.bat : ""), x.nom, "Date : " + dfr(x.debut) + " de " + hms(x.debut) + " à " + hms(x.fin), "Parcours : " + (x.complete ? "terminé" : "interrompu") + " (" + x.distance + " m)", "",
+      "POINTEAUX VALIDÉS (" + x.ok.length + ")"].concat(x.ok.map((q) => "- " + q.nom + " (" + q.cote + ") à " + hms(q.t) + (q.mode === "nfc" ? ", étiquette NFC" : ", position simulée")));
+    L.push("", "POINTEAUX NON VALIDÉS (" + x.manques.length + ")"); x.manques.forEach((q) => L.push("- " + q.nom + " (" + q.cote + ")"));
+    L.push("", "DÉFAUTS ET CONSTATS (" + x.defauts.length + ")"); x.defauts.forEach((q) => L.push("- " + hms(q.t) + " — " + q.txt + " — Lieu : " + q.lieu + (q.med && q.med.length ? " — " + q.med.length + " média(s) sur le téléphone" : "")));
+    if (x.log && x.log.length) { L.push("", "ÉVÉNEMENTS"); x.log.forEach((e) => L.push("- " + hms(e.t) + " — " + e.x)); }
+    L.push("", "Rapport généré par l’appli Mémo SSIAP. Non officiel : à relire et valider avant tout usage.");
+    return L.join("\n");
+  }
+  function pageRap(id) {
+    const x = load().runs.find((q) => q.id === id); if (!x) return null; const t = texteRapport(x);
+    const html = `<nav class="crumb"><a href="#rd-v-${esc(x.ronde)}">Ronde</a></nav><div class="page-h"><h1>Rapport de ronde</h1><p>${dfr(x.debut)} · ${hms(x.debut)} à ${hms(x.fin)}</p></div>
+      <section class="sec about"><pre class="rd-pre" id="rd-txt">${esc(t)}</pre><div class="chips"><button type="button" class="btn" data-act="rd-copier">${icon("copier")}Copier le rapport</button><button type="button" class="btn ghost" data-act="rd-rap-suppr" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button><a class="btn ghost" href="#rd-v-${esc(x.ronde)}">${icon("retour")}Retour</a></div></section>`;
+    return { html, title: "Rapport de ronde", tab: "outils", back: "rd-v-" + x.ronde };
+  }
+  function formDefaut(contexte) {
+    dlg(`<h2>Défaut ou constat</h2><label class="field"><span>Que voyez-vous ?</span><textarea id="rd-dt" rows="3" placeholder="Porte coupe-feu bloquée ouverte"></textarea><small>Vous pouvez dicter avec le micro du clavier.</small></label>
+      <div class="rd-btns"><button type="button" class="btn" data-act="rd-def-ok" data-c="${contexte}">${icon("check")}Enregistrer</button><button type="button" class="btn ghost" data-act="rd-def-ph" data-c="${contexte}">${icon("photo")}Enregistrer + photo</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`);
+  }
+  function enregDefaut(contexte, avecPhoto) {
+    const txt = (($("#rd-dt") || {}).value || "").trim() || "Défaut";
+    const fin = (med) => {
+      if (contexte === "rec" && REC) { const r = rondeDe(REC.id); const q = ajoutRepere("def", { txt, med: med ? [med] : [] }); REC.R.trace.defauts.push(q); majRonde(REC.id, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Défaut noté : " + txt); }
+      else if (RUN) { const r = rondeDe(RUN.id); const q = { t: Date.now(), txt, lieu: lieuA(r, RUN.geo, RUN.J.D), d: RUN.J.D, med: med ? [med] : [] }; RUN.defauts.push(q); logRun("Défaut : " + txt); }
+      closeDlg(); toast("Défaut enregistré.");
+    };
+    if (avecPhoto) prendreMedia("photo", fin); else fin(null);
+  }
+
+  /* ================= Routage ================= */
+  function page(t) {
+    if (t === "ronde") return pageListe();
+    if (t === "rd-aide") return pageAide();
+    if (t === "rd-new") return pageNouvelle();
+    if (t.startsWith("rd-rec-")) return pageRec(t.slice(7));
+    if (t.startsWith("rd-v-")) return pageVue(t.slice(5));
+    if (t.startsWith("rd-go-")) return pageGo(t.slice(6));
+    if (t.startsWith("rd-rap-")) return pageRap(t.slice(7));
+    return null;
+  }
+  function click(b, act, rerender, render, go) {
+    const id = b.dataset.id, val = (i) => (($("#" + i) || {}).value || "").trim();
+    switch (act) {
+      case "rd-dlg-x": closeDlg(); return true;
+      case "rd-media-ok": mediaOK = true; closeDlg(); if (pendingMedia) { const f = pendingMedia; pendingMedia = null; setTimeout(f, 50); } return true;
+      case "rd-cfg": { const f = +val("rd-foulee"), e = +val("rd-hetage"); if (f >= 40 && f <= 110) store.set("rd:foulee", f); if (e >= 2.2 && e <= 5) store.set("rd:hetage", e); toast("Réglages enregistrés."); return true; }
+      case "rd-creer": { const r = { id: uid(), site: val("rd-site"), bat: val("rd-bat"), nom: val("rd-nom") || "Ronde", date: Date.now(), trace: { verts: [], pointeaux: [], defauts: [] }, pointeaux: [], defauts: [], enCours: true }; const d = load(); d.rondes.push(r); save(d); go("rd-rec-" + r.id); return true; }
+      case "rd-start": demarrer(id, !!($("#rd-gps") && $("#rd-gps").checked)); return true;
+      case "rd-pt": { if (!REC) return true; const n = REC.R.trace.pointeaux.length + 1; REC.pendingPt = true; dlg(`<h2>Pointeau ici</h2><label class="field"><span>Nom du pointeau</span><input id="rd-pn" placeholder="Pointeau ${n}" value="Pointeau ${n}"></label><label class="field"><span>Position</span><select id="rd-pc">${COTES.map((c) => `<option>${c}</option>`).join("")}</select></label><div class="rd-btns"><button type="button" class="btn" data-act="rd-pt-rec">${icon("check")}Enregistrer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true; }
+      case "rd-pt-rec": { if (!REC) { closeDlg(); return true; } const q = ajoutRepere("pt", { nom: val("rd-pn") || "Pointeau", cote: val("rd-pc") || "sur place", simule: true }); REC.R.trace.pointeaux.push(q); majRonde(REC.id, (x) => { x.pointeaux = x.pointeaux || []; x.pointeaux.push(q); }); closeDlg(); vib(60); logRec("Pointeau « " + q.nom + " » posé"); return true; }
+      case "rd-def": if (REC) formDefaut("rec"); return true;
+      case "rd-vg": if (REC) { REC.R.virageManuel("gauche"); logRec("Virage gauche (bouton)"); sauveBrouillon(); } return true;
+      case "rd-vd": if (REC) { REC.R.virageManuel("droite"); logRec("Virage droite (bouton)"); sauveBrouillon(); } return true;
+      case "rd-vu": if (REC) { REC.R.virageManuel("demi-tour"); logRec("Demi-tour (bouton)"); sauveBrouillon(); } return true;
+      case "rd-es": { if (!REC || REC.stairs) return true; const n = +b.dataset.n; REC.R.etageManuel(n); REC.stairs = { n }; const bx = $("#rd-esc"); if (bx) { bx.hidden = false; $("#rd-esn").textContent = (n > 0 ? "montée de " : "descente de ") + Math.abs(n) + " étage(s)"; } logRec("Début d’escalier"); return true; }
+      case "rd-esp": { if (!REC || !REC.stairs) return true; const s = REC.stairs; s.n += s.n > 0 ? 1 : -1; REC.R.etageManuelN(s.n); $("#rd-esn").textContent = (s.n > 0 ? "montée de " : "descente de ") + Math.abs(s.n) + " étage(s)"; return true; }
+      case "rd-esf": { if (!REC || !REC.stairs) return true; REC.R.etageManuelFin(); REC.niv += REC.stairs.n; logRec("Arrivée à l’étage " + REC.niv); REC.stairs = null; const bx = $("#rd-esc"); if (bx) bx.hidden = true; sauveBrouillon(); majLive(); return true; }
+      case "rd-ph": if (REC) prendreMedia("photo", (m) => { const q = ajoutRepere("media", { med: [m], txt: "Photo" }); majRonde(REC.id, (x) => { x.defauts = x.defauts || []; x.defauts.push(Object.assign(q, { txt: "Photo à cet endroit" })); }); logRec("Photo prise"); }); return true;
+      case "rd-vid": if (REC) prendreMedia("video", (m) => { const q = ajoutRepere("media", { med: [m], txt: "Vidéo à cet endroit" }); majRonde(REC.id, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Vidéo enregistrée"); }); return true;
+      case "rd-fermer": if (REC) { REC.fermer = !REC.fermer; majRonde(REC.id, (x) => (x.fermer = REC.fermer)); toast(REC.fermer ? "La ronde reviendra sur le départ : l’écart sera réparti." : "Boucle annulée."); } return true;
+      case "rd-stop": dlg(`<h2>Terminer la ronde ?</h2><p>Le trait est gardé tel quel. Vous pourrez ensuite nommer les pointeaux et voir le plan en 3D.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-stop-ok">${icon("check")}Terminer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer la ronde</button></div>`); return true;
+      case "rd-stop-ok": { closeDlg(); const rid = REC && REC.id; if (rid) { if (REC.fermer) majRonde(rid, (x) => (x.fermer = true)); finirRec(true); go("rd-v-" + rid); } return true; }
+      case "rd-finir-vieux": { majRonde(id, (x) => { if (x.trace.verts.length && x.trace.verts[x.trace.verts.length - 1].type !== "fin") { const l = x.trace.verts[x.trace.verts.length - 1]; x.trace.verts.push({ type: "fin", x: 0, y: 0, z: l.z, d: Math.max(l.d, 0), cap: null }); } x.enCours = false; }); go("rd-v-" + id); return true; }
+      case "rd-suppr": dlg(`<h2>Supprimer cette ronde ?</h2><p>Le trait, les pointeaux et les défauts seront effacés de ce téléphone.</p><div class="rd-btns"><button type="button" class="btn red" data-act="rd-suppr-ok" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true;
+      case "rd-suppr-ok": { closeDlg(); const d = load(); const r = d.rondes.find((x) => x.id === id); if (r) (r.defauts || []).forEach((q) => (q.med || []).forEach((m) => IDB.del(m.id))); d.rondes = d.rondes.filter((x) => x.id !== id); d.runs = d.runs.filter((x) => x.ronde !== id); save(d); if (REC && REC.id === id) { clearInterval(REC.timer); REC.off && REC.off(); veille(false); REC = null; } go("ronde"); return true; }
+      case "rd-redo": dlg(`<h2>Refaire le trait ?</h2><p>L’ancien trait est remplacé. Les pointeaux gardent leur distance : vérifiez-les ensuite.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-redo-ok" data-id="${esc(id)}">${icon("recommencer")}Refaire</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true;
+      case "rd-redo-ok": closeDlg(); majRonde(id, (x) => { x.trace = { verts: [], pointeaux: [], defauts: [] }; x.enCours = true; }); go("rd-rec-" + id); return true;
+      case "rd-ren-ok": majRonde(id, (x) => (x.nom = val("rd-ren") || x.nom)); toast("Nom enregistré."); rerender(); return true;
+      case "rd-3d": if (V3) { const v = b.dataset.v; if (v === "zoom+") V3.zoom(1.3); else if (v === "zoom-") V3.zoom(0.77); else if (v === "g") V3.tourner(-0.4); else if (v === "d") V3.tourner(0.4); else V3.haut(); } return true;
+      case "rd-pt-add": formPointeau(id, null); return true;
+      case "rd-pt-edit": { const r = rondeDe(id); const p = r && (r.pointeaux || []).find((q) => q.id === b.dataset.p); formPointeau(id, p || null); return true; }
+      case "rd-nfc": lireNfc(); return true;
+      case "rd-pt-ok": { const pid = b.dataset.p, nom = val("rd-pn"), cote = val("rd-pc"), dd = parseFloat(val("rd-pd").replace(",", ".")); if (!nom) { toast("Donnez un nom au pointeau."); return true; }
+        majRonde(id, (x) => { x.pointeaux = x.pointeaux || []; const tot = (x.trace.verts[x.trace.verts.length - 1] || {}).d || 0; let q = pid && x.pointeaux.find((z) => z.id === pid); if (!q) { q = { id: uid(), d: 0, t: Date.now(), simule: true }; x.pointeaux.push(q); } q.nom = nom; q.cote = cote; if (isFinite(dd)) q.d = Math.max(0, Math.min(tot - (x.trace.verts[0] ? x.trace.verts[0].d : 0), dd)); if (nfcTmp) { q.nfc = nfcTmp; q.simule = false; } });
+        closeDlg(); toast("Pointeau enregistré : le guidage est recalculé."); rerender(); return true; }
+      case "rd-pt-suppr": majRonde(id, (x) => (x.pointeaux = (x.pointeaux || []).filter((q) => q.id !== b.dataset.p))); closeDlg(); toast("Pointeau supprimé : le guidage est recalculé."); rerender(); return true;
+      case "rd-def-suppr": majRonde(id, (x) => { const q = (x.defauts || []).find((z) => z.id === b.dataset.p); if (q) (q.med || []).forEach((m) => IDB.del(m.id)); x.defauts = (x.defauts || []).filter((z) => z.id !== b.dataset.p); }); rerender(); return true;
+      case "rd-med": voirMedia(b.dataset.m, b.dataset.k); return true;
+      case "rd-go": lancerGo(id); return true;
+      case "rd-ok-pt": { const q = prochainPt(); if (!q) { toast("Aucun pointeau à valider."); return true; } if (q.nfc) { nfcValider(q); return true; } q.fait = true; q.tFait = Date.now(); q.mode = "simule"; logRun("Pointeau « " + q.nom + " » validé"); vib(80); dire("Pointeau validé"); majGo(); return true; }
+      case "rd-g-def": if (RUN) formDefaut("run"); return true;
+      case "rd-g-vir": if (RUN) { RUN.J.virageFait(); majGo(); } return true;
+      case "rd-g-esc": if (RUN) { RUN.J.etageFait(); majGo(); } return true;
+      case "rd-g-voix": if (RUN) dire(RUN.J.consigne().texte); return true;
+      case "rd-g-fin": dlg(`<h2>Terminer la ronde ?</h2><p>Le rapport est créé avec les pointeaux validés, ceux qui manquent et vos défauts.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-g-fin-ok">${icon("check")}Terminer et voir le rapport</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer</button></div>`); return true;
+      case "rd-g-fin-ok": { closeDlg(); const rid = finirGo(); if (rid) go("rd-rap-" + rid); return true; }
+      case "rd-def-ok": enregDefaut(b.dataset.c, false); return true;
+      case "rd-def-ph": enregDefaut(b.dataset.c, true); return true;
+      case "rd-copier": { const e = $("#rd-txt"); if (e) { copy(e.textContent); toast("Rapport copié."); } return true; }
+      case "rd-rap-suppr": { const d = load(); const x = d.runs.find((q) => q.id === id); d.runs = d.runs.filter((q) => q.id !== id); save(d); go(x ? "rd-v-" + x.ronde : "ronde"); return true; }
+    }
+    return false;
+  }
+  async function nfcValider(q) {
+    const pl = plugin(); let uid2 = null;
+    try {
+      if (pl && pl.nfcLire) { toast("Approchez l’étiquette."); const r = await pl.nfcLire(); uid2 = r && r.uid; }
+      else if ("NDEFReader" in window) { toast("Approchez l’étiquette."); uid2 = await new Promise((ok, ko) => { const n = new NDEFReader(); n.scan().then(() => { n.onreading = (e) => ok(e.serialNumber); setTimeout(() => ko(new Error("delai")), 15000); }).catch(ko); }); }
+    } catch (e) { uid2 = null; }
+    if (uid2 && uid2 === q.nfc) { q.fait = true; q.tFait = Date.now(); q.mode = "nfc"; logRun("Pointeau « " + q.nom + " » validé (NFC)"); vib(80); dire("Pointeau validé"); majGo(); }
+    else if (uid2) toast("Ce n’est pas la bonne étiquette."); else { q.fait = true; q.tFait = Date.now(); q.mode = "simule"; logRun("Pointeau « " + q.nom + " » validé (sans NFC)"); majGo(); toast("Étiquette non lue : validé à la position."); }
+  }
+  /* Bouton Retour du téléphone : ferme la fenêtre, ou demande avant de quitter une ronde en cours. true = géré ici. */
+  function retour() {
+    if (document.getElementById("rd-dlg")) { closeDlg(); return true; }
+    const t = (location.hash || "").slice(1);
+    if (REC && t === "rd-rec-" + REC.id) { dlg(`<h2>Quitter la ronde ?</h2><p>Le trait déjà enregistré est conservé : vous pourrez le terminer plus tard.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-stop-ok">${icon("check")}Terminer maintenant</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer la ronde</button></div>`); return true; }
+    if (RUN && t === "rd-go-" + RUN.id) { dlg(`<h2>Quitter la ronde guidée ?</h2><p>Le rapport sera créé avec ce qui est fait.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-g-fin-ok">${icon("check")}Terminer et voir le rapport</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer</button></div>`); return true; }
+    return false;
+  }
+  return { page, click, retour, texteRapport, _C: C };
+}
+/* ronde-ui:fin */
 function PLANNING(h) {
   const { $, $$, esc, tx, icon, store, toast, PWA, NB, VX, IA, A, copy } = h;
   const p2 = (n) => String(n).padStart(2, "0");
@@ -23617,6 +24410,7 @@ const APP = (() => {
   const TOOLS = [
     { id: "rapports", t: "Rapports d’incident", d: "Racontez à la voix ou remplissez étape par étape : chronologie à l’heure près, questions sur ce qui manque, contrôle de qualité, ligne de main courante.", ic: "registre", co: "red", mc: "rapport incident compte rendu main courante redaction chronologie intervention dicter vocal voix dictee" },
     { id: "planning", t: "Mon planning et mes heures", d: "Vos heures de la semaine : photo du planning, heures supplémentaires à la voix ou au clavier, avec le lieu, le motif et l’affaire. Totaux et relevé du mois.", ic: "calendrier", co: "blue", mc: "planning heures horaires semaine heures supplementaires sup affaire tribunal lieu motif releve mois pointage" },
+    { id: "ronde", t: "Ronde guidée", d: "Faites la ronde une fois : l’appli pose le trait (virages, escaliers) et vous guide ensuite, même sans connexion. Pointeaux, défauts par lieu, plan en 3D, rapport.", ic: "ronde", co: "red", mc: "ronde rondes pointeau pointeaux nfc 3d etage escalier guidage parcours trait defaut tour de site" },
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
     { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
@@ -23630,11 +24424,11 @@ const APP = (() => {
   ];
   TOOLS.forEach((t) => (TL[t.id] = t));
 
-  const PAGE_T = { accueil: "Accueil", textes: "Textes de référence", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire" };
+  const PAGE_T = { accueil: "Accueil", textes: "Textes de référence", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire", ronde: "Ronde" };
   const tok = (id) => {
     if (id === "numeros") return "urgence";
     if (id === "quiz") return "o-quiz";
-    if (PAGE_T[id] || /^(?:[por]|pl)-/.test(id)) return id;
+    if (PAGE_T[id] || /^(?:[por]|pl|rd)-/.test(id)) return id;
     return "f-" + id;
   };
   const titleOf = (id) => FI[id]?.titre || PR[id]?.titre || TL[id]?.t || (id.startsWith("r-") && RU[id.slice(2)]?.titre) || (id.startsWith("appr-") && "Apprentissage") || PAGE_T[id] || id;
@@ -23914,7 +24708,7 @@ const APP = (() => {
 
   /* ---------- État ---------- */
   const state = { q: "", niv: store.get("niv", ""), qniv: store.get("qniv", ""), confirmDel: -1, confirmReset: false, qreset: false };
-  let RP = null, VX = null, IAX = null, PL = null;
+  let RP = null, VX = null, IAX = null, PL = null, RD = null;
   const PROC_RP = { "p-feu": "feu", "p-levee-doute": "alarme", "p-evacuer": "evacuation", "p-arret-cardiaque": "secours", "p-malaise": "secours", "p-etouffement": "secours", "p-hemorragie": "secours", "p-gaz": "gaz", "p-ascenseur": "ascenseur", "p-colis": "colis", "p-attaque": "autre", "p-coupure": "coupure", "p-conflit": "agression", "p-eau": "eau" };
   let myNums = store.get("mesnum", []);
   let pendingMark = null, navForward = false, curTok = null, cur = null, deferredPrompt = null;
@@ -25923,6 +26717,7 @@ function jChar(o = {}) {
     if (t === "rapport") return RP.pageEdit();
     if (t === "dictee") return RP.pageDictee();
     if (t === "planning" || t.startsWith("pl-")) return PL.page(t);
+    if (t === "ronde" || t.startsWith("rd-")) return RD.page(t);
     if (t === "jeu") return pageJeu();
     if (t === "jeu-import") return pageJeuImport();
     if (t === "textes") return pageTextes();
@@ -25983,6 +26778,7 @@ function jChar(o = {}) {
     if (guide) { guideClose(); return true; }
     if (!$("#zoom").hidden) { closeZoom(); return true; }
     const pv = $("#pl-view"); if (pv && !pv.hidden) { pv.hidden = true; const c = $("#pl-view-c"); if (c) c.innerHTML = ""; return true; }
+    if (RD && RD.retour()) return true;
     if (VX.popOpen()) { VX.ratePop(false); return true; }
     if (stack.length > 1) { stack.pop(); navTo(stack[stack.length - 1], true); return true; }
     if (curTok !== "accueil") {
@@ -26133,6 +26929,7 @@ function jChar(o = {}) {
     const act = b.dataset.act;
     if ((act.startsWith("rp-") || act.startsWith("dc-")) && RP.click(b, act, rerender, render, go)) return;
     if (act.startsWith("pl-") && PL.click(b, act, rerender, render, go)) return;
+    if (act.startsWith("rd-") && RD.click(b, act, rerender, render, go)) return;
     if (act.startsWith("jx-") && jxClick(b, act)) return;
     switch (act) {
       case "tts-page": if (VX.active) VX.stop(); else VX.readEl(main(), cur && cur.title ? cur.title : "Accueil"); break;
@@ -26777,6 +27574,7 @@ function jChar(o = {}) {
     IAX = IA({ store });
     RP = RAPPORTS({ $, $$, esc, tx, icon, store, toast, PWA, NB, VX, IA: IAX, A: ANALYSE });
     PL = PLANNING({ $, $$, esc, tx, icon, store, toast, PWA, NB, VX, IA: IAX, A: ANALYSE, copy: copyText, rerender: () => rerender() });
+    RD = RONDE({ $, $$, esc, tx, icon, store, toast, VX, copy: copyText, rerender: () => rerender() });
     const pz = document.createElement("div");
     pz.id = "print";
     document.body.appendChild(pz);
