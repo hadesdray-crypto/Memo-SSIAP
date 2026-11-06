@@ -1,3 +1,4 @@
+- « Mon poste » : section Rondes avec « Nouvelle ronde », « Mes rondes », les dernières rondes à lancer en un toucher et le mode d'emploi
 - Ronde : un escalier en colimaçon est maintenant reconnu (étage compté, hauteur dessinée en 3D) ; avec le baromètre c'est automatique, sinon l'appli demande en un geste, à la fin, « Je montais / Je descendais / Pas un escalier »
 - Ronde guidée : flèche boussole qui tourne pour vous remettre dans le sens de la ronde ; choix de l'affichage (Boussole, Plan 3D ou Les deux) ; « Vue dans mon sens » ; le plan 3D se tourne dans tous les sens
 - Glissement de l'accueil vers Mon poste / ADS : la page suit le doigt avec une transition fluide ; écran ADS refait (bandeau et grandes tuiles)

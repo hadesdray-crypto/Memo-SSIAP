@@ -1491,7 +1491,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "2.4.1",
+    version: "2.4.2",
     verifie: "5 novembre 2026",
     verifieCourt: "05/11/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -24068,6 +24068,10 @@ function POSTE(h) {
 
   /* ---------- Panneau « Mon poste » ---------- */
   const lien = (href, ic, co, t, s) => `<a class="card" href="#${href}"><span class="ico ${co || ""}">${icon(ic)}</span><span class="t"><b>${tx(t)}</b>${s ? `<span>${tx(s)}</span>` : ""}</span>${icon("chevron")}</a>`;
+  function rondesPoste() {
+    const d = store.get("rd:data", { rondes: [] }), rs = (d.rondes || []).filter((r) => !r.enCours).sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, 4), enc = (d.rondes || []).filter((r) => r.enCours).length;
+    return `<section class="sec"><h2 class="lbl b">Rondes</h2>${lien("rd-new", "plus", "red", "Nouvelle ronde", "Marchez une fois : le trait, les virages et les étages se posent tout seuls")}${lien("ronde", "ronde", "red", "Mes rondes", (d.rondes || []).length ? (d.rondes || []).length + " ronde(s)" + (enc ? " · " + enc + " interrompue(s)" : "") + " : guidage, plan 3D, pointeaux, rapports" : "Guidage, plan 3D, pointeaux, défauts, rapports")}${rs.map((r) => lien("rd-go-" + r.id, "lecture", "blue", "Faire : " + (r.nom || "Ronde"), (r.site || "") + (r.bat ? " · " + r.bat : ""))).join("")}${lien("rd-aide", "oeil", "blue", "Comment faire une ronde", "Mode d’emploi court")}</section>`;
+  }
   function pagePoste() {
     const p = prof(), nv = Math.max(0, niveau());
     const cartes = Object.keys(TYPES).filter((k) => TYPES[k].nv <= nv).map((k) => lien("po-l-" + k, TYPES[k].ic, "blue", TYPES[k].t, TYPES[k].d)).join("");
@@ -24075,7 +24079,7 @@ function POSTE(h) {
     const synth = nv >= 3 ? (() => { const d = store.get("rd:data", { rondes: [], runs: [] }); const retours = RET(); const def = (d.runs || []).reduce((a, r) => a + (r.defauts || []).length, 0); return `<section class="sec about"><h2 class="lbl a">Synthèse du site</h2><ul><li>${(d.rondes || []).length} ronde(s) enregistrée(s), ${(d.runs || []).length} passage(s)</li><li>${def} défaut(s) signalé(s) en ronde</li><li>${retours.length} message(s) reçu(s), ${nR} non lu(s)</li></ul></section>`; })() : "";
     const html = `<nav class="crumb"><a href="#accueil">Accueil</a></nav><div class="page-h"><h1>Mon poste</h1><p>${p.statut ? "<strong>" + STAT[p.statut] + "</strong>" + (p.pseudo ? " · " + esc(p.pseudo) : "") : "Choisissez votre poste pour voir vos outils."}</p></div>
       <div class="chips"><button type="button" class="btn ghost" data-act="po-prof">${icon("personnes")}${p.statut ? "Changer mon poste" : "Choisir mon poste"}</button><a class="btn ghost" href="#ads">${icon("cloche")}ADS : messages${nR ? " (" + nR + ")" : ""}</a></div>
-      <section class="sec"><h2 class="lbl b">Mes outils</h2>${lien("ronde", "ronde", "red", "Ronde guidée", "Trait fixe, pointeaux, défauts, plan en 3D")}${lien("rapports", "registre", "red", "Rapports d’incident", "À la voix ou pas à pas")}${lien("planning", "calendrier", "blue", "Mon planning et mes heures", "Semaine et heures supplémentaires")}${lien("ad-recus", "liste", "blue", "Retours d’agents", "Messages reçus, classés par dossier")}</section>
+      ${rondesPoste()}<section class="sec"><h2 class="lbl b">Mes outils</h2>${lien("rapports", "registre", "red", "Rapports d’incident", "À la voix ou pas à pas")}${lien("planning", "calendrier", "blue", "Mon planning et mes heures", "Semaine et heures supplémentaires")}${lien("ad-recus", "liste", "blue", "Retours d’agents", "Messages reçus, classés par dossier")}</section>
       ${cartes ? `<section class="sec"><h2 class="lbl g">Gestion d’équipe</h2>${cartes}</section>` : ""}${synth}
       <p class="small muted">Astuce : depuis l’accueil, glissez le doigt vers la droite pour revenir ici, vers la gauche pour ouvrir ADS.</p>`;
     return { html, title: "Mon poste", tab: "outils", back: "accueil" };
