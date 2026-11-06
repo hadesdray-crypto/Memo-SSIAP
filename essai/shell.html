@@ -36,8 +36,9 @@ button[disabled]{opacity:.6}
   }
   function ecran(t) {
     if (t === "code") {
-      $v.innerHTML = '<p>Saisissez le code d’essai que vous avez reçu.</p><input id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"><div class="m" id="m"></div><button id="b" type="button">Activer l’essai</button><p class="p">L’essai dure 24 heures à partir de l’activation, sur ce téléphone uniquement. Le code ne marche qu’une fois.</p>';
+      $v.innerHTML = '<p>Saisissez le code d’essai que vous avez reçu.</p><input id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXX-XXX-XXX" maxlength="11"><div class="m" id="m"></div><button id="b" type="button">Activer l’essai</button><p class="p">L’essai dure 24 heures à partir de l’activation, sur ce téléphone uniquement. Le code ne marche qu’une fois.</p>';
       document.getElementById("b").onclick = activer;
+      document.getElementById("c").oninput = function () { var t = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 9); this.value = t.match(/.{1,3}/g) ? t.match(/.{1,3}/g).join("-") : ""; };
       document.getElementById("c").onkeydown = function (e) { if (e.key === "Enter") activer(); };
     } else if (t === "fini") {
       $v.innerHTML = '<p><strong>Votre essai est terminé.</strong></p><p>Merci de l’avoir testé. Pour continuer à utiliser Mémo SSIAP, contactez la personne qui vous l’a envoyé.</p>';
@@ -57,7 +58,7 @@ button[disabled]{opacity:.6}
     if (!c) throw new Error("code");
     var S = crypto.subtle;
     var base = await S.importKey("raw", new TextEncoder().encode(secret), "PBKDF2", false, ["deriveKey"]);
-    var wk = await S.deriveKey({ name: "PBKDF2", salt: b64(c.s), iterations: 150000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    var wk = await S.deriveKey({ name: "PBKDF2", salt: b64(c.s), iterations: 600000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
     var meta;
     try { meta = JSON.parse(new TextDecoder().decode(await S.decrypt({ name: "AES-GCM", iv: b64(c.i) }, wk, b64(c.w)))); } catch (e) { throw new Error("code"); }
     return meta;
@@ -133,17 +134,17 @@ button[disabled]{opacity:.6}
   }
   async function activer() {
     var saisie = String(document.getElementById("c").value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (saisie.length !== 20) { msg("Le code doit comporter 20 caractères."); return; }
+    if (saisie.length !== 9) { msg("Le code comporte 9 lettres et chiffres."); return; }
     var b = document.getElementById("b"); b.disabled = true; msg("Vérification…");
     var vieux = lire(); if (vieux && vieux.etat) { msg("Un essai a déjà été utilisé sur ce téléphone."); b.disabled = false; return; }
-    var id = saisie.slice(0, 4), secret = saisie.slice(4), meta;
+    var id = saisie.slice(0, 1), secret = saisie.slice(1), meta;
     try { meta = await deverrouiller(id, secret); } catch (e) { msg("Code incorrect."); b.disabled = false; return; }
     var v = await verifier(id), n = Date.now();
     if (!v.enligne) { msg("Une connexion Internet est nécessaire pour activer l’essai."); b.disabled = false; return; }
     if (v.revoque) { msg("Ce code n’est plus valable."); b.disabled = false; return; }
     if (v.ecart > 600000) { msg("L’heure du téléphone est fausse. Mettez l’heure automatique puis réessayez."); b.disabled = false; return; }
     if (n > meta.avant) { msg("Ce code a expiré. Demandez-en un nouveau."); b.disabled = false; return; }
-    ecrire({ id: id, s: secret, etat: "actif", debut: n, fin: n + meta.h * 3600000, dernier: n });
+    ecrire({ id: id, k: meta.k, etat: "actif", debut: n, fin: n + meta.h * 3600000, dernier: n });
     demarrer();
   }
   async function demarrer() {
@@ -156,7 +157,7 @@ button[disabled]{opacity:.6}
     if (n >= s.fin) { purger("fini"); return ecran("fini"); }
     ecran("ouv");
     try {
-      var meta = await deverrouiller(s.id, s.s), html = await contenu(meta);
+      var html = await contenu({ k: s.k });
       s.dernier = Math.max(s.dernier, n); ecrire(s);
       afficher(html, s.id);
       verifier(s.id).then(function (v) { if (v.revoque) { purger("revoque"); location.reload(); } });

@@ -3,7 +3,7 @@
 // Les codes sont affichés une seule fois à l'écran ; seuls leurs « cadenas » (codes.json) sont gardés.
 import { readFileSync, writeFileSync } from "node:fs";
 import { webcrypto as c } from "node:crypto";
-const N = Number(process.argv[2] || 10), JOURS = Number(process.argv[3] || 14), HEURES = Number(process.argv[4] || 24);
+const N = Math.min(32, Number(process.argv[2] || 10)), JOURS = Number(process.argv[3] || 14), HEURES = Number(process.argv[4] || 24);
 const ALPHA = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 const alea = (n) => Array.from(c.getRandomValues(new Uint8Array(n)), (x) => ALPHA[x % 32]).join("");
 const b64 = (u) => Buffer.from(u).toString("base64");
@@ -23,14 +23,14 @@ writeFileSync(new URL("./contenu.enc", import.meta.url), out);
 // 3. Un cadenas par code : seule la personne qui a le code peut récupérer la clé.
 const avant = Date.now() + JOURS * 86400000, cadenas = [], codes = [], ids = new Set();
 for (let i = 0; i < N; i++) {
-  let id; do { id = alea(4); } while (ids.has(id)); ids.add(id);
-  const secret = alea(16), salt = c.getRandomValues(new Uint8Array(16)), iv2 = c.getRandomValues(new Uint8Array(12));
+  let id; do { id = alea(1); } while (ids.has(id)); ids.add(id);
+  const secret = alea(8), salt = c.getRandomValues(new Uint8Array(16)), iv2 = c.getRandomValues(new Uint8Array(12));
   const base = await c.subtle.importKey("raw", new TextEncoder().encode(secret), "PBKDF2", false, ["deriveKey"]);
-  const wk = await c.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 150000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+  const wk = await c.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 600000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
   const data = new TextEncoder().encode(JSON.stringify({ k: b64(K), h: HEURES, avant, id }));
   const w = new Uint8Array(await c.subtle.encrypt({ name: "AES-GCM", iv: iv2 }, wk, data));
   cadenas.push({ id, s: b64(salt), i: b64(iv2), w: b64(w) });
-  const t = id + secret; codes.push(t.match(/.{4}/g).join("-"));
+  const t = id + secret; codes.push(t.match(/.{3}/g).join("-"));
 }
 writeFileSync(new URL("./codes.json", import.meta.url), JSON.stringify(cadenas));
 console.log("Valables pour activation jusqu'au " + new Date(avant).toISOString() + ", essai de " + HEURES + " h après activation.\n" + codes.join("\n"));
