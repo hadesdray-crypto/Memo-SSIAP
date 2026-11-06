@@ -30,6 +30,8 @@ button[disabled]{opacity:.6}
   function purger(etat) {
     var s = lire() || {};
     try { localStorage.clear(); sessionStorage.clear(); } catch (e) {}
+    try { if (indexedDB.databases) indexedDB.databases().then(function (l) { l.forEach(function (d) { if (d.name) indexedDB.deleteDatabase(d.name); }); }); } catch (e) {}
+    try { if (window.caches) caches.keys().then(function (k) { k.forEach(function (n) { caches.delete(n); }); }); } catch (e) {}
     ecrire({ id: s.id, etat: etat || "fini", dernier: Date.now() });
   }
   function ecran(t) {
@@ -71,7 +73,7 @@ button[disabled]{opacity:.6}
       var lire = function () { try { return JSON.parse(localStorage.getItem(CLE)); } catch (e) { return null; } };
       var st = document.createElement("style");
       st.textContent = "*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}input,textarea{-webkit-user-select:text!important;user-select:text!important}" +
-        "#essai-fil{position:fixed;inset:0;z-index:2147483000;pointer-events:none;background:url(\"data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='260' height='180'><text x='20' y='110' transform='rotate(-28 130 90)' font-family='sans-serif' font-size='16' fill='rgba(120,120,120,.10)'>ESSAI " + id + "</text></svg>") + "\")}" +
+        "#essai-fil{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483000;pointer-events:none;background:url(\"data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='260' height='180'><text x='20' y='110' transform='rotate(-28 130 90)' font-family='sans-serif' font-size='16' fill='rgba(120,120,120,.10)'>ESSAI " + id + "</text></svg>") + "\")}" +
         "#essai-b{position:fixed;left:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:2147483001;pointer-events:none;background:rgba(0,0,0,.62);color:#fff;font:600 12px system-ui,sans-serif;padding:4px 9px;border-radius:12px}";
       var ajouter = function () {
         document.head.appendChild(st);
@@ -79,7 +81,7 @@ button[disabled]{opacity:.6}
         var b = document.createElement("div"); b.id = "essai-b"; document.body.appendChild(b);
         var tic = function () {
           var s = lire(), n = Date.now();
-          if (!s || s.etat !== "actif" || n >= s.fin || n < s.dernier - 300000) { location.reload(); return; }
+          if (!s || s.etat !== "actif" || n >= s.fin || n < s.dernier - 900000) { location.reload(); return; }
           s.dernier = Math.max(s.dernier, n); try { localStorage.setItem(CLE, JSON.stringify(s)); } catch (e) {}
           var r = Math.max(0, Math.floor((s.fin - n) / 60000));
           b.textContent = "Essai : il reste " + Math.floor(r / 60) + " h " + ("0" + (r % 60)).slice(-2) + " min";
@@ -93,6 +95,9 @@ button[disabled]{opacity:.6}
       try { Object.defineProperty(navigator, "canShare", { value: undefined, configurable: true }); } catch (e) {}
       try { navigator.clipboard.writeText = function () { return Promise.reject(new Error("bloqué")); }; } catch (e) {}
       try { window.print = function () {}; } catch (e) {}
+      try { var ex = document.execCommand.bind(document); document.execCommand = function (c) { return /^(copy|cut)$/i.test(String(c)) ? false : ex.apply(null, arguments); }; } catch (e) {}
+      document.addEventListener("click", function (e) { var a = e.target && e.target.closest && e.target.closest("a[download]"); if (a) { e.preventDefault(); e.stopPropagation(); } }, true);
+      try { var cl = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function () { if (this.hasAttribute("download")) return; return cl.apply(this, arguments); }; } catch (e) {}
     };
     return "<script>(" + f.toString() + ")(" + JSON.stringify(id) + "," + JSON.stringify(CLE) + ");<\/script>";
   }
@@ -101,14 +106,30 @@ button[disabled]{opacity:.6}
     html = i >= 0 ? html.slice(0, i + 6) + g + html.slice(i + 6) : g + html;
     document.open(); document.write(html); document.close();
   }
-  async function verifier(id) { /* en ligne seulement : essai arrêté à distance, heure du téléphone */
+  async function heureServeur() { /* heure réelle par Internet : plusieurs services en cascade (le premier qui répond) */
+    var sources = [
+      ["https://worldtimeapi.org/api/timezone/Etc/UTC", function (j) { return j.unixtime * 1000; }],
+      ["https://timeapi.io/api/Time/current/zone?timeZone=UTC", function (j) { return new Date(j.dateTime + "Z").getTime(); }],
+      ["https://www.timeapi.io/api/time/current/zone?timeZone=UTC", function (j) { return new Date(j.dateTime + "Z").getTime(); }]
+    ];
+    for (var i = 0; i < sources.length; i++) {
+      try {
+        var ac = new AbortController(), t = setTimeout(function () { ac.abort(); }, 4000);
+        var r = await fetch(sources[i][0], { cache: "no-store", signal: ac.signal }); clearTimeout(t);
+        var v = sources[i][1](await r.json()); if (v > 1.7e12) return v;
+      } catch (e) {}
+    }
+    return 0;
+  }
+  async function verifier(id) { /* en ligne : essai arrêté à distance ; heure du téléphone comparée à l'heure réelle */
+    var res = { revoque: false, ecart: 0, enligne: false };
     try {
-      var ac = new AbortController(), t = setTimeout(function () { ac.abort(); }, 4000);
+      var ac = new AbortController(), t = setTimeout(function () { ac.abort(); }, 5000);
       var r = await fetch(REV + "?t=" + Date.now(), { cache: "no-store", signal: ac.signal }); clearTimeout(t);
-      var d = r.headers.get("Date"), ecart = d ? Math.abs(new Date(d).getTime() - Date.now()) : 0;
-      var j = r.ok ? await r.json() : { ids: [] };
-      return { revoque: (j.ids || []).indexOf(id) >= 0, ecart: ecart };
-    } catch (e) { return { revoque: false, ecart: 0 }; }
+      if (r.ok) { var j = await r.json(); res.enligne = true; res.revoque = (j.ids || []).indexOf(id) >= 0; }
+    } catch (e) {}
+    var h = await heureServeur(); if (h) res.ecart = Math.abs(h - Date.now());
+    return res;
   }
   async function activer() {
     var saisie = String(document.getElementById("c").value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -117,7 +138,8 @@ button[disabled]{opacity:.6}
     var vieux = lire(); if (vieux && vieux.etat) { msg("Un essai a déjà été utilisé sur ce téléphone."); b.disabled = false; return; }
     var id = saisie.slice(0, 4), secret = saisie.slice(4), meta;
     try { meta = await deverrouiller(id, secret); } catch (e) { msg("Code incorrect."); b.disabled = false; return; }
-    var n = Date.now(), v = await verifier(id);
+    var v = await verifier(id), n = Date.now();
+    if (!v.enligne) { msg("Une connexion Internet est nécessaire pour activer l’essai."); b.disabled = false; return; }
     if (v.revoque) { msg("Ce code n’est plus valable."); b.disabled = false; return; }
     if (v.ecart > 600000) { msg("L’heure du téléphone est fausse. Mettez l’heure automatique puis réessayez."); b.disabled = false; return; }
     if (n > meta.avant) { msg("Ce code a expiré. Demandez-en un nouveau."); b.disabled = false; return; }
@@ -130,7 +152,7 @@ button[disabled]{opacity:.6}
     if (s.etat === "revoque") return ecran("revoque");
     if (s.etat === "fini") return ecran("fini");
     var n = Date.now();
-    if (n < s.dernier - 300000) return ecran("horloge");
+    if (n < s.dernier - 900000) return ecran("horloge");
     if (n >= s.fin) { purger("fini"); return ecran("fini"); }
     ecran("ouv");
     try {

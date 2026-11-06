@@ -32,7 +32,7 @@ jobs:
           cp ../essai/codes.json ../essai/contenu.enc ../manifest.webmanifest ../icon-192.png ../icon-512.png ../maskable-512.png ../apple-touch-icon.png ../favicon-32.png dist/
           cp ../icon-512.png ../maskable-512.png ../android-ressources/remplacer.py .
           test ! -e dist/sw.js
-          ! grep -q "Mémo SSIAP est un" dist/index.html
+          if grep -q "Mémo SSIAP est un" dist/index.html; then echo "contenu en clair dans la page"; exit 1; fi
           cat > capacitor.config.json <<'JSON'
           {
             "appId": "fr.memossiap.essai",
