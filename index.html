@@ -23644,7 +23644,7 @@ function RONDE(h) {
     const html = `<div class="page-h"><h1>${esc(r.nom)}</h1><p id="rd-etat" role="status">Capteurs en démarrage…</p></div>
       <div class="rd-live"><div><b id="rd-pas">0</b><span>pas</span></div><div><b id="rd-dist">0</b><span>mètres</span></div><div><b id="rd-niv">0</b><span>niveau</span></div><div><b id="rd-cap">–</b><span>cap</span></div></div>
       <div class="rd-grid">
-        <button type="button" class="btn vert" data-act="rd-pt">${icon("check")}Pointeau ici</button>
+        <button type="button" class="btn" data-act="rd-pt">${icon("check")}Pointeau ici</button>
         <button type="button" class="btn red" data-act="rd-def">${icon("alerte")}Défaut ici</button>
         <button type="button" class="btn ghost" data-act="rd-vg">${icon("precedent")}Virage gauche</button>
         <button type="button" class="btn ghost" data-act="rd-vd">Virage droite${icon("suivant")}</button>
@@ -23746,7 +23746,7 @@ function RONDE(h) {
       <div class="rd-cons"><div id="rd-cons" aria-live="polite">…</div><div class="rd-bar"><i id="rd-prog"></i></div><small id="rd-pnext"></small></div>
       <canvas id="rd-3d" class="rd-3d rd-3d-s" aria-label="Plan de la ronde avec votre position"></canvas>
       <div class="rd-grid">
-        <button type="button" class="btn vert" data-act="rd-ok-pt">${icon("check")}Pointeau validé</button>
+        <button type="button" class="btn" data-act="rd-ok-pt">${icon("check")}Pointeau validé</button>
         <button type="button" class="btn red" data-act="rd-g-def">${icon("alerte")}Signaler un défaut</button>
         <button type="button" class="btn ghost" data-act="rd-g-vir">${icon("suivant")}J’ai tourné</button>
         <button type="button" class="btn ghost" data-act="rd-g-esc">${icon("ascenseur")}Escalier fait</button>
@@ -23894,9 +23894,201 @@ function RONDE(h) {
     if (RUN && t === "rd-go-" + RUN.id) { dlg(`<h2>Quitter la ronde guidée ?</h2><p>Le rapport sera créé avec ce qui est fait.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-g-fin-ok">${icon("check")}Terminer et voir le rapport</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer</button></div>`); return true; }
     return false;
   }
-  return { page, click, retour, texteRapport, _C: C };
+  return { page, click, retour, texteRapport, media: prendreMedia, blob: (id) => IDB.get(id), supprMedia: (id) => IDB.del(id), _C: C };
 }
 /* ronde-ui:fin */
+/* poste-ui:debut — profil et poste (agent, chef d'équipe, SSIAP 3, responsable de site), écrans par poste, ADS (messages entre collègues). Tout reste sur le téléphone. */
+function POSTE(h) {
+  const { $, $$, esc, tx, icon, store, toast, copy, RD } = h;
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const p2 = (n) => String(n).padStart(2, "0");
+  const hms = (t) => { const d = new Date(t); return p2(d.getDate()) + "/" + p2(d.getMonth() + 1) + " " + p2(d.getHours()) + ":" + p2(d.getMinutes()); };
+  const STAT = { ssiap1: "Agent SSIAP 1", ssiap2: "Chef d’équipe SSIAP 2", ssiap3: "Responsable SSIAP 3", resp: "Responsable de site" };
+  const ORDRE = ["ssiap1", "ssiap2", "ssiap3", "resp"];
+  const prof = () => Object.assign({ statut: "", pseudo: "", site: "" }, store.get("poste:profil", {}));
+  const niveau = () => ORDRE.indexOf(prof().statut);
+  const L = () => store.get("poste:listes", {});
+  const saveL = (x) => store.set("poste:listes", x);
+  const RET = () => store.get("poste:retours", []);
+  const saveRet = (x) => store.set("poste:retours", x.slice(-400));
+
+  /* ---------- fenêtre (défile, boutons visibles) ---------- */
+  function dlg(html) { closeDlg(); const d = document.createElement("div"); d.id = "po-dlg"; d.className = "rd-dlg"; d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true"); d.innerHTML = `<div class="rd-box">${html}</div>`; document.body.appendChild(d); const f = d.querySelector("input,select,button"); if (f) f.focus({ preventScroll: true }); }
+  function closeDlg() { const d = document.getElementById("po-dlg"); if (d) d.remove(); }
+
+  /* ---------- Profil ---------- */
+  const formProfil = (premier) => `<h2>Mon poste</h2><p>Choisissez votre poste : l’appli vous montre ce dont vous avez besoin. Vous pouvez le changer à tout moment dans les réglages.</p>
+    <label class="field"><span>Poste</span><select id="po-st">${Object.keys(STAT).map((k) => `<option value="${k}"${prof().statut === k ? " selected" : ""}>${STAT[k]}</option>`).join("")}</select></label>
+    <label class="field"><span>Nom ou pseudo (facultatif)</span><input id="po-ps" autocomplete="off" maxlength="30" value="${esc(prof().pseudo)}" placeholder="Ce que vous voulez"><small>Pas besoin de votre vrai nom. Il reste sur ce téléphone et sert d’en-tête à vos messages.</small></label>
+    <label class="field"><span>Site (facultatif)</span><input id="po-si" autocomplete="off" maxlength="40" value="${esc(prof().site)}" placeholder="Nom du site"></label>
+    <div class="rd-btns"><button type="button" class="btn" data-act="po-prof-ok">${icon("check")}Enregistrer</button>${premier ? `<button type="button" class="btn ghost" data-act="po-prof-plus">${icon("horloge")}Plus tard</button>` : `<button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Annuler</button>`}</div>`;
+  let essais = 0;
+  function premier() {
+    if (prof().statut || store.get("poste:plustard", false)) return;
+    if (document.querySelector(".overlay:not([hidden]), .rd-dlg")) { if (essais++ < 12) setTimeout(premier, 2000); return; }
+    dlg(formProfil(true));
+  }
+  function reglages() {
+    const p = prof();
+    return `<section class="sec about" id="poste-reg"><h2 class="lbl b">Mon poste</h2>
+      <p>${p.statut ? "Poste actuel : <strong>" + STAT[p.statut] + "</strong>" + (p.pseudo ? " · " + esc(p.pseudo) : "") : "Aucun poste choisi."}</p>
+      <div class="chips"><button type="button" class="btn ghost" data-act="po-prof">${icon("personnes")}Changer mon poste</button><a class="btn ghost" href="#poste">${icon("suivant")}Ouvrir mon poste</a></div></section>`;
+  }
+
+  /* ---------- Listes simples ---------- */
+  const TYPES = {
+    equipe: { t: "Équipe du jour", d: "Qui est présent, sur quel poste, quels horaires.", ic: "personnes", nv: 1, champ: ["Poste ou pseudo", "Horaires, poste tenu"], date: false },
+    consignes: { t: "Consignes et passation", d: "Consignes en cours à transmettre à l’équipe suivante.", ic: "registre", nv: 1, champ: ["Consigne", "Détail"], date: true },
+    prise: { t: "Prise de service", d: "Liste de contrôle à cocher au début du service.", ic: "check", nv: 0, check: true, champ: ["Point à contrôler", "Note"], base: ["Lire la main courante et les consignes du service précédent.", "Vérifier les moyens de communication (radio, téléphone).", "Contrôler le tableau de signalisation de sécurité incendie : aucun défaut, aucune zone hors service non signalée.", "Contrôler les clés, badges et matériels remis.", "Noter dans la main courante l’heure de prise de service et les anomalies."] },
+    fin: { t: "Fin de service", d: "Liste de contrôle à cocher avant de partir.", ic: "check", nv: 0, check: true, champ: ["Point à contrôler", "Note"], base: ["Noter les événements du service dans la main courante.", "Transmettre les consignes en cours à l’équipe suivante.", "Signaler les systèmes ou équipements hors service.", "Remettre clés, badges et matériels.", "Rédiger les rapports d’incident non terminés."] },
+    registre: { t: "Registre de sécurité", d: "Essais, exercices, vérifications, visites : date et résultat.", ic: "registre", nv: 1, champ: ["Opération", "Résultat, observations"], date: true },
+    diplomes: { t: "Diplômes et recyclages de l’équipe", d: "Dates de validité à surveiller (sans données personnelles inutiles).", ic: "badge", nv: 1, champ: ["Qui (pseudo) et diplôme", "Échéance, remarque"], date: true },
+    verifs: { t: "Vérifications périodiques", d: "Suivi des vérifications et contrôles à date.", ic: "calendrier", nv: 2, champ: ["Vérification", "Prestataire, remarque"], date: true },
+    exercices: { t: "Exercices d’évacuation", d: "Dates, résultats et actions à suivre.", ic: "sortie", nv: 2, champ: ["Exercice", "Observations"], date: true },
+    sites: { t: "Sites et points d’attention", d: "Vos sites et ce qu’il faut y surveiller.", ic: "immeuble", nv: 2, champ: ["Site", "Point d’attention"], date: false },
+  };
+  const liste = (k) => { const all = L(); if (all[k]) return all[k]; const base = TYPES[k].base ? TYPES[k].base.map((t) => ({ id: uid(), titre: t, note: "", etat: false, date: "" })) : []; if (base.length) { all[k] = base; saveL(all); } return base; };
+  const majListe = (k, fn) => { const all = L(); all[k] = liste(k); fn(all[k]); saveL(all); };
+  function pageListe(k) {
+    const T = TYPES[k]; if (!T) return null; const it = liste(k);
+    const lignes = it.map((x) => `<li class="rd-li"><div><b>${T.check ? `<label class="tick"><input type="checkbox" data-act="po-coche" data-k="${k}" data-id="${x.id}"${x.etat ? " checked" : ""}><span>${esc(x.titre)}</span></label>` : esc(x.titre)}</b>${x.date ? `<span>${esc(x.date)}</span>` : ""}${x.note ? `<span>${esc(x.note)}</span>` : ""}</div>
+      <div class="chips">${T.check ? "" : `<button type="button" class="btn ghost" data-act="po-it" data-k="${k}" data-id="${x.id}">${icon("texte")}Modifier</button>`}<button type="button" class="btn ghost" data-act="po-it-suppr" data-k="${k}" data-id="${x.id}" aria-label="Supprimer">${icon("poubelle")}</button></div></li>`).join("");
+    const html = `<nav class="crumb"><a href="#poste">Mon poste</a></nav><div class="page-h"><h1>${esc(T.t)}</h1><p>${esc(T.d)}</p></div>
+      <ul class="rd-ul">${lignes || `<li class="muted">Rien pour l’instant.</li>`}</ul>
+      <div class="chips"><button type="button" class="btn" data-act="po-it" data-k="${k}" data-id="">${icon("plus")}Ajouter</button><button type="button" class="btn ghost" data-act="po-copie" data-k="${k}">${icon("copier")}Copier la liste</button>${T.check ? `<button type="button" class="btn ghost" data-act="po-zero" data-k="${k}">${icon("recommencer")}Tout décocher</button>` : ""}</div>
+      <p class="small muted">Ces listes restent sur ce téléphone. Elles complètent les consignes de votre site, elles ne les remplacent pas.</p>`;
+    return { html, title: T.t, tab: "outils", back: "poste" };
+  }
+  function formItem(k, id) {
+    const T = TYPES[k], x = id ? liste(k).find((z) => z.id === id) : null;
+    dlg(`<h2>${x ? "Modifier" : "Ajouter"}</h2><label class="field"><span>${T.champ[0]}</span><input id="po-it-t" value="${esc(x ? x.titre : "")}" maxlength="120"></label>
+      ${T.date ? `<label class="field"><span>Date</span><input id="po-it-d" type="date" value="${esc(x ? x.date : "")}"></label>` : ""}
+      <label class="field"><span>${T.champ[1]}</span><textarea id="po-it-n" rows="3" maxlength="400">${esc(x ? x.note : "")}</textarea></label>
+      <div class="rd-btns"><button type="button" class="btn" data-act="po-it-ok" data-k="${k}" data-id="${esc(id || "")}">${icon("check")}Enregistrer</button><button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Annuler</button></div>`);
+  }
+
+  /* ---------- Panneau « Mon poste » ---------- */
+  const lien = (href, ic, co, t, s) => `<a class="card" href="#${href}"><span class="ico ${co || ""}">${icon(ic)}</span><span class="t"><b>${tx(t)}</b>${s ? `<span>${tx(s)}</span>` : ""}</span>${icon("chevron")}</a>`;
+  function pagePoste() {
+    const p = prof(), nv = Math.max(0, niveau());
+    const cartes = Object.keys(TYPES).filter((k) => TYPES[k].nv <= nv).map((k) => lien("po-l-" + k, TYPES[k].ic, "blue", TYPES[k].t, TYPES[k].d)).join("");
+    const nR = RET().filter((x) => !x.lu).length;
+    const synth = nv >= 3 ? (() => { const d = store.get("rd:data", { rondes: [], runs: [] }); const retours = RET(); const def = (d.runs || []).reduce((a, r) => a + (r.defauts || []).length, 0); return `<section class="sec about"><h2 class="lbl a">Synthèse du site</h2><ul><li>${(d.rondes || []).length} ronde(s) enregistrée(s), ${(d.runs || []).length} passage(s)</li><li>${def} défaut(s) signalé(s) en ronde</li><li>${retours.length} message(s) reçu(s), ${nR} non lu(s)</li></ul></section>`; })() : "";
+    const html = `<nav class="crumb"><a href="#accueil">Accueil</a></nav><div class="page-h"><h1>Mon poste</h1><p>${p.statut ? "<strong>" + STAT[p.statut] + "</strong>" + (p.pseudo ? " · " + esc(p.pseudo) : "") : "Choisissez votre poste pour voir vos outils."}</p></div>
+      <div class="chips"><button type="button" class="btn ghost" data-act="po-prof">${icon("personnes")}${p.statut ? "Changer mon poste" : "Choisir mon poste"}</button><a class="btn ghost" href="#ads">${icon("cloche")}ADS : messages${nR ? " (" + nR + ")" : ""}</a></div>
+      <section class="sec"><h2 class="lbl b">Mes outils</h2>${lien("ronde", "ronde", "red", "Ronde guidée", "Trait fixe, pointeaux, défauts, plan en 3D")}${lien("rapports", "registre", "red", "Rapports d’incident", "À la voix ou pas à pas")}${lien("planning", "calendrier", "blue", "Mon planning et mes heures", "Semaine et heures supplémentaires")}${lien("ad-recus", "liste", "blue", "Retours d’agents", "Messages reçus, classés par dossier")}</section>
+      ${cartes ? `<section class="sec"><h2 class="lbl g">Gestion d’équipe</h2>${cartes}</section>` : ""}${synth}
+      <p class="small muted">Astuce : depuis l’accueil, glissez le doigt vers la droite pour revenir ici, vers la gauche pour ouvrir ADS.</p>`;
+    return { html, title: "Mon poste", tab: "outils", back: "accueil" };
+  }
+
+  /* ---------- ADS : messages entre collègues, sans serveur ---------- */
+  const TM = { alerte: "Alerte", demande: "Demande", info: "Information", ronde: "Rapport de ronde", service: "Retour de service" };
+  const DOSS = { alerte: "Alertes et anomalies", demande: "Demandes", info: "Travail", service: "Travail", ronde: "Rondes" };
+  const VERS = { ssiap1: "Agents", ssiap2: "Chef d’équipe SSIAP 2", ssiap3: "Responsable SSIAP 3", resp: "Responsable de site", coll: "Un collègue" };
+  const medias = () => store.get("poste:media", []);
+  function purge() { const h = +store.get("poste:garde", 72) || 72, lim = Date.now() - h * 3600000, m = medias(), reste = m.filter((x) => x.t >= lim); m.filter((x) => x.t < lim).forEach((x) => { try { RD.supprMedia(x.id); } catch (e) { /* rien */ } }); if (reste.length !== m.length) store.set("poste:media", reste); }
+  function pageAds() {
+    purge(); const p = prof(), r = RET(), nR = r.filter((x) => !x.lu).length;
+    const html = `<div class="ads"><nav class="crumb"><a href="#accueil">Accueil</a></nav><div class="page-h"><h1>ADS · Sécurité</h1><p>${p.statut ? STAT[p.statut] : "Poste non choisi"}${p.pseudo ? " · " + esc(p.pseudo) : ""}</p></div>
+      <div class="rd-grid"><a class="btn" href="#ad-new-alerte">${icon("alerte")}Alerte</a><a class="btn ghost" href="#ad-new-demande">${icon("personnes")}Demande</a><a class="btn ghost" href="#ad-new-info">${icon("texte")}Information</a><a class="btn ghost" href="#ad-new-ronde">${icon("ronde")}Envoyer une ronde</a></div>
+      <section class="sec"><h2 class="lbl b">Reçus</h2>${lien("ad-recus", "liste", "blue", "Retours d’agents", nR ? nR + " non lu(s)" : "Aucun nouveau message")}
+        <button type="button" class="btn ghost" data-act="po-coller">${icon("copier")}Coller un message reçu</button></section>
+      <section class="sec about"><h2 class="lbl a">Comment ça marche</h2><p>Votre message part par <strong>WhatsApp, SMS ou l’appli de messagerie</strong> de votre choix. Votre collègue le colle dans son appli ADS et il se range tout seul dans « Retours d’agents ». Chacun peut écrire à n’importe quel niveau : agent, chef d’équipe, SSIAP 3, responsable de site.</p>
+        <p class="small muted">Photos et vidéos : vérifiez que le site les autorise (appli non officielle). Photographiez la situation, pas pour constituer un fichier de personnes : les médias envoyés sont effacés de ce téléphone après <strong>${store.get("poste:garde", 72)} h</strong>.</p>
+        <label class="field"><span>Durée de conservation des médias</span><select data-act="po-garde">${[24, 72, 168].map((v) => `<option value="${v}"${+store.get("poste:garde", 72) === v ? " selected" : ""}>${v === 168 ? "7 jours" : v + " h"}</option>`).join("")}</select></label></section></div>`;
+    return { html, title: "ADS", tab: "outils", back: "accueil" };
+  }
+  let brouillon = null;
+  function pageNouveau(t) {
+    const type = TM[t] ? t : "info"; const p = prof(); const next = ORDRE[Math.min(ORDRE.length - 1, Math.max(0, niveau()) + 1)];
+    const runs = store.get("rd:data", { runs: [] }).runs || [];
+    brouillon = brouillon && brouillon.type === type ? brouillon : { type, med: [] };
+    const html = `<nav class="crumb"><a href="#ads">ADS</a></nav><div class="page-h"><h1>${TM[type]}</h1></div>
+      <section class="sec about"><label class="field"><span>À qui</span><select id="ad-vers">${Object.keys(VERS).map((k) => `<option value="${k}"${k === next ? " selected" : ""}>${VERS[k]}</option>`).join("")}</select></label>
+        <label class="field"><span>Sujet</span><input id="ad-sujet" maxlength="80" placeholder="En quelques mots"></label>
+        <label class="field"><span>Message</span><textarea id="ad-texte" rows="5" maxlength="1500" placeholder="Ce qui se passe, où, depuis quand"></textarea><small>Vous pouvez dicter avec le micro du clavier.</small></label>
+        ${type === "ronde" ? `<label class="field"><span>Rapport de ronde à joindre</span><select id="ad-run"><option value="">Aucun</option>${runs.slice(-10).reverse().map((r) => `<option value="${esc(r.id)}">${esc(r.nom || "Ronde")} · ${hms(r.debut)}</option>`).join("")}</select></label>` : ""}
+        <div class="chips"><button type="button" class="btn ghost" data-act="po-ph">${icon("photo")}Photo</button><button type="button" class="btn ghost" data-act="po-vid">${icon("photo")}Vidéo</button><span id="ad-nmed" class="small muted">${brouillon.med.length ? brouillon.med.length + " média(s) joint(s)" : ""}</span></div>
+        <div class="chips"><button type="button" class="btn" data-act="po-envoi" data-t="${type}">${icon("suivant")}Envoyer</button><button type="button" class="btn ghost" data-act="po-copier-msg" data-t="${type}">${icon("copier")}Copier le message</button><a class="btn ghost" href="#ads">${icon("retour")}Retour</a></div></section>`;
+    return { html, title: TM[type], tab: "outils", back: "ads" };
+  }
+  const entete = (type, vers, sujet, de) => "[ADS] " + TM[type] + " | De : " + (de || (STAT[prof().statut] || "Agent") + (prof().pseudo ? " " + prof().pseudo : "")) + " | À : " + VERS[vers] + " | " + hms(Date.now()) + (prof().site ? " | Site : " + prof().site : "") + (sujet ? "\nSujet : " + sujet : "");
+  function construire(type) {
+    const v = (i) => (($("#" + i) || {}).value || "").trim(); let t = entete(type, v("ad-vers") || "ssiap2", v("ad-sujet")) + "\n" + v("ad-texte");
+    const rid = v("ad-run"); if (rid) { const run = (store.get("rd:data", { runs: [] }).runs || []).find((x) => x.id === rid); if (run) t += "\n\n" + RD.texteRapport(run); }
+    return t;
+  }
+  async function envoyer(type) {
+    const t = construire(type); const files = [];
+    for (const m of brouillon.med) { try { const b = await RD.blob(m.id); if (b) files.push(new File([b], m.kind === "video" ? "video.mp4" : "photo.jpg", { type: b.type || (m.kind === "video" ? "video/mp4" : "image/jpeg") })); } catch (e) { /* média absent */ } }
+    try {
+      if (navigator.share) { const d = { text: t }; if (files.length && navigator.canShare && navigator.canShare({ files })) d.files = files; await navigator.share(d); toast("Message prêt à partir."); brouillon = null; return; }
+    } catch (e) { if (e && e.name === "AbortError") return; }
+    copy(t, "Message copié : collez-le dans WhatsApp ou un SMS."); if (files.length) toast("Les médias restent sur le téléphone : joignez-les depuis la galerie.");
+  }
+  /* réception : un message collé se range dans le bon dossier */
+  function lire(txt) {
+    const m = /\[ADS\]\s*([^|\n]+)\|\s*De\s*:\s*([^|\n]+)\|\s*À\s*:\s*([^|\n]+)\|\s*([^|\n]+)/.exec(txt || ""); if (!m) return null;
+    const type = Object.keys(TM).find((k) => TM[k] === m[1].trim()) || "info"; const sj = /Sujet\s*:\s*([^\n]*)/.exec(txt);
+    return { id: uid(), type, dossier: DOSS[type], de: m[2].trim(), vers: m[3].trim(), quand: m[4].trim(), sujet: sj ? sj[1].trim() : "", texte: txt.trim(), t: Date.now(), lu: false };
+  }
+  function pageRecus() {
+    const r = RET().slice().reverse(); const g = {}; r.forEach((x) => (g[x.dossier || "Travail"] = g[x.dossier || "Travail"] || []).push(x));
+    const blocs = Object.keys(g).map((k) => `<section class="sec"><h2 class="lbl b">${esc(k)} (${g[k].length})</h2><ul class="rd-ul">${g[k].map((x) => `<li class="rd-li"><div><b>${x.lu ? "" : "● "}${esc(x.sujet || TM[x.type])}</b><span>${esc(x.de)} → ${esc(x.vers)} · ${esc(x.quand)}</span></div><div class="chips"><button type="button" class="btn ghost" data-act="po-lire" data-id="${x.id}">${icon("oeil")}Lire</button><button type="button" class="btn ghost" data-act="po-fwd" data-id="${x.id}">${icon("suivant")}Transmettre</button><button type="button" class="btn ghost" data-act="po-ret-suppr" data-id="${x.id}" aria-label="Supprimer">${icon("poubelle")}</button></div></li>`).join("")}</ul></section>`).join("");
+    const html = `<nav class="crumb"><a href="#ads">ADS</a></nav><div class="page-h"><h1>Retours d’agents</h1><p>Messages reçus, rangés par dossier : travail, demandes, alertes et anomalies, rondes.</p></div>
+      <div class="chips"><button type="button" class="btn" data-act="po-coller">${icon("copier")}Coller un message reçu</button></div>${blocs || `<div class="result"><p>Aucun message reçu. Quand un collègue vous envoie un message ADS, copiez-le puis touchez « Coller un message reçu ».</p></div>`}`;
+    return { html, title: "Retours d’agents", tab: "outils", back: "ads" };
+  }
+
+  function page(t) {
+    if (t === "poste") return pagePoste();
+    if (t.startsWith("po-l-")) return pageListe(t.slice(5));
+    if (t === "ads") return pageAds();
+    if (t.startsWith("ad-new-")) return pageNouveau(t.slice(7));
+    if (t === "ad-recus") return pageRecus();
+    return null;
+  }
+  function click(b, act, rerender, render, go) {
+    const k = b.dataset.k, id = b.dataset.id, val = (i) => (($("#" + i) || {}).value || "").trim();
+    switch (act) {
+      case "po-x": closeDlg(); return true;
+      case "po-prof": dlg(formProfil(false)); return true;
+      case "po-prof-plus": store.set("poste:plustard", true); closeDlg(); return true;
+      case "po-prof-ok": { const st = val("po-st") || "ssiap1"; store.set("poste:profil", { statut: st, pseudo: val("po-ps"), site: val("po-si") }); closeDlg(); toast("Poste enregistré : " + STAT[st] + "."); rerender(); return true; }
+      case "po-coche": majListe(k, (a) => { const x = a.find((z) => z.id === id); if (x) x.etat = b.checked; }); return true;
+      case "po-zero": majListe(k, (a) => a.forEach((x) => (x.etat = false))); rerender(); return true;
+      case "po-it": formItem(k, id); return true;
+      case "po-it-ok": { const t = val("po-it-t"); if (!t) { toast("Écrivez un titre."); return true; } majListe(k, (a) => { let x = id && a.find((z) => z.id === id); if (!x) { x = { id: uid(), etat: false }; a.push(x); } x.titre = t; x.note = val("po-it-n"); x.date = val("po-it-d"); }); closeDlg(); rerender(); return true; }
+      case "po-it-suppr": majListe(k, (a) => { const i = a.findIndex((z) => z.id === id); if (i >= 0) a.splice(i, 1); }); rerender(); return true;
+      case "po-copie": copy(TYPES[k].t + "\n" + liste(k).map((x) => (TYPES[k].check ? (x.etat ? "[x] " : "[ ] ") : "- ") + x.titre + (x.date ? " (" + x.date + ")" : "") + (x.note ? " — " + x.note : "")).join("\n"), "Liste copiée."); return true;
+      case "po-ph": RD.media("photo", (m) => { brouillon.med.push(m); store.set("poste:media", medias().concat([{ id: m.id, t: Date.now() }])); const e = $("#ad-nmed"); if (e) e.textContent = brouillon.med.length + " média(s) joint(s)"; }); return true;
+      case "po-vid": RD.media("video", (m) => { brouillon.med.push(m); store.set("poste:media", medias().concat([{ id: m.id, t: Date.now() }])); const e = $("#ad-nmed"); if (e) e.textContent = brouillon.med.length + " média(s) joint(s)"; }); return true;
+      case "po-envoi": envoyer(b.dataset.t); return true;
+      case "po-copier-msg": copy(construire(b.dataset.t), "Message copié."); return true;
+      case "po-coller": dlg(`<h2>Coller un message reçu</h2><label class="field"><span>Message ADS</span><textarea id="po-col" rows="7" placeholder="Collez ici le message reçu"></textarea></label><div class="rd-btns"><button type="button" class="btn" data-act="po-coller-ok">${icon("check")}Ranger le message</button><button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Annuler</button></div>`); return true;
+      case "po-coller-ok": { const m = lire(val("po-col")); if (!m) { toast("Ce n’est pas un message ADS (il doit commencer par [ADS])."); return true; } saveRet(RET().concat([m])); closeDlg(); toast("Rangé dans « " + m.dossier + " »."); go("ad-recus"); return true; }
+      case "po-lire": { const a = RET(), x = a.find((z) => z.id === id); if (!x) return true; x.lu = true; saveRet(a); dlg(`<h2>${esc(x.sujet || TM[x.type])}</h2><pre class="rd-pre">${esc(x.texte)}</pre><div class="rd-btns"><button type="button" class="btn" data-act="po-fwd" data-id="${x.id}">${icon("suivant")}Transmettre</button><button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Fermer</button></div>`); rerender(); return true; }
+      case "po-fwd": { const x = RET().find((z) => z.id === id); if (!x) return true; closeDlg(); const t = "[ADS] Transmis par " + (STAT[prof().statut] || "un collègue") + (prof().pseudo ? " " + prof().pseudo : "") + " | " + hms(Date.now()) + "\n" + x.texte; if (navigator.share) navigator.share({ text: t }).catch(() => {}); else copy(t, "Message copié : collez-le dans votre messagerie."); return true; }
+      case "po-ret-suppr": saveRet(RET().filter((z) => z.id !== id)); rerender(); return true;
+    }
+    return false;
+  }
+  function changeGarde(el) { store.set("poste:garde", +el.value || 72); purge(); toast("Durée enregistrée."); }
+  /* Glisser sur l'accueil : vers la droite = Mon poste, vers la gauche = ADS. */
+  function glisser(go) {
+    let x0 = null, y0 = 0, t0 = 0;
+    document.addEventListener("touchstart", (e) => { if (e.touches.length !== 1) { x0 = null; return; } const t = e.target; const cur = (location.hash || "#accueil").slice(1) || "accueil"; if (!(cur === "accueil" || cur === "poste" || cur === "ads") || (t.closest && t.closest("canvas,input,textarea,select,.overlay,.rd-dlg,[data-noswipe],video,.fig,#pl-view"))) { x0 = null; return; } let n = t; while (n && n !== document.body) { if (n.scrollWidth > n.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(n).overflowX)) { x0 = null; return; } n = n.parentElement; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      if (x0 == null) return; const c = e.changedTouches[0], dx = c.clientX - x0, dy = c.clientY - y0; const cur = (location.hash || "#accueil").slice(1) || "accueil"; x0 = null;
+      if (Math.abs(dx) < 90 || Math.abs(dy) > 60 || Date.now() - t0 > 700) return;
+      if (cur === "accueil") go(dx > 0 ? "poste" : "ads"); else if (cur === "poste" && dx < 0) go("accueil"); else if (cur === "ads" && dx > 0) go("accueil");
+    }, { passive: true });
+  }
+  function retour() { if (document.getElementById("po-dlg")) { closeDlg(); return true; } return false; }
+  return { page, click, retour, reglages, premier, glisser, changeGarde, STAT };
+}
+/* poste-ui:fin */
 function PLANNING(h) {
   const { $, $$, esc, tx, icon, store, toast, PWA, NB, VX, IA, A, copy } = h;
   const p2 = (n) => String(n).padStart(2, "0");
@@ -24411,6 +24603,8 @@ const APP = (() => {
     { id: "rapports", t: "Rapports d’incident", d: "Racontez à la voix ou remplissez étape par étape : chronologie à l’heure près, questions sur ce qui manque, contrôle de qualité, ligne de main courante.", ic: "registre", co: "red", mc: "rapport incident compte rendu main courante redaction chronologie intervention dicter vocal voix dictee" },
     { id: "planning", t: "Mon planning et mes heures", d: "Vos heures de la semaine : photo du planning, heures supplémentaires à la voix ou au clavier, avec le lieu, le motif et l’affaire. Totaux et relevé du mois.", ic: "calendrier", co: "blue", mc: "planning heures horaires semaine heures supplementaires sup affaire tribunal lieu motif releve mois pointage" },
     { id: "ronde", t: "Ronde guidée", d: "Faites la ronde une fois : l’appli pose le trait (virages, escaliers) et vous guide ensuite, même sans connexion. Pointeaux, défauts par lieu, plan en 3D, rapport.", ic: "ronde", co: "red", mc: "ronde rondes pointeau pointeaux nfc 3d etage escalier guidage parcours trait defaut tour de site" },
+    { id: "poste", t: "Mon poste", d: "Vos outils selon votre poste (agent, chef d’équipe, SSIAP 3, responsable de site) : équipe, consignes, registre, retours d’agents.", ic: "personnes", co: "blue", mc: "poste statut profil equipe chef d equipe ssiap 2 ssiap 3 responsable site consignes passation registre" },
+    { id: "ads", t: "ADS : messages entre collègues", d: "Alerte, demande, information, rapport de ronde : envoyez à un collègue par WhatsApp ou SMS, il se range dans ses retours d’agents.", ic: "cloche", co: "red", mc: "ads messages talkie walkie alerte demande collegue whatsapp retours agents" },
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
     { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
@@ -24424,11 +24618,11 @@ const APP = (() => {
   ];
   TOOLS.forEach((t) => (TL[t.id] = t));
 
-  const PAGE_T = { accueil: "Accueil", textes: "Textes de référence", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire", ronde: "Ronde" };
+  const PAGE_T = { accueil: "Accueil", textes: "Textes de référence", jeu: "Jeu", "jeu-import": "Ajouter des questions", urgence: "Urgence", rappel: "Rappel", regles: "Règles", outils: "Outils", recherche: "Recherche", glossaire: "Sigles et matériel", sources: "Sources", favoris: "Mes favoris", apropos: "À propos", rapports: "Rapports d’incident", rapport: "Rapport", dictee: "Rapport à la voix", planning: "Mon planning", reglages: "Réglages", veille: "Veille réglementaire", ronde: "Ronde", poste: "Mon poste", ads: "ADS" };
   const tok = (id) => {
     if (id === "numeros") return "urgence";
     if (id === "quiz") return "o-quiz";
-    if (PAGE_T[id] || /^(?:[por]|pl|rd)-/.test(id)) return id;
+    if (PAGE_T[id] || /^(?:[por]|pl|rd|po|ad)-/.test(id)) return id;
     return "f-" + id;
   };
   const titleOf = (id) => FI[id]?.titre || PR[id]?.titre || TL[id]?.t || (id.startsWith("r-") && RU[id.slice(2)]?.titre) || (id.startsWith("appr-") && "Apprentissage") || PAGE_T[id] || id;
@@ -24708,7 +24902,7 @@ const APP = (() => {
 
   /* ---------- État ---------- */
   const state = { q: "", niv: store.get("niv", ""), qniv: store.get("qniv", ""), confirmDel: -1, confirmReset: false, qreset: false };
-  let RP = null, VX = null, IAX = null, PL = null, RD = null;
+  let RP = null, VX = null, IAX = null, PL = null, RD = null, PO = null;
   const PROC_RP = { "p-feu": "feu", "p-levee-doute": "alarme", "p-evacuer": "evacuation", "p-arret-cardiaque": "secours", "p-malaise": "secours", "p-etouffement": "secours", "p-hemorragie": "secours", "p-gaz": "gaz", "p-ascenseur": "ascenseur", "p-colis": "colis", "p-attaque": "autre", "p-coupure": "coupure", "p-conflit": "agression", "p-eau": "eau" };
   let myNums = store.get("mesnum", []);
   let pendingMark = null, navForward = false, curTok = null, cur = null, deferredPrompt = null;
@@ -25120,6 +25314,7 @@ const APP = (() => {
         ${PWA ? "" : `<p class="disc">${icon("info")}<span>Dans cet aperçu, Gemini ne peut pas joindre Google : il marchera dans l’appli publiée sur GitHub.</span></p>`}
         <p class="small muted">Créer une clé gratuite : <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a> · <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">conditions d’utilisation de Gemini</a></p>
       </section>
+      ${PO.reglages()}
       <section class="sec about"><h2 class="lbl g">Affichage</h2>
         <div class="chips"><button class="btn ghost" data-act="theme">${icon("auto")}Thème : ${THEME_L[theme]}</button><button class="btn ghost" data-act="size">${icon("texte")}Texte ${SIZE_L[size]}</button></div>
         <div class="chips" style="margin-top:8px"><button class="btn ghost" data-act="nuit-tg">${icon("lune")}Ronde de nuit : ${nuit ? "activée" : "désactivée"}</button><button class="btn ghost" data-act="xl-tg">${icon("texte")}Boutons de réponse : ${xl ? "très grands" : "normaux"}</button></div>
@@ -26718,6 +26913,7 @@ function jChar(o = {}) {
     if (t === "dictee") return RP.pageDictee();
     if (t === "planning" || t.startsWith("pl-")) return PL.page(t);
     if (t === "ronde" || t.startsWith("rd-")) return RD.page(t);
+    if (t === "poste" || t === "ads" || t.startsWith("po-") || t.startsWith("ad-")) return PO.page(t);
     if (t === "jeu") return pageJeu();
     if (t === "jeu-import") return pageJeuImport();
     if (t === "textes") return pageTextes();
@@ -26779,6 +26975,7 @@ function jChar(o = {}) {
     if (!$("#zoom").hidden) { closeZoom(); return true; }
     const pv = $("#pl-view"); if (pv && !pv.hidden) { pv.hidden = true; const c = $("#pl-view-c"); if (c) c.innerHTML = ""; return true; }
     if (RD && RD.retour()) return true;
+    if (PO && PO.retour()) return true;
     if (VX.popOpen()) { VX.ratePop(false); return true; }
     if (stack.length > 1) { stack.pop(); navTo(stack[stack.length - 1], true); return true; }
     if (curTok !== "accueil") {
@@ -26930,6 +27127,7 @@ function jChar(o = {}) {
     if ((act.startsWith("rp-") || act.startsWith("dc-")) && RP.click(b, act, rerender, render, go)) return;
     if (act.startsWith("pl-") && PL.click(b, act, rerender, render, go)) return;
     if (act.startsWith("rd-") && RD.click(b, act, rerender, render, go)) return;
+    if (act.startsWith("po-") && PO.click(b, act, rerender, render, go)) return;
     if (act.startsWith("jx-") && jxClick(b, act)) return;
     switch (act) {
       case "tts-page": if (VX.active) VX.stop(); else VX.readEl(main(), cur && cur.title ? cur.title : "Accueil"); break;
@@ -27575,6 +27773,10 @@ function jChar(o = {}) {
     RP = RAPPORTS({ $, $$, esc, tx, icon, store, toast, PWA, NB, VX, IA: IAX, A: ANALYSE });
     PL = PLANNING({ $, $$, esc, tx, icon, store, toast, PWA, NB, VX, IA: IAX, A: ANALYSE, copy: copyText, rerender: () => rerender() });
     RD = RONDE({ $, $$, esc, tx, icon, store, toast, VX, copy: copyText, rerender: () => rerender() });
+    PO = POSTE({ $, $$, esc, tx, icon, store, toast, copy: copyText, RD });
+    PO.glisser(go);
+    document.addEventListener("change", (e) => { const t = e.target; if (t && t.dataset && t.dataset.act === "po-garde") PO.changeGarde(t); });
+    setTimeout(() => PO.premier(), 2500);
     const pz = document.createElement("div");
     pz.id = "print";
     document.body.appendChild(pz);
