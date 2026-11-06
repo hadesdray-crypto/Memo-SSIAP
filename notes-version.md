@@ -1,3 +1,6 @@
+- Nouveau : **Livres de cours** (Outils et accueil) : tout le contenu des manuels SSIAP 1 (France Sélection, éd. juillet 2017) et SST (MémoForma V5_01/2024), rangé par partie et par page : cours, tableaux, schémas redessinés, 212 fiches et leurs questions, la voie engins en premier
+- Les questions des livres alimentent l'apprentissage, les jeux et l'examen blanc ; chaque fiche indique sa source. Quand le manuel diffère de la réglementation actuelle, le texte du manuel est conservé avec la mention « d'après ce manuel, utilisé pour la formation »
+- Recherche plus tolérante : elle comprend les fautes et les mots dits à l'oreille (« voix engin » trouve « voie engins »), propose « Vouliez-vous dire… » et reconnaît des mots familiers
 - « Mon poste » : section Rondes avec « Nouvelle ronde », « Mes rondes », les dernières rondes à lancer en un toucher et le mode d'emploi
 - Ronde : un escalier en colimaçon est maintenant reconnu (étage compté, hauteur dessinée en 3D) ; avec le baromètre c'est automatique, sinon l'appli demande en un geste, à la fin, « Je montais / Je descendais / Pas un escalier »
 - Ronde guidée : flèche boussole qui tourne pour vous remettre dans le sens de la ronde ; choix de l'affichage (Boussole, Plan 3D ou Les deux) ; « Vue dans mon sens » ; le plan 3D se tourne dans tous les sens
