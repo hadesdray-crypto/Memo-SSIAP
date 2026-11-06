@@ -58,6 +58,21 @@ button.card { font: inherit; text-align: left; cursor: pointer; border: 0; width
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
 /* ronde */
+.rd-bou { width: 100%; height: 230px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; display: block; }
+.rd-vis { display: flex; gap: 8px; margin: 8px 0; }
+.rd-vis .btn { flex: 1; min-height: 44px; padding: 8px 6px; }
+.rd-vis .btn[aria-pressed="true"] { outline: 2px solid var(--red, #b3121f); }
+.ads-h { background: linear-gradient(135deg, #0b1017, #1b2838); color: #f2f6fa; border-radius: 18px; padding: 18px 16px; margin: 4px 0 12px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+.ads-h h1 { margin: 0; font-size: 1.5rem; color: #fff; }
+.ads-h p { margin: 4px 0 0; color: #aab6c4; }
+.ads-pill { display: inline-flex; gap: 6px; align-items: center; margin-top: 10px; padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.12); font-size: .82rem; color: #e6edf5; }
+.ads-g { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 0 14px; }
+.ads-t { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; padding: 14px; border-radius: 16px; background: #121a24; color: #f2f6fa; text-decoration: none; font-weight: 600; min-height: 96px; box-shadow: 0 4px 14px rgba(0,0,0,.2); transition: transform .15s; }
+.ads-t:active { transform: scale(.97); }
+.ads-t i { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--c, #2563eb); color: #fff; }
+.ads-t i svg { width: 22px; height: 22px; }
+.ads-t small { font-weight: 400; color: #9fb0c2; font-size: .78rem; }
+#app { will-change: transform; }
 .rd-dlg { position: fixed; inset: 0; z-index: 120; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 12px; }
 .rd-box { background: var(--surface); color: var(--ink); border-radius: 16px; padding: 18px; width: 100%; max-width: 440px; max-height: 88vh; max-height: 88dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 .rd-box h2 { margin: 0; font-size: 1.25rem; }
@@ -1476,7 +1491,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "2.4.0",
+    version: "2.4.1",
     verifie: "5 novembre 2026",
     verifieCourt: "05/11/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -23173,7 +23188,7 @@ function RONDE_CORE() {
     const o = Object.assign({ foulee: 0.72, hEtage: 3.0 }, opt || {});
     const S = { x: 0, y: 0, z: 0, cap: null, dist: 0, pas: 0 };
     const pd = Pas(); let p0 = null, p0n = 0, p0s = 0, zr = 0, tz = null, zPlat = 0, grimpe = null, stable = 0, tStab = null, zStab = 0;
-    const hist = []; let tCalme = 0, tFin = 0;
+    const hist = []; let tCalme = 0, tFin = 0, prevCap = null; const rot = [];
     const debutA = (tc) => { let r = null; for (const h of hist) { if (h.t <= tc) r = h; } return r || hist[0] || { x: S.x, y: S.y, d: S.dist, cap: S.cap }; };
     const api = {
       etat: S, o, hist,
@@ -23183,6 +23198,10 @@ function RONDE_CORE() {
         const L = o.foulee; S.pas++;
         S.x += L * Math.sin(S.cap * D2R); S.y += L * Math.cos(S.cap * D2R); S.dist += L;
         const ev = { x: S.x, y: S.y, z: S.z, d: S.dist, cap: S.cap, t, n: S.pas };
+        /* Escalier en colimaçon : le cap tourne sans s'arrêter (plus de 200° en 14 pas). */
+        if (prevCap != null) { rot.push(dif(S.cap, prevCap)); if (rot.length > 14) rot.shift(); }
+        prevCap = S.cap;
+        if (rot.length >= 8) { const sum = rot.reduce((a, b) => a + b, 0); if (Math.abs(sum) >= 200) { ev.spirale = { sens: sum > 0 ? "droite" : "gauche", d0: hist.length >= rot.length ? hist[hist.length - rot.length].d : ev.d - rot.length * L, d1: ev.d }; rot.length = 0; } }
         hist.push(ev); if (hist.length > 80) hist.shift();
         return ev;
       },
@@ -23305,10 +23324,23 @@ function RONDE_CORE() {
   /* ---- Enregistrement : le trait se pose tout seul à chaque virage, chaque escalier. ---- */
   function Enregistrement(opt) {
     const o = Object.assign({ hEtage: 3.0 }, opt || {});
-    const T = { verts: [], pointeaux: [], defauts: [] }; const vir = Virages(); const steps = []; let manuelEtage = null;
+    const T = { verts: [], pointeaux: [], defauts: [], candidats: [] }; const vir = Virages(); const steps = []; let manuelEtage = null, decal = 0;
     function insererEtage(n, dv, df) {
+      const sp = T.candidats.find((c) => !c.resolu && c.d0 <= df + 3 && c.d1 >= dv - 3);
       const mk = (type, d) => ({ type, n, x: 0, y: 0, z: 0, d, cap: null });
       const ins = (v) => { let i = T.verts.length; while (i > 1 && T.verts[i - 1].d > v.d) i--; T.verts.splice(i, 0, v); };
+      api.dernierShift = null;
+      if (sp) {
+        /* Colimaçon : on n'avance pas à l'horizontale, on monte. Les virages posés pendant la montée sont retirés. */
+        dv = Math.min(dv, sp.d0); df = Math.max(df, sp.d1); sp.resolu = true;
+        T.verts = T.verts.filter((v, i) => i === 0 || !(v.type === "virage" && v.d >= dv - 0.01 && v.d <= df + 0.01));
+        const court = Math.min(0.4, Math.max(0, df - dv)), shift = df - dv - court;
+        T.verts.forEach((v, i) => { if (i > 0 && v.d > df + 0.001) v.d -= shift; });
+        [T.pointeaux, T.defauts].forEach((a) => a.forEach((q) => { if (q.d > df + 0.001) q.d -= shift; }));
+        T.candidats.forEach((c) => { if (c !== sp && c.d0 > df) { c.d0 -= shift; c.d1 -= shift; } });
+        decal += shift; api.dernierShift = { apres: df, shift };
+        df = dv + court;
+      }
       ins(mk("etage-debut", dv)); ins(mk("etage-fin", df));
       /* le début doit précéder la fin, puis on recalcule les hauteurs dans l'ordre du trait */
       let z = T.verts[0].z || 0;
@@ -23317,17 +23349,19 @@ function RONDE_CORE() {
     const api = {
       trace: T, steps,
       demarrer(x, y, z) { T.verts = [{ type: "depart", x0: x, y0: y, z0: z, z, d: 0, cap: null, ang: 0 }]; vir.reset(0, null); steps.length = 0; },
-      get distance() { return steps.length ? steps[steps.length - 1].d : 0; },
+      get distance() { return (steps.length ? steps[steps.length - 1].d : 0) - decal; },
+      get decalage() { return decal; },
       get segDepart() { return T.verts[T.verts.length - 1]; },
       /* Un pas a été fait. Renvoie un événement si un virage a été posé. */
       pas(ev) {
         steps.push(ev);
+        if (ev.spirale) { const sp = ev.spirale, c = T.candidats[T.candidats.length - 1], d0 = sp.d0 - decal, d1 = sp.d1 - decal; if (c && !c.resolu && d0 <= c.d1 + 6) { c.d1 = Math.max(c.d1, d1); c.sens = sp.sens; } else T.candidats.push({ d0, d1, sens: sp.sens, resolu: false }); }
         const dernier = T.verts[T.verts.length - 1];
         const e = vir.push(ev.cap);
         if (dernier.cap == null && vir.cap != null) dernier.cap = vir.cap;
         if (!e) return null;
         const c = steps[Math.max(0, Math.min(steps.length - 1, e.coin - 1))];
-        const s = { type: "virage", sens: typeVirage(e.ang), ang: e.ang, x: c.x, y: c.y, z: dernier.z, d: c.d, cap: e.cap };
+        const s = { type: "virage", sens: typeVirage(e.ang), ang: e.ang, x: c.x, y: c.y, z: dernier.z, d: c.d - decal, cap: e.cap };
         T.verts.push(s);
         return s;
       },
@@ -23340,8 +23374,8 @@ function RONDE_CORE() {
       },
       /* Escalier détecté par le baromètre. */
       etage(ev) {
-        const dv = ev.debut && ev.debut.d != null ? ev.debut.d : api.distance;
-        const df = ev.fin && ev.fin.d != null ? Math.max(dv, ev.fin.d) : api.distance;
+        const dv = ev.debut && ev.debut.d != null ? ev.debut.d - decal : api.distance;
+        const df = ev.fin && ev.fin.d != null ? Math.max(dv, ev.fin.d - decal) : api.distance;
         insererEtage(ev.n, dv, df);
         return T.verts.find(v => v.type === "etage-fin" && v.d === df) || T.verts[T.verts.length - 1];
       },
@@ -23352,6 +23386,9 @@ function RONDE_CORE() {
         insererEtage(m.n, m.d, api.distance);
         return T.verts[T.verts.length - 1];
       },
+      etageEntre(n, d0, d1) { insererEtage(n, d0, d1); return api.dernierShift; },
+      candidatsLibres() { return T.candidats.filter((c) => !c.resolu); },
+      ignorerCandidat(c) { c.resolu = true; },
       etageManuelN(n) { if (manuelEtage && n) manuelEtage.n = n; return manuelEtage ? manuelEtage.n : 0; },
       get etageManuelEnCours() { return !!manuelEtage; },
       terminer() {
@@ -23500,7 +23537,8 @@ function RONDE(h) {
   }
 
   /* ---------- Capteurs ---------- */
-  const plugin = () => { try { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.RondeCapteurs; } catch (e) { return null; } };
+  let plugCache;
+  const plugin = () => { if (plugCache) return plugCache; try { const c = window.Capacitor; if (!c) return null; let p = c.Plugins && c.Plugins.RondeCapteurs; if (!p && c.registerPlugin && (!c.isPluginAvailable || c.isPluginAvailable("RondeCapteurs"))) p = c.registerPlugin("RondeCapteurs"); if (p) plugCache = p; return p || null; } catch (e) { return null; } };
   function capteurs(onAcc, onCap, onHpa, etat) {
     const off = [];
     const mot = (e) => { const a = e.accelerationIncludingGravity; if (!a || a.x == null) return; onAcc(e.timeStamp || performance.now(), Math.hypot(a.x, a.y, a.z)); etat.acc = true; };
@@ -23508,7 +23546,7 @@ function RONDE(h) {
     window.addEventListener("devicemotion", mot); off.push(() => window.removeEventListener("devicemotion", mot));
     const ev = "ondeviceorientationabsolute" in window ? "deviceorientationabsolute" : "deviceorientation";
     window.addEventListener(ev, ori); off.push(() => window.removeEventListener(ev, ori));
-    const pl = plugin();
+    const pl = plugin(); etat.pl = !!(pl && pl.demarrerPression);
     if (pl && pl.demarrerPression) {
       try { pl.demarrerPression().catch(() => {}); const w = pl.addListener("pression", (d) => { if (d && d.hpa) { onHpa(performance.now(), d.hpa); etat.hpa = true; } }); off.push(() => { try { w.then ? w.then((x) => x.remove()) : w.remove(); pl.arreterPression(); } catch (e) { /* rien */ } }); } catch (e) { /* pas de baromètre */ }
     }
@@ -23557,15 +23595,45 @@ function RONDE(h) {
     const mv = (e) => {
       if (!ptr.has(e.pointerId)) return; ptr.set(e.pointerId, [e.clientX, e.clientY]);
       if (ptr.size === 2) { const [a, b] = [...ptr.values()]; const dd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (d0) zoom = Math.max(0.3, Math.min(6, zoom * dd / d0)); d0 = dd; }
-      else if (last) { yaw += (e.clientX - last[0]) * 0.01; pitch = Math.max(0.1, Math.min(1.5, pitch + (e.clientY - last[1]) * 0.01)); last = [e.clientX, e.clientY]; }
+      else if (last) { yaw += (e.clientX - last[0]) * 0.01; pitch = Math.max(-1.5, Math.min(1.5, pitch + (e.clientY - last[1]) * 0.01)); last = [e.clientX, e.clientY]; }
       draw();
     };
     const up = (e) => { ptr.delete(e.pointerId); last = null; d0 = 0; };
     canvas.addEventListener("pointerdown", dn); canvas.addEventListener("pointermove", mv); canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
     canvas.addEventListener("wheel", (e) => { e.preventDefault(); zoom = Math.max(0.3, Math.min(6, zoom * (e.deltaY < 0 ? 1.15 : 0.87))); draw(); }, { passive: false });
-    return { draw, zoom(f) { zoom = Math.max(0.3, Math.min(6, zoom * f)); draw(); }, tourner(d) { yaw += d; draw(); }, haut() { pitch = 1.5; draw(); }, perspective() { pitch = 0.95; yaw = -0.7; draw(); } };
+    return { draw, zoom(f) { zoom = Math.max(0.3, Math.min(6, zoom * f)); draw(); }, tourner(d) { yaw += d; draw(); }, lacet(y) { yaw = y; draw(); }, haut() { pitch = 1.5; draw(); }, perspective() { pitch = 0.95; yaw = -0.7; draw(); } };
   }
   let V3 = null;
+  const visuel = () => store.get("rd:visuel", "deux");
+  function majVis() {
+    const v = visuel(), b = $("#rd-bou"), c = $("#rd-3dw"); if (b) b.hidden = v === "3d"; if (c) c.hidden = v === "boussole";
+    document.querySelectorAll("[data-act=rd-vis]").forEach((x) => x.setAttribute("aria-pressed", x.dataset.v === v ? "true" : "false"));
+    const s = $("#rd-vsens"); if (s) s.setAttribute("aria-pressed", store.get("rd:vsens", 0) ? "true" : "false");
+    if (V3) V3.draw(); majBou();
+  }
+  /* angle (degrés, 0 = tout droit) entre la direction du trait et celle où pointe le téléphone */
+  function angleGuide() {
+    if (!RUN) return null; const G = RUN.J.G, v = RUN.geo.v, cap = RUN.S.etat.cap; if (cap == null || G.decalage == null) return null;
+    let i = Math.min(G.seg, v.length - 2); if (i < 0) return null;
+    const L = v[i + 1].d - v[i].d, reste = L - G.s; if (reste < 2.5 && v[i + 2] && v[i + 2].type !== "fin") i++;
+    const pc = v[i].pcap; if (pc == null) return null;
+    return ((C.norm(pc + G.decalage) - cap + 540) % 360) - 180;
+  }
+  let derBou = 0;
+  function majBou() {
+    const cv = $("#rd-bou"); if (!cv || cv.hidden || !RUN) return;
+    const w = cv.clientWidth || 300, hh = cv.clientHeight || 230, r = window.devicePixelRatio || 1; if (cv.width !== Math.round(w * r)) { cv.width = Math.round(w * r); cv.height = Math.round(hh * r); }
+    const g = cv.getContext("2d"); g.setTransform(r, 0, 0, r, 0, 0); g.clearRect(0, 0, w, hh);
+    const css = (n, f) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || f; const a = angleGuide(), cx = w / 2, cy = hh / 2 - 6, R = Math.min(w, hh) / 2 - 22;
+    g.strokeStyle = css("--line-2", "#ccc"); g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.stroke();
+    g.fillStyle = css("--ink-3", "#777"); g.font = "600 13px system-ui"; g.textAlign = "center"; g.fillText("Devant vous", cx, cy - R - 6);
+    let txt = "Marchez quelques pas…", col = css("--ink-3", "#777");
+    if (a != null) {
+      const ab = Math.abs(a); col = ab < 20 ? "#12703c" : ab < 60 ? "#d98a0b" : "#b3121f"; txt = ab < 20 ? "Bonne direction" : ab > 150 ? "Faites demi-tour" : a > 0 ? "Tournez à droite" : "Tournez à gauche";
+      g.save(); g.translate(cx, cy); g.rotate(a * Math.PI / 180); g.fillStyle = col; g.beginPath(); g.moveTo(0, -R + 6); g.lineTo(R * 0.42, 6); g.lineTo(R * 0.14, 6); g.lineTo(R * 0.14, R * 0.62); g.lineTo(-R * 0.14, R * 0.62); g.lineTo(-R * 0.14, 6); g.lineTo(-R * 0.42, 6); g.closePath(); g.fill(); g.restore();
+    }
+    g.fillStyle = col; g.font = "700 16px system-ui"; g.fillText(txt, cx, hh - 8);
+  }
   const ptsDe = (r) => { const geo = C.geometrie(r.trace, { fermer: !!r.fermer }); return { geo, pts: geo.v.map((s) => ({ x: s.px, y: s.py, z: s.pz })) }; };
   const posD = (geo, d) => { const q = geo.pos(d); return { x: q.x, y: q.y, z: q.z }; };
   const marqueurs = (r, geo) => ({
@@ -23668,7 +23736,7 @@ function RONDE(h) {
     if (!REC) return; const S = REC.S.etat, set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
     set("rd-pas", S.pas); set("rd-dist", Math.round(S.dist)); set("rd-niv", REC.niv); set("rd-cap", S.cap == null ? "–" : Math.round(S.cap) + "°");
     const et = REC.etat, ok = et.acc && et.cap;
-    set("rd-etat", !ok ? "Capteurs en attente… bougez un peu le téléphone." : (et.hpa ? "Capteurs : pas, boussole et baromètre actifs." : "Capteurs : pas et boussole actifs. Étages : boutons « Je monte / Je descends »."));
+    set("rd-etat", !ok ? "Capteurs en attente… bougez un peu le téléphone." : (et.hpa ? "Baromètre actif : les étages sont détectés tout seuls." : et.pl ? "Baromètre en démarrage… Les étages sont détectés tout seuls dès qu’il répond." : "Pas de baromètre sur cette version : un escalier (même en colimaçon) vous sera demandé en un geste à la fin. Pour la détection automatique, installez la dernière APK."));
   }
   async function demarrer(id, avecGps) {
     if (REC || occupe) return; occupe = true; mediaOK = false;
@@ -23683,11 +23751,17 @@ function RONDE(h) {
     REC.off = capteurs(
       (t, m) => { const p = S.accel(t, m); if (p) { const v = R.pas(p); if (v) { vib(40); logRec("Virage " + v.sens + " posé"); sauveBrouillon(); } if (!(p.n % 4)) majLive(); } },
       (cap) => S.cap(cap),
-      (t, hpa) => { const e = S.pression(t, hpa); if (e) { if (REC.stairs) return; R.etage(e); REC.niv += e.n; vib([50, 40, 50]); logRec((e.n > 0 ? "Montée de " : "Descente de ") + Math.abs(e.n) + " étage(s) détectée"); sauveBrouillon(); majLive(); } },
+      (t, hpa) => { const e = S.pression(t, hpa); if (e) { if (REC.stairs) return; R.etage(e); decaler(REC.id, R.dernierShift); REC.niv += e.n; vib([50, 40, 50]); logRec((e.n > 0 ? "Montée de " : "Descente de ") + Math.abs(e.n) + " étage(s) détectée"); sauveBrouillon(); majLive(); } },
       REC.etat);
     majRonde(id, (x) => { x.enCours = true; x.trace = R.trace; x.date = Date.now(); x.foulee = c.foulee; x.hEtage = c.hEtage; x.trace.verts = R.trace.verts; });
     if (avecGps && navigator.geolocation) { try { navigator.geolocation.getCurrentPosition((p) => majRonde(id, (x) => (x.gps = { lat: Math.round(p.coords.latitude * 1e4) / 1e4, lon: Math.round(p.coords.longitude * 1e4) / 1e4 })), () => {}, { timeout: 8000, maximumAge: 60000 }); } catch (e) { /* GPS indisponible */ } }
     veille(true); dire("Ronde démarrée. Marchez normalement."); h.rerender(); REC.timer = setInterval(() => { majLive(); if (REC && ++REC.tick % 7 === 0) sauveBrouillon(); }, 700);
+  }
+  function decaler(id, s) { if (!s || !s.shift) return; majRonde(id, (x) => { [x.pointeaux, x.defauts].forEach((a) => (a || []).forEach((q) => { if (q.d > s.apres + 0.001) q.d -= s.shift; })); }); }
+  function finaliser(go) { const rid = REC && REC.id; if (rid) { if (REC.fermer) majRonde(rid, (x) => (x.fermer = true)); finirRec(true); go("rd-v-" + rid); } return true; }
+  function revue(go) {
+    const cs = REC.R.candidatsLibres(); if (!cs.length) { finaliser(go); return; } const c = cs[0]; REC.rev = c;
+    dlg(`<h2>Étiez-vous dans un escalier ?</h2><p>Vous avez tourné en rond sur place, vers ${Math.round(c.d0)} m du départ : c’est typique d’un escalier en colimaçon. ${cs.length > 1 ? cs.length + " passages à confirmer." : ""}</p><label class="field"><span>Nombre d’étages</span><input id="rd-rn" type="number" inputmode="numeric" min="1" max="100" value="1"></label><div class="rd-btns"><button type="button" class="btn" data-act="rd-rev" data-v="1">${icon("ascenseur")}Je montais</button><button type="button" class="btn" data-act="rd-rev" data-v="-1">${icon("bas")}Je descendais</button><button type="button" class="btn ghost" data-act="rd-rev" data-v="0">${icon("retour")}Pas un escalier</button></div>`);
   }
   function sauveBrouillon() { if (!REC) return; const R = REC.R; majRonde(REC.id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = true; x.distAtteinte = Math.round(R.distance * 10) / 10; }); }
   function finirRec(garde) {
@@ -23750,7 +23824,9 @@ function RONDE(h) {
     }
     const html = `<div class="page-h"><h1>${esc(r.nom)}</h1><p id="rd-etat" role="status"></p></div>
       <div class="rd-cons"><div id="rd-cons" aria-live="polite">…</div><div class="rd-bar"><i id="rd-prog"></i></div><small id="rd-pnext"></small></div>
-      <canvas id="rd-3d" class="rd-3d rd-3d-s" aria-label="Plan de la ronde avec votre position"></canvas>
+      <div class="rd-vis" role="group" aria-label="Choix de l’affichage"><button type="button" class="btn ghost" data-act="rd-vis" data-v="boussole" aria-pressed="false">Boussole</button><button type="button" class="btn ghost" data-act="rd-vis" data-v="3d" aria-pressed="false">Plan 3D</button><button type="button" class="btn ghost" data-act="rd-vis" data-v="deux" aria-pressed="false">Les deux</button></div>
+      <canvas id="rd-bou" class="rd-bou" aria-label="Flèche qui indique la direction à suivre"></canvas>
+      <div id="rd-3dw"><canvas id="rd-3d" class="rd-3d rd-3d-s" aria-label="Plan de la ronde avec votre position"></canvas><div class="chips rd-3dbar"><button type="button" class="btn ghost" data-act="rd-3d" data-v="g">Tourner −</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="d">Tourner +</button><button type="button" class="btn ghost" id="rd-vsens" data-act="rd-vsens" aria-pressed="false">Vue dans mon sens</button></div></div>
       <div class="rd-grid">
         <button type="button" class="btn" data-act="rd-ok-pt">${icon("check")}Pointeau validé</button>
         <button type="button" class="btn red" data-act="rd-g-def">${icon("alerte")}Signaler un défaut</button>
@@ -23758,7 +23834,7 @@ function RONDE(h) {
         <button type="button" class="btn ghost" data-act="rd-g-esc">${icon("ascenseur")}Escalier fait</button>
       </div>
       <div class="chips"><button type="button" class="btn ghost" data-act="rd-g-voix">${icon("hautparleur")}Répéter la consigne</button><button type="button" class="btn" data-act="rd-g-fin">${icon("stop")}Terminer</button></div>`;
-    return { html, title: "Ronde guidée", tab: "outils", back: "rd-v-" + id, after: () => { monter3d(r, (geo) => (RUN ? posD(geo, RUN.J.D) : null)); majGo(); } };
+    return { html, title: "Ronde guidée", tab: "outils", back: "rd-v-" + id, after: () => { monter3d(r, (geo) => (RUN ? posD(geo, RUN.J.D) : null)); majVis(); majGo(); } };
   }
   function majGo() {
     if (!RUN) return; const J = RUN.J, c = J.consigne(), set = (i, v) => { const e = document.getElementById(i); if (e) e.textContent = v; };
@@ -23768,7 +23844,8 @@ function RONDE(h) {
     if (c.texte !== RUN.derniere) { RUN.derniere = c.texte; if (c.dist <= 12 || RUN.premiere) { dire(c.texte); } RUN.premiere = false; }
     if (nx && !nx.annonce && nx.d - J.D < 3) { nx.annonce = true; vib([80, 50, 80]); dire("Pointeau " + nx.nom + ", " + nx.cote); }
     RUN.pts.forEach((q) => { if (!q.fait && !q.manque && J.D > q.d + 6) { q.manque = true; logRun("Pointeau « " + q.nom + " » dépassé sans validation"); } });
-    if (V3) V3.draw();
+    if (V3) { if (store.get("rd:vsens", 0)) { const v = RUN.geo.v, i = Math.min(J.G.seg, v.length - 2); if (i >= 0) V3.lacet(Math.atan2(v[i + 1].px - v[i].px, v[i + 1].py - v[i].py)); else V3.draw(); } else V3.draw(); }
+    majBou();
     if (J.G.fini && !RUN.finiDit) { RUN.finiDit = true; dire("Fin de la ronde."); vib([100, 60, 100]); }
   }
   const prochainPt = () => RUN && RUN.pts.filter((q) => !q.fait && !q.manque).sort((a, b) => a.d - b.d)[0];
@@ -23784,7 +23861,7 @@ function RONDE(h) {
     RUN = { id, J, S, geo, etat: {}, log: [], ok: [], defauts: [], debut: Date.now(), pts: (r.pointeaux || []).map((q) => Object.assign({}, q, { fait: false, manque: false })), premiere: true };
     RUN.off = capteurs(
       (t, m) => { const p = S.accel(t, m); if (p) { const msg = J.pas(p.cap); if (msg) { if (msg.type === "virage-ok") vib(40); if (msg.type === "virage-inattendu") { dire("Virage inattendu, restez sur le trait."); logRun("Virage inattendu"); } if (msg.type === "retard") { dire("Vous êtes en retard sur le trait. Touchez « J’ai tourné » quand vous avez tourné."); } } majGo(); } },
-      (cap) => S.cap(cap),
+      (cap) => { S.cap(cap); const n = Date.now(); if (n - derBou > 120) { derBou = n; majBou(); } },
       (t, hpa) => { const e = S.pression(t, hpa); if (e) { J.etageFait(); vib([50, 40, 50]); majGo(); } },
       RUN.etat);
     veille(true); h.rerender(); RUN.timer = setInterval(majGo, 900);
@@ -23851,12 +23928,15 @@ function RONDE(h) {
       case "rd-vu": if (REC) { REC.R.virageManuel("demi-tour"); logRec("Demi-tour (bouton)"); sauveBrouillon(); } return true;
       case "rd-es": { if (!REC || REC.stairs) return true; const n = +b.dataset.n; REC.R.etageManuel(n); REC.stairs = { n }; const bx = $("#rd-esc"); if (bx) { bx.hidden = false; $("#rd-esn").textContent = (n > 0 ? "montée de " : "descente de ") + Math.abs(n) + " étage(s)"; } logRec("Début d’escalier"); return true; }
       case "rd-esp": { if (!REC || !REC.stairs) return true; const s = REC.stairs; s.n += s.n > 0 ? 1 : -1; REC.R.etageManuelN(s.n); $("#rd-esn").textContent = (s.n > 0 ? "montée de " : "descente de ") + Math.abs(s.n) + " étage(s)"; return true; }
-      case "rd-esf": { if (!REC || !REC.stairs) return true; REC.R.etageManuelFin(); REC.niv += REC.stairs.n; logRec("Arrivée à l’étage " + REC.niv); REC.stairs = null; const bx = $("#rd-esc"); if (bx) bx.hidden = true; sauveBrouillon(); majLive(); return true; }
+      case "rd-esf": { if (!REC || !REC.stairs) return true; REC.R.etageManuelFin(); decaler(REC.id, REC.R.dernierShift); REC.niv += REC.stairs.n; logRec("Arrivée à l’étage " + REC.niv); REC.stairs = null; const bx = $("#rd-esc"); if (bx) bx.hidden = true; sauveBrouillon(); majLive(); return true; }
       case "rd-ph": if (REC) { const rid = REC.id, q = ajoutRepere("media", { txt: "Photo à cet endroit" }); prendreMedia("photo", (m) => { q.med = [m]; majRonde(rid, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Photo prise"); }); } return true;
       case "rd-vid": if (REC) { const rid = REC.id, q = ajoutRepere("media", { txt: "Vidéo à cet endroit" }); prendreMedia("video", (m) => { q.med = [m]; majRonde(rid, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Vidéo enregistrée"); }); } return true;
       case "rd-fermer": if (REC) { REC.fermer = !REC.fermer; majRonde(REC.id, (x) => (x.fermer = REC.fermer)); toast(REC.fermer ? "La ronde reviendra sur le départ : l’écart sera réparti." : "Boucle annulée."); } return true;
       case "rd-stop": dlg(`<h2>Terminer la ronde ?</h2><p>Le trait est gardé tel quel. Vous pourrez ensuite nommer les pointeaux et voir le plan en 3D.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-stop-ok">${icon("check")}Terminer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer la ronde</button></div>`); return true;
-      case "rd-stop-ok": { closeDlg(); const rid = REC && REC.id; if (rid) { if (REC.fermer) majRonde(rid, (x) => (x.fermer = true)); finirRec(true); go("rd-v-" + rid); } return true; }
+      case "rd-stop-ok": { closeDlg(); if (REC && REC.R.candidatsLibres().length) { revue(go); return true; } return finaliser(go); }
+      case "rd-rev": { if (!REC || !REC.rev) { closeDlg(); return true; } const c = REC.rev, v = +b.dataset.v, n = Math.max(1, Math.min(100, Math.round(+val("rd-rn") || 1))); closeDlg(); REC.rev = null; if (v === 0) REC.R.ignorerCandidat(c); else { const sh = REC.R.etageEntre(v * n, c.d0, c.d1); decaler(REC.id, sh); REC.niv += v * n; logRec((v > 0 ? "Montée de " : "Descente de ") + n + " étage(s) confirmée"); } sauveBrouillon(); if (REC.R.candidatsLibres().length) revue(go); else finaliser(go); return true; }
+      case "rd-vis": { store.set("rd:visuel", b.dataset.v); majVis(); return true; }
+      case "rd-vsens": { store.set("rd:vsens", store.get("rd:vsens", 0) ? 0 : 1); majVis(); return true; }
       case "rd-finir-vieux": { majRonde(id, (x) => { if (x.trace.verts.length && x.trace.verts[x.trace.verts.length - 1].type !== "fin") { const l = x.trace.verts[x.trace.verts.length - 1]; x.trace.verts.push({ type: "fin", x: 0, y: 0, z: l.z, d: Math.max(l.d, x.distAtteinte || 0), cap: null }); } x.enCours = false; }); go("rd-v-" + id); return true; }
       case "rd-suppr": dlg(`<h2>Supprimer cette ronde ?</h2><p>Le trait, les pointeaux et les défauts seront effacés de ce téléphone.</p><div class="rd-btns"><button type="button" class="btn red" data-act="rd-suppr-ok" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true;
       case "rd-suppr-ok": { closeDlg(); const d = load(); const r = d.rondes.find((x) => x.id === id); if (r) (r.defauts || []).forEach((q) => (q.med || []).forEach((m) => IDB.del(m.id))); d.rondes = d.rondes.filter((x) => x.id !== id); d.runs = d.runs.filter((x) => x.ronde !== id); save(d); if (REC && REC.id === id) { clearInterval(REC.timer); REC.off && REC.off(); veille(false); REC = null; } go("ronde"); return true; }
@@ -24009,8 +24089,8 @@ function POSTE(h) {
   function purge() { const h = +store.get("poste:garde", 72) || 72, lim = Date.now() - h * 3600000, m = medias(), reste = m.filter((x) => x.t >= lim); m.filter((x) => x.t < lim).forEach((x) => { try { RD.supprMedia(x.id); } catch (e) { /* rien */ } }); if (reste.length !== m.length) store.set("poste:media", reste); }
   function pageAds() {
     purge(); const p = prof(), r = RET(), nR = r.filter((x) => !x.lu).length;
-    const html = `<div class="ads"><nav class="crumb"><a href="#accueil">Accueil</a></nav><div class="page-h"><h1>ADS · Sécurité</h1><p>${p.statut ? STAT[p.statut] : "Poste non choisi"}${p.pseudo ? " · " + esc(p.pseudo) : ""}</p></div>
-      <div class="rd-grid"><a class="btn" href="#ad-new-alerte">${icon("alerte")}Alerte</a><a class="btn ghost" href="#ad-new-demande">${icon("personnes")}Demande</a><a class="btn ghost" href="#ad-new-info">${icon("texte")}Information</a><a class="btn ghost" href="#ad-new-ronde">${icon("ronde")}Envoyer une ronde</a></div>
+    const html = `<div class="ads"><nav class="crumb"><a href="#accueil">Accueil</a></nav><div class="ads-h"><h1>ADS · Sécurité</h1><p>${p.statut ? STAT[p.statut] : "Poste non choisi"}${p.pseudo ? " · " + esc(p.pseudo) : ""}</p><span class="ads-pill">${icon("cloche")}${nR ? nR + " message(s) non lu(s)" : "Aucun nouveau message"}</span></div>
+      <div class="ads-g"><a class="ads-t" style="--c:#c0261c" href="#ad-new-alerte"><i>${icon("alerte")}</i>Alerte<small>Prévenir tout de suite</small></a><a class="ads-t" style="--c:#2563eb" href="#ad-new-demande"><i>${icon("personnes")}</i>Demande<small>Renfort, matériel</small></a><a class="ads-t" style="--c:#0f8a5f" href="#ad-new-info"><i>${icon("texte")}</i>Information<small>Constat, consigne</small></a><a class="ads-t" style="--c:#7c3aed" href="#ad-new-ronde"><i>${icon("ronde")}</i>Envoyer une ronde<small>Rapport de ronde</small></a></div>
       <section class="sec"><h2 class="lbl b">Reçus</h2>${lien("ad-recus", "liste", "blue", "Retours d’agents", nR ? nR + " non lu(s)" : "Aucun nouveau message")}
         <button type="button" class="btn ghost" data-act="po-coller">${icon("copier")}Coller un message reçu</button></section>
       <section class="sec about"><h2 class="lbl a">Comment ça marche</h2><p>Votre message part par <strong>WhatsApp, SMS ou l’appli de messagerie</strong> de votre choix. Votre collègue le colle dans son appli ADS et il se range tout seul dans « Retours d’agents ». Chacun peut écrire à n’importe quel niveau : agent, chef d’équipe, SSIAP 3, responsable de site.</p>
@@ -24098,13 +24178,37 @@ function POSTE(h) {
   function changeGarde(el) { store.set("poste:garde", +el.value || 72); purge(); toast("Durée enregistrée."); }
   /* Glisser sur l'accueil : vers la droite = Mon poste, vers la gauche = ADS. */
   function glisser(go) {
-    let x0 = null, y0 = 0, t0 = 0;
-    document.addEventListener("touchstart", (e) => { if (e.touches.length !== 1) { x0 = null; return; } const t = e.target; const cur = (location.hash || "#accueil").slice(1) || "accueil"; if (!(cur === "accueil" || cur === "poste" || cur === "ads") || (t.closest && t.closest("canvas,input,textarea,select,.overlay,.rd-dlg,[data-noswipe],video,.fig,#pl-view"))) { x0 = null; return; } let n = t; while (n && n !== document.body) { if (n.scrollWidth > n.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(n).overflowX)) { x0 = null; return; } n = n.parentElement; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); }, { passive: true });
-    document.addEventListener("touchend", (e) => {
-      if (x0 == null) return; const c = e.changedTouches[0], dx = c.clientX - x0, dy = c.clientY - y0; const cur = (location.hash || "#accueil").slice(1) || "accueil"; x0 = null;
-      if (Math.abs(dx) < 90 || Math.abs(dy) > 60 || Date.now() - t0 > 700) return;
-      if (cur === "accueil") go(dx > 0 ? "poste" : "ads"); else if (cur === "poste" && dx < 0) go("accueil"); else if (cur === "ads" && dx > 0) go("accueil");
+    let x0 = null, y0 = 0, t0 = 0, drag = false, lock = null, m = null, busy = false;
+    const reduit = () => { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } };
+    const curTok = () => (location.hash || "#accueil").slice(1) || "accueil";
+    const cible = (cur, dx) => (cur === "accueil" ? (dx > 0 ? "poste" : "ads") : cur === "poste" ? (dx < 0 ? "accueil" : null) : cur === "ads" ? (dx > 0 ? "accueil" : null) : null);
+    const libere = () => { if (m) { m.style.transition = ""; m.style.transform = ""; m.style.opacity = ""; } document.documentElement.style.overflowX = ""; };
+    document.addEventListener("touchstart", (e) => {
+      if (busy) { x0 = null; return; }
+      if (e.touches.length !== 1) { x0 = null; return; } const t = e.target, cur = curTok();
+      if (!(cur === "accueil" || cur === "poste" || cur === "ads") || (t.closest && t.closest("canvas,input,textarea,select,.overlay,.rd-dlg,[data-noswipe],video,.fig,#pl-view"))) { x0 = null; return; }
+      let n = t; while (n && n !== document.body) { if (n.scrollWidth > n.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(n).overflowX)) { x0 = null; return; } n = n.parentElement; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); drag = false; lock = null; m = document.getElementById("app");
     }, { passive: true });
+    document.addEventListener("touchmove", (e) => {
+      if (x0 == null || !m) return; const c = e.touches[0], dx = c.clientX - x0, dy = c.clientY - y0;
+      if (!lock && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) lock = Math.abs(dx) > Math.abs(dy) * 1.4 ? "h" : "v";
+      if (lock !== "h") return; const ok = cible(curTok(), dx);
+      document.documentElement.style.overflowX = "hidden"; m.style.transition = "none"; drag = true;
+      m.style.transform = "translateX(" + (ok ? dx * 0.92 : dx * 0.22) + "px)"; m.style.opacity = String(1 - Math.min(0.45, Math.abs(dx) / (innerWidth * 1.3)));
+    }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      if (x0 == null) return; const c = e.changedTouches[0], dx = c.clientX - x0, dt = Math.max(1, Date.now() - t0), cur = curTok(); x0 = null;
+      if (!drag) return; drag = false; const t = cible(cur, dx), vite = Math.abs(dx) / dt > 0.5 && Math.abs(dx) > 50;
+      if (!t || !(Math.abs(dx) > innerWidth * 0.28 || vite) || reduit()) { if (t && reduit() && Math.abs(dx) > 90) { libere(); go(t); return; } if (m) { m.style.transition = "transform .22s ease-out, opacity .22s"; m.style.transform = "translateX(0)"; m.style.opacity = "1"; } setTimeout(libere, 260); return; }
+      busy = true; const sens = dx > 0 ? 1 : -1; m.style.transition = "transform .17s ease-in, opacity .17s"; m.style.transform = "translateX(" + sens * innerWidth * 0.9 + "px)"; m.style.opacity = "0";
+      setTimeout(() => {
+        go(t); m.style.transition = "none"; m.style.transform = "translateX(" + -sens * innerWidth * 0.4 + "px)"; m.style.opacity = "0"; void m.offsetWidth;
+        m.style.transition = "transform .26s cubic-bezier(.2,.8,.2,1), opacity .26s"; m.style.transform = "translateX(0)"; m.style.opacity = "1";
+        setTimeout(() => { libere(); busy = false; }, 300);
+      }, 170);
+    }, { passive: true });
+    document.addEventListener("touchcancel", () => { x0 = null; drag = false; libere(); }, { passive: true });
   }
   function retour() { if (document.getElementById("po-dlg")) { closeDlg(); return true; } return false; }
   return { page, click, retour, reglages, premier, glisser, changeGarde, STAT };
