@@ -25,7 +25,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - name: Préparer le projet d'essai (le contenu y est chiffré, jamais en clair)
+      - name: Préparer le projet d'essai avec contenu chiffré
         run: |
           mkdir -p b/dist && cd b
           cp ../essai/shell.html dist/index.html
@@ -94,7 +94,7 @@ jobs:
           ls -la memo-ssiap-essai.apk
           # Contrôle : le contenu de l'appli n'est pas en clair dans l'APK.
           unzip -p memo-ssiap-essai.apk 'assets/public/*' 2>/dev/null | grep -c "Conditions d’utilisation" | grep -q '^0$'
-      - name: Publier (version préliminaire : ne touche pas aux mises à jour de la vraie application)
+      - name: Publier en version préliminaire, sans toucher aux mises à jour de la vraie application
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
