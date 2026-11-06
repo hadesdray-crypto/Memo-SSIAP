@@ -66,8 +66,11 @@ button.card { font: inherit; text-align: left; cursor: pointer; border: 0; width
 .rd-live { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .rd-live div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; min-width: 0; }
 .rd-live b { font-size: 1.35rem; } .rd-live span { font-size: .75rem; color: var(--ink-2); }
-.rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.rd-grid .btn { min-height: 64px; justify-content: center; text-align: center; }
+.rd-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.rd-grid .btn { min-height: 64px; justify-content: center; text-align: center; white-space: normal; overflow-wrap: anywhere; min-width: 0; max-width: 100%; }
+.rd-live { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.page-h h1, .rd-li b, .rd-li span, .crumb, #rd-cons { overflow-wrap: anywhere; }
+.rd-box .btn, .chips .btn { max-width: 100%; white-space: normal; }
 .btn.vert { background: var(--green-bg); color: #fff; border-color: var(--green-bg); }
 .rd-3d { width: 100%; height: 300px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; touch-action: none; display: block; }
 .rd-3d-s { height: 220px; }
@@ -1473,7 +1476,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "2.3.0",
+    version: "2.4.0",
     verifie: "5 novembre 2026",
     verifieCourt: "05/11/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -23438,7 +23441,7 @@ function RONDE(h) {
   const C = RONDE_CORE();
   const KEY = "rd:data";
   const load = () => { const d = store.get(KEY, null); return d && Array.isArray(d.rondes) ? d : { rondes: [], runs: [] }; };
-  const save = (d) => store.set(KEY, d);
+  const save = (d) => { try { localStorage.setItem("memo-ssiap:" + KEY, JSON.stringify(d)); return true; } catch (e) { toast("Mémoire du téléphone pleine : supprimez des rondes ou des médias pour libérer de la place."); return false; } };
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const p2 = (n) => String(n).padStart(2, "0");
   const hms = (t) => { const d = new Date(t); return p2(d.getHours()) + ":" + p2(d.getMinutes()); };
@@ -23447,7 +23450,7 @@ function RONDE(h) {
   const rondeDe = (id) => load().rondes.find((r) => r.id === id);
   const majRonde = (id, fn) => { const d = load(); const r = d.rondes.find((x) => x.id === id); if (r) { fn(r); save(d); } return r; };
   const COTES = ["à gauche", "à droite", "en face", "en haut", "en bas", "sur place"];
-  let REC = null, RUN = null, mediaOK = false, wl = null;
+  let REC = null, RUN = null, mediaOK = false, wl = null, vue = "", occupe = false;
   const vib = (n) => { try { navigator.vibrate && navigator.vibrate(n || 60); } catch (e) { /* rien */ } };
   const dire = (t) => { try { if (VX && VX.speak) VX.speak(t); } catch (e) { /* voix absente */ } };
 
@@ -23459,7 +23462,8 @@ function RONDE(h) {
     document.body.appendChild(d);
     const f = d.querySelector("button"); if (f) f.focus({ preventScroll: true });
   }
-  function closeDlg() { const d = document.getElementById("rd-dlg"); if (d) d.remove(); }
+  let urlMedia = null;
+  function closeDlg() { const d = document.getElementById("rd-dlg"); if (d) d.remove(); if (urlMedia) { try { URL.revokeObjectURL(urlMedia); } catch (e) { /* rien */ } urlMedia = null; } }
 
   /* ---------- Médias (IndexedDB) ---------- */
   const IDB = {
@@ -23490,7 +23494,7 @@ function RONDE(h) {
   async function voirMedia(id, kind) {
     try {
       const b = await IDB.get(id); if (!b) { toast("Média introuvable."); return; }
-      const u = URL.createObjectURL(b);
+      const u = URL.createObjectURL(b); urlMedia = u;
       dlg(`<h2>${kind === "video" ? "Vidéo" : "Photo"}</h2>${kind === "video" ? `<video src="${u}" controls playsinline style="width:100%;max-height:60vh"></video>` : `<img src="${u}" alt="Photo de la ronde" style="width:100%;max-height:60vh;object-fit:contain">`}<div class="rd-btns"><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Fermer</button></div>`);
     } catch (e) { toast("Média illisible."); }
   }
@@ -23562,7 +23566,7 @@ function RONDE(h) {
     return { draw, zoom(f) { zoom = Math.max(0.3, Math.min(6, zoom * f)); draw(); }, tourner(d) { yaw += d; draw(); }, haut() { pitch = 1.5; draw(); }, perspective() { pitch = 0.95; yaw = -0.7; draw(); } };
   }
   let V3 = null;
-  const ptsDe = (r) => { const geo = C.geometrie(r.trace); return { geo, pts: geo.v.map((s) => ({ x: s.px, y: s.py, z: s.pz })) }; };
+  const ptsDe = (r) => { const geo = C.geometrie(r.trace, { fermer: !!r.fermer }); return { geo, pts: geo.v.map((s) => ({ x: s.px, y: s.py, z: s.pz })) }; };
   const posD = (geo, d) => { const q = geo.pos(d); return { x: q.x, y: q.y, z: q.z }; };
   const marqueurs = (r, geo) => ({
     pointeaux: (r.pointeaux || []).map((q) => Object.assign(posD(geo, q.d), { nom: q.nom })),
@@ -23578,7 +23582,7 @@ function RONDE(h) {
 
   /* ---------- Libellé d'un endroit (pour les défauts et le rapport) ---------- */
   function lieuA(r, geo, d) {
-    const q = geo.pos(d); const etage = Math.round(q.z / (cfg().hEtage));
+    const q = geo.pos(d); const etage = Math.round(q.z / ((r && r.hEtage) || cfg().hEtage));
     const niv = etage === 0 ? "rez-de-chaussée" : etage > 0 ? "étage " + etage : "sous-sol " + Math.abs(etage);
     let proche = null, md = 1e9; (r.pointeaux || []).forEach((p) => { const dd = Math.abs(p.d - d); if (dd < md) { md = dd; proche = p; } });
     return niv + (proche && md < 15 ? ", près de « " + proche.nom + " »" : "") + ", à " + Math.round(d) + " m du départ";
@@ -23622,9 +23626,9 @@ function RONDE(h) {
     const d = load(); const sites = [...new Set(d.rondes.map((r) => r.site).filter(Boolean))];
     const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>Nouvelle ronde</h1><p>Choisissez des noms simples. Aucun nom de personne n’est demandé.</p></div>
       <section class="sec about">
-        <label class="field"><span>Site</span><input id="rd-site" list="rd-sites" autocomplete="off" placeholder="Nom du site"><datalist id="rd-sites">${sites.map((s) => `<option value="${esc(s)}">`).join("")}</datalist></label>
-        <label class="field"><span>Bâtiment</span><input id="rd-bat" autocomplete="off" placeholder="Bâtiment A"></label>
-        <label class="field"><span>Nom de la ronde</span><input id="rd-nom" autocomplete="off" placeholder="Ronde de nuit"></label>
+        <label class="field"><span>Site</span><input id="rd-site" list="rd-sites" maxlength="40" autocomplete="off" placeholder="Nom du site"><datalist id="rd-sites">${sites.map((s) => `<option value="${esc(s)}">`).join("")}</datalist></label>
+        <label class="field"><span>Bâtiment</span><input id="rd-bat" maxlength="40" autocomplete="off" placeholder="Bâtiment A"></label>
+        <label class="field"><span>Nom de la ronde</span><input id="rd-nom" maxlength="40" autocomplete="off" placeholder="Ronde de nuit"></label>
         <div class="chips"><button type="button" class="btn" data-act="rd-creer">${icon("suivant")}Continuer</button><a class="btn ghost" href="#ronde">${icon("retour")}Retour</a></div>
       </section>`;
     return { html, title: "Nouvelle ronde", tab: "outils", back: "ronde" };
@@ -23634,11 +23638,12 @@ function RONDE(h) {
   function pageRec(id) {
     const r = rondeDe(id); if (!r) return null;
     const actif = REC && REC.id === id;
+    if (!actif && !r.enCours) return pageListe();
     if (!actif) {
       const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>${esc(r.nom)}</h1><p>${r.enCours ? "Cette ronde a été interrompue." : "Prêt à enregistrer."}</p></div>
         <section class="sec about"><p>Tenez le téléphone devant vous, appareil photo vers l’avant, puis marchez normalement. Le départ est l’endroit où vous êtes maintenant.</p>
         <label class="tick"><input type="checkbox" id="rd-gps" checked><span>Noter la position GPS du départ (sert à retrouver la ronde du site)</span></label>
-        <div class="chips"><button type="button" class="btn" data-act="rd-start" data-id="${esc(id)}">${icon("lecture")}Démarrer la ronde</button>${r.enCours && r.trace.verts.length > 1 ? `<button type="button" class="btn ghost" data-act="rd-finir-vieux" data-id="${esc(id)}">${icon("check")}Garder ce qui est enregistré</button>` : ""}<button type="button" class="btn ghost" data-act="rd-suppr" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button></div></section>`;
+        <div class="chips"><button type="button" class="btn" data-act="rd-start" data-id="${esc(id)}">${icon("lecture")}Démarrer la ronde</button>${r.enCours && ((r.distAtteinte || 0) > 2 || r.trace.verts.length > 1) ? `<button type="button" class="btn ghost" data-act="rd-finir-vieux" data-id="${esc(id)}">${icon("check")}Garder ce qui est enregistré</button>` : ""}<button type="button" class="btn ghost" data-act="rd-suppr" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button></div></section>`;
       return { html, title: "Enregistrer", tab: "outils", back: "ronde" };
     }
     const html = `<div class="page-h"><h1>${esc(r.nom)}</h1><p id="rd-etat" role="status">Capteurs en démarrage…</p></div>
@@ -23666,14 +23671,15 @@ function RONDE(h) {
     set("rd-etat", !ok ? "Capteurs en attente… bougez un peu le téléphone." : (et.hpa ? "Capteurs : pas, boussole et baromètre actifs." : "Capteurs : pas et boussole actifs. Étages : boutons « Je monte / Je descends »."));
   }
   async function demarrer(id, avecGps) {
-    try { await demarrer2(id, avecGps); } catch (e) { console.error("ronde", e); REC = null; toast("La ronde n’a pas pu démarrer : " + (e && e.message ? e.message : "erreur")); }
+    if (REC || occupe) return; occupe = true; mediaOK = false;
+    try { await demarrer2(id, avecGps); } catch (e) { console.error("ronde", e); REC = null; toast("La ronde n’a pas pu démarrer : " + (e && e.message ? e.message : "erreur")); } finally { occupe = false; }
   }
   async function demarrer2(id, avecGps) {
     if (REC) return;
     if (!(await permissions())) { toast("Accès aux capteurs de mouvement refusé. Autorisez-les dans les réglages du téléphone."); return; }
     const c = cfg(); const r = rondeDe(id); if (!r) return;
     const S = C.Suivi({ foulee: c.foulee, hEtage: c.hEtage }), R = C.Enregistrement({ hEtage: c.hEtage }); R.demarrer(0, 0, 0);
-    REC = { id, S, R, c, niv: 0, etat: {}, log: [], stairs: null, t0: Date.now(), off: null };
+    REC = { id, S, R, c, niv: 0, etat: {}, log: [], stairs: null, t0: Date.now(), off: null, tick: 0 };
     REC.off = capteurs(
       (t, m) => { const p = S.accel(t, m); if (p) { const v = R.pas(p); if (v) { vib(40); logRec("Virage " + v.sens + " posé"); sauveBrouillon(); } if (!(p.n % 4)) majLive(); } },
       (cap) => S.cap(cap),
@@ -23681,9 +23687,9 @@ function RONDE(h) {
       REC.etat);
     majRonde(id, (x) => { x.enCours = true; x.trace = R.trace; x.date = Date.now(); x.foulee = c.foulee; x.hEtage = c.hEtage; x.trace.verts = R.trace.verts; });
     if (avecGps && navigator.geolocation) { try { navigator.geolocation.getCurrentPosition((p) => majRonde(id, (x) => (x.gps = { lat: Math.round(p.coords.latitude * 1e4) / 1e4, lon: Math.round(p.coords.longitude * 1e4) / 1e4 })), () => {}, { timeout: 8000, maximumAge: 60000 }); } catch (e) { /* GPS indisponible */ } }
-    veille(true); dire("Ronde démarrée. Marchez normalement."); h.rerender(); REC.timer = setInterval(majLive, 700);
+    veille(true); dire("Ronde démarrée. Marchez normalement."); h.rerender(); REC.timer = setInterval(() => { majLive(); if (REC && ++REC.tick % 7 === 0) sauveBrouillon(); }, 700);
   }
-  function sauveBrouillon() { if (!REC) return; const R = REC.R; majRonde(REC.id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = true; }); }
+  function sauveBrouillon() { if (!REC) return; const R = REC.R; majRonde(REC.id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = true; x.distAtteinte = Math.round(R.distance * 10) / 10; }); }
   function finirRec(garde) {
     if (!REC) return; const R = REC.R; R.terminer(); const id = REC.id;
     clearInterval(REC.timer); REC.off && REC.off(); veille(false);
@@ -23700,7 +23706,7 @@ function RONDE(h) {
       <div class="chips"><button type="button" class="btn ghost" data-act="rd-pt-edit" data-id="${esc(id)}" data-p="${esc(q.id)}">${icon("texte")}Modifier</button></div></li>`).join("");
     const dfs = (r.defauts || []).slice().sort((a, b) => a.d - b.d).map((q) => `<li class="rd-li"><div><b>${esc(q.txt || "Défaut")}</b><span>${esc(lieuA(r, geo, q.d))}</span></div><div class="chips">${(q.med || []).map((m) => `<button type="button" class="btn ghost" data-act="rd-med" data-m="${esc(m.id)}" data-k="${esc(m.kind)}">${icon("photo")}${m.kind === "video" ? "Vidéo" : "Photo"}</button>`).join("")}<button type="button" class="btn ghost" data-act="rd-def-suppr" data-id="${esc(id)}" data-p="${esc(q.id)}">${icon("poubelle")}</button></div></li>`).join("");
     const runs = load().runs.filter((x) => x.ronde === id).slice(-5).reverse().map((x) => lien("rd-rap-" + x.id, "registre", "blue", "Passage du " + dfr(x.debut) + " à " + hms(x.debut), (x.ok || []).length + " pointeau(x) validé(s), " + (x.defauts || []).length + " défaut(s)")).join("");
-    const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>${esc(r.nom)}</h1><p>${esc(r.site || "")} · ${esc(r.bat || "")} · ${tot} m · ${(geo.v.filter((s) => s.type === "virage").length)} virage(s) · ${(geo.v.filter((s) => s.type === "etage-fin").length)} escalier(s)</p></div>
+    const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>${esc(r.nom)}</h1><p>${[r.site, r.bat].filter(Boolean).map(esc).concat([]).join(" · ")}${r.site || r.bat ? " · " : ""}${tot} m · ${(geo.v.filter((s) => s.type === "virage").length)} virage(s) · ${(geo.v.filter((s) => s.type === "etage-fin").length)} escalier(s)</p></div>
       <div class="chips"><a class="btn" href="#rd-go-${esc(id)}">${icon("lecture")}Faire la ronde guidée</a></div>
       <section class="sec about"><h2 class="lbl b">Plan en 3D</h2><canvas id="rd-3d" class="rd-3d" aria-label="Plan en trois dimensions de la ronde"></canvas>${barre3d}</section>
       <section class="sec about"><h2 class="lbl g">Pointeaux</h2><ul class="rd-ul">${pts || `<li class="muted">Aucun pointeau.</li>`}</ul><div class="chips"><button type="button" class="btn ghost" data-act="rd-pt-add" data-id="${esc(id)}">${icon("plus")}Ajouter un pointeau</button></div>
@@ -23708,7 +23714,7 @@ function RONDE(h) {
       <section class="sec about"><h2 class="lbl">Défauts</h2><ul class="rd-ul">${dfs || `<li class="muted">Aucun défaut noté.</li>`}</ul></section>
       ${runs ? `<section class="sec"><h2 class="lbl b">Derniers passages</h2>${runs}</section>` : ""}
       <section class="sec about"><h2 class="lbl a">Gérer</h2>
-        <label class="field"><span>Nom</span><input id="rd-ren" value="${esc(r.nom)}"></label>
+        <label class="field"><span>Nom</span><input id="rd-ren" maxlength="40" value="${esc(r.nom)}"></label>
         <div class="chips"><button type="button" class="btn ghost" data-act="rd-ren-ok" data-id="${esc(id)}">${icon("check")}Renommer</button><button type="button" class="btn ghost" data-act="rd-redo" data-id="${esc(id)}">${icon("recommencer")}Refaire le trait</button><button type="button" class="btn ghost" data-act="rd-suppr" data-id="${esc(id)}">${icon("poubelle")}Supprimer la ronde</button></div></section>`;
     return { html, title: r.nom, tab: "outils", back: "ronde", after: () => monter3d(r) };
   }
@@ -23768,9 +23774,13 @@ function RONDE(h) {
   const prochainPt = () => RUN && RUN.pts.filter((q) => !q.fait && !q.manque).sort((a, b) => a.d - b.d)[0];
   function logRun(t) { if (RUN) RUN.log.push({ t: Date.now(), x: t }); }
   async function lancerGo(id) {
-    if (RUN) return; if (!(await permissions())) { toast("Accès aux capteurs de mouvement refusé."); return; }
+    if (RUN || occupe) return; occupe = true; mediaOK = false;
+    try { await lancerGo2(id); } finally { occupe = false; }
+  }
+  async function lancerGo2(id) {
+    if (!(await permissions())) { toast("Accès aux capteurs de mouvement refusé."); return; }
     const r = rondeDe(id); if (!r) return; const c = { foulee: r.foulee || cfg().foulee, hEtage: r.hEtage || cfg().hEtage };
-    const geo = C.geometrie(r.trace), J = C.Rejeu(r.trace, geo, { foulee: c.foulee }), S = C.Suivi({ foulee: c.foulee, hEtage: c.hEtage });
+    const geo = C.geometrie(r.trace, { fermer: !!r.fermer }), J = C.Rejeu(r.trace, geo, { foulee: c.foulee }), S = C.Suivi({ foulee: c.foulee, hEtage: c.hEtage });
     RUN = { id, J, S, geo, etat: {}, log: [], ok: [], defauts: [], debut: Date.now(), pts: (r.pointeaux || []).map((q) => Object.assign({}, q, { fait: false, manque: false })), premiere: true };
     RUN.off = capteurs(
       (t, m) => { const p = S.accel(t, m); if (p) { const msg = J.pas(p.cap); if (msg) { if (msg.type === "virage-ok") vib(40); if (msg.type === "virage-inattendu") { dire("Virage inattendu, restez sur le trait."); logRun("Virage inattendu"); } if (msg.type === "retard") { dire("Vous êtes en retard sur le trait. Touchez « J’ai tourné » quand vous avez tourné."); } } majGo(); } },
@@ -23815,6 +23825,7 @@ function RONDE(h) {
 
   /* ================= Routage ================= */
   function page(t) {
+    vue = t;
     if (t === "ronde") return pageListe();
     if (t === "rd-aide") return pageAide();
     if (t === "rd-new") return pageNouvelle();
@@ -23830,7 +23841,7 @@ function RONDE(h) {
       case "rd-dlg-x": closeDlg(); return true;
       case "rd-media-ok": mediaOK = true; closeDlg(); if (pendingMedia) { const f = pendingMedia; pendingMedia = null; setTimeout(f, 50); } return true;
       case "rd-cfg": { const f = +val("rd-foulee"), e = +val("rd-hetage"); if (f >= 40 && f <= 110) store.set("rd:foulee", f); if (e >= 2.2 && e <= 5) store.set("rd:hetage", e); toast("Réglages enregistrés."); return true; }
-      case "rd-creer": { const r = { id: uid(), site: val("rd-site"), bat: val("rd-bat"), nom: val("rd-nom") || "Ronde", date: Date.now(), trace: { verts: [], pointeaux: [], defauts: [] }, pointeaux: [], defauts: [], enCours: true }; const d = load(); d.rondes.push(r); save(d); go("rd-rec-" + r.id); return true; }
+      case "rd-creer": { const r = { id: uid(), site: val("rd-site"), bat: val("rd-bat"), nom: val("rd-nom") || "Ronde", date: Date.now(), trace: { verts: [], pointeaux: [], defauts: [] }, pointeaux: [], defauts: [], enCours: true }; const d = load(); d.rondes.push(r); if (!save(d)) return true; go("rd-rec-" + r.id); return true; }
       case "rd-start": demarrer(id, !!($("#rd-gps") && $("#rd-gps").checked)); return true;
       case "rd-pt": { if (!REC) return true; const n = REC.R.trace.pointeaux.length + 1; REC.pendingPt = true; dlg(`<h2>Pointeau ici</h2><label class="field"><span>Nom du pointeau</span><input id="rd-pn" placeholder="Pointeau ${n}" value="Pointeau ${n}"></label><label class="field"><span>Position</span><select id="rd-pc">${COTES.map((c) => `<option>${c}</option>`).join("")}</select></label><div class="rd-btns"><button type="button" class="btn" data-act="rd-pt-rec">${icon("check")}Enregistrer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true; }
       case "rd-pt-rec": { if (!REC) { closeDlg(); return true; } const q = ajoutRepere("pt", { nom: val("rd-pn") || "Pointeau", cote: val("rd-pc") || "sur place", simule: true }); REC.R.trace.pointeaux.push(q); majRonde(REC.id, (x) => { x.pointeaux = x.pointeaux || []; x.pointeaux.push(q); }); closeDlg(); vib(60); logRec("Pointeau « " + q.nom + " » posé"); return true; }
@@ -23841,22 +23852,22 @@ function RONDE(h) {
       case "rd-es": { if (!REC || REC.stairs) return true; const n = +b.dataset.n; REC.R.etageManuel(n); REC.stairs = { n }; const bx = $("#rd-esc"); if (bx) { bx.hidden = false; $("#rd-esn").textContent = (n > 0 ? "montée de " : "descente de ") + Math.abs(n) + " étage(s)"; } logRec("Début d’escalier"); return true; }
       case "rd-esp": { if (!REC || !REC.stairs) return true; const s = REC.stairs; s.n += s.n > 0 ? 1 : -1; REC.R.etageManuelN(s.n); $("#rd-esn").textContent = (s.n > 0 ? "montée de " : "descente de ") + Math.abs(s.n) + " étage(s)"; return true; }
       case "rd-esf": { if (!REC || !REC.stairs) return true; REC.R.etageManuelFin(); REC.niv += REC.stairs.n; logRec("Arrivée à l’étage " + REC.niv); REC.stairs = null; const bx = $("#rd-esc"); if (bx) bx.hidden = true; sauveBrouillon(); majLive(); return true; }
-      case "rd-ph": if (REC) prendreMedia("photo", (m) => { const q = ajoutRepere("media", { med: [m], txt: "Photo" }); majRonde(REC.id, (x) => { x.defauts = x.defauts || []; x.defauts.push(Object.assign(q, { txt: "Photo à cet endroit" })); }); logRec("Photo prise"); }); return true;
-      case "rd-vid": if (REC) prendreMedia("video", (m) => { const q = ajoutRepere("media", { med: [m], txt: "Vidéo à cet endroit" }); majRonde(REC.id, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Vidéo enregistrée"); }); return true;
+      case "rd-ph": if (REC) { const rid = REC.id, q = ajoutRepere("media", { txt: "Photo à cet endroit" }); prendreMedia("photo", (m) => { q.med = [m]; majRonde(rid, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Photo prise"); }); } return true;
+      case "rd-vid": if (REC) { const rid = REC.id, q = ajoutRepere("media", { txt: "Vidéo à cet endroit" }); prendreMedia("video", (m) => { q.med = [m]; majRonde(rid, (x) => { x.defauts = x.defauts || []; x.defauts.push(q); }); logRec("Vidéo enregistrée"); }); } return true;
       case "rd-fermer": if (REC) { REC.fermer = !REC.fermer; majRonde(REC.id, (x) => (x.fermer = REC.fermer)); toast(REC.fermer ? "La ronde reviendra sur le départ : l’écart sera réparti." : "Boucle annulée."); } return true;
       case "rd-stop": dlg(`<h2>Terminer la ronde ?</h2><p>Le trait est gardé tel quel. Vous pourrez ensuite nommer les pointeaux et voir le plan en 3D.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-stop-ok">${icon("check")}Terminer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer la ronde</button></div>`); return true;
       case "rd-stop-ok": { closeDlg(); const rid = REC && REC.id; if (rid) { if (REC.fermer) majRonde(rid, (x) => (x.fermer = true)); finirRec(true); go("rd-v-" + rid); } return true; }
-      case "rd-finir-vieux": { majRonde(id, (x) => { if (x.trace.verts.length && x.trace.verts[x.trace.verts.length - 1].type !== "fin") { const l = x.trace.verts[x.trace.verts.length - 1]; x.trace.verts.push({ type: "fin", x: 0, y: 0, z: l.z, d: Math.max(l.d, 0), cap: null }); } x.enCours = false; }); go("rd-v-" + id); return true; }
+      case "rd-finir-vieux": { majRonde(id, (x) => { if (x.trace.verts.length && x.trace.verts[x.trace.verts.length - 1].type !== "fin") { const l = x.trace.verts[x.trace.verts.length - 1]; x.trace.verts.push({ type: "fin", x: 0, y: 0, z: l.z, d: Math.max(l.d, x.distAtteinte || 0), cap: null }); } x.enCours = false; }); go("rd-v-" + id); return true; }
       case "rd-suppr": dlg(`<h2>Supprimer cette ronde ?</h2><p>Le trait, les pointeaux et les défauts seront effacés de ce téléphone.</p><div class="rd-btns"><button type="button" class="btn red" data-act="rd-suppr-ok" data-id="${esc(id)}">${icon("poubelle")}Supprimer</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true;
       case "rd-suppr-ok": { closeDlg(); const d = load(); const r = d.rondes.find((x) => x.id === id); if (r) (r.defauts || []).forEach((q) => (q.med || []).forEach((m) => IDB.del(m.id))); d.rondes = d.rondes.filter((x) => x.id !== id); d.runs = d.runs.filter((x) => x.ronde !== id); save(d); if (REC && REC.id === id) { clearInterval(REC.timer); REC.off && REC.off(); veille(false); REC = null; } go("ronde"); return true; }
       case "rd-redo": dlg(`<h2>Refaire le trait ?</h2><p>L’ancien trait est remplacé. Les pointeaux gardent leur distance : vérifiez-les ensuite.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-redo-ok" data-id="${esc(id)}">${icon("recommencer")}Refaire</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Annuler</button></div>`); return true;
       case "rd-redo-ok": closeDlg(); majRonde(id, (x) => { x.trace = { verts: [], pointeaux: [], defauts: [] }; x.enCours = true; }); go("rd-rec-" + id); return true;
-      case "rd-ren-ok": majRonde(id, (x) => (x.nom = val("rd-ren") || x.nom)); toast("Nom enregistré."); rerender(); return true;
+      case "rd-ren-ok": if (!val("rd-ren")) { toast("Écrivez un nom."); return true; } majRonde(id, (x) => (x.nom = val("rd-ren"))); toast("Nom enregistré."); rerender(); return true;
       case "rd-3d": if (V3) { const v = b.dataset.v; if (v === "zoom+") V3.zoom(1.3); else if (v === "zoom-") V3.zoom(0.77); else if (v === "g") V3.tourner(-0.4); else if (v === "d") V3.tourner(0.4); else V3.haut(); } return true;
       case "rd-pt-add": formPointeau(id, null); return true;
       case "rd-pt-edit": { const r = rondeDe(id); const p = r && (r.pointeaux || []).find((q) => q.id === b.dataset.p); formPointeau(id, p || null); return true; }
       case "rd-nfc": lireNfc(); return true;
-      case "rd-pt-ok": { const pid = b.dataset.p, nom = val("rd-pn"), cote = val("rd-pc"), dd = parseFloat(val("rd-pd").replace(",", ".")); if (!nom) { toast("Donnez un nom au pointeau."); return true; }
+      case "rd-pt-ok": { const pid = b.dataset.p, nom = val("rd-pn"), cote = val("rd-pc"), dd = parseFloat(val("rd-pd").replace(",", ".")); if (!nom) { toast("Donnez un nom au pointeau."); return true; } if (!pid && !isFinite(dd)) { toast("Indiquez la distance sur le trait, en mètres (voir le plan)."); return true; }
         majRonde(id, (x) => { x.pointeaux = x.pointeaux || []; const tot = (x.trace.verts[x.trace.verts.length - 1] || {}).d || 0; let q = pid && x.pointeaux.find((z) => z.id === pid); if (!q) { q = { id: uid(), d: 0, t: Date.now(), simule: true }; x.pointeaux.push(q); } q.nom = nom; q.cote = cote; if (isFinite(dd)) q.d = Math.max(0, Math.min(tot - (x.trace.verts[0] ? x.trace.verts[0].d : 0), dd)); if (nfcTmp) { q.nfc = nfcTmp; q.simule = false; } });
         closeDlg(); toast("Pointeau enregistré : le guidage est recalculé."); rerender(); return true; }
       case "rd-pt-suppr": majRonde(id, (x) => (x.pointeaux = (x.pointeaux || []).filter((q) => q.id !== b.dataset.p))); closeDlg(); toast("Pointeau supprimé : le guidage est recalculé."); rerender(); return true;
@@ -23886,15 +23897,20 @@ function RONDE(h) {
     if (uid2 && uid2 === q.nfc) { q.fait = true; q.tFait = Date.now(); q.mode = "nfc"; logRun("Pointeau « " + q.nom + " » validé (NFC)"); vib(80); dire("Pointeau validé"); majGo(); }
     else if (uid2) toast("Ce n’est pas la bonne étiquette."); else { q.fait = true; q.tFait = Date.now(); q.mode = "simule"; logRun("Pointeau « " + q.nom + " » validé (sans NFC)"); majGo(); toast("Étiquette non lue : validé à la position."); }
   }
+  /* Sortie de la page de ronde par un autre chemin (onglet, lien) : on garde ce qui est fait, on arrête les capteurs. */
+  function quitte(t) {
+    if (REC && t !== "rd-rec-" + REC.id) { sauveBrouillon(); clearInterval(REC.timer); REC.off && REC.off(); veille(false); REC = null; toast("Ronde interrompue : ouvrez-la dans « Ronde » pour la garder ou la refaire."); }
+    if (RUN && t !== "rd-go-" + RUN.id) { const rid = finirGo(); if (rid) toast("Ronde guidée arrêtée : le rapport est enregistré dans la ronde."); }
+  }
   /* Bouton Retour du téléphone : ferme la fenêtre, ou demande avant de quitter une ronde en cours. true = géré ici. */
   function retour() {
     if (document.getElementById("rd-dlg")) { closeDlg(); return true; }
-    const t = (location.hash || "").slice(1);
+    const t = vue;
     if (REC && t === "rd-rec-" + REC.id) { dlg(`<h2>Quitter la ronde ?</h2><p>Le trait déjà enregistré est conservé : vous pourrez le terminer plus tard.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-stop-ok">${icon("check")}Terminer maintenant</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer la ronde</button></div>`); return true; }
     if (RUN && t === "rd-go-" + RUN.id) { dlg(`<h2>Quitter la ronde guidée ?</h2><p>Le rapport sera créé avec ce qui est fait.</p><div class="rd-btns"><button type="button" class="btn" data-act="rd-g-fin-ok">${icon("check")}Terminer et voir le rapport</button><button type="button" class="btn ghost" data-act="rd-dlg-x">${icon("retour")}Continuer</button></div>`); return true; }
     return false;
   }
-  return { page, click, retour, texteRapport, media: prendreMedia, blob: (id) => IDB.get(id), supprMedia: (id) => IDB.del(id), _C: C };
+  return { page, click, retour, quitte, texteRapport, avertir: () => { mediaOK = false; }, media: prendreMedia, blob: (id) => IDB.get(id), supprMedia: (id) => IDB.del(id), _C: C };
 }
 /* ronde-ui:fin */
 /* poste-ui:debut — profil et poste (agent, chef d'équipe, SSIAP 3, responsable de site), écrans par poste, ADS (messages entre collègues). Tout reste sur le téléphone. */
@@ -23908,9 +23924,10 @@ function POSTE(h) {
   const prof = () => Object.assign({ statut: "", pseudo: "", site: "" }, store.get("poste:profil", {}));
   const niveau = () => ORDRE.indexOf(prof().statut);
   const L = () => store.get("poste:listes", {});
-  const saveL = (x) => store.set("poste:listes", x);
+  const ecrit = (k, v) => { try { localStorage.setItem("memo-ssiap:" + k, JSON.stringify(v)); return true; } catch (e) { toast("Mémoire du téléphone pleine : supprimez des éléments pour libérer de la place."); return false; } };
+  const saveL = (x) => ecrit("poste:listes", x);
   const RET = () => store.get("poste:retours", []);
-  const saveRet = (x) => store.set("poste:retours", x.slice(-400));
+  const saveRet = (x) => ecrit("poste:retours", x.slice(-400));
 
   /* ---------- fenêtre (défile, boutons visibles) ---------- */
   function dlg(html) { closeDlg(); const d = document.createElement("div"); d.id = "po-dlg"; d.className = "rd-dlg"; d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true"); d.innerHTML = `<div class="rd-box">${html}</div>`; document.body.appendChild(d); const f = d.querySelector("input,select,button"); if (f) f.focus({ preventScroll: true }); }
@@ -23923,9 +23940,11 @@ function POSTE(h) {
     <label class="field"><span>Site (facultatif)</span><input id="po-si" autocomplete="off" maxlength="40" value="${esc(prof().site)}" placeholder="Nom du site"></label>
     <div class="rd-btns"><button type="button" class="btn" data-act="po-prof-ok">${icon("check")}Enregistrer</button>${premier ? `<button type="button" class="btn ghost" data-act="po-prof-plus">${icon("horloge")}Plus tard</button>` : `<button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Annuler</button>`}</div>`;
   let essais = 0;
+  const mediaOKreset = () => { try { RD.avertir(); } catch (e) { /* rien */ } };
   function premier() {
     if (prof().statut || store.get("poste:plustard", false)) return;
-    if (document.querySelector(".overlay:not([hidden]), .rd-dlg")) { if (essais++ < 12) setTimeout(premier, 2000); return; }
+    const ac = document.activeElement, hh = (location.hash || "").slice(1) || "accueil";
+    if (document.querySelector(".overlay:not([hidden]), .rd-dlg") || (ac && /INPUT|TEXTAREA|SELECT/.test(ac.tagName)) || !["accueil", "outils", "poste", "ads", "reglages"].includes(hh)) { if (essais++ < 40) setTimeout(premier, 3000); return; }
     dlg(formProfil(true));
   }
   function reglages() {
@@ -23950,8 +23969,8 @@ function POSTE(h) {
   const liste = (k) => { const all = L(); if (all[k]) return all[k]; const base = TYPES[k].base ? TYPES[k].base.map((t) => ({ id: uid(), titre: t, note: "", etat: false, date: "" })) : []; if (base.length) { all[k] = base; saveL(all); } return base; };
   const majListe = (k, fn) => { const all = L(); all[k] = liste(k); fn(all[k]); saveL(all); };
   function pageListe(k) {
-    const T = TYPES[k]; if (!T) return null; const it = liste(k);
-    const lignes = it.map((x) => `<li class="rd-li"><div><b>${T.check ? `<label class="tick"><input type="checkbox" data-act="po-coche" data-k="${k}" data-id="${x.id}"${x.etat ? " checked" : ""}><span>${esc(x.titre)}</span></label>` : esc(x.titre)}</b>${x.date ? `<span>${esc(x.date)}</span>` : ""}${x.note ? `<span>${esc(x.note)}</span>` : ""}</div>
+    const T = TYPES[k]; if (!T) return null; if (T.nv > Math.max(0, niveau())) return pagePoste(); const it = liste(k);
+    const lignes = it.map((x) => `<li class="rd-li"><div><b>${T.check ? `<label class="tick"><input type="checkbox" data-act="po-coche" data-k="${k}" data-id="${x.id}"${x.etat ? " checked" : ""}><span>${esc(x.titre)}</span></label>` : esc(x.titre)}</b>${x.date ? `<span>${esc(x.date.split("-").reverse().join("/"))}</span>` : ""}${x.note ? `<span>${esc(x.note)}</span>` : ""}</div>
       <div class="chips">${T.check ? "" : `<button type="button" class="btn ghost" data-act="po-it" data-k="${k}" data-id="${x.id}">${icon("texte")}Modifier</button>`}<button type="button" class="btn ghost" data-act="po-it-suppr" data-k="${k}" data-id="${x.id}" aria-label="Supprimer">${icon("poubelle")}</button></div></li>`).join("");
     const html = `<nav class="crumb"><a href="#poste">Mon poste</a></nav><div class="page-h"><h1>${esc(T.t)}</h1><p>${esc(T.d)}</p></div>
       <ul class="rd-ul">${lignes || `<li class="muted">Rien pour l’instant.</li>`}</ul>
@@ -23999,11 +24018,11 @@ function POSTE(h) {
         <label class="field"><span>Durée de conservation des médias</span><select data-act="po-garde">${[24, 72, 168].map((v) => `<option value="${v}"${+store.get("poste:garde", 72) === v ? " selected" : ""}>${v === 168 ? "7 jours" : v + " h"}</option>`).join("")}</select></label></section></div>`;
     return { html, title: "ADS", tab: "outils", back: "accueil" };
   }
-  let brouillon = null;
+  let brouillon = { type: "info", med: [] };
   function pageNouveau(t) {
-    const type = TM[t] ? t : "info"; const p = prof(); const next = ORDRE[Math.min(ORDRE.length - 1, Math.max(0, niveau()) + 1)];
+    const type = TM[t] ? t : "info"; mediaOKreset(); const p = prof(); const next = ORDRE[Math.min(ORDRE.length - 1, Math.max(0, niveau()) + 1)];
     const runs = store.get("rd:data", { runs: [] }).runs || [];
-    brouillon = brouillon && brouillon.type === type ? brouillon : { type, med: [] };
+    brouillon = { type, med: [] };
     const html = `<nav class="crumb"><a href="#ads">ADS</a></nav><div class="page-h"><h1>${TM[type]}</h1></div>
       <section class="sec about"><label class="field"><span>À qui</span><select id="ad-vers">${Object.keys(VERS).map((k) => `<option value="${k}"${k === next ? " selected" : ""}>${VERS[k]}</option>`).join("")}</select></label>
         <label class="field"><span>Sujet</span><input id="ad-sujet" maxlength="80" placeholder="En quelques mots"></label>
@@ -24013,17 +24032,19 @@ function POSTE(h) {
         <div class="chips"><button type="button" class="btn" data-act="po-envoi" data-t="${type}">${icon("suivant")}Envoyer</button><button type="button" class="btn ghost" data-act="po-copier-msg" data-t="${type}">${icon("copier")}Copier le message</button><a class="btn ghost" href="#ads">${icon("retour")}Retour</a></div></section>`;
     return { html, title: TM[type], tab: "outils", back: "ads" };
   }
-  const entete = (type, vers, sujet, de) => "[ADS] " + TM[type] + " | De : " + (de || (STAT[prof().statut] || "Agent") + (prof().pseudo ? " " + prof().pseudo : "")) + " | À : " + VERS[vers] + " | " + hms(Date.now()) + (prof().site ? " | Site : " + prof().site : "") + (sujet ? "\nSujet : " + sujet : "");
+  const net = (s) => String(s || "").replace(/[|\r\n]+/g, " ").trim();
+  const entete = (type, vers, sujet, de) => "[ADS] " + TM[type] + " | De : " + (de || (STAT[prof().statut] || "Agent") + (prof().pseudo ? " " + net(prof().pseudo) : "")) + " | À : " + VERS[vers] + " | " + hms(Date.now()) + (prof().site ? " | Site : " + net(prof().site) : "") + (sujet ? "\nSujet : " + sujet : "");
   function construire(type) {
     const v = (i) => (($("#" + i) || {}).value || "").trim(); let t = entete(type, v("ad-vers") || "ssiap2", v("ad-sujet")) + "\n" + v("ad-texte");
     const rid = v("ad-run"); if (rid) { const run = (store.get("rd:data", { runs: [] }).runs || []).find((x) => x.id === rid); if (run) t += "\n\n" + RD.texteRapport(run); }
     return t;
   }
   async function envoyer(type) {
+    if (!brouillon) brouillon = { type, med: [] };
     const t = construire(type); const files = [];
     for (const m of brouillon.med) { try { const b = await RD.blob(m.id); if (b) files.push(new File([b], m.kind === "video" ? "video.mp4" : "photo.jpg", { type: b.type || (m.kind === "video" ? "video/mp4" : "image/jpeg") })); } catch (e) { /* média absent */ } }
     try {
-      if (navigator.share) { const d = { text: t }; if (files.length && navigator.canShare && navigator.canShare({ files })) d.files = files; await navigator.share(d); toast("Message prêt à partir."); brouillon = null; return; }
+      if (navigator.share) { const d = { text: t }; if (files.length && navigator.canShare && navigator.canShare({ files })) d.files = files; await navigator.share(d); toast("Message prêt à partir."); brouillon = { type, med: [] }; const ne = $("#ad-nmed"); if (ne) ne.textContent = ""; return; }
     } catch (e) { if (e && e.name === "AbortError") return; }
     copy(t, "Message copié : collez-le dans WhatsApp ou un SMS."); if (files.length) toast("Les médias restent sur le téléphone : joignez-les depuis la galerie.");
   }
@@ -24035,7 +24056,7 @@ function POSTE(h) {
   }
   function pageRecus() {
     const r = RET().slice().reverse(); const g = {}; r.forEach((x) => (g[x.dossier || "Travail"] = g[x.dossier || "Travail"] || []).push(x));
-    const blocs = Object.keys(g).map((k) => `<section class="sec"><h2 class="lbl b">${esc(k)} (${g[k].length})</h2><ul class="rd-ul">${g[k].map((x) => `<li class="rd-li"><div><b>${x.lu ? "" : "● "}${esc(x.sujet || TM[x.type])}</b><span>${esc(x.de)} → ${esc(x.vers)} · ${esc(x.quand)}</span></div><div class="chips"><button type="button" class="btn ghost" data-act="po-lire" data-id="${x.id}">${icon("oeil")}Lire</button><button type="button" class="btn ghost" data-act="po-fwd" data-id="${x.id}">${icon("suivant")}Transmettre</button><button type="button" class="btn ghost" data-act="po-ret-suppr" data-id="${x.id}" aria-label="Supprimer">${icon("poubelle")}</button></div></li>`).join("")}</ul></section>`).join("");
+    const blocs = Object.keys(g).map((k) => `<section class="sec"><h2 class="lbl b">${esc(k)} (${g[k].length})</h2><ul class="rd-ul">${g[k].map((x) => `<li class="rd-li"><div><b>${x.lu ? "" : "Nouveau · "}${esc(x.sujet || TM[x.type])}</b><span>De ${esc(x.de)} à ${esc(x.vers)} · ${esc(x.quand)}</span></div><div class="chips"><button type="button" class="btn ghost" data-act="po-lire" data-id="${x.id}">${icon("oeil")}Lire</button><button type="button" class="btn ghost" data-act="po-fwd" data-id="${x.id}">${icon("suivant")}Transmettre</button><button type="button" class="btn ghost" data-act="po-ret-suppr" data-id="${x.id}" aria-label="Supprimer">${icon("poubelle")}</button></div></li>`).join("")}</ul></section>`).join("");
     const html = `<nav class="crumb"><a href="#ads">ADS</a></nav><div class="page-h"><h1>Retours d’agents</h1><p>Messages reçus, rangés par dossier : travail, demandes, alertes et anomalies, rondes.</p></div>
       <div class="chips"><button type="button" class="btn" data-act="po-coller">${icon("copier")}Coller un message reçu</button></div>${blocs || `<div class="result"><p>Aucun message reçu. Quand un collègue vous envoie un message ADS, copiez-le puis touchez « Coller un message reçu ».</p></div>`}`;
     return { html, title: "Retours d’agents", tab: "outils", back: "ads" };
@@ -24055,7 +24076,7 @@ function POSTE(h) {
       case "po-x": closeDlg(); return true;
       case "po-prof": dlg(formProfil(false)); return true;
       case "po-prof-plus": store.set("poste:plustard", true); closeDlg(); return true;
-      case "po-prof-ok": { const st = val("po-st") || "ssiap1"; store.set("poste:profil", { statut: st, pseudo: val("po-ps"), site: val("po-si") }); closeDlg(); toast("Poste enregistré : " + STAT[st] + "."); rerender(); return true; }
+      case "po-prof-ok": { const st = val("po-st") || "ssiap1"; store.set("poste:profil", { statut: st, pseudo: net(val("po-ps")), site: net(val("po-si")) }); closeDlg(); toast("Poste enregistré : " + STAT[st] + "."); rerender(); return true; }
       case "po-coche": majListe(k, (a) => { const x = a.find((z) => z.id === id); if (x) x.etat = b.checked; }); return true;
       case "po-zero": majListe(k, (a) => a.forEach((x) => (x.etat = false))); rerender(); return true;
       case "po-it": formItem(k, id); return true;
@@ -24067,7 +24088,7 @@ function POSTE(h) {
       case "po-envoi": envoyer(b.dataset.t); return true;
       case "po-copier-msg": copy(construire(b.dataset.t), "Message copié."); return true;
       case "po-coller": dlg(`<h2>Coller un message reçu</h2><label class="field"><span>Message ADS</span><textarea id="po-col" rows="7" placeholder="Collez ici le message reçu"></textarea></label><div class="rd-btns"><button type="button" class="btn" data-act="po-coller-ok">${icon("check")}Ranger le message</button><button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Annuler</button></div>`); return true;
-      case "po-coller-ok": { const m = lire(val("po-col")); if (!m) { toast("Ce n’est pas un message ADS (il doit commencer par [ADS])."); return true; } saveRet(RET().concat([m])); closeDlg(); toast("Rangé dans « " + m.dossier + " »."); go("ad-recus"); return true; }
+      case "po-coller-ok": { if (val("po-col").length > 6000) { toast("Message trop long (6 000 caractères au plus)."); return true; } const m = lire(val("po-col")); if (!m) { toast("Ce n’est pas un message ADS (il doit commencer par [ADS])."); return true; } if (!saveRet(RET().concat([m]))) return true; closeDlg(); toast("Rangé dans « " + m.dossier + " »."); go("ad-recus"); return true; }
       case "po-lire": { const a = RET(), x = a.find((z) => z.id === id); if (!x) return true; x.lu = true; saveRet(a); dlg(`<h2>${esc(x.sujet || TM[x.type])}</h2><pre class="rd-pre">${esc(x.texte)}</pre><div class="rd-btns"><button type="button" class="btn" data-act="po-fwd" data-id="${x.id}">${icon("suivant")}Transmettre</button><button type="button" class="btn ghost" data-act="po-x">${icon("retour")}Fermer</button></div>`); rerender(); return true; }
       case "po-fwd": { const x = RET().find((z) => z.id === id); if (!x) return true; closeDlg(); const t = "[ADS] Transmis par " + (STAT[prof().statut] || "un collègue") + (prof().pseudo ? " " + prof().pseudo : "") + " | " + hms(Date.now()) + "\n" + x.texte; if (navigator.share) navigator.share({ text: t }).catch(() => {}); else copy(t, "Message copié : collez-le dans votre messagerie."); return true; }
       case "po-ret-suppr": saveRet(RET().filter((z) => z.id !== id)); rerender(); return true;
@@ -26933,6 +26954,7 @@ function jChar(o = {}) {
     if (t !== curTok) { if (VX) { VX.stop(); VX.stopMic(); } if (guide) guideClose(); }
     if (curTok !== null) scrolls[curTok] = window.scrollY;
     if (!stack.length) stack.push(t);
+    if (RD) RD.quitte(t);
     let page;
     try { page = pageFor(t); } catch (e) { console.error(e); page = null; }
     if (!page) page = notFound();
