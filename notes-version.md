@@ -1,3 +1,6 @@
+- Livres de cours : relecture complète contre les livres. 1 080 questions (au lieu de 659), au moins 3 par fiche, la page du livre citée dans chaque explication ; la bonne réponse n'est plus presque toujours la plus longue
+- Livres de cours : corrections de texte, de tableaux et de schémas d'après les pages ; les textes des schémas ne sont plus coupés
+- Correction : les questions de secourisme du SST s'affichaient mal, c'est réparé. L'examen blanc SSIAP 1 ne pioche plus dans le SST
 - Nouveau : **Livres de cours** (Outils et accueil) : tout le contenu des manuels SSIAP 1 (France Sélection, éd. juillet 2017) et SST (MémoForma V5_01/2024), rangé par partie et par page : cours, tableaux, schémas redessinés, 212 fiches et leurs questions, la voie engins en premier
 - Les questions des livres alimentent l'apprentissage, les jeux et l'examen blanc ; chaque fiche indique sa source. Quand le manuel diffère de la réglementation actuelle, le texte du manuel est conservé avec la mention « d'après ce manuel, utilisé pour la formation »
 - Recherche plus tolérante : elle comprend les fautes et les mots dits à l'oreille (« voix engin » trouve « voie engins »), propose « Vouliez-vous dire… » et reconnaît des mots familiers
