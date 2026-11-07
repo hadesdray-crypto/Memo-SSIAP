@@ -1,3 +1,4 @@
+- Jeux et apprentissage : les questions des livres alimentent la catégorie « SST, secourisme » et « Textes et règlement » ; les mises en situation de l'apprentissage affichent l'explication du livre
 - Livres de cours : relecture complète contre les livres. 1 080 questions (au lieu de 659), au moins 3 par fiche, la page du livre citée dans chaque explication ; la bonne réponse n'est plus presque toujours la plus longue
 - Livres de cours : corrections de texte, de tableaux et de schémas d'après les pages ; les textes des schémas ne sont plus coupés
 - Correction : les questions de secourisme du SST s'affichaient mal, c'est réparé. L'examen blanc SSIAP 1 ne pioche plus dans le SST

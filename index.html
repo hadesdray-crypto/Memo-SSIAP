@@ -1492,7 +1492,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "2.5.1",
+    version: "2.5.2",
     verifie: "5 novembre 2026",
     verifieCourt: "05/11/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -31346,7 +31346,7 @@ const APP = (() => {
     return {
       key: rid + "|" + f.id, lid: f.id, rid, f: f.id, auto: true, titre: "Apprendre : " + f.titre, objectif: f.clair, fiches: [f.id],
       etapes: ol ? ol.x : [], faire: oks, nepasfaire: ws, erreurs: [],
-      situations: (D.quiz || []).filter((q) => q.f === f.id).map((q) => ({ q: q.q, c: q.c, a: q.a, e: "" })),
+      situations: (D.quiz || []).filter((q) => q.f === f.id).map((q) => ({ q: q.q, c: q.c, a: q.a, e: q.x || "" })),
     };
   }
   function apLessons(rid) {
@@ -32538,7 +32538,8 @@ function jChar(o = {}) {
     const seen = new Set(), out = [];
     QZ.forEach((q) => {
       const cats = [...new Set((q.niv || []).map((n) => jMapNiv[n]).filter(Boolean))];
-      if (q.th === "erp" || q.th === "controles") cats.push("reglementation");
+      if (q.th === "erp" || q.th === "controles" || q.th === "l1-ann") cats.push("reglementation");
+      if (String(q.th).startsWith("lsst-")) { cats.length = 0; cats.push("sst"); }
       if (!cats.length) return;
       seen.add(q.id);
       out.push({ id: q.id, type: "qcm", cats, mode: "examen", q: q.q, c: q.c, a: q.a, x: q.x || "", f: q.f });
