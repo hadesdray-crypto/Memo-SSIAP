@@ -1,3 +1,4 @@
+- Secourisme (SST) : six dessins de gestes ajoutés aux fiches, comparés un par un aux pages du livre : RCP adulte, RCP enfant et nourrisson, défibrillateur (mise en œuvre et cas particuliers), désobstruction du nourrisson, saignement abondant. Ce sont des dessins schématiques, pas les photos du livre
 - Jeux et apprentissage : les questions des livres alimentent la catégorie « SST, secourisme » et « Textes et règlement » ; les mises en situation de l'apprentissage affichent l'explication du livre
 - Livres de cours : relecture complète contre les livres. 1 080 questions (au lieu de 659), au moins 3 par fiche, la page du livre citée dans chaque explication ; la bonne réponse n'est plus presque toujours la plus longue
 - Livres de cours : corrections de texte, de tableaux et de schémas d'après les pages ; les textes des schémas ne sont plus coupés
