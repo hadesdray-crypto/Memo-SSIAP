@@ -1,3 +1,4 @@
+- Relecture complète comparée aux photos des livres : trois fautes corrigées d'après la page 62 (« point de rassemblement », accord, ponctuation) et un schéma de ronde dont les mots étaient coupés
 - Recherche : elle comprend mieux les mots dits à l'oreille, par exemple « la voix en juin » ou « voix engin » trouvent la voie engins ; elle reste entièrement dans l'appli
 - Voie engins : page refaite, la définition et toutes les valeurs du cours en haut (largeur, pente, force portante, rayon, hauteur libre, surlargeur, poinçonnement, voie échelle, espaces libres), avec les schémas redessinés d'après le livre
 - Schémas : voie engins, voie échelle, pentes, balcons et espace libre redessinés d'après les pages 43 à 47 ; plus aucun texte coupé ou superposé sur les 115 schémas, lisibles aussi en thème sombre
