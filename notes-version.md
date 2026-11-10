@@ -1,3 +1,7 @@
+- Recherche : elle comprend mieux les mots dits à l'oreille, par exemple « la voix en juin » ou « voix engin » trouvent la voie engins ; elle reste entièrement dans l'appli
+- Voie engins : page refaite, la définition et toutes les valeurs du cours en haut (largeur, pente, force portante, rayon, hauteur libre, surlargeur, poinçonnement, voie échelle, espaces libres), avec les schémas redessinés d'après le livre
+- Schémas : voie engins, voie échelle, pentes, balcons et espace libre redessinés d'après les pages 43 à 47 ; plus aucun texte coupé ou superposé sur les 115 schémas, lisibles aussi en thème sombre
+- Secourisme (SST) : les deux graphiques des accidents du travail et des accidents de trajet ont leurs repères à la bonne hauteur, la chaîne des secours et la consigne de sécurité sont lisibles
 - Secourisme (SST) : retrait des six dessins de gestes ajoutés en 2.5.3, jugés pas assez exacts ; les fiches reviennent à leurs schémas d'origine
 - Jeux et apprentissage : les questions des livres alimentent la catégorie « SST, secourisme » et « Textes et règlement » ; les mises en situation de l'apprentissage affichent l'explication du livre
 - Livres de cours : relecture complète contre les livres. 1 080 questions (au lieu de 659), au moins 3 par fiche, la page du livre citée dans chaque explication ; la bonne réponse n'est plus presque toujours la plus longue
