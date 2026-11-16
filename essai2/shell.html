@@ -26,7 +26,7 @@ button[disabled]{opacity:.6}
 (function () {
   "use strict";
   window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); window.__inst = e; var bi = document.getElementById("inst"); if (bi) bi.style.display = ""; });
-  var CLE = "essai-ssiap", REV = "https://hadesdray-crypto.github.io/memo-ssiap/essai-revoques.json";
+  var CLE = "essai-ssiap", REV = "https://hadesdray-crypto.github.io/Memo-SSIAP/essai-revoques.json";
   var $v = document.getElementById("v");
   function lire() { try { return JSON.parse(localStorage.getItem(CLE)); } catch (e) { return null; } }
   function ecrire(s) { try { localStorage.setItem(CLE, JSON.stringify(s)); } catch (e) {} }
