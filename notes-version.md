@@ -1,3 +1,4 @@
+- Les livres de cours sont retirés le temps d’être réécrits en mots propres à partir des textes officiels (Légifrance, ministères) ; le reste de l’appli ne change pas
 - Ronde : seuls les vrais escaliers en colimaçon sont dessinés en spirale ; un escalier droit ou à paliers garde ton vrai trajet (virages compris) et la hauteur monte régulièrement le long de ce trajet
 - Ronde : l’escalier en colimaçon est maintenant dessiné en serpentin sur le plan en 3D, avec le nombre d’étages et l’étage d’arrivée ; un graphique « Hauteur » montre chaque montée et descente ; quand le baromètre détecte un étage, l’appli demande « Vous avez monté d’un étage, arrivé à l’étage 1 ? Oui / Non » (sans réponse en 25 secondes, c’est oui) et indique « Vous montez un escalier… » pendant la montée
 - Relecture complète comparée aux photos des livres : trois fautes corrigées d'après la page 62 (« point de rassemblement », accord, ponctuation) et un schéma de ronde dont les mots étaient coupés
