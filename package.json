@@ -1,0 +1,6 @@
+{
+  "name": "memo-ssiap",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mémo SSIAP : application Android construite à partir de la page index.html (voir .github/workflows/android.yml)."
+}

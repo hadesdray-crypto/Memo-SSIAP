@@ -1,0 +1,253 @@
+Memento à l’usage
+des centres de formation
+SSIAP
+édité le 29 mars 2021
+1 Ce mémento a pour objectif d’aider les centres de formation à la réalisation des formations
+SSIAP et à la préparation des examens, en prenant en compte les exigences de la
+réglementation et les demandes de la préfecture de la Vendée ainsi que du Service
+Départemental d’Incendie et de Secours.
+Les centres de formation peuvent s’appuyer sur les référents SSIAP au sein de la Préfecture et
+du SDIS.
+Coordonnées :
+- Préfecture – Service Interministériel de Défense et Protection Civile (S.I.D.P.C.) :
+o Courriel : pref-defense-protection-civile@vendee.gouv.fr
+o Adresse postale : 29 rue Delille - 85922 La Roche-sur-Yon Cedex 9
+o Ligne téléphonique : 02 51 36 72 20
+- SDIS – Groupement Gestion des Risques - Service Prévention :
+o Courriel : sprev@sdis-vendee.fr
+o Adresse postale : BP 695 – Les Oudairies – 85017 La Roche-sur-Yon Cedex
+o Ligne téléphonique :02 51 45 10 38
+Les centres de formation se doivent de connaître et d’appliquer l’arrêté modifié du 2 mai
+2005 relatif aux missions, à l’emploi et à la qualification du personnel permanent des services
+de sécurité incendie des établissements recevant du public et des immeubles de grande
+hauteur : https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000448223/2020-12-10/
+En outre, pour l’organisation des examens SSIAP, le président du jury applique également :
+- Circulaire du 25 mai 2016 « Procédure d’agrément des centres de formation SSIAP et
+organisation et suivi des examens » ;
+- Guide à l’intention du président du jury d’un examen SSIAP 1, 2 ou 3.
+Les centres de formation peuvent trouver ces sources réglementaires et autres documents
+concernant le SSIAP sur le site du ministère de l’Intérieur : https://www.interieur.gouv.fr/Le-
+ministere/Securite-civile/Documentation-technique/Les-sapeurs-pompiers/La-reglementation-
+incendie/Securite-incendie-et-assistance-a-personnes-SSIAP
+2 Fiche 1 - L’agrément préfectoral
+Agrément initial : le centre de formation doit en faire la demande au Préfet dont relève le
+siège social du centre de formation par courrier recommandé. Le dossier doit comporter la
+totalité des pièces justificatives. L’arrêté d’agrément a une validité de 5 ans (article 12 de
+l’arrêté du 2 mai 2005). 
+Modification de l’agrément : tout changement de formateur ou de convention de mise à
+disposition d’un lieu de formation ou d’exercices sur feu réel doit être porté à la
+connaissance du préfet ayant délivré l’agrément par courrier recommandé. Le dossier doit
+comporter les pièces modificatives. Un arrêté modificatif sera pris sans modifier la durée de
+validité initiale (article 12 de l’arrêté du 2 mai 2005).
+Cessation d’activité : tout centre ayant cessé son activité doit en informer le Préfet par
+courrier recommandé (article 13 de l’arrêté du 2 mai 2005).
+Renouvellement de l’agrément : à réaliser dans les mêmes conditions qu’une demande
+d’agrément initiale, deux mois avant la date anniversaire de la fin d’agrément (article 12 de
+l’arrêté du 2 mai 2005).
+Retrait d’agrément : le préfet peut, au cours de la période d’agrément (article 14 de l’arrêté 
+du 2 mai 2005) :
+- demander au centre de formation des informations visant à vérifier le respect des 
+conditions dans lesquelles, il a été agréé ;
+- faire contrôler le centre de formation par un représentant du SDIS ou de la 
+DIRECCTE ;
+- retirer à tout moment par décision motivée l’agrément, notamment sur proposition, 
+des directeurs du SDIS et la DIRECCTE.
+3 Fiche 2 – Planification des formations SSIAP
+Planning prévisionnel : le centre de formation doit communiquer par courriel au service
+prévention du SDIS 85 le planning prévisionnel de l’année N+1 au mois de décembre. Ce
+planning ne sera pas figé et seule la demande d’ouverture de session sera prise en compte
+réglementairement.
+Demande d’ouverture de session de formation initiale : le centre de formation doit en faire la
+demande par écrit au service prévention du SDIS 85. Un accusé de réception lui sera émis. Le
+dossier doit être envoyé au moins 2 mois avant la date d’examen et comporter les éléments
+suivants (article 8 de l’arrêté du 2 mai 2005) :
+- la date proposée d’organisation des épreuves ;
+- le nom, la fonction, la qualification et l’accord de participation pour les membres de
+jury SSIAP ;
+- la désignation d’un site avec engagement écrit du propriétaire ou de l’exploitant pour
+la mise à disposition des locaux et l’autorisation de manipulation des installations
+techniques nécessaires au déroulement de l’épreuve pratique ;
+- le planning de session avec détail des enseignements distingués par séquences et
+nom, qualité, fonction et qualifications des formateurs ;
+- la copie de l’arrêté d’agrément (seulement si le centre n’est pas Vendéen).
+Une réponse écrite sera émise par le SDIS.
+Uniquement les personnes prévues dans l’agrément d’un centre de formation
+Vendéen pourront être formateur.
+Information de recyclage, de remise à niveau et de module complémentaire : le centre de
+formation doit en informer le préfet (avec copie au SDIS) par écrit des dates et des lieux de la
+formation en Vendée en fournissant :
+- un planning horaire de la session avec le détail des enseignements ;
+- les coordonnées téléphoniques du responsable de la formation ;
+- la copie de l’arrêté d’agrément (seulement si le centre n’est pas Vendéen).
+Les formateurs d’un centre de formation ne peuvent pas être recyclés dans
+le centre de formation où ils exercent.
+4 Fiche 3 – Réalisation des formations
+Il est de la responsabilité du centre de formation de vérifier que le candidat remplisse les
+conditions pour se présenter à la formation. Le candidat qui ne respecte pas les conditions
+ne peut pas débuter la formation (inaptitude médicale même partielle, ...).
+Prérequis des stagiaires SSIAP 1 : 
+- être titulaire de l’une des attestations de formation au secourisme :
+o AFPS ou PSC 1 (moins de 2 ans) ;
+o AFGSU (après le 6 juillet 2019) – cf. arrêté du 23 août 2019 (titulaire en
+équivalence du PSC 1) ;
+o Sauveteur secouriste du Travail (SST) ou PSE 1 (en cours de validité).
+Si la formation de secourisme est réalisée par le centre de formation, elle doit être réalisée
+avant la formation SSIAP.
+- satisfaire à une évaluation, réalisée par le centre de formation, de la capacité du
+candidat, à rendre compte sur la main courante des anomalies constatées lors d’une
+ronde et à alerter les secours.
+Le centre de formation doit mettre en place des tests avant la formation pour réaliser cette
+évaluation.
+- être apte physiquement, cette aptitude étant attestée par un certificat médical
+datant de moins de 3 mois, conformément à l’annexe VII de l’arrêté du 2 mai 2005.
+Le centre de formation ne peut accueillir le stagiaire dans la formation, s’il n’a pas le
+certificat médical.
+Prérequis des stagiaires SSIAP 2 : 
+- formation au secourisme et certificat médical (cf. prérequis SSIAP 1) ;
+- être titulaire d’une qualification cité à l’article 4§2 de l’arrêté du 2 mai 2005 (SSIAP 1,
+sous-officier SP ou militaires avec PRV 1, bac pro spécialité « sécurité prévention »,
+brevet professionnel « agent technique de prévention et de sécurité », certificat
+d’aptitude professionnel « agent de prévention et de sécurité », mention
+complémentaire « sécurité civile et d’entreprise », décision du ministère de
+l’intérieur) ;
+- avoir exercé l’emploi d’agent de service de sécurité incendie pendant 1 607 heures
+durant les 24 derniers mois. Cette disposition doit être attestée soit par l’employeur,
+soit par la présentation du contrat de travail.
+Prérequis des stagiaires SSIAP 3 : 
+- formation au secourisme (cf. prérequis SSIAP 1) ;
+- disposer d’un diplôme de niveau 4 minimum, qui peut être obtenu par la validation
+des acquis de l’expérience ;
+- ou être titulaire du diplôme de SSIAP 2 (ou ERP 2 / IGH 2 délivré avant le 31 décembre
+2005) et justifier de 3 ans d’expérience de la fonction. Cette expérience
+professionnelle doit être attestée soit par l’employeur, soit par la présentation du
+contrat de travail.
+5 Réalisation de la formation : 
+Le centre de formation devra réaliser la formation conformément aux référentiels
+pédagogiques SSIAP en annexe II, III, IV, V et VI de l’arrêté du 2 mai 2005.
+Le centre de formation se devra de respecter scrupuleusement les volumes horaires de
+formation (hors temps d’examen et temps de déplacements) :
+- SSIAP 1 : 67 heures
+- SSIAP 2 : 70 heures
+- SSIAP 3 : 216 heures
+- Recyclage SSIAP 1 et 2 : 14 heures
+- Recyclage SSIAP 3 : 21 heures
+- Remise à niveau SSIAP 1 et 2 : 21 heures
+- Remise à niveau SSIAP 3 : 35 heures
+- Modules complémentaires SSIAP 1 : 43,5 heures
+- Modules complémentaires SSIAP 2 : 28 heures
+- Modules complémentaires SSIAP 3 : 
+o Titulaire du DUT « hygiène et sécurité option protection des populations –
+sécurité civile » : 24 heures ;
+o Titulaire du PRV 2 (brevet de prévention ou attestation du ministre de
+l’intérieur) : 34 heures.
+La formation doit être réalisée en présentiel (la formation à distance n’est
+pas autorisée à ce jour).
+6 Fiche 4 - Examens SSIAP
+Le centre de formation devra contacter une semaine avant l’examen, le référent SSIAP du
+SDIS 85 pour s’assurer de l’horaire et communiquer le nombre de candidats (en initial et en
+rattrapage).
+ Dossier des candidats :
+Les candidats doivent être présentés par un centre de formation :
+- SSIAP 1 : 15 candidats dont 12 maximum en initial ;
+- SSIAP 2 : 12 candidats ;
+- SSIAP 3 : 12 candidats dont 10 maximum en initial. 
+Avant le début de l’examen SSIAP, le centre de formation présente aux membres du jury le
+dossier complet de chaque candidat. Il ne doit comporter que les justificatifs listés dans les
+articles 4, 5, 6 et 8 de l’arrêté du 2 mai 2005.
+SSIAP 1 (formation initiale)
+Attestation de formation au secourisme
+Certificat médical (moins de 3 mois avant le début de formation)
+Document original justifiant l’identité. Carte d’identité / passeport (possibilité de date de 
+validité périmée) ou autres pièces justificatives en cours de validité (liste page 6 du guide du 
+président)
+Planning de la session avec la signature des stagiaires, des formateurs et du directeur du 
+centre de formation ou son représentant + Fiche d’assiduité des stagiaires
+Le volume horaire minimum est de 67 heures pour le SSIAP 1
+Évaluation, réalisée par le centre de formation, de la capacité du candidat, à rendre compte 
+sur la main courante, des anomalies constatées lors d’une ronde et à alerter les secours
+SSIAP 2 (formation initiale)
+Attestation de formation au secourisme
+Certificat médical (moins de 3 mois avant le début de formation)
+Document original justifiant l’identité. Carte d’identité / passeport (possibilité de date de 
+validité périmée) ou autres pièces justificatives en cours de validité (liste page 6 du guide du 
+président)
+Planning de la session avec la signature des stagiaires, des formateurs et du directeur du 
+centre de formation ou son représentant + Fiche d’assiduité des stagiaires
+Le volume horaire minimum est de 70 heures pour le SSIAP 2.
+Titulaire d’une qualification cité à l’article 4§2 de l’arrêté du 2 mai 2005
+(SSIAP 1, sous-officier SP ou militaires avec PRV 1, bac pro spécialité « sécurité prévention », 
+brevet professionnel « agent technique de prévention et de sécurité », certificat d’aptitude 
+professionnel « agent de prévention et de sécurité », mention complémentaire « sécurité 
+civile et d’entreprise », décision du ministère de l’intérieur) 
+Avoir exercé l’emploi d’agent de service de sécurité incendie pendant 1 607 heures durant 
+les 24 derniers mois. 
+Présentation de l’attestation de l’employeur ou du contrat de travail.
+7 SSIAP 3 (formation initiale)
+Attestation de formation au secourisme
+Document original justifiant l’identité. Carte d’identité / passeport (possibilité de date de 
+validité périmée) ou autres pièces justificatives en cours de validité (liste page 6 du guide du 
+président)
+Planning de la session avec la signature des stagiaires, des formateurs et du directeur du 
+centre de formation ou son représentant + Fiche d’assiduité des stagiaires
+Le volume horaire minimum est de 216 heures pour le SSIAP 3.
+Disposer d’un diplôme de niveau 4 minimum, qui peut être obtenu par la validation des 
+acquis de l’expérience 
+ou d’un diplôme de SSIAP 2 / ERP 2 / IGH 2 délivré avant le 31 décembre 2005 et justifier de 
+3 ans d’expérience de la fonction attesté soit par l’employeur ou soit par la présentation du 
+contrat de travail
+ou titulaire du DUT Hygiène Sécurité Environnement (annexe XIII), sans avoir au préalable 
+suivi la formation 
+SSIAP 1, 2 et 3 (rattrapage)
+Fiche d’évaluation originale pour les candidats ajournés à un examen précédent (moins de 1 
+an à la date du 1er échec)
+Document original justifiant l’identité. Carte d’identité / passeport (possibilité de date de 
+validité périmée) ou autres pièces justificatives en cours de validité (liste page 6 du guide du 
+président)
+ Composition du jury :
+Le jury est présidé par un préventionniste du SDIS 85 à jour de recyclage du PRV 2 et
+composé également de :
+SSIAP 1 : 
+- un chef de service de sécurité incendie ou un adjoint (SSIAP 3 recyclé) en fonction
+hiérarchique dans un ERP ou un IGH ;
+- ou un chargé de sécurité en type T (PRV 2 ou AP 2 recyclé).
+SSIAP 2 : 
+- Un chef de service de sécurité incendie ou un adjoint (SSIAP 3 recyclé) en fonction
+hiérarchique dans un ERP ;
+- Et un chef de service de sécurité incendie ou un adjoint (SSIAP 3 recyclé) en fonction
+hiérarchique dans un ERP ou un IGH ou un chargé de sécurité en type T (PRV 2 ou AP
+2 recyclé).
+SSIAP 3 :
+- Un chef de service de sécurité incendie (SSIAP 3 recyclé) en fonction hiérarchique
+dans un ERP ;
+- Et un chef de service de sécurité incendie (SSIAP 3 recyclé) en fonction hiérarchique
+dans un ERP ou un IGH.
+8 Epreuves :
+Lieu d’examen : il se déroule dans un établissement recevant du public, avec lequel le centre
+de formation dispose d’un engagement écrit du propriétaire ou de l’exploitant de
+l’établissement, de mettre à disposition les locaux et d’autoriser la manipulation des
+installations techniques nécessaires au déroulement de l’épreuve pratique.
+Pour les SSIAP 2 et 3, ils peuvent être réalisés dans les centres de formation si celui-ci dispose
+des installations nécessaires.
+Matériel : le centre de formation doit mettre à disposition des membres du jury :
+- un outil informatique pour la réalisation des QCM ;
+- une machine à fumée ou d’un mannequin pour les cas pratiques du SSIAP 1 ;
+- une salle d’examen (avec le matériel pédagogique : tableau, vidéo, …) et d’une salle PC
+séparées pour les cas pratiques du SSIAP 2. Les sujets (épreuves pédagogiques et
+gestion du PC) seront fournis par les membres du jury ;
+- deux salles d’examen pour l’écrit et l’oral du SSIAP 3. Les sujets (écrit et oral) seront
+fournis par le président du jury.
+Documents de fin d’examen : à la fin de l’examen, le centre de formation doit laisser au
+président :
+- l’attestation de participation à un jury (renseigné et signé par le centre de formation) ;
+- l’original du procès-verbal de l’examen (signé par tous les membres du jury) ;
+- la copie de la fiche individuelle des candidats non certifiés (signée par tous les
+membres du jury et le candidat) ;
+- les diplômes (non plastifiés) et pochettes plastifieuses (si possible, sinon ils seront
+envoyés ultérieurement au SDIS) ;
+- en cas d’anomalie : la copie du planning de la session avec le détail des
+enseignements paraphé par les formateurs et par le directeur de formation du centre
+de formation ainsi que la copie de la fiche d’assiduité des stagiaires lors de la
+formation, tamponné et signé par le président.
+ N.B. : le formateur peut assister aux épreuves de l’examen et à la délibération du jury mais ne
+doit en aucun cas intervenir dans son déroulement sans en être convié.
+9
