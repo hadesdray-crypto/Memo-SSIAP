@@ -137,7 +137,13 @@ button[disabled]{opacity:.6}
       var r = await fetch(REV + "?t=" + Date.now(), { cache: "no-store", signal: ac.signal }); clearTimeout(t);
       if (r.ok) { var j = await r.json(); res.enligne = true; res.revoque = (j.ids || []).indexOf(id) >= 0; }
     } catch (e) {}
-    var h = await heureServeur(); if (h) res.ecart = Math.abs(h - Date.now());
+    var h = await heureServeur(); if (h) { res.ecart = Math.abs(h - Date.now()); res.enligne = true; }
+    if (!res.enligne) { /* dernier recours : tout site joignable prouve qu'il y a Internet (réponse opaque acceptée) */
+      var tests = ["https://www.gstatic.com/generate_204", "https://www.google.com/generate_204", "https://cloudflare.com/cdn-cgi/trace", "https://raw.githubusercontent.com/hadesdray-crypto/memo-ssiap/main/essai-revoques.json"];
+      for (var k = 0; k < tests.length && !res.enligne; k++) {
+        try { var ac2 = new AbortController(), t2 = setTimeout(function () { ac2.abort(); }, 5000); await fetch(tests[k], { mode: "no-cors", cache: "no-store", signal: ac2.signal }); clearTimeout(t2); res.enligne = true; } catch (e) {}
+      }
+    }
     return res;
   }
   async function activer() {
