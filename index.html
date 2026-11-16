@@ -29390,10 +29390,15 @@ function RONDE_CORE() {
         const L = o.foulee; S.pas++;
         S.x += L * Math.sin(S.cap * D2R); S.y += L * Math.cos(S.cap * D2R); S.dist += L;
         const ev = { x: S.x, y: S.y, z: S.z, d: S.dist, cap: S.cap, t, n: S.pas };
-        /* Escalier en colimaçon : le cap tourne sans s'arrêter (plus de 200° en 14 pas). */
+        /* Escalier en colimaçon : le cap tourne à chaque pas, toujours du même côté, sur un tour entier. Un escalier droit à palier
+           (demi-tour d'un coup, puis volées droites) ou un simple couloir qui tourne n'est JAMAIS pris pour un colimaçon. */
         if (prevCap != null) { rot.push(dif(S.cap, prevCap)); if (rot.length > 14) rot.shift(); }
         prevCap = S.cap;
-        if (rot.length >= 8) { const sum = rot.reduce((a, b) => a + b, 0); if (Math.abs(sum) >= 200) { ev.spirale = { sens: sum > 0 ? "droite" : "gauche", d0: hist.length >= rot.length ? hist[hist.length - rot.length].d : ev.d - rot.length * L, d1: ev.d }; rot.length = 0; } }
+        if (rot.length >= 14) {
+          const sum = rot.reduce((a, b) => a + b, 0), sg = Math.sign(sum);
+          const reguliers = rot.filter((r) => Math.sign(r) === sg && Math.abs(r) >= 5).length, maxi = Math.max(...rot.map((r) => Math.abs(r)));
+          if (Math.abs(sum) >= 280 && reguliers >= 11 && maxi <= 0.3 * Math.abs(sum)) { ev.spirale = { sens: sum > 0 ? "droite" : "gauche", d0: hist.length >= rot.length ? hist[hist.length - rot.length].d : ev.d - rot.length * L, d1: ev.d }; rot.length = 0; }
+        }
         hist.push(ev); if (hist.length > 80) hist.shift();
         return ev;
       },
@@ -29492,6 +29497,14 @@ function RONDE_CORE() {
         caps[i] = c;
         cx += v[i].len * Math.sin(c * D2R); cy += v[i].len * Math.cos(c * D2R);
       }
+    }
+    /* Escalier droit ou à paliers : le chemin réel est gardé tel quel, la hauteur monte régulièrement le long de ce chemin. */
+    for (let a = 0; a < n; a++) {
+      if (v[a].type !== "etage-debut") continue;
+      let b = a + 1; while (b < n && v[b].type !== "etage-fin") b++;
+      if (b >= n || b === a + 1) continue;
+      const L = v[b].d - v[a].d, z0 = pts[a].z, z1 = pts[b].z; if (!(L > 0)) continue;
+      for (let i = a; i <= b; i++) pts[i].z = z0 + (z1 - z0) * ((v[i].d - v[a].d) / L);
     }
     /* Fermer la boucle : la ronde revient au point de départ, l'écart est réparti sur le trajet. */
     if (o.fermer && n > 2) {
@@ -29792,7 +29805,15 @@ function RONDE(h) {
           const nn = Math.abs(p0.n || 1);
           g.fillStyle = ink; g.font = "600 11px system-ui"; const lib = (p0.n < 0 ? "Descente " : "Montée ") + nn + " étage" + (nn > 1 ? "s" : "") + (p0.col ? " en colimaçon" : "") + " → " + nomN(p1.z), lw = g.measureText(lib).width;
           g.fillText(lib, b[0] + 10 + lw > w - 4 ? Math.max(4, b[0] - 10 - lw) : b[0] + 10, b[1] - 8);
-        } else { g.lineTo(b[0], b[1]); g.stroke(); }
+        } else {
+          g.lineTo(b[0], b[1]); g.stroke();
+          if (p1.k === "etage-fin") {
+            /* escalier à paliers : le vrai chemin est dessiné, seule l'étiquette est posée à l'arrivée */
+            const nn = Math.abs(p1.n || 1); g.fillStyle = ink; g.font = "600 11px system-ui";
+            const lib = (p1.n < 0 ? "Descente " : "Montée ") + nn + " étage" + (nn > 1 ? "s" : "") + " → " + nomN(p1.z), lw = g.measureText(lib).width;
+            g.fillText(lib, b[0] + 10 + lw > w - 4 ? Math.max(4, b[0] - 10 - lw) : b[0] + 10, b[1] - 8);
+          }
+        }
       }
       g.lineWidth = 1; g.strokeStyle = line; pts.forEach((p) => { const a = T(p), b = T({ x: p.x, y: p.y, z: Math.min(...zs) }); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
       const pt = (p, col, rad, label, dy) => { const a = T(p); g.fillStyle = col; g.beginPath(); g.arc(a[0], a[1], rad, 0, 7); g.fill(); if (label) { g.fillStyle = ink; g.font = "600 12px system-ui"; g.fillText(label, a[0] + rad + 3, a[1] + 4 + (dy || 0)); } };
