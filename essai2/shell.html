@@ -154,7 +154,6 @@ button[disabled]{opacity:.6}
     var id = saisie.slice(0, 1), secret = saisie.slice(1), meta;
     try { meta = await deverrouiller(id, secret); } catch (e) { msg("Code incorrect."); b.disabled = false; return; }
     var v = await verifier(id), n = Date.now();
-    if (!v.enligne) { msg("Une connexion Internet est nécessaire pour activer l’essai."); b.disabled = false; return; }
     if (v.revoque) { msg("Ce code n’est plus valable."); b.disabled = false; return; }
     if (v.ecart > 600000) { msg("L’heure du téléphone est fausse. Mettez l’heure automatique puis réessayez."); b.disabled = false; return; }
     if (n > meta.avant) { msg("Ce code a expiré. Demandez-en un nouveau."); b.disabled = false; return; }
