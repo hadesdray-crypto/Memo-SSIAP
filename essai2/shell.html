@@ -177,6 +177,7 @@ button[disabled]{opacity:.6}
     } catch (e) { $v.innerHTML = '<p>Impossible d’ouvrir l’application. Fermez-la puis rouvrez-la.</p>'; }
   }
   try { if (navigator.serviceWorker) navigator.serviceWorker.register("sw.js"); } catch (e) {}
+  try { var C0 = window.Capacitor, P0 = C0 && C0.isNativePlatform && C0.isNativePlatform() && C0.Plugins && C0.Plugins.SpeechRecognition; if (P0 && !localStorage.getItem("essai-micro")) { localStorage.setItem("essai-micro", "1"); P0.requestPermissions(); } } catch (e) {}
   demarrer();
 })();
 </script></body></html>
