@@ -1,3 +1,4 @@
+- Vérification complète du cours avec les textes officiels : une soixantaine de corrections (distances de sortie CO 43, durée du module complémentaire 43 h 30, 114 = urgence sourds et malentendants, CO₂ classe B, durées de la 5e partie SSIAP 1, essais des groupes électrogènes…) ; chaque point non confirmé reste signalé
 - Corrections vérifiées sur les textes officiels (Légifrance) : voie échelle (longueur minimale 10 m) et colonnes en charge (valeurs ERP et IGH séparées)
 - Le cours SSIAP 1 et SST est de retour, entièrement réécrit en mots propres à partir des textes officiels (Légifrance, ministères, INRS) : tous les schémas, tableaux et questions sont conservés ; les points encore à confirmer sont signalés dans les fiches
 - Ronde : seuls les vrais escaliers en colimaçon sont dessinés en spirale ; un escalier droit ou à paliers garde ton vrai trajet (virages compris) et la hauteur monte régulièrement le long de ce trajet
