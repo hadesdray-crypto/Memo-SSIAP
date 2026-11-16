@@ -3,6 +3,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#b3121f">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https: data: blob:">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#b3121f">
 <title>Mémo SSIAP, essai</title>
 <style>
 html,body{margin:0;height:100%;background:#b3121f;color:#fff;font:16px system-ui,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -23,6 +25,7 @@ button[disabled]{opacity:.6}
 <script>
 (function () {
   "use strict";
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); window.__inst = e; var bi = document.getElementById("inst"); if (bi) bi.style.display = ""; });
   var CLE = "essai-ssiap", REV = "https://hadesdray-crypto.github.io/memo-ssiap/essai-revoques.json";
   var $v = document.getElementById("v");
   function lire() { try { return JSON.parse(localStorage.getItem(CLE)); } catch (e) { return null; } }
@@ -39,6 +42,8 @@ button[disabled]{opacity:.6}
     if (t === "code") {
       $v.innerHTML = '<p>Saisissez le code d’essai que vous avez reçu.</p><input id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXX-XXX-XXX" maxlength="11"><div class="m" id="m"></div><button id="b" type="button">Activer l’essai</button><p class="p">L’essai dure 48 heures à partir de l’activation, sur ce téléphone uniquement. Le code ne marche qu’une fois.</p>';
       document.getElementById("b").onclick = activer;
+      var bi = document.createElement("button"); bi.id = "inst"; bi.type = "button"; bi.textContent = "Installer l’application sur ce téléphone"; bi.style.display = window.__inst ? "" : "none";
+      document.getElementById("b").insertAdjacentElement("afterend", bi); bi.onclick = function () { if (window.__inst) { try { window.__inst.prompt(); } catch (e) {} } };
       document.getElementById("c").oninput = function () { var t = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 9); this.value = t.match(/.{1,3}/g) ? t.match(/.{1,3}/g).join("-") : ""; };
       document.getElementById("c").onkeydown = function (e) { if (e.key === "Enter") activer(); };
     } else if (t === "fini") {
@@ -166,6 +171,7 @@ button[disabled]{opacity:.6}
       verifier(s.id).then(function (v) { if (v.revoque) { purger("revoque"); location.reload(); } });
     } catch (e) { $v.innerHTML = '<p>Impossible d’ouvrir l’application. Fermez-la puis rouvrez-la.</p>'; }
   }
+  try { if (navigator.serviceWorker) navigator.serviceWorker.register("sw.js"); } catch (e) {}
   demarrer();
 })();
 </script></body></html>
