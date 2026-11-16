@@ -29521,7 +29521,7 @@ function RONDE_CORE() {
       const sp = T.candidats.find((c) => !c.resolu && c.d0 <= df + 3 && c.d1 >= dv - 3);
       const mk = (type, d) => ({ type, n, x: 0, y: 0, z: 0, d, cap: null });
       const ins = (v) => { let i = T.verts.length; while (i > 1 && T.verts[i - 1].d > v.d) i--; T.verts.splice(i, 0, v); };
-      api.dernierShift = null;
+      api.dernierShift = null; const spLen = sp ? Math.max(0, sp.d1 - sp.d0) : 0;
       if (sp) {
         /* Colimaçon : on n'avance pas à l'horizontale, on monte. Les virages posés pendant la montée sont retirés. */
         dv = Math.min(dv, sp.d0); df = Math.max(df, sp.d1); sp.resolu = true;
@@ -29533,7 +29533,9 @@ function RONDE_CORE() {
         decal += shift; api.dernierShift = { apres: df, shift };
         df = dv + court;
       }
-      ins(mk("etage-debut", dv)); ins(mk("etage-fin", df));
+      const e1 = mk("etage-debut", dv), e2 = mk("etage-fin", df);
+      if (sp) { const tours = Math.max(1, Math.min(3 * Math.abs(n), Math.round(spLen / 5 * 2) / 2)); e1.col = e2.col = sp.sens; e1.tours = e2.tours = tours; }
+      ins(e1); ins(e2);
       /* le début doit précéder la fin, puis on recalcule les hauteurs dans l'ordre du trait */
       let z = T.verts[0].z || 0;
       for (let i = 1; i < T.verts.length; i++) { const v = T.verts[i]; if (v.type === "etage-fin") z += v.n * o.hEtage; v.z = z; }
@@ -29773,9 +29775,24 @@ function RONDE(h) {
       g.lineWidth = 1; g.strokeStyle = line; g.fillStyle = css("--ink-3", "#777"); g.font = "12px system-ui";
       niv.slice(0, 40).forEach((z) => { const a = T({ x: B.cx - rx / k * 0 - 10, y: B.cy, z }); g.beginPath(); g.moveTo(a[0] - 18, a[1]); g.lineTo(a[0] + 18, a[1]); g.stroke(); });
       /* trait : une couleur par niveau, piquets vers le sol pour la profondeur */
+      const emp = Math.max(1, Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) * 0.045), hE = D.hEtage || 3, nomN = (z) => { const n = Math.round(z / hE); return n === 0 ? "Rez-de-chaussée" : n > 0 ? "Étage " + n : "Sous-sol " + Math.abs(n); };
       for (let i = 0; i < pts.length - 1; i++) {
-        const a = T(pts[i]), b = T(pts[i + 1]); const hue = (Math.round(pts[i + 1].z / 3) * 47 + 200) % 360;
-        g.strokeStyle = `hsl(${hue},65%,45%)`; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+        const p0 = pts[i], p1 = pts[i + 1], a = T(p0), b = T(p1); const hue = (Math.round(p1.z / 3) * 47 + 200) % 360;
+        g.strokeStyle = `hsl(${hue},65%,45%)`; g.lineWidth = 4; g.lineCap = "round"; g.lineJoin = "round"; g.beginPath(); g.moveTo(a[0], a[1]);
+        if (p0.k === "etage-debut" && p1.k === "etage-fin") {
+          /* escalier : colimaçon = serpentin qui monte tout autour d'un axe ; escalier droit = ligne inclinée */
+          let q1 = null;
+          if (p0.col) {
+            const tr = Math.max(1, p0.tours || 1.5), sg = p0.col === "gauche" ? -1 : 1, N = Math.max(48, Math.round(tr * 36));
+            const hx = (t) => emp * Math.cos(sg * t * 2 * Math.PI * tr) - emp, hy = (t) => emp * Math.sin(sg * t * 2 * Math.PI * tr);
+            const ex = p1.x - (p0.x + hx(1)), ey = p1.y - (p0.y + hy(1)); g.lineWidth = 3;
+            for (let j = 1; j <= N; j++) { const t = j / N, q = T({ x: p0.x + hx(t) + ex * t, y: p0.y + hy(t) + ey * t, z: p0.z + (p1.z - p0.z) * t }); g.lineTo(q[0], q[1]); }
+          } else g.lineTo(b[0], b[1]);
+          g.stroke();
+          const nn = Math.abs(p0.n || 1);
+          g.fillStyle = ink; g.font = "600 11px system-ui"; const lib = (p0.n < 0 ? "Descente " : "Montée ") + nn + " étage" + (nn > 1 ? "s" : "") + (p0.col ? " en colimaçon" : "") + " → " + nomN(p1.z), lw = g.measureText(lib).width;
+          g.fillText(lib, b[0] + 10 + lw > w - 4 ? Math.max(4, b[0] - 10 - lw) : b[0] + 10, b[1] - 8);
+        } else { g.lineTo(b[0], b[1]); g.stroke(); }
       }
       g.lineWidth = 1; g.strokeStyle = line; pts.forEach((p) => { const a = T(p), b = T({ x: p.x, y: p.y, z: Math.min(...zs) }); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
       const pt = (p, col, rad, label, dy) => { const a = T(p); g.fillStyle = col; g.beginPath(); g.arc(a[0], a[1], rad, 0, 7); g.fill(); if (label) { g.fillStyle = ink; g.font = "600 12px system-ui"; g.fillText(label, a[0] + rad + 3, a[1] + 4 + (dy || 0)); } };
@@ -29826,17 +29843,33 @@ function RONDE(h) {
     }
     g.fillStyle = col; g.font = "700 16px system-ui"; g.fillText(txt, cx, hh - 8);
   }
-  const ptsDe = (r) => { const geo = C.geometrie(r.trace, { fermer: !!r.fermer }); return { geo, pts: geo.v.map((s) => ({ x: s.px, y: s.py, z: s.pz })) }; };
+  const ptsDe = (r) => { const geo = C.geometrie(r.trace, { fermer: !!r.fermer }); return { geo, pts: geo.v.map((s) => ({ x: s.px, y: s.py, z: s.pz, k: s.type, n: s.n, col: s.col, tours: s.tours })), vv: geo.v }; };
   const posD = (geo, d) => { const q = geo.pos(d); return { x: q.x, y: q.y, z: q.z }; };
   const marqueurs = (r, geo) => ({
     pointeaux: (r.pointeaux || []).map((q) => Object.assign(posD(geo, q.d), { nom: q.nom })),
     defauts: (r.defauts || []).map((q) => posD(geo, q.d)),
   });
+  /* Profil de hauteur : la hauteur le long du parcours, avec chaque montée et chaque descente. */
+  function profil(r) {
+    const cv = $("#rd-prof"); if (!cv) return; const v = ptsDe(r).vv, hE = r.hEtage || cfg().hEtage;
+    const w = cv.clientWidth || 300, hh = cv.clientHeight || 150, k = window.devicePixelRatio || 1; cv.width = Math.round(w * k); cv.height = Math.round(hh * k);
+    const g = cv.getContext("2d"); g.setTransform(k, 0, 0, k, 0, 0); g.clearRect(0, 0, w, hh);
+    const css = (n, f) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || f, ink = css("--ink", "#222"), line = css("--line-2", "#ccc");
+    let off = 0; const X = v.map((s, i) => { if (i && v[i - 1].type === "etage-debut" && s.type === "etage-fin") off += 8; return (s.d - v[0].d) + off; });
+    const tot = Math.max(1, X[X.length - 1]), zs = v.map((s) => s.pz), z0 = Math.min(...zs, 0), z1 = Math.max(...zs, hE), L = 58, R = 10, Tp = 14, B = 22;
+    const px = (x) => L + x / tot * (w - L - R), py = (z) => hh - B - (z - z0) / (z1 - z0 || 1) * (hh - B - Tp);
+    g.font = "11px system-ui"; g.textAlign = "right"; g.lineWidth = 1;
+    const niv = [...new Set(zs.map((z) => Math.round(z / hE)))].sort((a, b) => a - b);
+    niv.forEach((n) => { const y = py(n * hE); g.strokeStyle = line; g.beginPath(); g.moveTo(L, y); g.lineTo(w - R, y); g.stroke(); g.fillStyle = css("--ink-3", "#777"); g.fillText(n === 0 ? "Rez" : n > 0 ? "Étage " + n : "S-sol " + Math.abs(n), L - 6, y + 4); });
+    g.lineWidth = 3; g.lineCap = "round"; g.lineJoin = "round";
+    for (let i = 1; i < v.length; i++) { const esc = v[i - 1].type === "etage-debut" && v[i].type === "etage-fin"; g.strokeStyle = esc ? "#d98a0b" : `hsl(${(Math.round(zs[i] / 3) * 47 + 200) % 360},65%,45%)`; g.beginPath(); g.moveTo(px(X[i - 1]), py(zs[i - 1])); g.lineTo(px(X[i]), py(zs[i])); g.stroke(); }
+    g.fillStyle = ink; g.textAlign = "center"; g.font = "600 11px system-ui"; g.fillText("Hauteur le long du parcours (orange = escalier)", w / 2 + L / 2, hh - 6);
+  }
   function monter3d(r, posFn) {
     const cv = $("#rd-3d"); if (!cv) return;
     const { geo, pts } = ptsDe(r); const m = marqueurs(r, geo);
-    V3 = vue3d(cv, () => Object.assign({ pts }, m, { pos: posFn ? posFn(geo) : null }));
-    V3.draw();
+    V3 = vue3d(cv, () => Object.assign({ pts, hEtage: r.hEtage || cfg().hEtage }, m, { pos: posFn ? posFn(geo) : null }));
+    V3.draw(); profil(r);
   }
   const barre3d = `<div class="chips rd-3dbar"><button type="button" class="btn ghost" data-act="rd-3d" data-v="zoom+">${icon("plus")}Zoom</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="zoom-">Zoom −</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="g">${icon("precedent")}Tourner</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="d">Tourner${icon("suivant")}</button><button type="button" class="btn ghost" data-act="rd-3d" data-v="haut">Vue du dessus</button></div>`;
 
@@ -29918,6 +29951,7 @@ function RONDE(h) {
         <button type="button" class="btn ghost" data-act="rd-es" data-n="1">${icon("ascenseur")}Je monte</button>
         <button type="button" class="btn ghost" data-act="rd-es" data-n="-1">${icon("bas")}Je descends</button>
       </div>
+      <div id="rd-conf" class="result" role="alert" hidden><p><strong id="rd-conf-t"></strong></p><div class="chips"><button type="button" class="btn" data-act="rd-conf" data-v="1">${icon("check")}Oui</button><button type="button" class="btn ghost" data-act="rd-conf" data-v="0">Non</button></div></div>
       <div id="rd-esc" class="result" hidden><p><strong>Escalier en cours :</strong> <span id="rd-esn"></span></p><div class="chips"><button type="button" class="btn ghost" data-act="rd-esp">${icon("plus")}Un étage de plus</button><button type="button" class="btn" data-act="rd-esf">${icon("check")}J’y suis</button></div></div>
       <div class="chips"><button type="button" class="btn ghost" data-act="rd-vid">${icon("photo")}Vidéo</button><button type="button" class="btn ghost" data-act="rd-fermer">${icon("recommencer")}Boucler sur le départ</button><button type="button" class="btn" data-act="rd-stop">${icon("stop")}Terminer la ronde</button></div>
       <section class="sec about"><h2 class="lbl b">Derniers repères</h2><ul id="rd-log" class="rd-log"></ul></section>`;
@@ -29928,7 +29962,9 @@ function RONDE(h) {
     if (!REC) return; const S = REC.S.etat, set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
     set("rd-pas", S.pas); set("rd-dist", Math.round(S.dist)); set("rd-niv", REC.niv); set("rd-cap", S.cap == null ? "–" : Math.round(S.cap) + "°");
     const et = REC.etat, ok = et.acc && et.cap;
-    set("rd-etat", !ok ? "Capteurs en attente… bougez un peu le téléphone." : (et.hpa ? "Baromètre actif : les étages sont détectés tout seuls." : et.pl ? "Baromètre en démarrage… Les étages sont détectés tout seuls dès qu’il répond." : "Pas de baromètre sur cette version : un escalier (même en colimaçon) vous sera demandé en un geste à la fin. Pour la détection automatique, installez la dernière APK."));
+    const cf = document.getElementById("rd-conf"); if (cf) { cf.hidden = !REC.conf; const ct = document.getElementById("rd-conf-t"); if (ct && REC.conf) ct.textContent = REC.conf.txt; }
+    const gr = REC.S.debug.grimpe;
+    set("rd-etat", gr ? (gr.dir > 0 ? "Vous montez un escalier… continuez jusqu’à l’étage." : "Vous descendez un escalier… continuez jusqu’à l’étage.") : !ok ? "Capteurs en attente… bougez un peu le téléphone." : (et.hpa ? "Baromètre actif : les étages sont détectés tout seuls." : et.pl ? "Baromètre en démarrage… Les étages sont détectés tout seuls dès qu’il répond." : "Pas de baromètre sur cette version : un escalier (même en colimaçon) vous sera demandé en un geste à la fin. Pour la détection automatique, installez la dernière APK."));
   }
   async function demarrer(id, avecGps) {
     if (REC || occupe) return; occupe = true; mediaOK = false;
@@ -29943,21 +29979,34 @@ function RONDE(h) {
     REC.off = capteurs(
       (t, m) => { const p = S.accel(t, m); if (p) { const v = R.pas(p); if (v) { vib(40); logRec("Virage " + v.sens + " posé"); sauveBrouillon(); } if (!(p.n % 4)) majLive(); } },
       (cap) => S.cap(cap),
-      (t, hpa) => { const e = S.pression(t, hpa); if (e) { if (REC.stairs) return; R.etage(e); decaler(REC.id, R.dernierShift); REC.niv += e.n; vib([50, 40, 50]); logRec((e.n > 0 ? "Montée de " : "Descente de ") + Math.abs(e.n) + " étage(s) détectée"); sauveBrouillon(); majLive(); } },
+      (t, hpa) => { const e = S.pression(t, hpa); if (e) { if (REC.stairs) return; confEtage(e); } },
       REC.etat);
     majRonde(id, (x) => { x.enCours = true; x.trace = R.trace; x.date = Date.now(); x.foulee = c.foulee; x.hEtage = c.hEtage; x.trace.verts = R.trace.verts; });
     if (avecGps && navigator.geolocation) { try { navigator.geolocation.getCurrentPosition((p) => majRonde(id, (x) => (x.gps = { lat: Math.round(p.coords.latitude * 1e4) / 1e4, lon: Math.round(p.coords.longitude * 1e4) / 1e4 })), () => {}, { timeout: 8000, maximumAge: 60000 }); } catch (e) { /* GPS indisponible */ } }
     veille(true); dire("Ronde démarrée. Marchez normalement."); h.rerender(); REC.timer = setInterval(() => { majLive(); if (REC && ++REC.tick % 7 === 0) sauveBrouillon(); }, 700);
   }
+  const nomNiv = (n) => (n === 0 ? "au rez-de-chaussée" : n > 0 ? "à l’étage " + n : "au sous-sol " + Math.abs(n));
+  function validerEtage(e) {
+    if (!REC) return; REC.R.etage(e); decaler(REC.id, REC.R.dernierShift); REC.niv += e.n; vib([50, 40, 50]);
+    logRec((e.n > 0 ? "Montée de " : "Descente de ") + Math.abs(e.n) + " étage(s) : arrivé " + nomNiv(REC.niv)); sauveBrouillon(); majLive();
+  }
+  function purgerConf() { if (REC && REC.conf) { const c = REC.conf; clearTimeout(c.tm); REC.conf = null; validerEtage(c.e); } }
+  /* Étage détecté par le baromètre : on demande « oui » ou « non » ; sans réponse en 25 s, c'est « oui ». */
+  function confEtage(e) {
+    purgerConf(); const nn = Math.abs(e.n);
+    const txt = (e.n > 0 ? "Vous avez monté de " : "Vous êtes descendu de ") + nn + " étage" + (nn > 1 ? "s" : "") + ". Vous êtes arrivé " + nomNiv(REC.niv + e.n) + ". C’est bien ça ?";
+    REC.conf = { e, txt, tm: setTimeout(() => { if (REC && REC.conf && REC.conf.e === e) purgerConf(); majLive(); }, 25000) };
+    vib([50, 40, 50]); dire(txt); majLive();
+  }
   function decaler(id, s) { if (!s || !s.shift) return; majRonde(id, (x) => { [x.pointeaux, x.defauts].forEach((a) => (a || []).forEach((q) => { if (q.d > s.apres + 0.001) q.d -= s.shift; })); }); }
   function finaliser(go) { const rid = REC && REC.id; if (rid) { if (REC.fermer) majRonde(rid, (x) => (x.fermer = true)); finirRec(true); go("rd-v-" + rid); } return true; }
   function revue(go) {
-    const cs = REC.R.candidatsLibres(); if (!cs.length) { finaliser(go); return; } const c = cs[0]; REC.rev = c;
+    purgerConf(); const cs = REC.R.candidatsLibres(); if (!cs.length) { finaliser(go); return; } const c = cs[0]; REC.rev = c;
     dlg(`<h2>Étiez-vous dans un escalier ?</h2><p>Vous avez tourné en rond sur place, vers ${Math.round(c.d0)} m du départ : c’est typique d’un escalier en colimaçon. ${cs.length > 1 ? cs.length + " passages à confirmer." : ""}</p><label class="field"><span>Nombre d’étages</span><input id="rd-rn" type="number" inputmode="numeric" min="1" max="100" value="1"></label><div class="rd-btns"><button type="button" class="btn" data-act="rd-rev" data-v="1">${icon("ascenseur")}Je montais</button><button type="button" class="btn" data-act="rd-rev" data-v="-1">${icon("bas")}Je descendais</button><button type="button" class="btn ghost" data-act="rd-rev" data-v="0">${icon("retour")}Pas un escalier</button></div>`);
   }
   function sauveBrouillon() { if (!REC) return; const R = REC.R; majRonde(REC.id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = true; x.distAtteinte = Math.round(R.distance * 10) / 10; }); }
   function finirRec(garde) {
-    if (!REC) return; const R = REC.R; R.terminer(); const id = REC.id;
+    if (!REC) return; purgerConf(); const R = REC.R; R.terminer(); const id = REC.id;
     clearInterval(REC.timer); REC.off && REC.off(); veille(false);
     majRonde(id, (x) => { x.trace = JSON.parse(JSON.stringify(R.trace)); x.enCours = false; x.fin = Date.now(); if (garde) x.date = Date.now(); });
     REC = null; return id;
@@ -29974,7 +30023,7 @@ function RONDE(h) {
     const runs = load().runs.filter((x) => x.ronde === id).slice(-5).reverse().map((x) => lien("rd-rap-" + x.id, "registre", "blue", "Passage du " + dfr(x.debut) + " à " + hms(x.debut), (x.ok || []).length + " pointeau(x) validé(s), " + (x.defauts || []).length + " défaut(s)")).join("");
     const html = `<nav class="crumb"><a href="#ronde">Ronde</a></nav><div class="page-h"><h1>${esc(r.nom)}</h1><p>${[r.site, r.bat].filter(Boolean).map(esc).concat([]).join(" · ")}${r.site || r.bat ? " · " : ""}${tot} m · ${(geo.v.filter((s) => s.type === "virage").length)} virage(s) · ${(geo.v.filter((s) => s.type === "etage-fin").length)} escalier(s)</p></div>
       <div class="chips"><a class="btn" href="#rd-go-${esc(id)}">${icon("lecture")}Faire la ronde guidée</a></div>
-      <section class="sec about"><h2 class="lbl b">Plan en 3D</h2><canvas id="rd-3d" class="rd-3d" aria-label="Plan en trois dimensions de la ronde"></canvas>${barre3d}</section>
+      <section class="sec about"><h2 class="lbl b">Plan en 3D</h2><canvas id="rd-3d" class="rd-3d" aria-label="Plan en trois dimensions de la ronde"></canvas>${barre3d}${geo.v.some((s) => s.type === "etage-fin") ? `<h3 class="small muted" style="margin:10px 0 4px">Hauteur : montées et descentes</h3><canvas id="rd-prof" class="rd-3d" style="height:150px" aria-label="Profil de hauteur de la ronde"></canvas>` : ""}</section>
       <section class="sec about"><h2 class="lbl g">Pointeaux</h2><ul class="rd-ul">${pts || `<li class="muted">Aucun pointeau.</li>`}</ul><div class="chips"><button type="button" class="btn ghost" data-act="rd-pt-add" data-id="${esc(id)}">${icon("plus")}Ajouter un pointeau</button></div>
         <p class="small muted">Chaque pointeau est placé à une distance sur le trait : si vous le déplacez ou le supprimez, tout le guidage se recalcule tout seul.</p></section>
       <section class="sec about"><h2 class="lbl">Défauts</h2><ul class="rd-ul">${dfs || `<li class="muted">Aucun défaut noté.</li>`}</ul></section>
@@ -30118,6 +30167,7 @@ function RONDE(h) {
       case "rd-vg": if (REC) { REC.R.virageManuel("gauche"); logRec("Virage gauche (bouton)"); sauveBrouillon(); } return true;
       case "rd-vd": if (REC) { REC.R.virageManuel("droite"); logRec("Virage droite (bouton)"); sauveBrouillon(); } return true;
       case "rd-vu": if (REC) { REC.R.virageManuel("demi-tour"); logRec("Demi-tour (bouton)"); sauveBrouillon(); } return true;
+      case "rd-conf": { if (!REC || !REC.conf) return true; const c = REC.conf; clearTimeout(c.tm); REC.conf = null; if (b.dataset.v === "1") validerEtage(c.e); else logRec("Étage non retenu : vous avez répondu non"); majLive(); return true; }
       case "rd-es": { if (!REC || REC.stairs) return true; const n = +b.dataset.n; REC.R.etageManuel(n); REC.stairs = { n }; const bx = $("#rd-esc"); if (bx) { bx.hidden = false; $("#rd-esn").textContent = (n > 0 ? "montée de " : "descente de ") + Math.abs(n) + " étage(s)"; } logRec("Début d’escalier"); return true; }
       case "rd-esp": { if (!REC || !REC.stairs) return true; const s = REC.stairs; s.n += s.n > 0 ? 1 : -1; REC.R.etageManuelN(s.n); $("#rd-esn").textContent = (s.n > 0 ? "montée de " : "descente de ") + Math.abs(s.n) + " étage(s)"; return true; }
       case "rd-esf": { if (!REC || !REC.stairs) return true; REC.R.etageManuelFin(); decaler(REC.id, REC.R.dernierShift); REC.niv += REC.stairs.n; logRec("Arrivée à l’étage " + REC.niv); REC.stairs = null; const bx = $("#rd-esc"); if (bx) bx.hidden = true; sauveBrouillon(); majLive(); return true; }
