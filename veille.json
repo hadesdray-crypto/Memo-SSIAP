@@ -1,8 +1,8 @@
 {
  "v": 1,
- "maj": "2026-11-09T06:25:45.420Z",
+ "maj": "2026-11-16T06:52:19.010Z",
  "sources": 74,
- "lues": 48,
+ "lues": 40,
  "premiere": false,
  "gemini": true,
  "injoignables": [
@@ -79,12 +79,6 @@
    "code": "connexion impossible"
   },
   {
-   "t": "Entretiens et vérifications obligatoires en ERP (portes automatiques, ascenseurs, éclairage…)",
-   "o": "Adapsa",
-   "u": "https://adapsa.com/entretien-verification-des-installations-techniques-en-erp/",
-   "code": "erreur 404"
-  },
-  {
    "t": "Arrêté du 1er décembre 2025 modifiant le règlement de sécurité ERP (contrôles des ERP de 5e catégorie)",
    "o": "AP-HP, veille juridique",
    "u": "https://affairesjuridiques.aphp.fr/textes/arrete-du-1er-decembre-2025-modifiant-larrete-du-25-juin-1980-portant-approbation-des-dispositions-generales-du-reglement-de-securite-contre-les-risques-dincendie-et-de-panique-dans-les-etablissem/",
@@ -130,7 +124,7 @@
    "t": "Carte de poche « Arrêt cardiaque »",
    "o": "Fédération française de cardiologie",
    "u": "https://www.fedecardio.org/wp-content/uploads/2022/09/Carte-de-poche-ARRET-CARDIAQUE.pdf",
-   "code": "délai dépassé"
+   "code": "erreur 403"
   },
   {
    "t": "Réagir en cas d’attaque terroriste",
@@ -158,6 +152,137 @@
   }
  ],
  "alertes": [
+  {
+   "id": "dac7cc2a25",
+   "date": "2026-11-16",
+   "type": "page",
+   "t": "Certification SSIAP 1 (RS 5641) : compétences et modalités d’évaluation",
+   "o": "France compétences",
+   "u": "https://www.francecompetences.fr/recherche/rs/5641/",
+   "fiches": [
+    "Les rondes de sécurité",
+    "La levée de doute",
+    "Main courante et compte rendu",
+    "SSIAP 1 : agent de sécurité incendie",
+    "Programme des formations SSIAP 1 et 2"
+   ],
+   "portee": "incertain",
+   "resume": "La page a changé depuis la dernière vérification (1 passage nouveau ou modifié, 0 supprimé). À vérifier."
+  },
+  {
+   "id": "3881c695ea",
+   "date": "2026-11-16",
+   "type": "page",
+   "t": "Certification SSIAP 2 (RS 5642)",
+   "o": "France compétences",
+   "u": "https://www.francecompetences.fr/recherche/rs/5642/",
+   "fiches": [
+    "SSIAP 2 : chef d’équipe"
+   ],
+   "portee": "incertain",
+   "resume": "La page a changé depuis la dernière vérification (1 passage nouveau ou modifié, 0 supprimé). À vérifier."
+  },
+  {
+   "id": "434660dccf",
+   "date": "2026-11-16",
+   "type": "pdf",
+   "t": "Programme de formation SSIAP 1 (blocs de l’arrêté du 2 mai 2005)",
+   "o": "CCI Hauts-de-France",
+   "u": "https://document.hautsdefrance.cci.fr/formation/pdf/version/3/product/109214",
+   "fiches": [
+    "Le triangle du feu",
+    "Comment le feu se propage",
+    "Les fumées et les phénomènes dangereux",
+    "Les détecteurs automatiques d’incendie (DAI)",
+    "Les rondes de sécurité",
+    "Programme des formations SSIAP 1 et 2"
+   ],
+   "portee": "incertain",
+   "resume": "Le document officiel a été remplacé par une nouvelle version. À vérifier."
+  },
+  {
+   "id": "d73516ca7f",
+   "date": "2026-11-16",
+   "type": "pdf",
+   "t": "Programme de formation SSIAP 2 (blocs de l’arrêté du 2 mai 2005)",
+   "o": "CCI Hauts-de-France",
+   "u": "https://document.hautsdefrance.cci.fr/formation/pdf/version/3/product/109218",
+   "fiches": [
+    "Lire le tableau du poste de sécurité",
+    "SSIAP 2 : chef d’équipe",
+    "Programme des formations SSIAP 1 et 2"
+   ],
+   "portee": "incertain",
+   "resume": "Le document officiel a été remplacé par une nouvelle version. À vérifier."
+  },
+  {
+   "id": "70e107a003",
+   "date": "2026-11-16",
+   "type": "pdf",
+   "t": "Réponse ministérielle n° 111762 : agents de sécurité incendie et carte professionnelle",
+   "o": "Assemblée nationale",
+   "u": "https://www.assemblee-nationale.fr/dyn/13/questions/QANR5L13QE111762.pdf",
+   "fiches": [
+    "SSIAP et agent de sécurité (APS) : le cumul"
+   ],
+   "portee": "incertain",
+   "resume": "Le document officiel a été remplacé par une nouvelle version. À vérifier."
+  },
+  {
+   "id": "3d44819054",
+   "date": "2026-11-16",
+   "type": "page",
+   "t": "Cheminements d’évacuation en ERP : dispositions liées aux dégagements",
+   "o": "Fédération française du bâtiment",
+   "u": "https://www.ffbatiment.fr/techniques-batiment/reglementation-construction/reglementation-securite-incendie/dossier-bam/cheminements-d-evacuation-en-erp-dispositions-constructives-liees-aux-degagements",
+   "fiches": [
+    "Dégagements, issues et unités de passage"
+   ],
+   "portee": "incertain",
+   "resume": "La page a changé depuis la dernière vérification (0 passage nouveau ou modifié, 1 supprimé). À vérifier."
+  },
+  {
+   "id": "824b47a473",
+   "date": "2026-11-16",
+   "type": "page",
+   "t": "Entretiens et vérifications obligatoires en ERP (portes automatiques, ascenseurs, éclairage…)",
+   "o": "Adapsa",
+   "u": "https://adapsa.com/entretien-verification-des-installations-techniques-en-erp/",
+   "fiches": [
+    "Vérifications périodiques des installations"
+   ],
+   "portee": "incertain",
+   "resume": "La page a changé depuis la dernière vérification (6 passages nouveaux ou modifiés, 4 supprimés). À vérifier."
+  },
+  {
+   "id": "f3a5254dbb",
+   "date": "2026-11-16",
+   "type": "page",
+   "t": "ERP de 5e catégorie : nouvelles obligations au 1er janvier et au 1er juillet 2026 (PE 4, PE 10, PE 21)",
+   "o": "L’Officiel des métiers",
+   "u": "https://www.lofficieldesmetiers.fr/chauffagistes-erp-de-nouvelles-obligations-au-1er-janvier-2026-pour-la-securite-incendie/",
+   "fiches": [
+    "ERP de 5e catégorie : seuils et règles",
+    "Vérifications périodiques des installations",
+    "Ce qui a changé en 2025 et 2026"
+   ],
+   "portee": "incertain",
+   "resume": "La page a changé depuis la dernière vérification (3 passages nouveaux ou modifiés, 3 supprimés). À vérifier."
+  },
+  {
+   "id": "1235f34a7d",
+   "date": "2026-11-16",
+   "type": "page",
+   "t": "Urgence sécurité gaz GRDF : 0 800 47 33 33",
+   "o": "Selectra (guide)",
+   "u": "https://selectra.info/energie/guides/demarches/grdf/coupure",
+   "fiches": [
+    "Odeur ou fuite de gaz",
+    "Numéros d’urgence"
+   ],
+   "portee": "incertain",
+   "resume": "La page a changé depuis la dernière vérification (8 passages nouveaux ou modifiés, 7 supprimés). À vérifier."
+  },
   {
    "id": "a7a630cb77",
    "date": "2026-11-09",
@@ -467,7 +592,11 @@
  ],
  "recherche": [],
  "erreurs": [
-  "Résumé de « Traitement d’air et ventilation dans les ERP : arrêté du 29 juillet 2025 » : The operation was aborted due to timeout",
+  "Résumé de « Certification SSIAP 1 (RS 5641) : compétences et modalités d’évaluation » : The operation was aborted due to timeout",
+  "Résumé de « Certification SSIAP 2 (RS 5642) » : The operation was aborted due to timeout",
+  "Résumé de « Cheminements d’évacuation en ERP : dispositions liées aux dégagements » : The operation was aborted due to timeout",
+  "Résumé de « Entretiens et vérifications obligatoires en ERP (portes automatiques, ascenseurs, éclairage…) » : The operation was aborted due to timeout",
+  "Résumé de « ERP de 5e catégorie : nouvelles obligations au 1er janvier et au 1er juillet 2026 (PE 4, PE 10, PE 21) » : The operation was aborted due to timeout",
   "Résumé de « Urgence sécurité gaz GRDF : 0 800 47 33 33 » : The operation was aborted due to timeout",
   "Recherche des nouveaux textes : Gemini : erreur 429"
  ]
