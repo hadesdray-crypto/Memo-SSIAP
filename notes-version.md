@@ -1,3 +1,4 @@
+- Mon bâtiment : lien vers le texte officiel sur les dérogations (Légifrance), sous le rappel des bâtiments existants
 - Mon bâtiment : rappel clair sous les calculs — un bâtiment ancien ou existant peut demander des adaptations, validées uniquement par l’autorité après avis de la commission de sécurité (exemples PE 11 et CO 41)
 - Mon bâtiment : règles de calcul vérifiées sur les textes officiels (CO 38, PE 11, PE 26, MS 39, effectifs par type) ; correction : dégagements calculés niveau par niveau, magasins comptés selon l’étage, 5e catégorie signalée quand le public est sous le seuil
 - Mon bâtiment : bouton facultatif « Activer Géorisques » (installations classées et cavités à moins de 500 m), sans compte, expliqué en clair, désactivable à tout moment
