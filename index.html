@@ -30007,8 +30007,16 @@ function jChar(o = {}) {
     }
     BAT.busy = false; batDraw();
   }
+  function batGate(redo) {
+    if (PRIV.reseauOk()) { BAT.gate = null; return true; }
+    const t = PRIV.get().total;
+    BAT.gate = t ? null : redo;
+    BAT.msg = t ? "Le mode « tout bloquer » est actif dans Confidentialité : désactivez-le pour chercher un bâtiment." : "Cette recherche envoie l’adresse ou la position à l’IGN et au CSTB (services publics). Autoriser la connexion pour l’appli ?";
+    batDraw(); return false;
+  }
   async function batSearch(q) {
     BAT.q = q;
+    if (!batGate(() => batSearch(q))) return;
     const ph = batPhrase(q);
     if (ph.type && $("#bat-t")) { $("#bat-t").value = ph.type; BAT.typeInit = ph.type; }
     if (!ph.place) { BAT.msg = "Donnez une adresse, une ville ou un quartier, ou touchez « Ma position »."; BAT.cands = []; batDraw(); return; }
@@ -30030,6 +30038,7 @@ function jChar(o = {}) {
     batLoad();
   }
   function batGps() {
+    if (!batGate(batGps)) return;
     if (!navigator.geolocation) { BAT.msg = "La position n’est pas disponible sur cet appareil."; batDraw(); return; }
     BAT.msg = "Recherche de votre position…"; batDraw();
     navigator.geolocation.getCurrentPosition((p) => { BAT.pt = [p.coords.longitude, p.coords.latitude]; BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.cands = []; batLoad(); }, () => { BAT.msg = "Position refusée ou introuvable. Autorisez la position dans les réglages, ou saisissez une adresse."; batDraw(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 });
@@ -30193,7 +30202,7 @@ function jChar(o = {}) {
     const set = (id, h) => { const el = $("#" + id); if (el) el.innerHTML = h; };
     if (!$("#bat-msg")) return;
     const cands = BAT.cands.length > 1 ? `<div class="cards">${BAT.cands.map((c, i) => `<button type="button" class="btn ghost" data-act="bat-pick" data-i="${i}" style="text-align:left">${tx(c.label)}</button>`).join("")}</div>` : "";
-    set("bat-msg", (BAT.msg ? `<p class="small" aria-live="polite">${tx(BAT.msg)}</p>` : "") + cands);
+    set("bat-msg", (BAT.msg ? `<p class="small" aria-live="polite">${tx(BAT.msg)}</p>` : "") + (BAT.gate ? `<div class="chips"><button type="button" class="btn" data-act="bat-net">Autoriser la connexion</button></div>` : "") + cands);
     set("bat-dossier", batDossierHTML());
     set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut).")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
     set("bat-calc", batCalc());
@@ -30571,6 +30580,7 @@ function jChar(o = {}) {
       case "bat-go": prefill.bat = b.dataset.q; go("o-batiment"); break;
       case "bat-find": batSearch($("#bat-q").value); break;
       case "bat-gps": batGps(); break;
+      case "bat-net": { const f = BAT.gate; BAT.gate = null; PRIV.set("reseau", true); if (f) f(); break; }
       case "bat-pick": batPick(+b.dataset.i); break;
       case "bat-save": BAT.pending = "save"; batDraw(); break;
       case "bat-share": BAT.pending = "share"; batDraw(); break;
