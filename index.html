@@ -29948,7 +29948,7 @@ function jChar(o = {}) {
     place = place.replace(/^(à|a|au|aux|dans|sur|près de|pres de|vers|en|de|du|des)\s+/i, "").trim();
     return { type, place };
   }
-  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", urba: null, urbaNote: "", geo: null, geoNote: "", msg: "", busy: false, rot: 30, pending: null };
+  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", urba: null, urbaNote: "", geo: null, geoNote: "", routes: [], routesNote: "", msg: "", busy: false, rot: 30, pending: null };
   const batTimeout = async (url) => {
     const c = new AbortController();
     const t = setTimeout(() => c.abort(), 15000);
@@ -30009,6 +30009,19 @@ function jChar(o = {}) {
         if (q) BAT.urba = { z: q.libelle || "", t: q.typezone || "", l: q.libelong || "", doc: q.idurba || "", d: String(q.datvalid || "") };
         else BAT.urbaNote = "Aucun zonage d’urbanisme trouvé à ce point dans le Géoportail de l’urbanisme.";
       } catch (e) { BAT.urbaNote = "Le Géoportail de l’urbanisme n’a pas répondu : zonage non affiché."; }
+      BAT.routes = []; BAT.routesNote = "";
+      try {
+        const pn = "geometrie,nature,nom_voie_ban_gauche,nom_voie_ban_droite,nom_collaboratif_gauche,importance,largeur_de_chaussee,position_par_rapport_au_sol,etat_de_l_objet,fictif";
+        const rj = await batTimeout(`https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=BDTOPO_V3:troncon_de_route&COUNT=400&OUTPUTFORMAT=application/json&PROPERTYNAME=${encodeURIComponent(pn)}&CQL_FILTER=${encodeURIComponent(`DWITHIN(geometrie,POINT(${pt[1]} ${pt[0]}),${BAT.r + 15},meters)`)}`);
+        (rj.features || []).forEach((f) => {
+          const q = f.properties || {}, g = f.geometry;
+          if (!g || q.fictif || (q.etat_de_l_objet && q.etat_de_l_objet !== "En service")) return;
+          const lines = g.type === "LineString" ? [g.coordinates] : g.type === "MultiLineString" ? g.coordinates : [];
+          const nom = q.nom_voie_ban_gauche || q.nom_voie_ban_droite || q.nom_collaboratif_gauche || "";
+          lines.forEach((l) => { if (l.length > 1) BAT.routes.push({ n: nom, t: q.nature || "", w: q.largeur_de_chaussee || null, i: q.importance || "", s: q.position_par_rapport_au_sol || "0", p: l.map((c) => [Math.round(c[0] * 1e6) / 1e6, Math.round(c[1] * 1e6) / 1e6]) }); });
+        });
+        if (!BAT.routes.length) BAT.routesNote = "Aucune route trouvée dans ce cercle dans la base de l’IGN.";
+      } catch (e) { BAT.routesNote = "Les routes de l’IGN n’ont pas répondu : le plan est affiché sans les routes."; }
       BAT.geo = null; BAT.geoNote = "";
       if (store.get("bat-geo", 0)) {
         try {
@@ -30152,29 +30165,57 @@ function jChar(o = {}) {
       ${BAT.bdnbNote ? `<p class="small">${tx(BAT.bdnbNote)}</p>` : ""}
       ${BAT.urbaNote ? `<p class="small">${tx(BAT.urbaNote)}</p>` : ""}
       ${BAT.geoNote ? `<p class="small">${tx(BAT.geoNote)}</p>` : ""}
-      <p class="small muted">${tx("Sources : IGN (BD TOPO, Géoportail de l’urbanisme), CSTB (base nationale des bâtiments), base adresse nationale. Données sous Licence ouverte 2.0.")}${BAT.geo ? tx(" Installations classées et cavités : Géorisques (BRGM, ministère de la Transition écologique), licence non précisée par l’éditeur.") : ""}</p>
+      <p class="small muted">${tx("Sources : IGN (BD TOPO bâtiments et routes, photo aérienne BD ORTHO, Géoportail de l’urbanisme), CSTB (base nationale des bâtiments), base adresse nationale. Données sous Licence ouverte 2.0.")}${BAT.geo ? tx(" Installations classées et cavités : Géorisques (BRGM, ministère de la Transition écologique), Licence Ouverte 2.0 d’après les conditions du site ; certaines données appartenant à des tiers peuvent demander leur accord. Consulté le " + new Date().toLocaleDateString("fr-FR") + ".") : ""}</p>
       ${manque.length ? `<p class="small">${tx("Non trouvé, à renseigner par l’agent : " + manque.join(" ; ") + ".")}</p>` : ""}${igh}
       <p class="small muted">${tx("Données ouvertes (IGN, base adresse nationale, CSTB), sous Licence Ouverte 2.0. Elles peuvent être anciennes ou fausses : confirmez sur place.")}</p></div></section>`;
   }
   /* Volume 3D schématique : contour × hauteur, toit plat. */
   function bat3D() {
     const m = BAT.main; if (!m) return "";
-    const lon0 = m.c[0], lat0 = m.c[1], th = (BAT.rot * Math.PI) / 180, co = Math.cos(th), si = Math.sin(th);
+    const lon0 = m.c[0], lat0 = m.c[1], th = (BAT.rot * Math.PI) / 180, co = Math.cos(th), si = Math.sin(th), R = BAT.r;
+    const projM = (x, y0, z) => { const y = -y0, X = x * co - y * si, Y = x * si + y * co; return [X, -z + Y * 0.5, Y]; };
+    const proj = (p, z) => { const q = batM(p[0], p[1], lon0, lat0); return projM(q[0], q[1], z); };
     const list = [m].concat(BAT.voisins).filter((x) => x.ring);
-    const proj = (p, z) => { const q = batM(p[0], p[1], lon0, lat0); const X = q[0] * co - q[1] * si, Y = q[0] * si + q[1] * co; return [X, -z + Y * 0.5, Y]; };
     const items = list.map((b, i) => {
       const hh = b.h != null ? b.h : 3;
       const base = b.ring.map((p) => proj(p, 0)), top = b.ring.map((p) => proj(p, hh));
       const depth = base.reduce((s, p) => s + p[2], 0) / base.length;
       return { b, base, top, depth, main: i === 0, inc: b.h == null };
     });
-    const pts = []; items.forEach((it) => { it.base.concat(it.top).forEach((p) => pts.push(p)); });
+    const circ = []; for (let k = 0; k < 72; k++) { const a = (k / 72) * 2 * Math.PI; circ.push(projM(R * Math.cos(a), R * Math.sin(a), 0)); }
+    const pts = circ.slice(); items.forEach((it) => { it.base.concat(it.top).forEach((p) => pts.push(p)); });
     const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
     const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-    const W = 320, H = 230, pad = 12, s = Math.min((W - 2 * pad) / Math.max(1, x1 - x0), (H - 2 * pad) / Math.max(1, y1 - y0));
-    const T = (p) => `${((p[0] - x0) * s + pad + (W - 2 * pad - (x1 - x0) * s) / 2).toFixed(1)},${((p[1] - y0) * s + pad + (H - 2 * pad - (y1 - y0) * s) / 2).toFixed(1)}`;
-    items.sort((a, b) => a.depth - b.depth);
+    const W = 320, H = 250, pad = 14, s = Math.min((W - 2 * pad) / Math.max(1, x1 - x0), (H - 2 * pad) / Math.max(1, y1 - y0));
+    const tx0 = (p) => (p[0] - x0) * s + pad + (W - 2 * pad - (x1 - x0) * s) / 2, ty0 = (p) => (p[1] - y0) * s + pad + (H - 2 * pad - (y1 - y0) * s) / 2;
+    const T = (p) => `${tx0(p).toFixed(1)},${ty0(p).toFixed(1)}`;
+    const cl = `<clipPath id="bat-clip"><polygon points="${circ.map(T).join(" ")}"/></clipPath>`;
     let g = "";
+    /* Photo aérienne IGN (facultative) posée à plat sous le plan */
+    if (store.get("bat-photo", 0) && PRIV.reseauOk()) {
+      const lat = lat0 * Math.PI / 180, Rt = 6378137, mx = lon0 * Math.PI / 180 * Rt, my = Math.log(Math.tan(Math.PI / 4 + lat / 2)) * Rt, h = (R * 1.05) / Math.cos(lat);
+      const url = `https://data.geopf.fr/wms-r/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=ORTHOIMAGERY.ORTHOPHOTOS&STYLES=&CRS=EPSG:3857&BBOX=${[mx - h, my - h, mx + h, my + h].join(",")}&WIDTH=512&HEIGHT=512&FORMAT=image/jpeg`;
+      const E = R * 1.05, nw = projM(-E, E, 0), ne = projM(E, E, 0), sw = projM(-E, -E, 0);
+      const a = (tx0(ne) - tx0(nw)) / 512, b = (ty0(ne) - ty0(nw)) / 512, c = (tx0(sw) - tx0(nw)) / 512, d = (ty0(sw) - ty0(nw)) / 512;
+      g += `<g clip-path="url(#bat-clip)"><image href="${url}" width="512" height="512" preserveAspectRatio="none" transform="matrix(${a.toFixed(5)} ${b.toFixed(5)} ${c.toFixed(5)} ${d.toFixed(5)} ${tx0(nw).toFixed(2)} ${ty0(nw).toFixed(2)})"/></g>`;
+    }
+    g += `<polygon points="${circ.map(T).join(" ")}" fill="${store.get("bat-photo", 0) && PRIV.reseauOk() ? "none" : "var(--surface-2, transparent)"}" stroke="var(--ink-3)" stroke-width=".8" stroke-dasharray="4 3"/>`;
+    /* Routes réelles (IGN, BD TOPO), limitées au cercle */
+    const photo = store.get("bat-photo", 0) && PRIV.reseauOk();
+    let rg = "", lab = [];
+    (BAT.routes || []).forEach((r) => {
+      const q = r.p.map((c) => proj(c, 0));
+      const wm = Math.max(2.5, r.w || (r.i <= 4 ? 7 : r.i <= 5 ? 5 : 3)), wpx = Math.max(1.2, wm * s * 0.9);
+      const road = ["Sentier", "Chemin", "Escalier", "Piste cyclable"].indexOf(r.t) >= 0 || /sentier|chemin|escalier|piste/i.test(r.t);
+      const d = "M" + q.map(T).join(" L");
+      rg += `<path d="${d}" fill="none" stroke="${photo ? "#fff" : "var(--ink-3)"}" stroke-opacity="${road ? 0.6 : photo ? 0.55 : 0.28}" stroke-width="${(road ? 1.2 : wpx).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"${r.s !== "0" ? ' stroke-dasharray="4 2"' : ""}/>`;
+      if (r.n) { let len = 0; for (let i = 1; i < r.p.length; i++) { const a = batM(r.p[i - 1][0], r.p[i - 1][1], lon0, lat0), b = batM(r.p[i][0], r.p[i][1], lon0, lat0); len += Math.hypot(b[0] - a[0], b[1] - a[1]); } lab.push({ n: r.n, len, q }); }
+    });
+    g += `<g clip-path="url(#bat-clip)">${rg}</g>`;
+    const seen = {}; lab.sort((a, b) => b.len - a.len);
+    let lt = "", nl = 0;
+    lab.forEach((l) => { if (seen[l.n] || nl >= 6 || l.len < 18) return; seen[l.n] = 1; nl++; const mid = l.q[Math.floor(l.q.length / 2)]; lt += `<text x="${tx0(mid).toFixed(1)}" y="${ty0(mid).toFixed(1)}" font-size="8" text-anchor="middle" fill="var(--ink)" stroke="var(--surface)" stroke-width="2.4" paint-order="stroke" style="font-weight:600">${esc(l.n)}</text>`; });
+    items.sort((a, b) => a.depth - b.depth);
     items.forEach((it) => {
       const col = it.main ? "var(--red)" : "var(--ink-3)";
       const walls = [];
@@ -30187,7 +30228,9 @@ function jChar(o = {}) {
       walls.forEach((w) => { g += `<polygon points="${w.p}" fill="${col}" fill-opacity="${w.o.toFixed(2)}" stroke="var(--line-2)" stroke-width=".6"${it.inc ? ' stroke-dasharray="3 2"' : ""}/>`; });
       g += `<polygon points="${it.top.map(T).join(" ")}" fill="${col}" fill-opacity="${it.main ? 0.9 : 0.5}" stroke="var(--ink-2)" stroke-width=".7"/>`;
     });
-    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Volume schématique du bâtiment et des bâtiments voisins" style="width:100%;height:auto;background:var(--surface);border-radius:12px;border:1px solid var(--line)">${g}</svg>`;
+    g += lt;
+    if (photo) g += `<text x="${W - 4}" y="${H - 4}" font-size="7" text-anchor="end" fill="#fff" stroke="#000" stroke-width="1.6" paint-order="stroke">Photo aérienne © IGN</text>`;
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Plan en volume : bâtiment, voisins et routes dans un rayon de ${R} mètres" style="width:100%;height:auto;background:var(--surface);border-radius:12px;border:1px solid var(--line)"><defs>${cl}</defs>${g}</svg>`;
   }
   /* Calculs d'ERP à partir du bâtiment et du type choisi par l'agent. */
   /* Effectif du public d'après les textes (M 2, L 3, N 2, T 2, V 2, W 2, X 2, Y 2) : le maximum possible pour une surface donnée. */
@@ -30255,7 +30298,7 @@ function jChar(o = {}) {
     return r.replace(/<\/section>$/, d + `<p class="small"><a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000290033" target="_blank" rel="noopener noreferrer">${tx("Texte officiel sur les dérogations (Légifrance)")}</a></p></section>`);
   }
   const batSaved = () => store.get("batiments", []);
-  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote, urba: BAT.urba, urbaNote: BAT.urbaNote, geo: BAT.geo, geoNote: BAT.geoNote }; }
+  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote, urba: BAT.urba, urbaNote: BAT.urbaNote, geo: BAT.geo, geoNote: BAT.geoNote, routes: BAT.routes, routesNote: BAT.routesNote }; }
   const batKo = (o) => Math.max(1, Math.round(JSON.stringify(o).length / 1024));
   function batText() {
     const f = batFacts(); if (!f) return "";
@@ -30283,9 +30326,9 @@ function jChar(o = {}) {
     if (fn) { fn.hidden = !BAT.main; if (BAT.main && BAT.askSurf) fn.open = true; }
     set("bat-geo", store.get("bat-geo", 0)
       ? `<section class="sec"><h2 class="lbl">Géorisques : activé</h2><p class="small">${tx("Les installations classées et les cavités à moins de 500 m s’ajoutent à la fiche.")}</p><div class="chips"><button type="button" class="btn ghost" data-act="bat-geo-off">Désactiver</button></div></section>`
-      : `<section class="sec"><h2 class="lbl">Plus d’informations (facultatif)</h2><p class="small">${tx("Ajouter à la fiche les installations classées et les cavités souterraines à moins de 500 m, depuis Géorisques (BRGM, ministère de la Transition écologique).")}</p><ul class="small"><li>${tx("Aucun compte à créer, aucun mot de passe.")}</li><li>${tx("Votre téléphone interroge directement le service : la position du bâtiment lui est envoyée, rien ne passe par un serveur de l’appli.")}</li><li>${tx("L’éditeur ne précise pas la licence de ces données : vérifiez avant tout usage commercial.")}</li><li>${tx("Vous pouvez désactiver à tout moment.")}</li></ul><div class="chips"><button type="button" class="btn" data-act="bat-geo-on">Activer Géorisques</button></div></section>`);
+      : `<section class="sec"><h2 class="lbl">Plus d’informations (facultatif)</h2><p class="small">${tx("Ajouter à la fiche les installations classées et les cavités souterraines à moins de 500 m, depuis Géorisques (BRGM, ministère de la Transition écologique).")}</p><ul class="small"><li>${tx("Aucun compte à créer, aucun mot de passe.")}</li><li>${tx("Votre téléphone interroge directement le service : la position du bâtiment lui est envoyée, rien ne passe par un serveur de l’appli.")}</li><li>${tx("Licence Ouverte 2.0 d’après les conditions d’utilisation du site Géorisques. Certaines données appartiennent à des tiers et peuvent demander leur accord.")}</li><li>${tx("Vous pouvez désactiver à tout moment.")}</li></ul><div class="chips"><button type="button" class="btn" data-act="bat-geo-on">Activer Géorisques</button></div></section>`);
     set("bat-dossier", batDossierHTML());
-    set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Précision : position ± " + (BAT.main.pp != null ? fmtN(BAT.main.pp) + " m" : "non publiée") + ", hauteur ± " + (BAT.main.pa != null ? fmtN(BAT.main.pa) + " m" : "non publiée") + (BAT.voisins.concat([BAT.main]).some((x) => x.h == null) ? " ; " + BAT.voisins.concat([BAT.main]).filter((x) => x.h == null).length + " bâtiment(s) sans hauteur connue, dessinés à 3 m en pointillés (inexact)" : "") + ". Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut).")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
+    set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<div class="chips"><button type="button" class="btn ghost" data-act="bat-photo">${store.get("bat-photo", 0) ? "Retirer la photo aérienne" : "Ajouter la photo aérienne (IGN)"}</button></div>${tx(BAT.routesNote)?`<p class="small muted">${tx(BAT.routesNote)}</p>`:""}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Précision : position ± " + (BAT.main.pp != null ? fmtN(BAT.main.pp) + " m" : "non publiée") + ", hauteur ± " + (BAT.main.pa != null ? fmtN(BAT.main.pa) + " m" : "non publiée") + (BAT.voisins.concat([BAT.main]).some((x) => x.h == null) ? " ; " + BAT.voisins.concat([BAT.main]).filter((x) => x.h == null).length + " bâtiment(s) sans hauteur connue, dessinés à 3 m en pointillés (inexact)" : "") + ". Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut). Routes : base de l’IGN (BD TOPO), limitées au cercle de " + BAT.r + " m ; un nom absent veut dire que l’IGN ne le publie pas pour ce tronçon. Photo aérienne facultative, vue du dessus : les toits peuvent être un peu décalés par rapport aux contours (effet de prise de vue). Sans connexion, la photo ne s’affiche pas et n’est pas enregistrée.")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
     set("bat-calc", batCalc());
     set("bat-actions", batActionsHTML());
     set("bat-saved", batSavedHTML());
@@ -30667,6 +30710,7 @@ function jChar(o = {}) {
       case "bat-go": prefill.bat = b.dataset.q; go("o-batiment"); break;
       case "bat-find": batSearch($("#bat-q").value); break;
       case "bat-gps": batGps(); break;
+      case "bat-photo": { const on = !store.get("bat-photo", 0); store.set("bat-photo", on ? 1 : 0); if (on && !PRIV.reseauOk()) { batGate(() => batDraw()); break; } batDraw(); break; }
       case "bat-geo-on": case "bat-geo-off": { store.set("bat-geo", b.dataset.act === "bat-geo-on" ? 1 : 0); if (b.dataset.act === "bat-geo-on" && !PRIV.reseauOk()) { batGate(() => { if (BAT.pt) batLoad(); }); break; } if (BAT.pt && !BAT.busy) batLoad(); else batDraw(); break; }
       case "bat-net": { const f = BAT.gate; BAT.gate = null; PRIV.set("reseau", true); if (f) f(); break; }
       case "bat-pick": batPick(+b.dataset.i); break;
@@ -30675,7 +30719,7 @@ function jChar(o = {}) {
       case "bat-no": BAT.pending = null; batDraw(); break;
       case "bat-save-yes": { const l = batSaved(); l.unshift(batSnapshot()); store.set("batiments", l.slice(0, 20)); BAT.pending = null; batDraw(); toast("Dossier gardé : il s’ouvre sans connexion."); break; }
       case "bat-share-yes": { const tx0 = batText(); BAT.pending = null; batDraw(); if (navigator.share) navigator.share({ title: "Fiche du bâtiment", text: tx0 }).catch(() => {}); else copyText(tx0, "Fiche copiée."); break; }
-      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, urba: d.urba || null, urbaNote: d.urbaNote || "", geo: d.geo || null, geoNote: d.geoNote || "", msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
+      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, urba: d.urba || null, urbaNote: d.urbaNote || "", geo: d.geo || null, geoNote: d.geoNote || "", routes: d.routes || [], routesNote: d.routes ? (d.routesNote || "") : "Dossier enregistré avant l’ajout des routes.", msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
       case "bat-del": { const l = batSaved(); l.splice(+b.dataset.i, 1); store.set("batiments", l); batDraw(); break; }
       case "eff-deg": prefill.deg = b.dataset.n; go("o-degagements"); break;
       case "qz-niv": state.qniv = b.dataset.v; store.set("qniv", state.qniv); rerender(); break;

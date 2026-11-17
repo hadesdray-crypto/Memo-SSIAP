@@ -1,3 +1,7 @@
+- Mon bâtiment : les vraies routes de l’IGN (avec leur nom quand il est publié) sont dessinées dans le cercle du plan, et gardées avec le dossier hors connexion
+- Mon bâtiment : bouton « Ajouter la photo aérienne (IGN) » sous le plan (Licence ouverte, source IGN affichée, connexion nécessaire, non enregistrée)
+- Mon bâtiment : correction du plan 3D, qui était inversé (nord en bas) : le nord est maintenant en haut
+- Mon bâtiment : Géorisques, licence ouverte 2.0 d’après leurs conditions d’utilisation, date de consultation indiquée sous la fiche
 - Mon bâtiment : lien vers le texte officiel sur les dérogations (Légifrance), sous le rappel des bâtiments existants
 - Mon bâtiment : rappel clair sous les calculs — un bâtiment ancien ou existant peut demander des adaptations, validées uniquement par l’autorité après avis de la commission de sécurité (exemples PE 11 et CO 41)
 - Mon bâtiment : règles de calcul vérifiées sur les textes officiels (CO 38, PE 11, PE 26, MS 39, effectifs par type) ; correction : dégagements calculés niveau par niveau, magasins comptés selon l’étage, 5e catégorie signalée quand le public est sous le seuil
