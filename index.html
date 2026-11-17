@@ -30201,7 +30201,7 @@ function jChar(o = {}) {
   const catDe = (tot) => (tot > 1500 ? "1re" : tot >= 701 ? "2e" : tot >= 301 ? "3e" : "4e");
   const batSeuil = (e) => { const x = e && e.cat ? D.seuils5.find((q) => q.id === e.cat) : null; return x && x.tot ? x.tot : null; };
   const batCat = (e, pub, pers) => { const sv = batSeuil(e); if (sv && pub < sv && !pers) return "5e (public sous le seuil de " + sv + ")"; const c = catDe(pub + (pers || 0)); return !sv && c === "4e" ? "4e ou 5e (selon le seuil propre au type)" : c; };
-  function batCalc() {
+  function batCalc0() {
     const m = BAT.main; if (!m) return "";
     const f = batFacts(), t = $("#bat-t") ? $("#bat-t").value : "";
     const L1 = LIEUX["1"], L5 = LIEUX["5"];
@@ -30248,6 +30248,11 @@ function jChar(o = {}) {
       <div class="chips"><button type="button" class="btn ghost" data-act="eff-cat" data-n="${pub}" data-cat="${e && e.cat ? e.cat : ""}">${tx("Vérifier la catégorie")}</button></div>
       <p class="small muted">${tx(estime && f.pct != null && !f.inc ? "Taux d’approximation : environ ± " + f.pct + " % (entre " + fmtN(batPub(e, f.a0, f.nMin)) + " et " + fmtN(batPub(e, f.a1, f.nMax)) + " personnes). " : estime ? "Taux d’approximation non connu. " : "Valeur saisie par vous : pas de marge de calcul. ")}${tx("Résultat indicatif, à vérifier avant validation. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
     return out;
+  }
+  function batCalc() {
+    const r = batCalc0(); if (!r) return r;
+    const d = disc("Bâtiment ancien ou existant : ces résultats appliquent la règle générale. Selon son âge, son état ou sa forme, un bâtiment existant peut demander des adaptations, mais seule une décision de l’autorité les valide, après avis de la commission de sécurité. Exemples du règlement : largeur de 0,90 m ramenée à 0,80 m pour une rénovation ou un aménagement dans un immeuble existant (PE 11 § 3) ; dérogations possibles pour les impasses de plus de 10 m dans un immeuble existant (CO 41 § 3). Toute information affichée ici qui n’est pas une règle (donnée ouverte, estimation, marge) est signalée et expliquée.");
+    return r.replace(/<\/section>$/, d + "</section>");
   }
   const batSaved = () => store.get("batiments", []);
   function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote, urba: BAT.urba, urbaNote: BAT.urbaNote, geo: BAT.geo, geoNote: BAT.geoNote }; }
