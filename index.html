@@ -27400,7 +27400,7 @@ const APP = (() => {
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
     { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
-    { id: "o-batiment", t: "Mon bâtiment", d: "Adresse, position ou « je cherche un bâtiment » : fiche du bâtiment, effectif, dégagements, extincteurs et volume 3D.", ic: "immeuble", co: "blue", mc: "batiment immeuble adresse gps position je cherche un batiment erp restaurant magasin recherche autour rayon voisins 3d volume dossier hors connexion fiche" },
+    { id: "o-batiment", t: "Mon bâtiment", d: "Adresse, position ou « je cherche un bâtiment » : fiche du bâtiment, effectif, dégagements, extincteurs et volume 3D.", ic: "immeuble", co: "blue", mc: "batiment immeuble adresse gps position ma position localisation ou je suis ou suis je je cherche un batiment cherche batiment trouver batiment etablissement erp restaurant brasserie bar cafe magasin boutique commerce supermarche centre commercial bureau banque mairie musee eglise gymnase salle de sport theatre cinema salle des fetes salle de spectacle discotheque ecole college lycee hotel hopital clinique bibliotheque recherche autour rayon voisins batiments voisins 3d modele volume maquette plan dossier fiche du batiment hors connexion surface au sol surface de plancher hauteur niveaux etages annee de construction materiaux murs toit parcelle cadastre risques seisme radon argile inondation submersion monument historique ign bdnb cstb base adresse nationale open data calcul automatique effectif degagements unites de passage up categorie probable extincteurs a verifier avant validation" },
     { id: "o-categorie", t: "Catégorie d’un ERP", d: "Activité et effectif : 5e catégorie ou 1er groupe, puis catégorie 1 à 4.", ic: "immeuble", co: "blue", mc: "classement categorie erp effectif seuil 5e groupe" },
     { id: "o-effectif", t: "Calcul de l’effectif", d: "Surface, sièges ou places : nombre de personnes à prendre en compte.", ic: "personnes", co: "blue", mc: "effectif theorique densite surface m2 personnes calcul" },
     { id: "o-degagements", t: "Dégagements et unités de passage", d: "Nombre de sorties et largeurs minimales selon l’effectif. Largeur mesurée en UP.", ic: "sortie", co: "green", mc: "degagement sortie issue unite de passage UP largeur CO 38 PE 11" },
@@ -29968,16 +29968,17 @@ function jChar(o = {}) {
     const c = batCentre(ring);
     let h = typeof p.hauteur === "number" ? p.hauteur : null;
     if (h == null && typeof p.altitude_maximale_toit === "number" && typeof p.altitude_minimale_sol === "number") h = Math.round((p.altitude_maximale_toit - p.altitude_minimale_sol) * 10) / 10;
-    return { id: f.id || p.cleabs, rnb: p.identifiants_rnb || "", ring, c, h, aire: Math.round(batArea(ring)), nature: p.nature || "", usage: p.usage_1 || "", usage2: p.usage_2 || "", etages: p.nombre_d_etages, logements: p.nombre_de_logements, murs: p.materiaux_des_murs, toit: p.materiaux_de_la_toiture, legere: !!p.construction_legere, maj: String(p.date_modification || "").slice(0, 10), pp: p.precision_planimetrique, pa: p.precision_altimetrique, dist: pt ? Math.round(batDist(pt, c)) : 0, dedans: pt ? batInside(ring, pt[0], pt[1]) : false };
+    const per = (() => { let t = 0; for (let i = 0; i < ring.length - 1; i++) t += batDist(ring[i], ring[i + 1]); return t; })();
+    return { per, id: f.id || p.cleabs, rnb: p.identifiants_rnb || "", ring, c, h, aire: Math.round(batArea(ring)), nature: p.nature || "", usage: p.usage_1 || "", usage2: p.usage_2 || "", etages: p.nombre_d_etages, logements: p.nombre_de_logements, murs: p.materiaux_des_murs, toit: p.materiaux_de_la_toiture, legere: !!p.construction_legere, maj: String(p.date_modification || "").slice(0, 10), pp: p.precision_planimetrique, pa: p.precision_altimetrique, dist: pt ? Math.round(batDist(pt, c)) : 0, dedans: pt ? batInside(ring, pt[0], pt[1]) : false };
   }
   async function batLoad() {
-    BAT.busy = true; BAT.msg = "Recherche des bâtiments autour du point…"; batDraw();
+    BAT.busy = true; BAT.ok = false; BAT.msg = "Recherche en cours : bâtiments autour du point…"; batDraw();
     try {
       const pt = BAT.pt;
       const cql = `DWITHIN(geometrie,POINT(${pt[1]} ${pt[0]}),${BAT.r},meters)`;
       const j = await batTimeout(`https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=BDTOPO_V3:batiment&COUNT=80&OUTPUTFORMAT=application/json&CQL_FILTER=${encodeURIComponent(cql)}`);
       const all = (j.features || []).map((f) => batBuild(f, pt)).filter(Boolean);
-      if (!all.length) { BAT.main = null; BAT.voisins = []; BAT.msg = "Aucun bâtiment trouvé dans ce rayon. Augmentez le rayon ou déplacez le point."; BAT.busy = false; batDraw(); return; }
+      if (!all.length) { BAT.main = null; BAT.voisins = []; BAT.ok = false; BAT.msg = "Aucun bâtiment trouvé dans ce rayon. Augmentez le rayon ou déplacez le point."; BAT.busy = false; batDraw(); return; }
       all.sort((a, b) => (b.dedans - a.dedans) || (a.dist - b.dist));
       BAT.main = all[0]; BAT.voisins = all.slice(1, 13);
       BAT.bdnb = null; BAT.bdnbNote = "";
@@ -30001,9 +30002,15 @@ function jChar(o = {}) {
           if (!BAT.bdnb) BAT.bdnbNote = BAT.bdnbNote || "Cette adresse n’est pas dans la base nationale des bâtiments.";
         } catch (e) { BAT.bdnbNote = "La base nationale des bâtiments n’a pas répondu : seules les données de l’IGN sont affichées."; }
       }
-      BAT.msg = "";
+      const ff = batFacts(), tt = $("#bat-t");
+      BAT.askType = !(tt && tt.value); BAT.askSurf = !ff.plancher;
+      BAT.ok = true;
+      BAT.msg = "Bâtiment trouvé" + (BAT.adr ? " : " + BAT.adr : "") + ". " + (BAT.voisins.length ? BAT.voisins.length + " bâtiment" + (BAT.voisins.length > 1 ? "s" : "") + " voisin" + (BAT.voisins.length > 1 ? "s" : "") + " dans " + BAT.r + " m. " : "Aucun voisin dans " + BAT.r + " m. ") + "Fiche, volume 3D et calculs juste en dessous." + (BAT.askType ? " Choisissez le type d’établissement." : "") + (BAT.askSurf ? " Surface inconnue : saisissez-la dans « Corriger ou affiner »." : "");
+      BAT.busy = false; batDraw();
+      const dz = $("#bat-dossier"); if (dz && dz.scrollIntoView) dz.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
     } catch (e) {
-      BAT.msg = batErr("Le service n’a pas répondu. Réessayez dans un instant.");
+      BAT.ok = false; BAT.msg = batErr("Le service n’a pas répondu. Réessayez dans un instant.");
     }
     BAT.busy = false; batDraw();
   }
@@ -30020,14 +30027,14 @@ function jChar(o = {}) {
     const ph = batPhrase(q);
     if (ph.type && $("#bat-t")) { $("#bat-t").value = ph.type; BAT.typeInit = ph.type; }
     if (!ph.place) { BAT.msg = "Donnez une adresse, une ville ou un quartier, ou touchez « Ma position »."; BAT.cands = []; batDraw(); return; }
-    BAT.busy = true; BAT.msg = "Recherche de l’adresse…"; batDraw();
+    BAT.busy = true; BAT.ok = false; BAT.msg = "Recherche en cours : adresse…"; batDraw();
     try {
       const j = await batTimeout(`https://data.geopf.fr/geocodage/search?q=${encodeURIComponent(ph.place)}&limit=5`);
       BAT.cands = (j.features || []).map((f) => ({ lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], label: f.properties.label, id: f.properties.type === "housenumber" ? f.properties.id : "", cc: f.properties.citycode, type: f.properties.type, score: f.properties.score }));
-      if (!BAT.cands.length) { BAT.msg = "Aucune adresse trouvée. Précisez avec la ville ou le code postal."; BAT.busy = false; batDraw(); return; }
+      if (!BAT.cands.length) { BAT.msg = "Aucune adresse trouvée. Précisez avec la ville ou le code postal."; BAT.ok = false; BAT.busy = false; batDraw(); return; }
       BAT.busy = false;
       if (BAT.cands.length === 1 || (BAT.cands[0].score > 0.85 && BAT.cands[0].type === "housenumber")) { batPick(0); return; }
-      BAT.msg = "Plusieurs adresses possibles : choisissez la bonne."; batDraw();
+      BAT.ok = false; BAT.msg = "Plusieurs adresses trouvées : touchez la bonne."; batDraw();
     } catch (e) {
       BAT.busy = false; BAT.msg = batErr("Le service d’adresses n’a pas répondu. Réessayez."); batDraw();
     }
@@ -30039,9 +30046,13 @@ function jChar(o = {}) {
   }
   function batGps() {
     if (!batGate(batGps)) return;
-    if (!navigator.geolocation) { BAT.msg = "La position n’est pas disponible sur cet appareil."; batDraw(); return; }
-    BAT.msg = "Recherche de votre position…"; batDraw();
-    navigator.geolocation.getCurrentPosition((p) => { BAT.pt = [p.coords.longitude, p.coords.latitude]; BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.cands = []; batLoad(); }, () => { BAT.msg = "Position refusée ou introuvable. Autorisez la position dans les réglages, ou saisissez une adresse."; batDraw(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 });
+    if (!navigator.geolocation) { BAT.ok = false; BAT.msg = "La position n’est pas disponible sur cet appareil. Écrivez une adresse."; batDraw(); return; }
+    BAT.busy = true; BAT.ok = false; BAT.msg = "Recherche de votre position… (jusqu’à 20 secondes)"; batDraw();
+    navigator.geolocation.getCurrentPosition((p) => { BAT.pt = [p.coords.longitude, p.coords.latitude]; BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.cands = []; BAT.gpsPrec = p.coords.accuracy; batLoad(); }, (er) => {
+      BAT.busy = false; BAT.ok = false;
+      BAT.msg = er && er.code === 1 ? "Position refusée. Autorisez la position pour l’appli dans les réglages du téléphone (Applications, Mémo SSIAP, Autorisations), ou écrivez une adresse." : er && er.code === 3 ? "La position met trop de temps. Allez près d’une fenêtre ou écrivez une adresse." : "Position introuvable. Activez la localisation du téléphone, ou écrivez une adresse.";
+      batDraw();
+    }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 });
   }
   /* Données déduites du bâtiment principal : chaque valeur garde sa provenance. */
   function batFacts() {
@@ -30054,12 +30065,27 @@ function jChar(o = {}) {
     let niv = b.nb_niveau || (typeof m.etages === "number" && m.etages > 0 ? m.etages : null), nivSrc = b.nb_niveau ? "Base nationale des bâtiments" : "IGN", nivK = "donnee";
     if (!niv && m.h) { niv = Math.max(1, Math.round(m.h / 3)); nivSrc = "Estimé : hauteur divisée par 3 m"; nivK = "estime"; }
     const plancher = emprise && niv ? Math.round(emprise * niv) : null;
+    /* Marges : calculées seulement à partir des précisions publiées. */
+    const eIGN = !b.surface_emprise_sol;
+    const aErr = eIGN && m.pp != null && m.per ? Math.round(m.per * m.pp) : null; /* m² : bande de largeur « précision » le long du contour */
+    const hErr = m.h != null && m.pa != null ? m.pa : null;
+    const nEst = nivK === "estime";
+    let nMin = niv, nMax = niv;
+    if (nEst && m.h) { nMin = Math.max(1, Math.round(Math.max(0, m.h - (hErr || 0)) / 4)); nMax = Math.max(nMin, Math.round((m.h + (hErr || 0)) / 2.5)); }
+    let pMin = null, pMax = null, pct = null, margeNote = "", inc = false;
+    if (plancher) {
+      const okA = !eIGN || aErr != null;
+      const a0 = emprise - (aErr || 0), a1 = emprise + (aErr || 0);
+      pMin = Math.round(Math.max(0, a0) * nMin); pMax = Math.round(a1 * nMax);
+      pct = Math.round((Math.max(pMax - plancher, plancher - pMin) / plancher) * 100);
+      if (!okA || !eIGN) { inc = true; margeNote = "Marge de la surface au sol non publiée par la source : taux d’approximation non connu, vérifiez sur place."; }
+    }
     add("Adresse", BAT.adr || null, "Base adresse nationale");
-    add("Surface au sol", emprise ? fmtN(emprise) + NB + "m²" : null, empriseSrc, b.surface_emprise_sol ? "donnee" : "estime");
+    add("Surface au sol", emprise ? fmtN(emprise) + NB + "m²" + (aErr != null ? " (± " + fmtN(aErr) + NB + "m², soit ± " + Math.round((aErr / emprise) * 100) + NB + "%)" : eIGN ? " (marge non publiée)" : " (marge non publiée par la base)") : null, empriseSrc, b.surface_emprise_sol ? "donnee" : "estime");
     if (b.surface_emprise_sol && m.aire && Math.abs(b.surface_emprise_sol - m.aire) / Math.max(1, b.surface_emprise_sol) > 0.3) add("Écart entre les deux sources", "Contour IGN : " + fmtN(m.aire) + NB + "m² contre " + fmtN(b.surface_emprise_sol) + NB + "m² : vérifiez sur place", "Calculé", "estime");
-    add("Hauteur", m.h != null ? fmtN(m.h) + NB + "m" : null, "IGN");
-    add("Nombre de niveaux", niv, nivSrc, nivK);
-    add("Surface de plancher (estimation)", plancher ? fmtN(plancher) + NB + "m²" : null, "Calculé : surface au sol × niveaux", "estime");
+    add("Hauteur", m.h != null ? fmtN(m.h) + NB + "m" + (hErr != null ? " (± " + fmtN(hErr) + NB + "m)" : " (marge non publiée)") : null, "IGN");
+    add("Nombre de niveaux", niv != null ? niv + (nEst && nMin !== nMax ? " (entre " + nMin + " et " + nMax + ")" : "") : null, nivSrc + (nEst ? " : hypothèse de 2,5 à 4 m par niveau, à vérifier" : ""), nivK);
+    add("Surface de plancher (estimation)", plancher ? fmtN(plancher) + NB + "m²" + (inc ? " (taux d’approximation non connu)" : " (entre " + fmtN(pMin) + " et " + fmtN(pMax) + NB + "m², environ ± " + pct + NB + "%)") : null, "Calculé : surface au sol × niveaux. " + margeNote, "estime");
     add("Année de construction", b.annee_construction, "Base nationale des bâtiments");
     add("Usage", b.usage_principal_bdnb_open || (m.usage && !/indiff/i.test(m.usage) ? m.usage : ""), b.usage_principal_bdnb_open ? "Base nationale des bâtiments" : "IGN");
     add("Logements", b.nb_log != null ? b.nb_log : m.logements, b.nb_log != null ? "Base nationale des bâtiments" : "IGN");
@@ -30080,7 +30106,7 @@ function jChar(o = {}) {
     add("Précision de la hauteur", m.pa != null ? "environ " + fmtN(m.pa) + NB + "m" : null, "IGN");
     add("Fiabilité de la surface", b.fiabilite_emprise_sol ? String(b.fiabilite_emprise_sol).toLowerCase() : null, "Base nationale des bâtiments");
     add("Fiabilité de la hauteur", b.fiabilite_hauteur ? String(b.fiabilite_hauteur).toLowerCase() : null, "Base nationale des bâtiments");
-    return { F, emprise, niv, plancher, h: m.h };
+    return { F, emprise, niv, plancher, pMin, pMax, pct, inc, h: m.h };
   }
   function batDossierHTML() {
     const m = BAT.main; if (!m) return "";
@@ -30148,10 +30174,11 @@ function jChar(o = {}) {
     if (f.plancher) {
       const rows = EFF.map((e) => {
         const fl = e.f.find((x) => x.u === "m²"); if (!fl) return "";
-        const pub = ceil(f.plancher * fl.x), g = co38(pub);
-        return `<div><dt>${tx(e.t)}</dt><dd>${tx(fmtN(pub) + " personnes · " + g.deg + " dégagement" + (g.deg > 1 ? "s" : "") + (g.up ? ", " + g.up + " UP" : "") + " · catégorie probable : " + catDe(pub))}</dd></div>`;
+        const pub = ceil(f.plancher * fl.x), g = co38(pub), lo = ceil(f.pMin * fl.x), hi = ceil(f.pMax * fl.x);
+        const c0 = catDe(lo), c1 = catDe(hi), gh = co38(hi);
+        return `<div><dt>${tx(e.t)}</dt><dd>${tx(fmtN(pub) + " personnes" + (f.inc ? "" : " (entre " + fmtN(lo) + " et " + fmtN(hi) + ")") + " · " + g.deg + (!f.inc && gh.deg !== g.deg ? " à " + gh.deg : "") + " dégagement" + (gh.deg > 1 ? "s" : "") + (g.up ? ", " + g.up + (!f.inc && gh.up !== g.up ? " à " + gh.up : "") + " UP" : "") + " · catégorie : " + (f.inc || c0 === c1 ? c0 : c0 + " à " + c1))}</dd></div>`;
       }).join("");
-      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx("Toute la surface de plancher est comptée comme accessible au public : c’est un maximum. Choisissez le type pour affiner.")}</p>`;
+      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx((f.inc ? "Taux d’approximation non connu (la source ne publie pas la marge de la surface). " : "Taux d’approximation : environ ± " + f.pct + " % sur la surface de plancher, donc sur chaque effectif. ") + "Toute la surface de plancher est comptée comme accessible au public : c’est un maximum. Choisissez le type pour affiner.")}</p>`;
     }
     /* 3. Type choisi */
     if (!t) { out += `<p class="muted">${tx("Choisissez le type d’établissement plus haut pour le calcul détaillé.")}</p></section>`; return out; }
@@ -30177,7 +30204,7 @@ function jChar(o = {}) {
         ${pub <= 300 ? `<li>${tx("Si l’établissement est de 5e catégorie (PE 11) : " + (pe ? pe[1] : ""))}</li>` : ""}
       </ul>
       <div class="chips"><button type="button" class="btn ghost" data-act="eff-cat" data-n="${pub}" data-cat="${e && e.cat ? e.cat : ""}">${tx("Vérifier la catégorie")}</button></div>
-      <p class="small muted">${tx("Résultat indicatif, à vérifier avant validation : la surface de plancher est estimée d’après le contour et la hauteur. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
+      <p class="small muted">${tx(!effIn && !surf && f.pct != null && !f.inc ? "Taux d’approximation : environ ± " + f.pct + " % (entre " + fmtN(Math.round(pub * f.pMin / f.plancher)) + " et " + fmtN(Math.round(pub * f.pMax / f.plancher)) + " personnes). " : (effIn || surf ? "Valeur saisie par vous : pas de marge de calcul. " : "Taux d’approximation non connu. "))} ${tx("Résultat indicatif, à vérifier avant validation : la surface de plancher est estimée d’après le contour et la hauteur. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
     return out;
   }
   const batSaved = () => store.get("batiments", []);
@@ -30202,9 +30229,13 @@ function jChar(o = {}) {
     const set = (id, h) => { const el = $("#" + id); if (el) el.innerHTML = h; };
     if (!$("#bat-msg")) return;
     const cands = BAT.cands.length > 1 ? `<div class="cards">${BAT.cands.map((c, i) => `<button type="button" class="btn ghost" data-act="bat-pick" data-i="${i}" style="text-align:left">${tx(c.label)}</button>`).join("")}</div>` : "";
-    set("bat-msg", (BAT.msg ? `<p class="small" aria-live="polite">${tx(BAT.msg)}</p>` : "") + (BAT.gate ? `<div class="chips"><button type="button" class="btn" data-act="bat-net">Autoriser la connexion</button></div>` : "") + cands);
+    set("bat-msg", (BAT.msg ? (BAT.ok ? `<div class="result"><p><strong>${tx(BAT.msg)}</strong></p></div>` : `<p class="${BAT.busy ? "small" : "small"}" aria-live="polite"><strong>${tx(BAT.msg)}</strong></p>`) : "") + (BAT.gate ? `<div class="chips"><button type="button" class="btn" data-act="bat-net">Autoriser la connexion</button></div>` : "") + cands);
+    $$('[data-act="bat-find"],[data-act="bat-gps"]').forEach((x) => { x.disabled = !!BAT.busy; });
+    const nd = $("#bat-need"), fn = $("#bat-fine");
+    if (nd) nd.hidden = !(BAT.main && BAT.askType);
+    if (fn) { fn.hidden = !BAT.main; if (BAT.main && BAT.askSurf) fn.open = true; }
     set("bat-dossier", batDossierHTML());
-    set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut).")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
+    set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Précision : position ± " + (BAT.main.pp != null ? fmtN(BAT.main.pp) + " m" : "non publiée") + ", hauteur ± " + (BAT.main.pa != null ? fmtN(BAT.main.pa) + " m" : "non publiée") + (BAT.voisins.concat([BAT.main]).some((x) => x.h == null) ? " ; " + BAT.voisins.concat([BAT.main]).filter((x) => x.h == null).length + " bâtiment(s) sans hauteur connue, dessinés à 3 m en pointillés (inexact)" : "") + ". Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut).")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
     set("bat-calc", batCalc());
     set("bat-actions", batActionsHTML());
     set("bat-saved", batSavedHTML());
@@ -30213,13 +30244,18 @@ function jChar(o = {}) {
     const html = `${toolHead("o-batiment")}
       <div class="form">
         <label class="field"><span>Adresse, ville, ou une phrase comme « je cherche un restaurant à Lyon »</span><input id="bat-q" type="text" autocomplete="off" placeholder="Adresse ou « je cherche un bâtiment »" enterkeyhint="search"></label>
-        <div class="chips"><button type="button" class="btn" data-act="bat-find">Chercher</button><button type="button" class="btn ghost" data-act="bat-gps">Ma position</button></div>
-        <label class="field"><span>Rayon autour du point pour les voisins</span><select id="bat-r"><option value="30">30 m</option><option value="60" selected>60 m</option><option value="100">100 m</option><option value="150">150 m</option></select></label>
-        <label class="field"><span>Type d’établissement (à choisir par l’agent)</span><select id="bat-t"><option value="">Choisir…</option>${EFF.map((e) => `<option value="${e.id}">${esc(e.t)}</option>`).join("")}<option value="AUT">Autre type : saisir l’effectif connu</option></select></label>
-        <div class="grid3">${numField("bat-s", "Surface accessible au public (m²)", "Préremplie avec la surface de plancher estimée si vous laissez vide.", "decimal")}${numField("bat-e", "Effectif connu", "Si vous le connaissez, il remplace le calcul.")}${numField("bat-p", "Personnel")}</div>
+        <div class="chips"><button type="button" class="btn" data-act="bat-find">Chercher cette adresse</button><button type="button" class="btn ghost" data-act="bat-gps">Utiliser ma position</button></div>
+        <p class="small muted">${tx("« Chercher cette adresse » : écrivez une adresse ou une phrase au-dessus. « Utiliser ma position » : trouve le bâtiment où vous êtes, sans rien écrire.")}</p>
       </div>
-      <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
       <div id="bat-msg" aria-live="polite"></div>
+      <div id="bat-need" hidden><div class="form">
+        <label class="field" id="bat-tw"><span>Il manque le type d’établissement : choisissez-le pour le calcul détaillé</span><select id="bat-t"><option value="">Choisir…</option>${EFF.map((e) => `<option value="${e.id}">${esc(e.t)}</option>`).join("")}<option value="AUT">Autre type : saisir l’effectif connu</option></select></label>
+      </div></div>
+      <details id="bat-fine" hidden><summary>Corriger ou affiner (facultatif)</summary><div class="form">
+        <label class="field"><span>Rayon autour du point pour les voisins</span><select id="bat-r"><option value="30">30 m</option><option value="60" selected>60 m</option><option value="100">100 m</option><option value="150">150 m</option></select></label>
+        <div class="grid3">${numField("bat-s", "Surface accessible au public (m²)", "Préremplie avec la surface de plancher estimée si vous laissez vide.", "decimal")}${numField("bat-e", "Effectif connu", "Si vous le connaissez, il remplace le calcul.")}${numField("bat-p", "Personnel")}</div>
+      </div></details>
+      <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
       <div id="bat-actions"></div>
       <div id="bat-dossier"></div>
       <div id="bat-3d"></div>

@@ -45,7 +45,7 @@ jobs:
           sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"1.${{ github.run_number }}\"/" android/app/build.gradle
           npx cap sync android
           # Permissions prévues dès la première version, pour ne jamais avoir à réinstaller : réseau, micro (dictée), son, vibration.
-          for P in ACCESS_NETWORK_STATE RECORD_AUDIO MODIFY_AUDIO_SETTINGS VIBRATE; do
+          for P in ACCESS_NETWORK_STATE ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION RECORD_AUDIO MODIFY_AUDIO_SETTINGS VIBRATE; do
             grep -q "android.permission.$P" android/app/src/main/AndroidManifest.xml || sed -i "s#<uses-permission android:name=\"android.permission.INTERNET\" />#<uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.$P\" />#" android/app/src/main/AndroidManifest.xml
           done
           grep -n "uses-permission" android/app/src/main/AndroidManifest.xml
