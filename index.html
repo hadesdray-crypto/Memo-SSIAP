@@ -29948,7 +29948,7 @@ function jChar(o = {}) {
     place = place.replace(/^(à|a|au|aux|dans|sur|près de|pres de|vers|en|de|du|des)\s+/i, "").trim();
     return { type, place };
   }
-  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", msg: "", busy: false, rot: 30, pending: null };
+  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", urba: null, urbaNote: "", msg: "", busy: false, rot: 30, pending: null };
   const batTimeout = async (url) => {
     const c = new AbortController();
     const t = setTimeout(() => c.abort(), 15000);
@@ -30002,6 +30002,13 @@ function jChar(o = {}) {
           if (!BAT.bdnb) BAT.bdnbNote = BAT.bdnbNote || "Cette adresse n’est pas dans la base nationale des bâtiments.";
         } catch (e) { BAT.bdnbNote = "La base nationale des bâtiments n’a pas répondu : seules les données de l’IGN sont affichées."; }
       }
+      BAT.urba = null; BAT.urbaNote = "";
+      try {
+        const g = await batTimeout("https://apicarto.ign.fr/api/gpu/zone-urba?geom=" + encodeURIComponent(JSON.stringify({ type: "Point", coordinates: BAT.main.c })));
+        const q = g && g.features && g.features[0] && g.features[0].properties;
+        if (q) BAT.urba = { z: q.libelle || "", t: q.typezone || "", l: q.libelong || "", doc: q.idurba || "", d: String(q.datvalid || "") };
+        else BAT.urbaNote = "Aucun zonage d’urbanisme trouvé à ce point dans le Géoportail de l’urbanisme.";
+      } catch (e) { BAT.urbaNote = "Le Géoportail de l’urbanisme n’a pas répondu : zonage non affiché."; }
       const ff = batFacts(), tt = $("#bat-t");
       BAT.askType = !(tt && tt.value); BAT.askSurf = !ff.plancher;
       BAT.ok = true;
@@ -30099,6 +30106,10 @@ function jChar(o = {}) {
     add("Ruissellement", b.alea_ruissellement, "Base nationale des bâtiments");
     add("Submersion marine", b.alea_submersion_marine, "Base nationale des bâtiments");
     add("Monument historique proche", b.distance_monument_historique != null ? fmtN(Math.round(b.distance_monument_historique)) + NB + "m" + (b.denomination_monument_historique ? " : " + b.denomination_monument_historique : "") : null, "Base nationale des bâtiments");
+    if (BAT.urba) {
+      const u = BAT.urba, dd = /^\d{8}$/.test(u.d) ? u.d.slice(0, 4) + "-" + u.d.slice(4, 6) + "-" + u.d.slice(6) : "";
+      add("Zonage d’urbanisme", (u.z ? u.z + (u.t && u.t !== u.z ? " (" + u.t + ")" : "") : u.t) + (u.l ? " : " + u.l : ""), "Géoportail de l’urbanisme" + (dd ? ", document validé le " + vDate(dd) : "") + " : le règlement de la zone est à lire dans le document");
+    }
     add("Parcelle cadastrale", Array.isArray(b.l_parcelle_id) ? b.l_parcelle_id.join(", ") : null, "Base nationale des bâtiments");
     add("Identifiant national du bâtiment (RNB)", m.rnb, "IGN");
     add("Donnée IGN mise à jour le", m.maj ? vDate(m.maj) : null, "IGN : plus elle est ancienne, plus il faut vérifier");
@@ -30121,6 +30132,8 @@ function jChar(o = {}) {
       ${disc("À vérifier avant validation. Les données ouvertes sont normalement sûres, mais elles peuvent être anciennes ou fausses. Les valeurs calculées ou estimées dépendent des règles et des estimations indiquées : confirmez-les sur place et avec le dossier de l’établissement.")}
       <dl class="kv">${rows}</dl><div class="result">
       ${BAT.bdnbNote ? `<p class="small">${tx(BAT.bdnbNote)}</p>` : ""}
+      ${BAT.urbaNote ? `<p class="small">${tx(BAT.urbaNote)}</p>` : ""}
+      <p class="small muted">${tx("Sources : IGN (BD TOPO, Géoportail de l’urbanisme), CSTB (base nationale des bâtiments), base adresse nationale. Données sous Licence ouverte 2.0.")}</p>
       ${manque.length ? `<p class="small">${tx("Non trouvé, à renseigner par l’agent : " + manque.join(" ; ") + ".")}</p>` : ""}${igh}
       <p class="small muted">${tx("Données ouvertes (IGN, base adresse nationale, CSTB), sous Licence Ouverte 2.0. Elles peuvent être anciennes ou fausses : confirmez sur place.")}</p></div></section>`;
   }
@@ -30208,7 +30221,7 @@ function jChar(o = {}) {
     return out;
   }
   const batSaved = () => store.get("batiments", []);
-  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote }; }
+  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote, urba: BAT.urba, urbaNote: BAT.urbaNote }; }
   const batKo = (o) => Math.max(1, Math.round(JSON.stringify(o).length / 1024));
   function batText() {
     const f = batFacts(); if (!f) return "";
@@ -30623,7 +30636,7 @@ function jChar(o = {}) {
       case "bat-no": BAT.pending = null; batDraw(); break;
       case "bat-save-yes": { const l = batSaved(); l.unshift(batSnapshot()); store.set("batiments", l.slice(0, 20)); BAT.pending = null; batDraw(); toast("Dossier gardé : il s’ouvre sans connexion."); break; }
       case "bat-share-yes": { const tx0 = batText(); BAT.pending = null; batDraw(); if (navigator.share) navigator.share({ title: "Fiche du bâtiment", text: tx0 }).catch(() => {}); else copyText(tx0, "Fiche copiée."); break; }
-      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
+      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, urba: d.urba || null, urbaNote: d.urbaNote || "", msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
       case "bat-del": { const l = batSaved(); l.splice(+b.dataset.i, 1); store.set("batiments", l); batDraw(); break; }
       case "eff-deg": prefill.deg = b.dataset.n; go("o-degagements"); break;
       case "qz-niv": state.qniv = b.dataset.v; store.set("qniv", state.qniv); rerender(); break;
