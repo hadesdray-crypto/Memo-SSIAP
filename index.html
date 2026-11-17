@@ -30135,7 +30135,7 @@ function jChar(o = {}) {
     add("Précision de la hauteur", m.pa != null ? "environ " + fmtN(m.pa) + NB + "m" : null, "IGN");
     add("Fiabilité de la surface", b.fiabilite_emprise_sol ? String(b.fiabilite_emprise_sol).toLowerCase() : null, "Base nationale des bâtiments");
     add("Fiabilité de la hauteur", b.fiabilite_hauteur ? String(b.fiabilite_hauteur).toLowerCase() : null, "Base nationale des bâtiments");
-    return { F, emprise, niv, plancher, pMin, pMax, pct, inc, h: m.h };
+    return { F, emprise, niv, plancher, pMin, pMax, pct, inc, h: m.h, a0: emprise ? Math.max(0, emprise - (aErr || 0)) : 0, a1: emprise ? emprise + (aErr || 0) : 0, nMin, nMax };
   }
   function batDossierHTML() {
     const m = BAT.main; if (!m) return "";
@@ -30190,6 +30190,17 @@ function jChar(o = {}) {
     return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Volume schématique du bâtiment et des bâtiments voisins" style="width:100%;height:auto;background:var(--surface);border-radius:12px;border:1px solid var(--line)">${g}</svg>`;
   }
   /* Calculs d'ERP à partir du bâtiment et du type choisi par l'agent. */
+  /* Effectif du public d'après les textes (M 2, L 3, N 2, T 2, V 2, W 2, X 2, Y 2) : le maximum possible pour une surface donnée. */
+  const batCoef = (e) => { const c = e.f.filter((x) => x.u === "m²" && x.k !== "file"); return c.length ? Math.max(...c.map((x) => x.x)) : 0; };
+  const batPub = (e, emp, niv) => {
+    if (e.id === "M") { let t = 0; for (let i = 0; i < niv; i++) t += emp * (i <= 1 ? 1 / 3 : i === 2 ? 1 / 6 : 1 / 15); return ceil(t); }
+    return ceil(emp * niv * batCoef(e));
+  };
+  /* Dégagements : CO 38 se calcule niveau par niveau. On prend le niveau le plus chargé. */
+  const batNivMax = (e, emp, niv) => (e.id === "M" ? ceil(emp / 3) : ceil((emp * batCoef(e))));
+  const catDe = (tot) => (tot > 1500 ? "1re" : tot >= 701 ? "2e" : tot >= 301 ? "3e" : "4e");
+  const batSeuil = (e) => { const x = e && e.cat ? D.seuils5.find((q) => q.id === e.cat) : null; return x && x.tot ? x.tot : null; };
+  const batCat = (e, pub, pers) => { const sv = batSeuil(e); if (sv && pub < sv && !pers) return "5e (public sous le seuil de " + sv + ")"; const c = catDe(pub + (pers || 0)); return !sv && c === "4e" ? "4e ou 5e (selon le seuil propre au type)" : c; };
   function batCalc() {
     const m = BAT.main; if (!m) return "";
     const f = batFacts(), t = $("#bat-t") ? $("#bat-t").value : "";
@@ -30198,45 +30209,44 @@ function jChar(o = {}) {
     const ext1 = Math.max(L1.min, niv * Math.max(1, ceil((emp || 1) / L1.per)));
     const ext5 = Math.max(L5.min, niv * Math.max(1, ceil((emp || 1) / L5.per)));
     const tag = `<span class="pill amber">Calculé</span> <span class="small muted">à vérifier avant validation</span>`;
-    const catDe = (tot) => (tot > 1500 ? "1re" : tot >= 701 ? "2e" : tot >= 301 ? "3e" : "4e");
     let out = `<section class="sec"><h2 class="lbl g">Calculs automatiques</h2>${tag}`;
-    /* 1. Ce qui ne dépend pas du type */
-    out += `<div class="result"><p><strong>${tx("Extincteurs, au minimum : " + ext1 + " (1er groupe) ou " + ext5 + " (5e catégorie)")}</strong></p><p class="small">${tx("1 appareil pour " + L1.per + " m² et par niveau (1er groupe, minimum " + L1.min + "), ou " + L5.per + " m² et par niveau (5e catégorie). Calculé sur " + niv + " niveau" + (niv > 1 ? "x" : "") + " de " + fmtN(emp) + " m².")}</p></div>`;
-    /* 2. Tableau par type : aucun choix nécessaire */
+    out += `<div class="result"><p><strong>${tx("Extincteurs, au minimum : " + ext1 + " (1er groupe) ou " + ext5 + " (5e catégorie)")}</strong></p><p class="small">${tx("1 appareil pour " + L1.per + " m² et par niveau, 2 au minimum par établissement (MS 39) ; en 5e catégorie, 1 appareil pour " + L5.per + " m² et 1 par niveau (PE 26). Calculé sur " + niv + " niveau" + (niv > 1 ? "x" : "") + " de " + fmtN(emp) + " m², en supposant la même surface à chaque niveau.")}</p></div>`;
     if (f.plancher) {
       const rows = EFF.map((e) => {
-        const fl = e.f.find((x) => x.u === "m²"); if (!fl) return "";
-        const pub = ceil(f.plancher * fl.x), g = co38(pub), lo = ceil(f.pMin * fl.x), hi = ceil(f.pMax * fl.x);
-        const c0 = catDe(lo), c1 = catDe(hi), gh = co38(hi);
-        return `<div><dt>${tx(e.t)}</dt><dd>${tx(fmtN(pub) + " personnes" + (f.inc ? "" : " (entre " + fmtN(lo) + " et " + fmtN(hi) + ")") + " · " + g.deg + (!f.inc && gh.deg !== g.deg ? " à " + gh.deg : "") + " dégagement" + (gh.deg > 1 ? "s" : "") + (g.up ? ", " + g.up + (!f.inc && gh.up !== g.up ? " à " + gh.up : "") + " UP" : "") + " · catégorie : " + (f.inc || c0 === c1 ? c0 : c0 + " à " + c1))}</dd></div>`;
+        if (!batCoef(e)) return "";
+        const pub = batPub(e, emp, niv), lo = batPub(e, f.a0, f.nMin), hi = batPub(e, f.a1, f.nMax);
+        const nv = batNivMax(e, emp, niv), g = co38(nv), gh = co38(batNivMax(e, f.a1, f.nMax));
+        const c = batCat(e, pub), c0 = batCat(e, lo), c1 = batCat(e, hi);
+        return `<div><dt>${tx(e.t)}</dt><dd>${tx(fmtN(pub) + " personnes" + (f.inc ? "" : " (entre " + fmtN(lo) + " et " + fmtN(hi) + ")") + " · par niveau (le plus chargé, " + fmtN(nv) + " personnes) : " + g.deg + (!f.inc && gh.deg !== g.deg ? " à " + gh.deg : "") + " dégagement" + (g.deg > 1 ? "s" : "") + (g.up ? ", " + g.up + (!f.inc && gh.up !== g.up ? " à " + gh.up : "") + " UP" : "") + " · catégorie (public seul) : " + (f.inc || c0 === c1 ? c : c0 + " à " + c1))}</dd></div>`;
       }).join("");
-      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx((f.inc ? "Taux d’approximation non connu (la source ne publie pas la marge de la surface). " : "Taux d’approximation : environ ± " + f.pct + " % sur la surface de plancher, donc sur chaque effectif. ") + "Toute la surface de plancher est comptée comme accessible au public : c’est un maximum. Choisissez le type pour affiner.")}</p>`;
+      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx((f.inc ? "Taux d’approximation non connu (la source ne publie pas la marge de la surface). " : "Taux d’approximation : environ ± " + f.pct + " % sur la surface de plancher. ") + "Toute la surface est comptée comme accessible au public avec la densité la plus forte du type : c’est un maximum, l’effectif réel est souvent plus bas. Les dégagements se calculent niveau par niveau (CO 38) ; l’escalier compte le cumul des niveaux qu’il dessert (CO 38 § 2). La catégorie compte public et personnel : le personnel s’ajoute. Les seuils de la 5e catégorie viennent d’une synthèse du service public et sont à vérifier dans l’article PE 2. Choisissez le type pour affiner.")}</p>`;
     }
-    /* 3. Type choisi */
     if (!t) { out += `<p class="muted">${tx("Choisissez le type d’établissement plus haut pour le calcul détaillé.")}</p></section>`; return out; }
     const e = EFF.find((x) => x.id === t);
     const surf = val("bat-s"), effIn = int("bat-e"), pers = int("bat-p");
-    let pub = 0, ligne = "";
+    let pub = 0, ligne = "", estime = false;
     if (effIn) { pub = effIn; ligne = `Effectif saisi : ${fmtN(effIn)} personnes.`; }
-    else if (e) {
-      const fl = e.f.find((x) => x.u === "m²");
-      const s2 = surf || (f.plancher || 0);
-      if (fl && s2) { pub = ceil(s2 * fl.x); ligne = `${tx(fl.l)} : ${fmtN(s2)}${NB}m²${surf ? "" : " (surface de plancher estimée, à remplacer par la surface réelle accessible au public)"} → ${fmtN(pub)} personnes (${tx(e.note)})`; }
+    else if (e && batCoef(e)) {
+      if (surf) { pub = ceil(surf * batCoef(e)); ligne = `${fmtN(surf)}${NB}m² saisis × ${fmtN(Math.round(batCoef(e) * 100) / 100)} personne(s) par m² (${tx(e.note)})`; }
+      else if (f.plancher) { pub = batPub(e, emp, niv); estime = true; ligne = `Surface de plancher estimée (${fmtN(f.plancher)}${NB}m²), à remplacer par la surface réelle accessible au public → ${fmtN(pub)} personnes (${tx(e.note)})`; }
     }
     let inv = "";
-    if (effIn && e) { const fl = e.f.find((x) => x.u === "m²"); if (fl) inv = `<p class="small">${tx("Avec cet effectif, la surface accessible au public est au plus de " + fmtN(Math.floor(effIn / fl.x)) + " m².")}</p>`; }
+    if (effIn && e && batCoef(e)) inv = `<p class="small">${tx("Avec cet effectif, la surface accessible au public est au plus de " + fmtN(Math.floor(effIn / batCoef(e))) + " m².")}</p>`;
     if (!pub) { out += `<p class="muted">${tx("Indiquez la surface accessible au public ou l’effectif : l’autre valeur se calcule.")}</p></section>`; return out; }
-    const g1 = co38(pub), pe = PE11.find(([mx]) => pub <= mx);
-    const tot = pub + pers;
+    const nvl = estime ? batNivMax(e, emp, niv) : pub;
+    const g1 = co38(nvl), pe = PE11.find(([mx]) => nvl + pers <= mx);
+    const tot = pub + pers, sv = batSeuil(e);
     const dg = g1.parts ? `${g1.deg} dégagements, ${g1.up}${NB}UP en tout (${g1.parts.map((q) => q + "UP").join(" + ")})` : `${g1.deg} dégagement${g1.deg > 1 ? "s" : ""}, ${g1.up}${NB}UP`;
+    const cat = sv && pub < sv ? "5e (public " + fmtN(pub) + " sous le seuil de " + sv + ")" : !sv && catDe(tot) === "4e" ? "4e ou 5e (selon le seuil propre au type)" : catDe(tot);
     out += `<div class="result"><div class="big">${fmtN(pub)} personnes<small>Effectif théorique du public, type choisi</small></div>
       <p class="small">${ligne}</p>${inv}
       <ul>
-        <li>${tx("Si l’établissement est du 1er groupe (catégories 1 à 4) : " + dg + ". Catégorie probable : " + catDe(tot) + " (public + personnel = " + fmtN(tot) + ").")}</li>
-        ${pub <= 300 ? `<li>${tx("Si l’établissement est de 5e catégorie (PE 11) : " + (pe ? pe[1] : ""))}</li>` : ""}
+        <li>${tx("1er groupe (catégories 1 à 4) : " + dg + (estime ? ", pour le niveau le plus chargé (" + fmtN(nvl) + " personnes)" : ", pour un local ou un niveau de " + fmtN(nvl) + " personnes") + ".")}</li>
+        ${nvl + pers <= 300 ? `<li>${tx("5e catégorie (PE 11) : " + (pe ? pe[1] : ""))}</li>` : ""}
+        <li>${tx("Catégorie : " + cat + (pers ? " (public + personnel = " + fmtN(tot) + ")" : ". Le personnel s’ajoute au public : indiquez-le plus haut."))}</li>
       </ul>
       <div class="chips"><button type="button" class="btn ghost" data-act="eff-cat" data-n="${pub}" data-cat="${e && e.cat ? e.cat : ""}">${tx("Vérifier la catégorie")}</button></div>
-      <p class="small muted">${tx(!effIn && !surf && f.pct != null && !f.inc ? "Taux d’approximation : environ ± " + f.pct + " % (entre " + fmtN(Math.round(pub * f.pMin / f.plancher)) + " et " + fmtN(Math.round(pub * f.pMax / f.plancher)) + " personnes). " : (effIn || surf ? "Valeur saisie par vous : pas de marge de calcul. " : "Taux d’approximation non connu. "))} ${tx("Résultat indicatif, à vérifier avant validation : la surface de plancher est estimée d’après le contour et la hauteur. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
+      <p class="small muted">${tx(estime && f.pct != null && !f.inc ? "Taux d’approximation : environ ± " + f.pct + " % (entre " + fmtN(batPub(e, f.a0, f.nMin)) + " et " + fmtN(batPub(e, f.a1, f.nMax)) + " personnes). " : estime ? "Taux d’approximation non connu. " : "Valeur saisie par vous : pas de marge de calcul. ")}${tx("Résultat indicatif, à vérifier avant validation. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
     return out;
   }
   const batSaved = () => store.get("batiments", []);

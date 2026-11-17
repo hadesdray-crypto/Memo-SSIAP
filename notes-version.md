@@ -1,3 +1,4 @@
+- Mon bâtiment : règles de calcul vérifiées sur les textes officiels (CO 38, PE 11, PE 26, MS 39, effectifs par type) ; correction : dégagements calculés niveau par niveau, magasins comptés selon l’étage, 5e catégorie signalée quand le public est sous le seuil
 - Mon bâtiment : bouton facultatif « Activer Géorisques » (installations classées et cavités à moins de 500 m), sans compte, expliqué en clair, désactivable à tout moment
 - Mon bâtiment : ajout du zonage d’urbanisme (Géoportail de l’urbanisme, licence ouverte), gardé aussi hors connexion ; sources indiquées sous la fiche
 - Mon bâtiment : message clair « Bâtiment trouvé » avec défilement vers la fiche, boutons expliqués, champs affichés seulement s’il manque une information ; position corrigée ; taux d’approximation (± %) sur surface, hauteur, niveaux, plancher, effectif et catégorie, et précision indiquée sous le volume 3D ; recherche de l’appli élargie
