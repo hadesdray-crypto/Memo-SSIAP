@@ -1,3 +1,7 @@
+- Mon bâtiment : nouvelle « Fiche métier » SSIAP 1, 2 et 3 sous le calcul : par type et catégorie, ce qu’il faut connaître (service de sécurité, extincteurs, RIA, alarme, SSI, détection, désenfumage, éclairage, dégagements, registre, visites…)
+- Fiche métier : chaque règle porte son article, un extrait du texte et son degré de certitude ; fonctionne hors connexion ; choix neuf ou existant
+- Fiche métier : visites périodiques (GE 4), seuils de 5e catégorie (PE 2), service de sécurité des magasins et salles (M 29, L 14), registre de sécurité en vigueur depuis le 1er juillet 2026 (R143-44)
+- Fiche métier : encart « Version assurance » (référentiels APSAD du CNPP, vendus, non intégrés) avec une case à saisir, gardée sur le téléphone
 - Mon bâtiment : les vraies routes de l’IGN (avec leur nom quand il est publié) sont dessinées dans le cercle du plan, et gardées avec le dossier hors connexion
 - Mon bâtiment : bouton « Ajouter la photo aérienne (IGN) » sous le plan (Licence ouverte, source IGN affichée, connexion nécessaire, non enregistrée)
 - Mon bâtiment : correction du plan 3D, qui était inversé (nord en bas) : le nord est maintenant en haut
