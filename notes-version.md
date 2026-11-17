@@ -1,3 +1,4 @@
+- Fiche du feu : schéma du triangle en premier, puis cas particuliers (métaux, gaz, lithium, électricité), explosion, développement du feu, fumées, installation nucléaire ; les points d’une seule source sont marqués « À vérifier »
 - Corrections de chiffres et de termes vérifiées (accidents du travail −6,7 %, décès de trajet 286, numéros d’urgence 112/114, réanimation 30:2, comburantes, toxicité aiguë, doigts sous le menton)
 - Vérification complète du cours avec les textes officiels : une soixantaine de corrections (distances de sortie CO 43, durée du module complémentaire 43 h 30, 114 = urgence sourds et malentendants, CO₂ classe B, durées de la 5e partie SSIAP 1, essais des groupes électrogènes…) ; chaque point non confirmé reste signalé
 - Corrections vérifiées sur les textes officiels (Légifrance) : voie échelle (longueur minimale 10 m) et colonnes en charge (valeurs ERP et IGH séparées)
