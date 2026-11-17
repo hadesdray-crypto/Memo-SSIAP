@@ -29948,7 +29948,7 @@ function jChar(o = {}) {
     place = place.replace(/^(à|a|au|aux|dans|sur|près de|pres de|vers|en|de|du|des)\s+/i, "").trim();
     return { type, place };
   }
-  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", urba: null, urbaNote: "", msg: "", busy: false, rot: 30, pending: null };
+  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", urba: null, urbaNote: "", geo: null, geoNote: "", msg: "", busy: false, rot: 30, pending: null };
   const batTimeout = async (url) => {
     const c = new AbortController();
     const t = setTimeout(() => c.abort(), 15000);
@@ -30009,6 +30009,19 @@ function jChar(o = {}) {
         if (q) BAT.urba = { z: q.libelle || "", t: q.typezone || "", l: q.libelong || "", doc: q.idurba || "", d: String(q.datvalid || "") };
         else BAT.urbaNote = "Aucun zonage d’urbanisme trouvé à ce point dans le Géoportail de l’urbanisme.";
       } catch (e) { BAT.urbaNote = "Le Géoportail de l’urbanisme n’a pas répondu : zonage non affiché."; }
+      BAT.geo = null; BAT.geoNote = "";
+      if (store.get("bat-geo", 0)) {
+        try {
+          const G = "https://georisques.gouv.fr/api/v1/", ll = BAT.main.c[0] + "," + BAT.main.c[1];
+          const [a, b] = await Promise.all([batTimeout(G + "installations_classees?latlon=" + ll + "&rayon=500&page=1&page_size=10"), batTimeout(G + "cavites?latlon=" + ll + "&rayon=500&page=1&page_size=10")]);
+          const dist = (o) => (typeof o.longitude === "number" && typeof o.latitude === "number" ? Math.round(batDist(BAT.main.c, [o.longitude, o.latitude])) : null);
+          BAT.geo = {
+            n1: (a && a.results) || 0, n2: (b && b.results) || 0,
+            icpe: ((a && a.data) || []).slice(0, 5).map((o) => ({ n: o.raisonSociale || "", r: o.regime || "", sv: o.statutSeveso || "", e: o.etatActivite || "", d: dist(o) })),
+            cav: ((b && b.data) || []).slice(0, 5).map((o) => ({ n: o.nom || "", t: o.type || "", d: dist(o) }))
+          };
+        } catch (e) { BAT.geoNote = "Géorisques n’a pas répondu : installations classées et cavités non affichées."; }
+      }
       const ff = batFacts(), tt = $("#bat-t");
       BAT.askType = !(tt && tt.value); BAT.askSurf = !ff.plancher;
       BAT.ok = true;
@@ -30110,6 +30123,11 @@ function jChar(o = {}) {
       const u = BAT.urba, dd = /^\d{8}$/.test(u.d) ? u.d.slice(0, 4) + "-" + u.d.slice(4, 6) + "-" + u.d.slice(6) : "";
       add("Zonage d’urbanisme", (u.z ? u.z + (u.t && u.t !== u.z ? " (" + u.t + ")" : "") : u.t) + (u.l ? " : " + u.l : ""), "Géoportail de l’urbanisme" + (dd ? ", document validé le " + vDate(dd) : "") + " : le règlement de la zone est à lire dans le document");
     }
+    if (BAT.geo) {
+      const g = BAT.geo, ds = (x) => (x.d != null ? x.d + NB + "m" : "distance inconnue");
+      add("Installations classées à moins de 500 m", g.n1 ? g.n1 + (g.n1 > g.icpe.length ? " (les " + g.icpe.length + " premières)" : "") + " : " + g.icpe.map((x) => (x.n || "sans nom") + " (" + [x.r, x.sv, x.e, ds(x)].filter(Boolean).join(", ") + ")").join("; ") : "aucune", "Géorisques (BRGM, ministère de la Transition écologique)");
+      add("Cavités souterraines à moins de 500 m", g.n2 ? g.n2 + " : " + g.cav.map((x) => (x.n || "sans nom") + " (" + [x.t, ds(x)].filter(Boolean).join(", ") + ")").join("; ") : "aucune recensée", "Géorisques (BRGM, ministère de la Transition écologique)");
+    }
     add("Parcelle cadastrale", Array.isArray(b.l_parcelle_id) ? b.l_parcelle_id.join(", ") : null, "Base nationale des bâtiments");
     add("Identifiant national du bâtiment (RNB)", m.rnb, "IGN");
     add("Donnée IGN mise à jour le", m.maj ? vDate(m.maj) : null, "IGN : plus elle est ancienne, plus il faut vérifier");
@@ -30133,7 +30151,8 @@ function jChar(o = {}) {
       <dl class="kv">${rows}</dl><div class="result">
       ${BAT.bdnbNote ? `<p class="small">${tx(BAT.bdnbNote)}</p>` : ""}
       ${BAT.urbaNote ? `<p class="small">${tx(BAT.urbaNote)}</p>` : ""}
-      <p class="small muted">${tx("Sources : IGN (BD TOPO, Géoportail de l’urbanisme), CSTB (base nationale des bâtiments), base adresse nationale. Données sous Licence ouverte 2.0.")}</p>
+      ${BAT.geoNote ? `<p class="small">${tx(BAT.geoNote)}</p>` : ""}
+      <p class="small muted">${tx("Sources : IGN (BD TOPO, Géoportail de l’urbanisme), CSTB (base nationale des bâtiments), base adresse nationale. Données sous Licence ouverte 2.0.")}${BAT.geo ? tx(" Installations classées et cavités : Géorisques (BRGM, ministère de la Transition écologique), licence non précisée par l’éditeur.") : ""}</p>
       ${manque.length ? `<p class="small">${tx("Non trouvé, à renseigner par l’agent : " + manque.join(" ; ") + ".")}</p>` : ""}${igh}
       <p class="small muted">${tx("Données ouvertes (IGN, base adresse nationale, CSTB), sous Licence Ouverte 2.0. Elles peuvent être anciennes ou fausses : confirmez sur place.")}</p></div></section>`;
   }
@@ -30221,7 +30240,7 @@ function jChar(o = {}) {
     return out;
   }
   const batSaved = () => store.get("batiments", []);
-  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote, urba: BAT.urba, urbaNote: BAT.urbaNote }; }
+  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote, urba: BAT.urba, urbaNote: BAT.urbaNote, geo: BAT.geo, geoNote: BAT.geoNote }; }
   const batKo = (o) => Math.max(1, Math.round(JSON.stringify(o).length / 1024));
   function batText() {
     const f = batFacts(); if (!f) return "";
@@ -30247,6 +30266,9 @@ function jChar(o = {}) {
     const nd = $("#bat-need"), fn = $("#bat-fine");
     if (nd) nd.hidden = !(BAT.main && BAT.askType);
     if (fn) { fn.hidden = !BAT.main; if (BAT.main && BAT.askSurf) fn.open = true; }
+    set("bat-geo", store.get("bat-geo", 0)
+      ? `<section class="sec"><h2 class="lbl">Géorisques : activé</h2><p class="small">${tx("Les installations classées et les cavités à moins de 500 m s’ajoutent à la fiche.")}</p><div class="chips"><button type="button" class="btn ghost" data-act="bat-geo-off">Désactiver</button></div></section>`
+      : `<section class="sec"><h2 class="lbl">Plus d’informations (facultatif)</h2><p class="small">${tx("Ajouter à la fiche les installations classées et les cavités souterraines à moins de 500 m, depuis Géorisques (BRGM, ministère de la Transition écologique).")}</p><ul class="small"><li>${tx("Aucun compte à créer, aucun mot de passe.")}</li><li>${tx("Votre téléphone interroge directement le service : la position du bâtiment lui est envoyée, rien ne passe par un serveur de l’appli.")}</li><li>${tx("L’éditeur ne précise pas la licence de ces données : vérifiez avant tout usage commercial.")}</li><li>${tx("Vous pouvez désactiver à tout moment.")}</li></ul><div class="chips"><button type="button" class="btn" data-act="bat-geo-on">Activer Géorisques</button></div></section>`);
     set("bat-dossier", batDossierHTML());
     set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Précision : position ± " + (BAT.main.pp != null ? fmtN(BAT.main.pp) + " m" : "non publiée") + ", hauteur ± " + (BAT.main.pa != null ? fmtN(BAT.main.pa) + " m" : "non publiée") + (BAT.voisins.concat([BAT.main]).some((x) => x.h == null) ? " ; " + BAT.voisins.concat([BAT.main]).filter((x) => x.h == null).length + " bâtiment(s) sans hauteur connue, dessinés à 3 m en pointillés (inexact)" : "") + ". Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut).")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
     set("bat-calc", batCalc());
@@ -30269,6 +30291,7 @@ function jChar(o = {}) {
         <div class="grid3">${numField("bat-s", "Surface accessible au public (m²)", "Préremplie avec la surface de plancher estimée si vous laissez vide.", "decimal")}${numField("bat-e", "Effectif connu", "Si vous le connaissez, il remplace le calcul.")}${numField("bat-p", "Personnel")}</div>
       </div></details>
       <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
+      <div id="bat-geo"></div>
       <div id="bat-actions"></div>
       <div id="bat-dossier"></div>
       <div id="bat-3d"></div>
@@ -30629,6 +30652,7 @@ function jChar(o = {}) {
       case "bat-go": prefill.bat = b.dataset.q; go("o-batiment"); break;
       case "bat-find": batSearch($("#bat-q").value); break;
       case "bat-gps": batGps(); break;
+      case "bat-geo-on": case "bat-geo-off": { store.set("bat-geo", b.dataset.act === "bat-geo-on" ? 1 : 0); if (b.dataset.act === "bat-geo-on" && !PRIV.reseauOk()) { batGate(() => { if (BAT.pt) batLoad(); }); break; } if (BAT.pt && !BAT.busy) batLoad(); else batDraw(); break; }
       case "bat-net": { const f = BAT.gate; BAT.gate = null; PRIV.set("reseau", true); if (f) f(); break; }
       case "bat-pick": batPick(+b.dataset.i); break;
       case "bat-save": BAT.pending = "save"; batDraw(); break;
@@ -30636,7 +30660,7 @@ function jChar(o = {}) {
       case "bat-no": BAT.pending = null; batDraw(); break;
       case "bat-save-yes": { const l = batSaved(); l.unshift(batSnapshot()); store.set("batiments", l.slice(0, 20)); BAT.pending = null; batDraw(); toast("Dossier gardé : il s’ouvre sans connexion."); break; }
       case "bat-share-yes": { const tx0 = batText(); BAT.pending = null; batDraw(); if (navigator.share) navigator.share({ title: "Fiche du bâtiment", text: tx0 }).catch(() => {}); else copyText(tx0, "Fiche copiée."); break; }
-      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, urba: d.urba || null, urbaNote: d.urbaNote || "", msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
+      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, urba: d.urba || null, urbaNote: d.urbaNote || "", geo: d.geo || null, geoNote: d.geoNote || "", msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
       case "bat-del": { const l = batSaved(); l.splice(+b.dataset.i, 1); store.set("batiments", l); batDraw(); break; }
       case "eff-deg": prefill.deg = b.dataset.n; go("o-degagements"); break;
       case "qz-niv": state.qniv = b.dataset.v; store.set("qniv", state.qniv); rerender(); break;
