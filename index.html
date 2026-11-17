@@ -29968,7 +29968,7 @@ function jChar(o = {}) {
     const c = batCentre(ring);
     let h = typeof p.hauteur === "number" ? p.hauteur : null;
     if (h == null && typeof p.altitude_maximale_toit === "number" && typeof p.altitude_minimale_sol === "number") h = Math.round((p.altitude_maximale_toit - p.altitude_minimale_sol) * 10) / 10;
-    return { id: f.id || p.cleabs, rnb: p.identifiants_rnb || "", ring, c, h, aire: Math.round(batArea(ring)), nature: p.nature || "", usage: p.usage_1 || "", usage2: p.usage_2 || "", etages: p.nombre_d_etages, logements: p.nombre_de_logements, murs: p.materiaux_des_murs, toit: p.materiaux_de_la_toiture, legere: !!p.construction_legere, dist: pt ? Math.round(batDist(pt, c)) : 0, dedans: pt ? batInside(ring, pt[0], pt[1]) : false };
+    return { id: f.id || p.cleabs, rnb: p.identifiants_rnb || "", ring, c, h, aire: Math.round(batArea(ring)), nature: p.nature || "", usage: p.usage_1 || "", usage2: p.usage_2 || "", etages: p.nombre_d_etages, logements: p.nombre_de_logements, murs: p.materiaux_des_murs, toit: p.materiaux_de_la_toiture, legere: !!p.construction_legere, maj: String(p.date_modification || "").slice(0, 10), pp: p.precision_planimetrique, pa: p.precision_altimetrique, dist: pt ? Math.round(batDist(pt, c)) : 0, dedans: pt ? batInside(ring, pt[0], pt[1]) : false };
   }
   async function batLoad() {
     BAT.busy = true; BAT.msg = "Recherche des bâtiments autour du point…"; batDraw();
@@ -29995,7 +29995,7 @@ function jChar(o = {}) {
       }
       if (cle && cc) {
         try {
-          const sel = "batiment_groupe_id,surface_emprise_sol,nb_niveau,annee_construction,mat_mur_txt,mat_toit_txt,usage_principal_bdnb_open,fiabilite_emprise_sol,fiabilite_hauteur,nb_log,alea_sismique,alea_radon,alea_argile,alea_debordement,alea_ruissellement,alea_submersion_marine,distance_monument_historique,denomination_monument_historique,perimetre_bat_historique";
+          const sel = "batiment_groupe_id,surface_emprise_sol,nb_niveau,annee_construction,mat_mur_txt,mat_toit_txt,usage_principal_bdnb_open,fiabilite_emprise_sol,fiabilite_hauteur,nb_log,alea_sismique,alea_radon,alea_argile,alea_debordement,alea_ruissellement,alea_submersion_marine,distance_monument_historique,denomination_monument_historique,perimetre_bat_historique,l_parcelle_id";
           const b = await batTimeout(`https://api.bdnb.io/v1/bdnb/donnees/batiment_groupe_complet?code_commune_insee=eq.${encodeURIComponent(cc)}&cle_interop_adr_principale_ban=eq.${encodeURIComponent(cle)}&select=${sel}&limit=1`);
           BAT.bdnb = b && b[0] ? b[0] : null;
           if (!BAT.bdnb) BAT.bdnbNote = BAT.bdnbNote || "Cette adresse n’est pas dans la base nationale des bâtiments.";
@@ -30039,22 +30039,24 @@ function jChar(o = {}) {
     const m = BAT.main; if (!m) return null;
     const b = BAT.bdnb || {};
     const F = [];
-    const add = (l, v, s) => { if (v != null && v !== "") F.push({ l, v, s }); };
+    const add = (l, v, s, k) => { if (v != null && v !== "") F.push({ l, v, s, k: k || "donnee" }); };
     const emprise = b.surface_emprise_sol || m.aire;
     const empriseSrc = b.surface_emprise_sol ? "Base nationale des bâtiments" : "Contour IGN, calculé";
-    let niv = b.nb_niveau || (typeof m.etages === "number" && m.etages > 0 ? m.etages : null), nivSrc = b.nb_niveau ? "Base nationale des bâtiments" : "IGN";
-    if (!niv && m.h) { niv = Math.max(1, Math.round(m.h / 3)); nivSrc = "Estimé : hauteur divisée par 3 m"; }
+    let niv = b.nb_niveau || (typeof m.etages === "number" && m.etages > 0 ? m.etages : null), nivSrc = b.nb_niveau ? "Base nationale des bâtiments" : "IGN", nivK = "donnee";
+    if (!niv && m.h) { niv = Math.max(1, Math.round(m.h / 3)); nivSrc = "Estimé : hauteur divisée par 3 m"; nivK = "estime"; }
     const plancher = emprise && niv ? Math.round(emprise * niv) : null;
     add("Adresse", BAT.adr || null, "Base adresse nationale");
-    add("Surface au sol", emprise ? fmtN(emprise) + NB + "m²" : null, empriseSrc);
+    add("Surface au sol", emprise ? fmtN(emprise) + NB + "m²" : null, empriseSrc, b.surface_emprise_sol ? "donnee" : "estime");
+    if (b.surface_emprise_sol && m.aire && Math.abs(b.surface_emprise_sol - m.aire) / Math.max(1, b.surface_emprise_sol) > 0.3) add("Écart entre les deux sources", "Contour IGN : " + fmtN(m.aire) + NB + "m² contre " + fmtN(b.surface_emprise_sol) + NB + "m² : vérifiez sur place", "Calculé", "estime");
     add("Hauteur", m.h != null ? fmtN(m.h) + NB + "m" : null, "IGN");
-    add("Nombre de niveaux", niv, nivSrc);
-    add("Surface de plancher (estimation)", plancher ? fmtN(plancher) + NB + "m²" : null, "Estimé : surface au sol × niveaux");
+    add("Nombre de niveaux", niv, nivSrc, nivK);
+    add("Surface de plancher (estimation)", plancher ? fmtN(plancher) + NB + "m²" : null, "Calculé : surface au sol × niveaux", "estime");
     add("Année de construction", b.annee_construction, "Base nationale des bâtiments");
     add("Usage", b.usage_principal_bdnb_open || (m.usage && !/indiff/i.test(m.usage) ? m.usage : ""), b.usage_principal_bdnb_open ? "Base nationale des bâtiments" : "IGN");
     add("Logements", b.nb_log != null ? b.nb_log : m.logements, b.nb_log != null ? "Base nationale des bâtiments" : "IGN");
     add("Matériaux des murs", b.mat_mur_txt ? String(b.mat_mur_txt).toLowerCase() : m.murs, b.mat_mur_txt ? "Base nationale des bâtiments" : "IGN");
     add("Matériaux du toit", b.mat_toit_txt ? String(b.mat_toit_txt).toLowerCase() : m.toit, b.mat_toit_txt ? "Base nationale des bâtiments" : "IGN");
+    add("Construction légère", m.legere ? "oui" : null, "IGN");
     add("Séisme", b.alea_sismique, "Base nationale des bâtiments");
     add("Radon", b.alea_radon, "Base nationale des bâtiments");
     add("Argile (retrait-gonflement)", b.alea_argile, "Base nationale des bâtiments");
@@ -30062,6 +30064,11 @@ function jChar(o = {}) {
     add("Ruissellement", b.alea_ruissellement, "Base nationale des bâtiments");
     add("Submersion marine", b.alea_submersion_marine, "Base nationale des bâtiments");
     add("Monument historique proche", b.distance_monument_historique != null ? fmtN(Math.round(b.distance_monument_historique)) + NB + "m" + (b.denomination_monument_historique ? " : " + b.denomination_monument_historique : "") : null, "Base nationale des bâtiments");
+    add("Parcelle cadastrale", Array.isArray(b.l_parcelle_id) ? b.l_parcelle_id.join(", ") : null, "Base nationale des bâtiments");
+    add("Identifiant national du bâtiment (RNB)", m.rnb, "IGN");
+    add("Donnée IGN mise à jour le", m.maj ? vDate(m.maj) : null, "IGN : plus elle est ancienne, plus il faut vérifier");
+    add("Précision de la position", m.pp != null ? "environ " + fmtN(m.pp) + NB + "m" : null, "IGN");
+    add("Précision de la hauteur", m.pa != null ? "environ " + fmtN(m.pa) + NB + "m" : null, "IGN");
     add("Fiabilité de la surface", b.fiabilite_emprise_sol ? String(b.fiabilite_emprise_sol).toLowerCase() : null, "Base nationale des bâtiments");
     add("Fiabilité de la hauteur", b.fiabilite_hauteur ? String(b.fiabilite_hauteur).toLowerCase() : null, "Base nationale des bâtiments");
     return { F, emprise, niv, plancher, h: m.h };
@@ -30069,13 +30076,14 @@ function jChar(o = {}) {
   function batDossierHTML() {
     const m = BAT.main; if (!m) return "";
     const f = batFacts();
-    const rows = f.F.map((x) => `<div><dt>${tx(x.l)}</dt><dd>${tx(String(x.v))}<br><span class="small muted">${tx(x.s)}</span></dd></div>`).join("");
+    const rows = f.F.map((x) => `<div><dt>${tx(x.l)}</dt><dd>${tx(String(x.v))}<br><span class="pill ${x.k === "estime" ? "amber" : "green"}">${x.k === "estime" ? "Calculé ou estimé" : "Donnée ouverte"}</span> <span class="small muted">${tx(x.s)}</span></dd></div>`).join("");
     const manque = [];
     if (!BAT.bdnb) manque.push("année de construction, usage et risques du lieu (adresse absente de la base nationale)");
     if (m.etages == null && !(BAT.bdnb && BAT.bdnb.nb_niveau)) manque.push("nombre de niveaux (estimé d’après la hauteur)");
     if (m.h == null) manque.push("hauteur");
     const igh = f.h != null && f.h >= 25 ? `<p class="small"><strong>${tx("Hauteur de 25 m ou plus : vérifiez si le plancher bas du dernier niveau dépasse 28 m (ou 50 m pour l’habitation).")}</strong> <a href="#f-igh">${tx("Voir les immeubles de grande hauteur")}</a></p>` : "";
     return `<section class="sec"><h2 class="lbl b">Fiche du bâtiment</h2>
+      ${disc("À vérifier avant validation. Les données ouvertes sont normalement sûres, mais elles peuvent être anciennes ou fausses. Les valeurs calculées ou estimées dépendent des règles et des estimations indiquées : confirmez-les sur place et avec le dossier de l’établissement.")}
       <dl class="kv">${rows}</dl><div class="result">
       ${BAT.bdnbNote ? `<p class="small">${tx(BAT.bdnbNote)}</p>` : ""}
       ${manque.length ? `<p class="small">${tx("Non trouvé, à renseigner par l’agent : " + manque.join(" ; ") + ".")}</p>` : ""}${igh}
@@ -30118,37 +30126,50 @@ function jChar(o = {}) {
   function batCalc() {
     const m = BAT.main; if (!m) return "";
     const f = batFacts(), t = $("#bat-t") ? $("#bat-t").value : "";
-    if (!t) return `<section class="sec"><h2 class="lbl g">Calculs</h2>${res("", `<p class="muted">${tx("Choisissez le type d’établissement : c’est la seule donnée que les bases ouvertes ne donnent pas. Le reste est déjà prérempli.")}</p>`)}</section>`;
-    const e = EFF.find((x) => x.id === t);
     const L1 = LIEUX["1"], L5 = LIEUX["5"];
+    const niv = f.niv || 1, emp = f.emprise || 0;
+    const ext1 = Math.max(L1.min, niv * Math.max(1, ceil((emp || 1) / L1.per)));
+    const ext5 = Math.max(L5.min, niv * Math.max(1, ceil((emp || 1) / L5.per)));
+    const tag = `<span class="pill amber">Calculé</span> <span class="small muted">à vérifier avant validation</span>`;
+    const catDe = (tot) => (tot > 1500 ? "1re" : tot >= 701 ? "2e" : tot >= 301 ? "3e" : "4e");
+    let out = `<section class="sec"><h2 class="lbl g">Calculs automatiques</h2>${tag}`;
+    /* 1. Ce qui ne dépend pas du type */
+    out += `<div class="result"><p><strong>${tx("Extincteurs, au minimum : " + ext1 + " (1er groupe) ou " + ext5 + " (5e catégorie)")}</strong></p><p class="small">${tx("1 appareil pour " + L1.per + " m² et par niveau (1er groupe, minimum " + L1.min + "), ou " + L5.per + " m² et par niveau (5e catégorie). Calculé sur " + niv + " niveau" + (niv > 1 ? "x" : "") + " de " + fmtN(emp) + " m².")}</p></div>`;
+    /* 2. Tableau par type : aucun choix nécessaire */
+    if (f.plancher) {
+      const rows = EFF.map((e) => {
+        const fl = e.f.find((x) => x.u === "m²"); if (!fl) return "";
+        const pub = ceil(f.plancher * fl.x), g = co38(pub);
+        return `<div><dt>${tx(e.t)}</dt><dd>${tx(fmtN(pub) + " personnes · " + g.deg + " dégagement" + (g.deg > 1 ? "s" : "") + (g.up ? ", " + g.up + " UP" : "") + " · catégorie probable : " + catDe(pub))}</dd></div>`;
+      }).join("");
+      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx("Toute la surface de plancher est comptée comme accessible au public : c’est un maximum. Choisissez le type pour affiner.")}</p>`;
+    }
+    /* 3. Type choisi */
+    if (!t) { out += `<p class="muted">${tx("Choisissez le type d’établissement plus haut pour le calcul détaillé.")}</p></section>`; return out; }
+    const e = EFF.find((x) => x.id === t);
     const surf = val("bat-s"), effIn = int("bat-e"), pers = int("bat-p");
     let pub = 0, ligne = "";
     if (effIn) { pub = effIn; ligne = `Effectif saisi : ${fmtN(effIn)} personnes.`; }
     else if (e) {
       const fl = e.f.find((x) => x.u === "m²");
-      const s = surf || (f.plancher || 0);
-      if (fl && s) { pub = ceil(s * fl.x); ligne = `${tx(fl.l)} : ${fmtN(s)}${NB}m²${surf ? "" : " (surface de plancher estimée, à remplacer par la surface réelle accessible au public)"} → ${fmtN(pub)} personnes (${tx(e.note)})`; }
+      const s2 = surf || (f.plancher || 0);
+      if (fl && s2) { pub = ceil(s2 * fl.x); ligne = `${tx(fl.l)} : ${fmtN(s2)}${NB}m²${surf ? "" : " (surface de plancher estimée, à remplacer par la surface réelle accessible au public)"} → ${fmtN(pub)} personnes (${tx(e.note)})`; }
     }
     let inv = "";
     if (effIn && e) { const fl = e.f.find((x) => x.u === "m²"); if (fl) inv = `<p class="small">${tx("Avec cet effectif, la surface accessible au public est au plus de " + fmtN(Math.floor(effIn / fl.x)) + " m².")}</p>`; }
-    if (!pub) return `<section class="sec"><h2 class="lbl g">Calculs</h2>${res("", `<p class="muted">${tx("Indiquez la surface accessible au public ou l’effectif : l’autre valeur se calcule.")}</p>`)}</section>`;
+    if (!pub) { out += `<p class="muted">${tx("Indiquez la surface accessible au public ou l’effectif : l’autre valeur se calcule.")}</p></section>`; return out; }
     const g1 = co38(pub), pe = PE11.find(([mx]) => pub <= mx);
-    const niv = f.niv || 1, emp = f.emprise || 0;
-    const ext1 = Math.max(L1.min, niv * Math.max(1, ceil((emp || 1) / L1.per)));
-    const ext5 = Math.max(L5.min, niv * Math.max(1, ceil((emp || 1) / L5.per)));
     const tot = pub + pers;
-    const cat = tot > 1500 ? "1re" : tot >= 701 ? "2e" : tot >= 301 ? "3e" : "4e";
-    const dg = g1.parts ? `${g1.deg} dégagements, ${g1.up}${NB}UP en tout (${g1.parts.map((p) => p + "UP").join(" + ")})` : `${g1.deg} dégagement${g1.deg > 1 ? "s" : ""}, ${g1.up}${NB}UP`;
-    return `<section class="sec"><h2 class="lbl g">Calculs, estimation à confirmer</h2>
-      <div class="result"><div class="big">${fmtN(pub)} personnes<small>Effectif théorique du public</small></div>
+    const dg = g1.parts ? `${g1.deg} dégagements, ${g1.up}${NB}UP en tout (${g1.parts.map((q) => q + "UP").join(" + ")})` : `${g1.deg} dégagement${g1.deg > 1 ? "s" : ""}, ${g1.up}${NB}UP`;
+    out += `<div class="result"><div class="big">${fmtN(pub)} personnes<small>Effectif théorique du public, type choisi</small></div>
       <p class="small">${ligne}</p>${inv}
       <ul>
-        <li>${tx("Si l’établissement est du 1er groupe (catégories 1 à 4) : " + dg + ". Catégorie probable : " + cat + " (public + personnel = " + fmtN(tot) + ").")}</li>
-        ${pub <= 300 ? `<li>${tx("Si l’établissement est de 5e catégorie (PE 11) : " + (pe ? pe[1] : "") )}</li>` : ""}
-        <li>${tx("Extincteurs, au minimum : " + ext1 + " (1er groupe, 1 par " + L1.per + " m² et par niveau, sur " + niv + " niveau" + (niv > 1 ? "x" : "") + ") ou " + ext5 + " (5e catégorie, 1 par " + L5.per + " m² et par niveau).")}</li>
+        <li>${tx("Si l’établissement est du 1er groupe (catégories 1 à 4) : " + dg + ". Catégorie probable : " + catDe(tot) + " (public + personnel = " + fmtN(tot) + ").")}</li>
+        ${pub <= 300 ? `<li>${tx("Si l’établissement est de 5e catégorie (PE 11) : " + (pe ? pe[1] : ""))}</li>` : ""}
       </ul>
       <div class="chips"><button type="button" class="btn ghost" data-act="eff-cat" data-n="${pub}" data-cat="${e && e.cat ? e.cat : ""}">${tx("Vérifier la catégorie")}</button></div>
-      <p class="small muted">${tx("Résultat indicatif : la surface de plancher est estimée d’après le contour et la hauteur. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
+      <p class="small muted">${tx("Résultat indicatif, à vérifier avant validation : la surface de plancher est estimée d’après le contour et la hauteur. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
+    return out;
   }
   const batSaved = () => store.get("batiments", []);
   function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote }; }
