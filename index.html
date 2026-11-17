@@ -27400,6 +27400,7 @@ const APP = (() => {
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
     { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
+    { id: "o-batiment", t: "Mon bâtiment", d: "Adresse, position ou « je cherche un bâtiment » : fiche du bâtiment, effectif, dégagements, extincteurs et volume 3D.", ic: "immeuble", co: "blue", mc: "batiment immeuble adresse gps position je cherche un batiment erp restaurant magasin recherche autour rayon voisins 3d volume dossier hors connexion fiche" },
     { id: "o-categorie", t: "Catégorie d’un ERP", d: "Activité et effectif : 5e catégorie ou 1er groupe, puis catégorie 1 à 4.", ic: "immeuble", co: "blue", mc: "classement categorie erp effectif seuil 5e groupe" },
     { id: "o-effectif", t: "Calcul de l’effectif", d: "Surface, sièges ou places : nombre de personnes à prendre en compte.", ic: "personnes", co: "blue", mc: "effectif theorique densite surface m2 personnes calcul" },
     { id: "o-degagements", t: "Dégagements et unités de passage", d: "Nombre de sorties et largeurs minimales selon l’effectif. Largeur mesurée en UP.", ic: "sortie", co: "green", mc: "degagement sortie issue unite de passage UP largeur CO 38 PE 11" },
@@ -27885,7 +27886,8 @@ const APP = (() => {
     }
     return seg;
   }
-  function resultsHTML(q) {
+  function resultsHTML(q) { return batCard(q) + resultsHTML0(q); }
+  function resultsHTML0(q) {
     const { toks, res, approx, intent } = search(q, { exact: state.exact === q });
     if (!toks.length) return "";
     const terms = markTerms(toks.concat(toks.flatMap((t) => expand(t).slice(0, 3))));
@@ -29926,7 +29928,289 @@ function jChar(o = {}) {
     }
   }
 
-  const TOOL_PAGES = { "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
+  /* ---------- Outil : Mon bâtiment ---------- */
+  /* Sources ouvertes : Base adresse nationale et BD TOPO (IGN, géoplateforme), base de données nationale des bâtiments (CSTB), Licence Ouverte 2.0. */
+  const bnorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  const BAT_MOTS = { restaurant: "N", brasserie: "N", bar: "N", cafe: "N", "debit de boissons": "N", magasin: "M", boutique: "M", commerce: "M", supermarche: "M", "centre commercial": "M", bureau: "W", bureaux: "W", banque: "W", mairie: "W", administration: "W", musee: "Y", eglise: "V", mosquee: "V", temple: "V", gymnase: "X", "salle de sport": "X", "salle d exposition": "T", exposition: "T", theatre: "L2", cinema: "L2", "salle de spectacle": "L2", "salle des fetes": "L1", "salle de reunion": "L1", discotheque: "LP", ecole: "AUT", college: "AUT", lycee: "AUT", hotel: "AUT", hopital: "AUT", clinique: "AUT", bibliotheque: "AUT" };
+  const BAT_ERP_RE = /\b(cherche|cherches|recherche|trouve|trouver|chercher)\b.*\b(batiment|erp|etablissement|restaurant|brasserie|magasin|boutique|commerce|supermarche|centre commercial|bureau|bureaux|banque|mairie|musee|eglise|mosquee|temple|gymnase|salle|theatre|cinema|discotheque|ecole|college|lycee|hotel|hopital|clinique|bibliotheque)\b|\bmon batiment\b/;
+  const batIntent = (q) => BAT_ERP_RE.test(bnorm(q));
+  function batCard(q) {
+    if (!batIntent(q)) return "";
+    return `<a class="res" href="#o-batiment" data-act="bat-go" data-q="${esc(q)}"><span class="k">${icon("immeuble")}Outil</span><b>Chercher un bâtiment</b><span class="s">Adresse, position ou zone : fiche du bâtiment, calculs et volume 3D. Touchez pour lancer la recherche « ${esc(q)} ».</span></a>`;
+  }
+  function batPhrase(q) {
+    const n = bnorm(q);
+    let type = "";
+    Object.keys(BAT_MOTS).sort((a, b) => b.length - a.length).some((k) => { if ((" " + n + " ").includes(" " + k + " ")) { type = BAT_MOTS[k]; return true; } return false; });
+    let place = String(q || "").replace(/^\s*(je\s+)?(cherche|recherche|trouve|veux trouver|veux)\s+/i, "");
+    place = place.replace(/^(un|une|le|la|l['’]|mon|ma)\s*/i, "");
+    place = place.replace(new RegExp("^(" + Object.keys(BAT_MOTS).concat(["bâtiment", "batiment", "erp", "établissement", "etablissement"]).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")\\b\\s*", "i"), "");
+    place = place.replace(/^(à|a|au|aux|dans|sur|près de|pres de|vers|en|de|du|des)\s+/i, "").trim();
+    return { type, place };
+  }
+  const BAT = { q: "", cands: [], pt: null, adr: "", cle: "", cc: "", r: 60, main: null, voisins: [], bdnb: null, bdnbNote: "", msg: "", busy: false, rot: 30, pending: null };
+  const batTimeout = async (url) => {
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), 15000);
+    try { const r = await fetch(url, { signal: c.signal }); if (!r.ok) throw new Error("HTTP " + r.status); return await r.json(); }
+    finally { clearTimeout(t); }
+  };
+  const batErr = (autre) => (!PRIV.reseauOk() ? "La connexion est désactivée : activez-la avec l’icône en haut de l’écran (Confidentialité), puis relancez la recherche." : navigator.onLine === false ? "Pas de connexion : ouvrez un dossier gardé hors connexion plus bas." : autre);
+  const batM = (lon, lat, lon0, lat0) => [(lon - lon0) * 111320 * Math.cos((lat0 * Math.PI) / 180), (lat - lat0) * 110540];
+  const batRing = (f) => { const g = f.geometry; if (!g || !g.coordinates) return null; const poly = g.type === "MultiPolygon" ? g.coordinates[0] : g.coordinates; return poly && poly[0] ? poly[0].map((p) => [p[0], p[1]]) : null; };
+  const batArea = (ring) => { if (!ring || ring.length < 4) return 0; const lon0 = ring[0][0], lat0 = ring[0][1]; const m = ring.map((p) => batM(p[0], p[1], lon0, lat0)); let a = 0; for (let i = 0; i < m.length - 1; i++) a += m[i][0] * m[i + 1][1] - m[i + 1][0] * m[i][1]; return Math.abs(a) / 2; };
+  const batInside = (ring, lon, lat) => { let c = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [xi, yi] = ring[i], [xj, yj] = ring[j]; if ((yi > lat) !== (yj > lat) && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) c = !c; } return c; };
+  const batCentre = (ring) => { let x = 0, y = 0; ring.forEach((p) => { x += p[0]; y += p[1]; }); return [x / ring.length, y / ring.length]; };
+  const batDist = (a, b) => { const m = batM(b[0], b[1], a[0], a[1]); return Math.hypot(m[0], m[1]); };
+  function batBuild(f, pt) {
+    const p = f.properties || {}, ring = batRing(f);
+    if (!ring) return null;
+    const c = batCentre(ring);
+    let h = typeof p.hauteur === "number" ? p.hauteur : null;
+    if (h == null && typeof p.altitude_maximale_toit === "number" && typeof p.altitude_minimale_sol === "number") h = Math.round((p.altitude_maximale_toit - p.altitude_minimale_sol) * 10) / 10;
+    return { id: f.id || p.cleabs, rnb: p.identifiants_rnb || "", ring, c, h, aire: Math.round(batArea(ring)), nature: p.nature || "", usage: p.usage_1 || "", usage2: p.usage_2 || "", etages: p.nombre_d_etages, logements: p.nombre_de_logements, murs: p.materiaux_des_murs, toit: p.materiaux_de_la_toiture, legere: !!p.construction_legere, dist: pt ? Math.round(batDist(pt, c)) : 0, dedans: pt ? batInside(ring, pt[0], pt[1]) : false };
+  }
+  async function batLoad() {
+    BAT.busy = true; BAT.msg = "Recherche des bâtiments autour du point…"; batDraw();
+    try {
+      const pt = BAT.pt;
+      const cql = `DWITHIN(geometrie,POINT(${pt[1]} ${pt[0]}),${BAT.r},meters)`;
+      const j = await batTimeout(`https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=BDTOPO_V3:batiment&COUNT=80&OUTPUTFORMAT=application/json&CQL_FILTER=${encodeURIComponent(cql)}`);
+      const all = (j.features || []).map((f) => batBuild(f, pt)).filter(Boolean);
+      if (!all.length) { BAT.main = null; BAT.voisins = []; BAT.msg = "Aucun bâtiment trouvé dans ce rayon. Augmentez le rayon ou déplacez le point."; BAT.busy = false; batDraw(); return; }
+      all.sort((a, b) => (b.dedans - a.dedans) || (a.dist - b.dist));
+      BAT.main = all[0]; BAT.voisins = all.slice(1, 13);
+      BAT.bdnb = null; BAT.bdnbNote = "";
+      let cle = BAT.cle, cc = BAT.cc;
+      if (!cle) {
+        try {
+          const rv = await batTimeout(`https://data.geopf.fr/geocodage/reverse?lon=${pt[0]}&lat=${pt[1]}&limit=1`);
+          const ft = rv.features && rv.features[0];
+          if (ft && ft.properties && ft.properties.type === "housenumber") {
+            const d = ft.properties.distance;
+            if (d != null && d <= 30) { cle = ft.properties.id; cc = ft.properties.citycode; BAT.adr = BAT.adr || ft.properties.label; }
+            else BAT.bdnbNote = `L’adresse connue la plus proche est à ${d} m : je ne l’associe pas à ce bâtiment.`;
+          }
+        } catch (e) { /* sans adresse */ }
+      }
+      if (cle && cc) {
+        try {
+          const sel = "batiment_groupe_id,surface_emprise_sol,nb_niveau,annee_construction,mat_mur_txt,mat_toit_txt,usage_principal_bdnb_open,fiabilite_emprise_sol,fiabilite_hauteur,nb_log,alea_sismique,alea_radon,alea_argile,alea_debordement,alea_ruissellement,alea_submersion_marine,distance_monument_historique,denomination_monument_historique,perimetre_bat_historique";
+          const b = await batTimeout(`https://api.bdnb.io/v1/bdnb/donnees/batiment_groupe_complet?code_commune_insee=eq.${encodeURIComponent(cc)}&cle_interop_adr_principale_ban=eq.${encodeURIComponent(cle)}&select=${sel}&limit=1`);
+          BAT.bdnb = b && b[0] ? b[0] : null;
+          if (!BAT.bdnb) BAT.bdnbNote = BAT.bdnbNote || "Cette adresse n’est pas dans la base nationale des bâtiments.";
+        } catch (e) { BAT.bdnbNote = "La base nationale des bâtiments n’a pas répondu : seules les données de l’IGN sont affichées."; }
+      }
+      BAT.msg = "";
+    } catch (e) {
+      BAT.msg = batErr("Le service n’a pas répondu. Réessayez dans un instant.");
+    }
+    BAT.busy = false; batDraw();
+  }
+  async function batSearch(q) {
+    BAT.q = q;
+    const ph = batPhrase(q);
+    if (ph.type && $("#bat-t")) { $("#bat-t").value = ph.type; BAT.typeInit = ph.type; }
+    if (!ph.place) { BAT.msg = "Donnez une adresse, une ville ou un quartier, ou touchez « Ma position »."; BAT.cands = []; batDraw(); return; }
+    BAT.busy = true; BAT.msg = "Recherche de l’adresse…"; batDraw();
+    try {
+      const j = await batTimeout(`https://data.geopf.fr/geocodage/search?q=${encodeURIComponent(ph.place)}&limit=5`);
+      BAT.cands = (j.features || []).map((f) => ({ lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], label: f.properties.label, id: f.properties.type === "housenumber" ? f.properties.id : "", cc: f.properties.citycode, type: f.properties.type, score: f.properties.score }));
+      if (!BAT.cands.length) { BAT.msg = "Aucune adresse trouvée. Précisez avec la ville ou le code postal."; BAT.busy = false; batDraw(); return; }
+      BAT.busy = false;
+      if (BAT.cands.length === 1 || (BAT.cands[0].score > 0.85 && BAT.cands[0].type === "housenumber")) { batPick(0); return; }
+      BAT.msg = "Plusieurs adresses possibles : choisissez la bonne."; batDraw();
+    } catch (e) {
+      BAT.busy = false; BAT.msg = batErr("Le service d’adresses n’a pas répondu. Réessayez."); batDraw();
+    }
+  }
+  function batPick(i) {
+    const c = BAT.cands[i]; if (!c) return;
+    BAT.pt = [c.lon, c.lat]; BAT.adr = c.label; BAT.cle = c.id; BAT.cc = c.cc; BAT.cands = [];
+    batLoad();
+  }
+  function batGps() {
+    if (!navigator.geolocation) { BAT.msg = "La position n’est pas disponible sur cet appareil."; batDraw(); return; }
+    BAT.msg = "Recherche de votre position…"; batDraw();
+    navigator.geolocation.getCurrentPosition((p) => { BAT.pt = [p.coords.longitude, p.coords.latitude]; BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.cands = []; batLoad(); }, () => { BAT.msg = "Position refusée ou introuvable. Autorisez la position dans les réglages, ou saisissez une adresse."; batDraw(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 });
+  }
+  /* Données déduites du bâtiment principal : chaque valeur garde sa provenance. */
+  function batFacts() {
+    const m = BAT.main; if (!m) return null;
+    const b = BAT.bdnb || {};
+    const F = [];
+    const add = (l, v, s) => { if (v != null && v !== "") F.push({ l, v, s }); };
+    const emprise = b.surface_emprise_sol || m.aire;
+    const empriseSrc = b.surface_emprise_sol ? "Base nationale des bâtiments" : "Contour IGN, calculé";
+    let niv = b.nb_niveau || (typeof m.etages === "number" && m.etages > 0 ? m.etages : null), nivSrc = b.nb_niveau ? "Base nationale des bâtiments" : "IGN";
+    if (!niv && m.h) { niv = Math.max(1, Math.round(m.h / 3)); nivSrc = "Estimé : hauteur divisée par 3 m"; }
+    const plancher = emprise && niv ? Math.round(emprise * niv) : null;
+    add("Adresse", BAT.adr || null, "Base adresse nationale");
+    add("Surface au sol", emprise ? fmtN(emprise) + NB + "m²" : null, empriseSrc);
+    add("Hauteur", m.h != null ? fmtN(m.h) + NB + "m" : null, "IGN");
+    add("Nombre de niveaux", niv, nivSrc);
+    add("Surface de plancher (estimation)", plancher ? fmtN(plancher) + NB + "m²" : null, "Estimé : surface au sol × niveaux");
+    add("Année de construction", b.annee_construction, "Base nationale des bâtiments");
+    add("Usage", b.usage_principal_bdnb_open || (m.usage && !/indiff/i.test(m.usage) ? m.usage : ""), b.usage_principal_bdnb_open ? "Base nationale des bâtiments" : "IGN");
+    add("Logements", b.nb_log != null ? b.nb_log : m.logements, b.nb_log != null ? "Base nationale des bâtiments" : "IGN");
+    add("Matériaux des murs", b.mat_mur_txt ? String(b.mat_mur_txt).toLowerCase() : m.murs, b.mat_mur_txt ? "Base nationale des bâtiments" : "IGN");
+    add("Matériaux du toit", b.mat_toit_txt ? String(b.mat_toit_txt).toLowerCase() : m.toit, b.mat_toit_txt ? "Base nationale des bâtiments" : "IGN");
+    add("Séisme", b.alea_sismique, "Base nationale des bâtiments");
+    add("Radon", b.alea_radon, "Base nationale des bâtiments");
+    add("Argile (retrait-gonflement)", b.alea_argile, "Base nationale des bâtiments");
+    add("Débordement de cours d’eau", b.alea_debordement, "Base nationale des bâtiments");
+    add("Ruissellement", b.alea_ruissellement, "Base nationale des bâtiments");
+    add("Submersion marine", b.alea_submersion_marine, "Base nationale des bâtiments");
+    add("Monument historique proche", b.distance_monument_historique != null ? fmtN(Math.round(b.distance_monument_historique)) + NB + "m" + (b.denomination_monument_historique ? " : " + b.denomination_monument_historique : "") : null, "Base nationale des bâtiments");
+    add("Fiabilité de la surface", b.fiabilite_emprise_sol ? String(b.fiabilite_emprise_sol).toLowerCase() : null, "Base nationale des bâtiments");
+    add("Fiabilité de la hauteur", b.fiabilite_hauteur ? String(b.fiabilite_hauteur).toLowerCase() : null, "Base nationale des bâtiments");
+    return { F, emprise, niv, plancher, h: m.h };
+  }
+  function batDossierHTML() {
+    const m = BAT.main; if (!m) return "";
+    const f = batFacts();
+    const rows = f.F.map((x) => `<div><dt>${tx(x.l)}</dt><dd>${tx(String(x.v))}<br><span class="small muted">${tx(x.s)}</span></dd></div>`).join("");
+    const manque = [];
+    if (!BAT.bdnb) manque.push("année de construction, usage et risques du lieu (adresse absente de la base nationale)");
+    if (m.etages == null && !(BAT.bdnb && BAT.bdnb.nb_niveau)) manque.push("nombre de niveaux (estimé d’après la hauteur)");
+    if (m.h == null) manque.push("hauteur");
+    const igh = f.h != null && f.h >= 25 ? `<p class="small"><strong>${tx("Hauteur de 25 m ou plus : vérifiez si le plancher bas du dernier niveau dépasse 28 m (ou 50 m pour l’habitation).")}</strong> <a href="#f-igh">${tx("Voir les immeubles de grande hauteur")}</a></p>` : "";
+    return `<section class="sec"><h2 class="lbl b">Fiche du bâtiment</h2>
+      <dl class="kv">${rows}</dl><div class="result">
+      ${BAT.bdnbNote ? `<p class="small">${tx(BAT.bdnbNote)}</p>` : ""}
+      ${manque.length ? `<p class="small">${tx("Non trouvé, à renseigner par l’agent : " + manque.join(" ; ") + ".")}</p>` : ""}${igh}
+      <p class="small muted">${tx("Données ouvertes (IGN, base adresse nationale, CSTB), sous Licence Ouverte 2.0. Elles peuvent être anciennes ou fausses : confirmez sur place.")}</p></div></section>`;
+  }
+  /* Volume 3D schématique : contour × hauteur, toit plat. */
+  function bat3D() {
+    const m = BAT.main; if (!m) return "";
+    const lon0 = m.c[0], lat0 = m.c[1], th = (BAT.rot * Math.PI) / 180, co = Math.cos(th), si = Math.sin(th);
+    const list = [m].concat(BAT.voisins).filter((x) => x.ring);
+    const proj = (p, z) => { const q = batM(p[0], p[1], lon0, lat0); const X = q[0] * co - q[1] * si, Y = q[0] * si + q[1] * co; return [X, -z + Y * 0.5, Y]; };
+    const items = list.map((b, i) => {
+      const hh = b.h != null ? b.h : 3;
+      const base = b.ring.map((p) => proj(p, 0)), top = b.ring.map((p) => proj(p, hh));
+      const depth = base.reduce((s, p) => s + p[2], 0) / base.length;
+      return { b, base, top, depth, main: i === 0, inc: b.h == null };
+    });
+    const pts = []; items.forEach((it) => { it.base.concat(it.top).forEach((p) => pts.push(p)); });
+    const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const W = 320, H = 230, pad = 12, s = Math.min((W - 2 * pad) / Math.max(1, x1 - x0), (H - 2 * pad) / Math.max(1, y1 - y0));
+    const T = (p) => `${((p[0] - x0) * s + pad + (W - 2 * pad - (x1 - x0) * s) / 2).toFixed(1)},${((p[1] - y0) * s + pad + (H - 2 * pad - (y1 - y0) * s) / 2).toFixed(1)}`;
+    items.sort((a, b) => a.depth - b.depth);
+    let g = "";
+    items.forEach((it) => {
+      const col = it.main ? "var(--red)" : "var(--ink-3)";
+      const walls = [];
+      for (let i = 0; i < it.base.length - 1; i++) {
+        const a = it.base[i], b = it.base[i + 1], c = it.top[i + 1], d = it.top[i];
+        const nx = b[1] - a[1], shade = 0.28 + 0.4 * Math.abs(nx / Math.hypot(b[0] - a[0], b[2] - a[2] || 1e-6));
+        walls.push({ d: (a[2] + b[2]) / 2, p: `${T(a)} ${T(b)} ${T(c)} ${T(d)}`, o: Math.min(0.75, shade) });
+      }
+      walls.sort((a, b) => a.d - b.d);
+      walls.forEach((w) => { g += `<polygon points="${w.p}" fill="${col}" fill-opacity="${w.o.toFixed(2)}" stroke="var(--line-2)" stroke-width=".6"${it.inc ? ' stroke-dasharray="3 2"' : ""}/>`; });
+      g += `<polygon points="${it.top.map(T).join(" ")}" fill="${col}" fill-opacity="${it.main ? 0.9 : 0.5}" stroke="var(--ink-2)" stroke-width=".7"/>`;
+    });
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Volume schématique du bâtiment et des bâtiments voisins" style="width:100%;height:auto;background:var(--surface);border-radius:12px;border:1px solid var(--line)">${g}</svg>`;
+  }
+  /* Calculs d'ERP à partir du bâtiment et du type choisi par l'agent. */
+  function batCalc() {
+    const m = BAT.main; if (!m) return "";
+    const f = batFacts(), t = $("#bat-t") ? $("#bat-t").value : "";
+    if (!t) return `<section class="sec"><h2 class="lbl g">Calculs</h2>${res("", `<p class="muted">${tx("Choisissez le type d’établissement : c’est la seule donnée que les bases ouvertes ne donnent pas. Le reste est déjà prérempli.")}</p>`)}</section>`;
+    const e = EFF.find((x) => x.id === t);
+    const L1 = LIEUX["1"], L5 = LIEUX["5"];
+    const surf = val("bat-s"), effIn = int("bat-e"), pers = int("bat-p");
+    let pub = 0, ligne = "";
+    if (effIn) { pub = effIn; ligne = `Effectif saisi : ${fmtN(effIn)} personnes.`; }
+    else if (e) {
+      const fl = e.f.find((x) => x.u === "m²");
+      const s = surf || (f.plancher || 0);
+      if (fl && s) { pub = ceil(s * fl.x); ligne = `${tx(fl.l)} : ${fmtN(s)}${NB}m²${surf ? "" : " (surface de plancher estimée, à remplacer par la surface réelle accessible au public)"} → ${fmtN(pub)} personnes (${tx(e.note)})`; }
+    }
+    let inv = "";
+    if (effIn && e) { const fl = e.f.find((x) => x.u === "m²"); if (fl) inv = `<p class="small">${tx("Avec cet effectif, la surface accessible au public est au plus de " + fmtN(Math.floor(effIn / fl.x)) + " m².")}</p>`; }
+    if (!pub) return `<section class="sec"><h2 class="lbl g">Calculs</h2>${res("", `<p class="muted">${tx("Indiquez la surface accessible au public ou l’effectif : l’autre valeur se calcule.")}</p>`)}</section>`;
+    const g1 = co38(pub), pe = PE11.find(([mx]) => pub <= mx);
+    const niv = f.niv || 1, emp = f.emprise || 0;
+    const ext1 = Math.max(L1.min, niv * Math.max(1, ceil((emp || 1) / L1.per)));
+    const ext5 = Math.max(L5.min, niv * Math.max(1, ceil((emp || 1) / L5.per)));
+    const tot = pub + pers;
+    const cat = tot > 1500 ? "1re" : tot >= 701 ? "2e" : tot >= 301 ? "3e" : "4e";
+    const dg = g1.parts ? `${g1.deg} dégagements, ${g1.up}${NB}UP en tout (${g1.parts.map((p) => p + "UP").join(" + ")})` : `${g1.deg} dégagement${g1.deg > 1 ? "s" : ""}, ${g1.up}${NB}UP`;
+    return `<section class="sec"><h2 class="lbl g">Calculs, estimation à confirmer</h2>
+      <div class="result"><div class="big">${fmtN(pub)} personnes<small>Effectif théorique du public</small></div>
+      <p class="small">${ligne}</p>${inv}
+      <ul>
+        <li>${tx("Si l’établissement est du 1er groupe (catégories 1 à 4) : " + dg + ". Catégorie probable : " + cat + " (public + personnel = " + fmtN(tot) + ").")}</li>
+        ${pub <= 300 ? `<li>${tx("Si l’établissement est de 5e catégorie (PE 11) : " + (pe ? pe[1] : "") )}</li>` : ""}
+        <li>${tx("Extincteurs, au minimum : " + ext1 + " (1er groupe, 1 par " + L1.per + " m² et par niveau, sur " + niv + " niveau" + (niv > 1 ? "x" : "") + ") ou " + ext5 + " (5e catégorie, 1 par " + L5.per + " m² et par niveau).")}</li>
+      </ul>
+      <div class="chips"><button type="button" class="btn ghost" data-act="eff-cat" data-n="${pub}" data-cat="${e && e.cat ? e.cat : ""}">${tx("Vérifier la catégorie")}</button></div>
+      <p class="small muted">${tx("Résultat indicatif : la surface de plancher est estimée d’après le contour et la hauteur. Le dossier de l’établissement, le texte officiel et l’avis de la commission de sécurité font foi.")}</p></div></section>`;
+  }
+  const batSaved = () => store.get("batiments", []);
+  function batSnapshot() { return { id: "b" + Date.now(), when: new Date().toISOString(), adr: BAT.adr, pt: BAT.pt, r: BAT.r, main: BAT.main, voisins: BAT.voisins, bdnb: BAT.bdnb, bdnbNote: BAT.bdnbNote }; }
+  const batKo = (o) => Math.max(1, Math.round(JSON.stringify(o).length / 1024));
+  function batText() {
+    const f = batFacts(); if (!f) return "";
+    return "Bâtiment : " + (BAT.adr || "position " + BAT.pt[1].toFixed(5) + ", " + BAT.pt[0].toFixed(5)) + "\n" + f.F.map((x) => x.l + " : " + String(x.v).replace(/ /g, " ") + " (" + x.s + ")").join("\n") + "\nDonnées ouvertes, indicatives : à confirmer sur place.";
+  }
+  function batSavedHTML() {
+    const l = batSaved();
+    return l.length ? `<section class="sec"><h2 class="lbl a">Dossiers gardés hors connexion</h2><div class="cards">${l.map((d, i) => `<div class="vcard"><b>${tx(d.adr || "Position " + d.pt[1].toFixed(4) + ", " + d.pt[0].toFixed(4))}</b><span class="small muted">${tx(new Date(d.when).toLocaleDateString("fr-FR"))} · ${batKo(d)}${NB}Ko</span><div class="chips"><button type="button" class="btn ghost" data-act="bat-open" data-i="${i}">Ouvrir</button><button type="button" class="btn ghost" data-act="bat-del" data-i="${i}">Supprimer</button></div></div>`).join("")}</div></section>` : "";
+  }
+  function batActionsHTML() {
+    if (!BAT.main) return "";
+    const pend = BAT.pending;
+    if (pend === "save") return `<div class="result"><p>${tx("Garder ce dossier sur le téléphone (" + batKo(batSnapshot()) + " Ko), pour le consulter sans connexion ?")}</p><div class="chips"><button type="button" class="btn" data-act="bat-save-yes">Oui, garder</button><button type="button" class="btn ghost" data-act="bat-no">Non</button></div></div>`;
+    if (pend === "share") return `<div class="result"><p>${tx("Envoyer la fiche du bâtiment en texte (" + Math.max(1, Math.round(batText().length / 1024)) + " Ko) ? Vous choisissez ensuite à qui, rien n’est envoyé avant.")}</p><div class="chips"><button type="button" class="btn" data-act="bat-share-yes">Oui, envoyer</button><button type="button" class="btn ghost" data-act="bat-no">Non</button></div></div>`;
+    return `<div class="chips"><button type="button" class="btn ghost" data-act="bat-save">${tx("Garder hors connexion")}</button><button type="button" class="btn ghost" data-act="bat-share">${tx("Envoyer la fiche")}</button></div>`;
+  }
+  function batDraw() {
+    const set = (id, h) => { const el = $("#" + id); if (el) el.innerHTML = h; };
+    if (!$("#bat-msg")) return;
+    const cands = BAT.cands.length > 1 ? `<div class="cards">${BAT.cands.map((c, i) => `<button type="button" class="btn ghost" data-act="bat-pick" data-i="${i}" style="text-align:left">${tx(c.label)}</button>`).join("")}</div>` : "";
+    set("bat-msg", (BAT.msg ? `<p class="small" aria-live="polite">${tx(BAT.msg)}</p>` : "") + cands);
+    set("bat-dossier", batDossierHTML());
+    set("bat-3d", BAT.main ? `<section class="sec"><h2 class="lbl">Volume schématique en 3D</h2>${bat3D()}<label class="field"><span>Tourner</span><input id="bat-rot" type="range" min="0" max="359" value="${BAT.rot}" aria-label="Tourner le volume"></label><p class="small muted">${tx("Contour et hauteur seulement, toit plat. Les bâtiments voisins sont en gris, le bâtiment choisi en rouge. Contour en pointillés : hauteur inconnue (3 m par défaut).")} ${BAT.voisins.length ? tx(BAT.voisins.length + " bâtiments voisins dans un rayon de " + BAT.r + " m.") : ""}</p></section>` : "");
+    set("bat-calc", batCalc());
+    set("bat-actions", batActionsHTML());
+    set("bat-saved", batSavedHTML());
+  }
+  function toolBatiment() {
+    const html = `${toolHead("o-batiment")}
+      <div class="form">
+        <label class="field"><span>Adresse, ville, ou une phrase comme « je cherche un restaurant à Lyon »</span><input id="bat-q" type="text" autocomplete="off" placeholder="Adresse ou « je cherche un bâtiment »" enterkeyhint="search"></label>
+        <div class="chips"><button type="button" class="btn" data-act="bat-find">Chercher</button><button type="button" class="btn ghost" data-act="bat-gps">Ma position</button></div>
+        <label class="field"><span>Rayon autour du point pour les voisins</span><select id="bat-r"><option value="30">30 m</option><option value="60" selected>60 m</option><option value="100">100 m</option><option value="150">150 m</option></select></label>
+        <label class="field"><span>Type d’établissement (à choisir par l’agent)</span><select id="bat-t"><option value="">Choisir…</option>${EFF.map((e) => `<option value="${e.id}">${esc(e.t)}</option>`).join("")}<option value="AUT">Autre type : saisir l’effectif connu</option></select></label>
+        <div class="grid3">${numField("bat-s", "Surface accessible au public (m²)", "Préremplie avec la surface de plancher estimée si vous laissez vide.", "decimal")}${numField("bat-e", "Effectif connu", "Si vous le connaissez, il remplace le calcul.")}${numField("bat-p", "Personnel")}</div>
+      </div>
+      <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
+      <div id="bat-msg" aria-live="polite"></div>
+      <div id="bat-actions"></div>
+      <div id="bat-dossier"></div>
+      <div id="bat-3d"></div>
+      <div id="bat-calc" aria-live="polite"></div>
+      <div id="bat-saved"></div>
+      ${toolFoot(["effectif", "degagements", "extincteurs-regles", "igh"], "Les données du bâtiment viennent de bases ouvertes : elles servent à gagner du temps, jamais à valider une conformité. Une connexion est nécessaire pour chercher ; un dossier gardé s’ouvre sans connexion.")}`;
+    const after = () => {
+      const qi = $("#bat-q"); if (qi) qi.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); batSearch(qi.value); } });
+      if (prefill.bat) { const q = prefill.bat; delete prefill.bat; $("#bat-q").value = q; batSearch(q); }
+      else if (BAT.main) { $("#bat-q").value = BAT.q || ""; $("#bat-r").value = String(BAT.r); batDraw(); }
+      else batDraw();
+    };
+    const update = () => {
+      const r = $("#bat-r"); if (r && +r.value !== BAT.r) { BAT.r = +r.value; if (BAT.pt && !BAT.busy) batLoad(); return; }
+      const rot = $("#bat-rot"); if (rot && +rot.value !== BAT.rot) { BAT.rot = +rot.value; const el = $("#bat-3d svg"); if (el) el.outerHTML = bat3D(); }
+      const c = $("#bat-calc"); if (c && BAT.main) c.innerHTML = batCalc();
+    };
+    return { html, title: TL["o-batiment"].t, tab: "outils", back: "outils", after, update };
+  }
+
+  const TOOL_PAGES = { "o-batiment": toolBatiment, "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
 
   function notFound() {
     return { html: `<div class="page-h"><h1>Page introuvable</h1><p>Ce lien ne correspond à aucune page du mémo.</p></div><p><a class="btn" href="#accueil">${icon("accueil")}Retour à l’accueil</a></p>`, title: "Page introuvable", tab: "" };
@@ -30153,6 +30437,7 @@ function jChar(o = {}) {
       if (href.startsWith("#")) {
         e.preventDefault();
         if (a.dataset.mark) pendingMark = effQ(state.q);
+        if (a.dataset.act === "bat-go") prefill.bat = a.dataset.q;
         let t = href.slice(1);
         try { t = decodeURIComponent(t); } catch (er) { /* adresse brute */ }
         navTo(t || "accueil");
@@ -30262,6 +30547,17 @@ function jChar(o = {}) {
       case "lv-del": extState.lv.splice(+b.dataset.i, 1); cur.drawLevels(); cur.update(); break;
       case "feu": feuSel = b.dataset.k; $$('[data-act="feu"]').forEach((x) => x.setAttribute("aria-pressed", x.dataset.k === feuSel)); cur.update(); $("#out").scrollIntoView({ block: "nearest", behavior: "smooth" }); break;
       case "eff-cat": prefill.cat = { type: b.dataset.cat, n: b.dataset.n }; go("o-categorie"); break;
+      case "bat-go": prefill.bat = b.dataset.q; go("o-batiment"); break;
+      case "bat-find": batSearch($("#bat-q").value); break;
+      case "bat-gps": batGps(); break;
+      case "bat-pick": batPick(+b.dataset.i); break;
+      case "bat-save": BAT.pending = "save"; batDraw(); break;
+      case "bat-share": BAT.pending = "share"; batDraw(); break;
+      case "bat-no": BAT.pending = null; batDraw(); break;
+      case "bat-save-yes": { const l = batSaved(); l.unshift(batSnapshot()); store.set("batiments", l.slice(0, 20)); BAT.pending = null; batDraw(); toast("Dossier gardé : il s’ouvre sans connexion."); break; }
+      case "bat-share-yes": { const tx0 = batText(); BAT.pending = null; batDraw(); if (navigator.share) navigator.share({ title: "Fiche du bâtiment", text: tx0 }).catch(() => {}); else copyText(tx0, "Fiche copiée."); break; }
+      case "bat-open": { const d = batSaved()[+b.dataset.i]; if (d) { Object.assign(BAT, { pt: d.pt, adr: d.adr, r: d.r, main: d.main, voisins: d.voisins, bdnb: d.bdnb, bdnbNote: d.bdnbNote, msg: "Dossier ouvert depuis le téléphone, sans connexion.", cands: [] }); $("#bat-r").value = String(BAT.r); batDraw(); } break; }
+      case "bat-del": { const l = batSaved(); l.splice(+b.dataset.i, 1); store.set("batiments", l); batDraw(); break; }
       case "eff-deg": prefill.deg = b.dataset.n; go("o-degagements"); break;
       case "qz-niv": state.qniv = b.dataset.v; store.set("qniv", state.qniv); rerender(); break;
       case "ap-pick": { const st = apS[b.dataset.key] || (apS[b.dataset.key] = { i: 0, p: [] }); if (st.p[st.i] == null) st.p[st.i] = +b.dataset.k; rerender(); break; }
