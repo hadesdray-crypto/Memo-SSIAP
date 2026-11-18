@@ -27400,6 +27400,7 @@ const APP = (() => {
     { id: "o-quiz", t: "Entraînement et quiz", d: "Quiz rapide, par thème, examen blanc SSIAP 1, révision de vos erreurs et suivi de vos progrès.", ic: "quiz", co: "green", mc: "quiz revision questions examen blanc entrainement QCM progres erreurs" },
     { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
+    { id: "o-ssi", t: "SSI, DAS et compartimentage", d: "Par type et catégorie : système de sécurité incendie, alarme, détection, DAS, compartimentage, désenfumage, avec l’article et la certitude.", ic: "cloche", co: "red", mc: "ssi das compartimentage desenfumage alarme detection categorie a b c d e temporisation cmsi uga ecs mise en securite portes coupe feu clapet" },
     { id: "o-batiment", t: "Mon bâtiment", d: "Adresse, position ou « je cherche un bâtiment » : fiche du bâtiment, effectif, dégagements, extincteurs et volume 3D.", ic: "immeuble", co: "blue", mc: "batiment immeuble adresse gps position ma position localisation ou je suis ou suis je je cherche un batiment cherche batiment trouver batiment etablissement erp restaurant brasserie bar cafe magasin boutique commerce supermarche centre commercial bureau banque mairie musee eglise gymnase salle de sport theatre cinema salle des fetes salle de spectacle discotheque ecole college lycee hotel hopital clinique bibliotheque recherche autour rayon voisins batiments voisins 3d modele volume maquette plan dossier fiche du batiment hors connexion surface au sol surface de plancher hauteur niveaux etages annee de construction materiaux murs toit parcelle cadastre risques seisme radon argile inondation submersion monument historique ign bdnb cstb base adresse nationale open data calcul automatique effectif degagements unites de passage up categorie probable extincteurs a verifier avant validation" },
     { id: "o-categorie", t: "Catégorie d’un ERP", d: "Activité et effectif : 5e catégorie ou 1er groupe, puis catégorie 1 à 4.", ic: "immeuble", co: "blue", mc: "classement categorie erp effectif seuil 5e groupe" },
     { id: "o-effectif", t: "Calcul de l’effectif", d: "Surface, sièges ou places : nombre de personnes à prendre en compte.", ic: "personnes", co: "blue", mc: "effectif theorique densite surface m2 personnes calcul" },
@@ -30345,7 +30346,7 @@ function jChar(o = {}) {
   const FICHE_PE2 = { J: "personnes âgées : 25 résidents ou 100 au total ; personnes handicapées : 20 résidents ou 100 au total", L: "salles de réunion, d’audition, polyvalentes : 100 en sous-sol, 200 en tout ; spectacles, projections, cabarets : 20 en sous-sol, 50 en tout", M: "100 en sous-sol, 100 en étages, 200 en tout", N: "100 en sous-sol, 200 en étages, 200 en tout", O: "100 en tout", P: "20 en sous-sol, 100 en étages, 120 en tout", R: "maternelles, crèches, haltes-garderies, jardins d’enfants : sous-sol interdit, 1 en étage (20 s’il n’y a qu’un niveau en étage), 100 en tout ; autres : 100, 100, 200 ; avec locaux de sommeil : 30 en tout", S: "100 en sous-sol, 100 en étages, 200 en tout", T: "100, 100, 200", U: "sans hébergement : 100 en tout ; avec hébergement : 20 en tout", V: "100 en sous-sol, 200 en étages, 300 en tout", W: "100, 100, 200", X: "100, 100, 200", Y: "100, 100, 200", OA: "20 en tout", GA: "200 en tout (gares souterraines ou mixtes : 1er groupe quel que soit l’effectif)", PA: "300 en tout" };
   const FICHE_GE4 = { 3: { "12": "J L M N O P R S T U W X Y", "3": "J L O P R U", "4": "J O U R1" }, 5: { "12": "V", "3": "M N S T V W X Y", "4": "L M N P R2 S T V W X Y" } };
   const FICHE_ST = { c: "Imposé par le texte", v: "Dépend de la visite", n: "Norme non fournie", i: "À confirmer" };
-  BAT.fi = { type: "", cat: "", eff: "", sub: false, som: false, ne: "", job: "1" };
+  BAT.fi = { type: "", cat: "", eff: "", sub: false, som: false, ne: "", job: store.get("fi-job", "1") };
   function ficheGE4(t, c, som) {
     if (!/^[1-4]$/.test(c)) return null;
     const k = c === "1" || c === "2" ? "12" : c, tt = t === "R" ? (som ? "R1" : "R2") : t;
@@ -30382,20 +30383,25 @@ function jChar(o = {}) {
       <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="bat-fm"${f.som ? " checked" : ""}> ${tx("Locaux réservés au sommeil")}</span></label></div>`;
     return `<section class="sec"><h2 class="lbl">${tx("Fiche métier : ce que le SSIAP doit connaître")}</h2><p class="small">${tx("Règles des textes officiels stockés dans l’appli (aucune connexion nécessaire). Chaque ligne donne l’article, l’extrait et son degré de certitude. Choisissez le type et la catégorie.")}</p>${inputs}<div id="bat-fiche-out"></div></section>`;
   }
+  const FICHE_IC = { "service-securite": "personnes", personnel: "badge", extinction: "extincteur", RIA: "goutte", colonnes: "goutte", hydrants: "goutte", alarme: "cloche", SSI: "cloche", detection: "oeil", desenfumage: "gaz", eclairage: "etincelle", degagements: "sortie", effectif: "personnes", isolement: "porte", stabilite: "immeuble", amenagements: "colis", electricite: "eclair", gaz: "gaz", chauffage: "flamme", ascenseurs: "ascenseur", signalisation: "attention", accessibilite: "personnes", sommeil: "lune", documents: "registre", verifications: "check", autre: "info" };
+  const ficheRow = (r) => `<li>${tx(r.e)}${r.v ? " <b>" + tx(r.v) + "</b>" : ""}${r.k ? `<br><span class="muted">${tx("Condition : " + r.k)}</span>` : ""}<br><span class="pill ${r.z === "t" ? "green" : "amber"}">${FICHE_ST[r.z === "t" ? "c" : r.z]}</span> <span class="muted">${tx(r.a + " · « " + r.q + " »")}</span></li>`;
+  const ficheLegend = () => `<p class="small muted"><span class="pill green">Imposé par le texte</span> ${tx("l’extrait cité le dit.")} <span class="pill amber">Dépend de la visite</span> ${tx("à décider sur place ou par la commission.")} <span class="pill amber">Norme non fournie</span> ${tx("la norme payante n’est pas dans l’appli.")} <span class="pill amber">Approximatif</span> ${tx("donnée estimée, à préciser par le rédacteur du compte rendu.")}</p>`;
+  const ficheJobBar = () => `<div class="chips fiche-job" role="tablist" aria-label="Mon statut">${[["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"]].map(([k, l]) => `<button type="button" class="btn ${BAT.fi.job === k ? "" : "ghost"}" data-act="fiche-job" data-j="${k}" role="tab" aria-selected="${BAT.fi.job === k}">${icon("badge")} ${l}</button>`).join("")}</div>`;
   function ficheOut() {
     const f = BAT.fi, jobs = [["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"]];
     if (!f.type) return `<p class="muted">${tx("Choisissez le type d’établissement pour afficher la fiche.")}</p>`;
-    let out = `<div class="chips" role="tablist">${jobs.map(([k, l]) => `<button type="button" class="btn ${f.job === k ? "" : "ghost"}" data-act="fiche-job" data-j="${k}" role="tab" aria-selected="${f.job === k}">${l}</button>`).join("")}</div>`;
-    out += `<div class="result"><p><strong>${tx("À retenir en premier")}</strong></p>${ficheSummary(f)}</div>`;
+    let out = `<div class="result"><p><strong>${icon("badge")} ${tx(jobs[+f.job - 1][1] + " · type " + f.type + (f.cat ? " · " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : "") + (f.ne === "n" ? " · neuf" : f.ne === "e" ? " · existant" : ""))}</strong></p>${ficheLegend()}</div>`;
     out += ficheCalcul(f);
+    out += `<div class="result"><p><strong>${icon("liste")} ${tx("À retenir en premier")}</strong></p>${ficheSummary(f)}</div>`;
+    out += `<a class="btn" href="#o-ssi">${icon("cloche")} ${tx("Section complète : SSI, DAS et compartimentage")}</a>`;
     const keep = FICHE_R.filter((r) => ficheKey(r, f));
     const asS = store.get("bat-assur", {});
     out += `<p class="small muted">${tx(keep.length + " règles pour " + jobs[+f.job - 1][1] + ", type " + f.type + (f.cat ? ", " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : ", toutes catégories") + ". Les conditions écrites dans chaque règle (surface, niveaux, sous-sol, sommeil…) sont à vérifier sur place.")}</p>`;
     FICHE_TH.forEach(([h, lab]) => {
       const L = keep.filter((r) => r.h === h), as = FICHE_ASS[h];
       if (!L.length && !as) return;
-      out += `<details class="card"><summary><strong>${tx(lab)}</strong> <span class="small muted">${L.length} règle${L.length > 1 ? "s" : ""}</span></summary>`;
-      out += `<ul class="small">${L.map((r) => `<li>${tx(r.e)}${r.v ? " <b>" + tx(r.v) + "</b>" : ""}${r.k ? `<br><span class="muted">${tx("Condition : " + r.k)}</span>` : ""}<br><span class="pill ${r.z === "t" ? "green" : "amber"}">${FICHE_ST[r.z === "t" ? "c" : r.z]}</span> <span class="muted">${tx(r.a + " · « " + r.q + " »")}</span></li>`).join("")}</ul>`;
+      out += `<details class="card"><summary>${icon(FICHE_IC[h] || "info")} <strong>${tx(lab)}</strong> <span class="pill">${L.length}</span></summary>`;
+      out += `<ul class="small">${L.map(ficheRow).join("")}</ul>`;
       if (as) out += `<div class="result"><p class="small"><strong>${tx("Version assurance")}</strong> : ${tx(as)}. ${tx("Référentiel édité et vendu par le CNPP : non intégré. À saisir par le SSIAP d’après le contrat.")}</p><label class="field"><span>${tx("Exigence de l’assureur (gardée sur le téléphone)")}</span><input type="text" data-fass="${h}" value="${esc(asS[h] || "")}" autocomplete="off"></label></div>`;
       out += `</details>`;
     });
@@ -30422,7 +30428,7 @@ function jChar(o = {}) {
       li("Distance au bâtiment voisin : jusqu’à 8 m : T 30 " + (one || f.som ? "indice 1" : "indice 2") + " ; de 8 à 12 m : T 15 " + (one || f.som ? "indice 1" : "indice 2") + ".", "CO 17 (tableau lu sur Légifrance) ; distances au voisin à mesurer sur place", true);
     }
     if (!L.length) return "";
-    return `<div class="result"><p><strong>${tx("Calculé pour ce bâtiment")}</strong> <span class="pill amber">Calculé</span> <span class="small muted">${tx("à vérifier avant validation")}</span></p><ul class="small">${L.join("")}</ul></div>`;
+    return `<div class="result"><p><strong>${icon("immeuble")} ${tx("Calculé pour ce bâtiment")}</strong> <span class="pill amber">Calculé</span> <span class="small muted">${tx("à vérifier avant validation")}</span></p><ul class="small">${L.join("")}</ul></div>`;
   }
   function ficheOutDraw() { const el = $("#bat-fiche-out"); if (el) el.innerHTML = ficheOut(); }
   function ficheDraw() {
@@ -30448,8 +30454,53 @@ function jChar(o = {}) {
     return ch;
   }
 
+  /* ===== Section SSI, DAS et compartimentage ===== */
+  const SSI_SEC = [
+    ["SSI", "Le système de sécurité incendie exigé", "cloche", (r) => r.h === "SSI"],
+    ["alarme", "Alarme : type d’équipement et temporisation", "cloche", (r) => r.h === "alarme"],
+    ["detection", "Détection automatique", "oeil", (r) => r.h === "detection"],
+    ["das", "DAS, mise en sécurité et compartimentage", "porte", (r) => /\bDAS\b|actionn|clapet|coupe-feu|compartiment|fermeture automatique|mise en sécurité|volet/i.test(r.e + " " + r.k) && r.h !== "desenfumage"],
+    ["desenfumage", "Désenfumage", "gaz", (r) => r.h === "desenfumage"],
+    ["eclairage", "Éclairage de sécurité", "etincelle", (r) => r.h === "eclairage"],
+  ];
+  function ssiOut() {
+    const f = BAT.fi;
+    if (!f.type) return `<p class="muted">${tx("Choisissez le type d’établissement pour afficher ce que les textes imposent.")}</p>`;
+    const keep = FICHE_R.filter((r) => ficheKey(r, f));
+    let out = `<div class="result"><p><strong>${icon("badge")} ${tx("SSIAP " + f.job + " · type " + f.type + (f.cat ? " · " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : " · toutes catégories"))}</strong></p>${ficheLegend()}</div>`;
+    SSI_SEC.forEach(([id, lab, ic, fn]) => {
+      const L = keep.filter(fn);
+      out += `<details class="card"${L.length && (id === "SSI" || id === "alarme") ? " open" : ""}><summary>${icon(ic)} <strong>${tx(lab)}</strong> <span class="pill">${L.length}</span></summary>`;
+      out += L.length ? `<ul class="small">${L.map(ficheRow).join("")}</ul>` : `<p class="small muted">${tx("Aucune règle pour ce type et cette catégorie dans les textes stockés : voir les dispositions du type et l’avis de la commission de sécurité.")}</p>`;
+      out += `</details>`;
+    });
+    out += `<div class="result"><p><strong>${icon("info")} ${tx("Ce que l’appli ne contient pas")}</strong></p><p class="small">${tx("Les catégories de SSI (A à E) et les types d’équipement d’alarme (1, 2a, 2b, 3, 4) sont définis par le règlement (MS 53 à MS 73) et précisés par les normes NF S 61-931 à 61-940 : ces normes sont payantes et ne sont pas intégrées. Aucun chiffre n’est donné quand le texte stocké n’en contient pas. Le dossier de l’établissement et l’avis de la commission font foi.")}</p></div>`;
+    return out;
+  }
+  function ssiDraw() { const el = $("#ssi-out"); if (el) el.innerHTML = ssiOut(); }
+  function toolSSI() {
+    const f = BAT.fi;
+    const html = `${toolHead("o-ssi")}
+      <div class="result"><p><strong>${tx("Mon statut")}</strong></p><div id="ssi-job">${ficheJobBar()}</div></div>
+      <div class="form"><label class="field"><span>${tx("Type d’établissement")}</span><select id="ssi-t"><option value="">Choisir…</option>${FICHE_TYPES.map(([k, l]) => `<option value="${k}"${f.type === k ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
+      <label class="field"><span>${tx("Catégorie")}</span><select id="ssi-c"><option value="">Toutes</option>${["1", "2", "3", "4", "5"].map((k) => `<option value="${k}"${f.cat === k ? " selected" : ""}>${k}${k === "1" ? "re" : "e"} catégorie</option>`).join("")}</select></label>
+      <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="ssi-m"${f.som ? " checked" : ""}> ${tx("Locaux réservés au sommeil")}</span></label></div>
+      <div id="ssi-out">${ssiOut()}</div>
+      <div class="sec"><h3 class="lbl b">${tx("Comprendre : les cours")}</h3><div class="links">${["ssi", "alarme", "declencheur-manuel", "detecteurs", "das", "tableau-ssi", "compartimentage", "desenfumage", "eclairage-securite"].map(linkCard).join("")}</div></div>`;
+    const update = () => {
+      const t = $("#ssi-t"), c = $("#ssi-c"), m = $("#ssi-m");
+      if (!t) return;
+      let ch = false;
+      if (BAT.fi.type !== t.value) { BAT.fi.type = t.value; ch = true; }
+      if (BAT.fi.cat !== c.value) { BAT.fi.cat = c.value; BAT.fi.catMan = true; ch = true; }
+      if (BAT.fi.som !== m.checked) { BAT.fi.som = m.checked; ch = true; }
+      if (ch) ssiDraw();
+    };
+    return { html, title: TL["o-ssi"].t, tab: "outils", back: "outils", update };
+  }
   function toolBatiment() {
     const html = `${toolHead("o-batiment")}
+      <div class="result"><p><strong>${tx("Mon statut")}</strong> <span class="small muted">${tx("la fiche du bâtiment s’adapte à votre poste")}</span></p><div id="bat-job">${ficheJobBar()}</div></div>
       <div class="form">
         <label class="field"><span>Adresse, ville, ou une phrase comme « je cherche un restaurant à Lyon »</span><input id="bat-q" type="text" autocomplete="off" placeholder="Adresse ou « je cherche un bâtiment »" enterkeyhint="search"></label>
         <div class="chips"><button type="button" class="btn" data-act="bat-find">Chercher cette adresse</button><button type="button" class="btn ghost" data-act="bat-gps">Utiliser ma position</button></div>
@@ -30488,7 +30539,7 @@ function jChar(o = {}) {
     return { html, title: TL["o-batiment"].t, tab: "outils", back: "outils", after, update };
   }
 
-  const TOOL_PAGES = { "o-batiment": toolBatiment, "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
+  const TOOL_PAGES = { "o-batiment": toolBatiment, "o-ssi": toolSSI, "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
 
   function notFound() {
     return { html: `<div class="page-h"><h1>Page introuvable</h1><p>Ce lien ne correspond à aucune page du mémo.</p></div><p><a class="btn" href="#accueil">${icon("accueil")}Retour à l’accueil</a></p>`, title: "Page introuvable", tab: "" };
@@ -30828,7 +30879,7 @@ function jChar(o = {}) {
       case "bat-go": prefill.bat = b.dataset.q; go("o-batiment"); break;
       case "bat-find": batSearch($("#bat-q").value); break;
       case "bat-gps": batGps(); break;
-      case "fiche-job": { BAT.fi.job = b.dataset.j || "1"; ficheOutDraw(); break; }
+      case "fiche-job": { BAT.fi.job = b.dataset.j || "1"; store.set("fi-job", BAT.fi.job); [...$$(".fiche-job")].forEach((el) => (el.innerHTML = ficheJobBar().replace(/^<div[^>]*>|<\/div>$/g, ""))); ficheOutDraw(); if (typeof ssiDraw === "function") ssiDraw(); break; }
       case "bat-photo": { const on = !store.get("bat-photo", 0); store.set("bat-photo", on ? 1 : 0); if (on && !PRIV.reseauOk()) { batGate(() => batDraw()); break; } batDraw(); break; }
       case "bat-geo-on": case "bat-geo-off": { store.set("bat-geo", b.dataset.act === "bat-geo-on" ? 1 : 0); if (b.dataset.act === "bat-geo-on" && !PRIV.reseauOk()) { batGate(() => { if (BAT.pt) batLoad(); }); break; } if (BAT.pt && !BAT.busy) batLoad(); else batDraw(); break; }
       case "bat-net": { const f = BAT.gate; BAT.gate = null; PRIV.set("reseau", true); if (f) f(); break; }

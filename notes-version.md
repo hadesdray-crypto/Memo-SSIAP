@@ -1,3 +1,6 @@
+- Nouvelle section « SSI, DAS et compartimentage » (Outils) : par type et catégorie, le système de sécurité incendie, l’alarme et la temporisation, la détection, les DAS et le compartimentage, le désenfumage, l’éclairage de sécurité, chaque règle avec son article et sa certitude, et les cours SSI en lien
+- Mon bâtiment : le statut SSIAP 1, 2 ou 3 se choisit tout en haut, avant la recherche, et il est gardé pour la fiche et la section SSI
+- Fiche métier plus lisible : icônes par thème, légende des pastilles de certitude, résumé du poste, bloc « Calculé pour ce bâtiment » en premier
 - Fiche métier : plus de 1700 règles (ajout de 380 règles : DAS, SSI, types J O U R S T V W X Y, parcs de stationnement, chapiteaux, structures gonflables…), toutes avec un extrait vérifié mot pour mot dans les textes
 - Fiche métier : le type, la catégorie et l’effectif viennent du bâtiment trouvé ; bloc « Calculé pour ce bâtiment » (niveaux, effectif, extincteurs, dégagements, résistance au feu, distance au voisin, service de sécurité des magasins)
 - Fiche métier : chaque calcul est marqué « Règle vérifiée sur le texte » ou « Approximatif : à préciser » quand il repose sur une surface, un nombre de niveaux ou une hauteur estimés
