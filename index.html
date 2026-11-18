@@ -32015,6 +32015,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   const APK_VERSION = 0; /* remplacé à la fabrication de l'APK */
   const DEPOT = "https://github.com/hadesdray-crypto/memo-ssiap";
   const API_REL = "https://api.github.com/repos/hadesdray-crypto/memo-ssiap/releases/latest";
+  const VERSION_URL = "https://raw.githubusercontent.com/hadesdray-crypto/Memo-SSIAP/maj/version.json";
   const LIEN_APK = DEPOT + "/releases/latest/download/memo-ssiap.apk";
   const pont = () => window.Capacitor;
   const modDispo = (n) => { const c = pont(); return !!(c && ((c.Plugins && n in c.Plugins) || (c.isPluginAvailable && c.isPluginAvailable(n)) || (c.PluginHeaders && c.PluginHeaders.some((h) => h.name === n)))); };
@@ -32031,11 +32032,12 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (!PRIV.reseauOk()) { if (manuel) toast("La connexion est désactivée : activez-la avec l’icône en haut de l’écran."); return; }
     MAJ.verif = "en-cours"; majDessiner();
     try {
-      const ac = new AbortController(), t = setTimeout(() => ac.abort(), 15000);
-      const r = await fetch(API_REL, { cache: "no-store", signal: ac.signal });
-      clearTimeout(t);
-      if (!r.ok) throw new Error(String(r.status));
-      const rel = await r.json(), n = Number(String(rel.tag_name || "").replace(/\D/g, ""));
+      /* 1) petit fichier de version (pas de limite d'appels) ; 2) sinon l'API GitHub (limitée à 60 appels par heure et par réseau). */
+      const get = async (u) => { const ac = new AbortController(), t = setTimeout(() => ac.abort(), 15000); try { const r = await fetch(u, { cache: "no-store", signal: ac.signal }); if (!r.ok) throw new Error(String(r.status)); return await r.json(); } finally { clearTimeout(t); } };
+      let rel = null;
+      try { const v = await get(VERSION_URL + "?t=" + Date.now()); if (v && v.v) rel = { tag_name: "android-" + v.v, body: (v.notes || []).map((x) => "- " + x).join("\n") + "\nweb.zip sha256 : " + (v.sha256 || ""), assets: [{ name: "web.zip", size: v.taille || 0 }] }; } catch (e) { /* on essaie l'API */ }
+      if (!rel) rel = await get(API_REL);
+      const n = Number(String(rel.tag_name || "").replace(/\D/g, ""));
       /* Liste de ce qui change : les lignes à puces des notes de version publiées avec l'APK (la ligne technique sha256 est écartée). */
       MAJ.notes = String(rel.body || "").split("\n").map((l) => l.trim()).filter((l) => /^[-•*] /.test(l) && !/sha256/i.test(l)).map((l) => l.replace(/^[-•*] /, "")).slice(0, 14);
       const zip = (rel.assets || []).find((a) => a.name === "web.zip");

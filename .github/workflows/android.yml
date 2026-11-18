@@ -117,3 +117,22 @@ jobs:
 
           web.zip sha256 : $(sha256sum web.zip | cut -d' ' -f1)" \
             --latest
+      - name: Publier le petit fichier de version (lu par l'appli, sans limite de l'API GitHub)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHA=$(sha256sum web.zip | cut -d' ' -f1)
+          TAILLE=$(stat -c %s web.zip)
+          python3 - "$SHA" "$TAILLE" <<'PY'
+          import json, sys, re
+          notes = []
+          try:
+              notes = [l.strip()[2:] for l in open("notes-version.md", encoding="utf-8") if re.match(r"^\s*[-*] ", l)][:14]
+          except FileNotFoundError:
+              pass
+          json.dump({"v": ${{ github.run_number }}, "sha256": sys.argv[1], "taille": int(sys.argv[2]), "notes": notes}, open("/tmp/version.json", "w", encoding="utf-8"), ensure_ascii=False)
+          PY
+          D=$(mktemp -d); cd "$D"; git init -q -b maj
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          cp /tmp/version.json .; git add version.json; git commit -qm "Version ${{ github.run_number }}"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" maj

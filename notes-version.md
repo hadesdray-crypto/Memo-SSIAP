@@ -1,3 +1,4 @@
+- Mises à jour plus fiables : l’appli lit d’abord un petit fichier de version, qui n’est pas soumis à la limite d’appels de GitHub (sur le réseau mobile, cette limite pouvait empêcher la proposition de mise à jour)
 - Mon bâtiment, correction importante : le bâtiment est maintenant celui officiellement rattaché à l’adresse dans le Référentiel national des bâtiments (RNB) ; avant, le point de l’adresse pouvait tomber sur une petite construction voisine (abri, garage) et la fiche donnait les règles du mauvais bâtiment
 - Mon bâtiment par la position : le bâtiment qui contient la position est choisi, sans compter les petites constructions, puis son adresse officielle est retrouvée automatiquement ; si plusieurs vrais bâtiments sont dans la marge d’erreur de la position, l’appli ne devine pas et demande l’adresse une seule fois, puis la retient
 - Mon bâtiment : « 4bis » et « 4 bis » sont reconnus de la même façon
