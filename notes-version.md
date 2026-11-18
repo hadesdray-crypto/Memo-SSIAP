@@ -1,3 +1,4 @@
+- Fiche métier SSIAP 1, 2, 3 : placée juste sous la recherche d’adresse, avant le dossier du bâtiment
 - Fiche métier SSIAP : visible dès l’ouverture de « Mon bâtiment », sans avoir à chercher une adresse (choisir le type et la catégorie suffit)
 - Mon bâtiment : nouvelle « Fiche métier » SSIAP 1, 2 et 3 sous le calcul : par type et catégorie, ce qu’il faut connaître (service de sécurité, extincteurs, RIA, alarme, SSI, détection, désenfumage, éclairage, dégagements, registre, visites…)
 - Fiche métier : chaque règle porte son article, un extrait du texte et son degré de certitude ; fonctionne hors connexion ; choix neuf ou existant

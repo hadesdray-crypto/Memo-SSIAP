@@ -30436,12 +30436,12 @@ function jChar(o = {}) {
         <div class="grid3">${numField("bat-s", "Surface accessible au public (m²)", "Préremplie avec la surface de plancher estimée si vous laissez vide.", "decimal")}${numField("bat-e", "Effectif connu", "Si vous le connaissez, il remplace le calcul.")}${numField("bat-p", "Personnel")}</div>
       </div></details>
       <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
+      <div id="bat-fiche"></div>
       <div id="bat-geo"></div>
       <div id="bat-actions"></div>
       <div id="bat-dossier"></div>
       <div id="bat-3d"></div>
       <div id="bat-calc" aria-live="polite"></div>
-      <div id="bat-fiche"></div>
       <div id="bat-saved"></div>
       ${toolFoot(["effectif", "degagements", "extincteurs-regles", "igh"], "Les données du bâtiment viennent de bases ouvertes : elles servent à gagner du temps, jamais à valider une conformité. Une connexion est nécessaire pour chercher ; un dossier gardé s’ouvre sans connexion.")}`;
     const after = () => {
