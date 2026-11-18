@@ -30436,9 +30436,12 @@ function jChar(o = {}) {
       if (cle && cc) {
         try {
           const sel = "batiment_groupe_id,surface_emprise_sol,nb_niveau,annee_construction,mat_mur_txt,mat_toit_txt,usage_principal_bdnb_open,fiabilite_emprise_sol,fiabilite_hauteur,nb_log,alea_sismique,alea_radon,alea_argile,alea_debordement,alea_ruissellement,alea_submersion_marine,distance_monument_historique,denomination_monument_historique,perimetre_bat_historique,l_parcelle_id";
-          const b = await batTimeout(`https://api.bdnb.io/v1/bdnb/donnees/batiment_groupe_complet?code_commune_insee=eq.${encodeURIComponent(cc)}&cle_interop_adr_principale_ban=eq.${encodeURIComponent(cle)}&select=${sel}&limit=1`);
-          BAT.bdnb = b && b[0] ? b[0] : null;
-          if (!BAT.bdnb) BAT.bdnbNote = BAT.bdnbNote || "Cette adresse n’est pas dans la base nationale des bâtiments.";
+          const b = await batTimeout(`https://api.bdnb.io/v1/bdnb/donnees/batiment_groupe_complet?code_commune_insee=eq.${encodeURIComponent(cc)}&cle_interop_adr_principale_ban=eq.${encodeURIComponent(cle)}&select=${sel}&limit=10`);
+          /* Une adresse peut porter plusieurs bâtiments dans cette base : on garde celui dont l'emprise correspond au bâtiment trouvé (30 % d'écart au plus), jamais un autre. */
+          const L = (b || []).filter((x) => x && x.surface_emprise_sol);
+          const ok = L.map((x) => ({ x, e: Math.abs(x.surface_emprise_sol - BAT.main.aire) / Math.max(1, BAT.main.aire) })).filter((o) => o.e <= 0.3).sort((p, q) => p.e - q.e);
+          BAT.bdnb = ok.length ? ok[0].x : (L.length === 0 && b && b.length === 1 ? b[0] : null);
+          if (!BAT.bdnb) BAT.bdnbNote = BAT.bdnbNote || (L.length ? "La base nationale des bâtiments a " + L.length + " bâtiment(s) à cette adresse, mais aucun ne correspond au bâtiment trouvé : ses données ne sont pas utilisées." : "Cette adresse n’est pas dans la base nationale des bâtiments.");
         } catch (e) { BAT.bdnbNote = "La base nationale des bâtiments n’a pas répondu : seules les données de l’IGN sont affichées."; }
       }
       BAT.urba = null; BAT.urbaNote = "";
@@ -30609,6 +30612,7 @@ function jChar(o = {}) {
     if (b.surface_emprise_sol && m.aire && Math.abs(b.surface_emprise_sol - m.aire) / Math.max(1, b.surface_emprise_sol) > 0.3) add("Écart entre les deux sources", "Contour IGN : " + fmtN(m.aire) + NB + "m² contre " + fmtN(b.surface_emprise_sol) + NB + "m² : vérifiez sur place", "Calculé", "estime");
     add("Hauteur", m.h != null ? fmtN(m.h) + NB + "m" + (hErr != null ? " (± " + fmtN(hErr) + NB + "m)" : " (marge non publiée)") : null, "IGN");
     add("Nombre de niveaux", niv != null ? niv + (nEst && nMin !== nMax ? " (entre " + nMin + " et " + nMax + ")" : "") : null, nivSrc + (nEst ? " : hypothèse de 2,5 à 4 m par niveau, à vérifier" : ""), nivK);
+    add("Sous-sols", "Non publié : aucune base ouverte ne donne les sous-sols, à renseigner sur place", "IGN, base nationale des bâtiments", "estime");
     add("Surface de plancher (estimation)", plancher ? fmtN(plancher) + NB + "m²" + (inc ? " (taux d’approximation non connu)" : " (entre " + fmtN(pMin) + " et " + fmtN(pMax) + NB + "m², environ ± " + pct + NB + "%)") : null, "Calculé : surface au sol × niveaux. " + margeNote, "estime");
     add("Année de construction", b.annee_construction, "Base nationale des bâtiments");
     add("Usage", b.usage_principal_bdnb_open || (m.usage && !/indiff/i.test(m.usage) ? m.usage : ""), b.usage_principal_bdnb_open ? "Base nationale des bâtiments" : "IGN");
