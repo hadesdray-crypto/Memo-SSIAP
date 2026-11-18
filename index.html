@@ -1455,6 +1455,12 @@ details summary { cursor: pointer; }
 .suj-d { border: 1px solid var(--line, rgba(127,127,127,.25)); border-radius: 12px; padding: 8px 10px; margin: 8px 0; }
 .suj-d > summary, .suj-more > summary { cursor: pointer; padding: 6px 0; }
 .suj-more { margin-top: 6px; }
+.syn-wrap { overflow: auto; max-height: 62vh; max-height: 62dvh; border: 1px solid var(--sv-line); border-radius: 14px; touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; background: var(--surface); }
+.syn-svg { display: block; height: auto; }
+.syn-act { animation: ssimp 1.1s ease-in-out infinite; }
+.syn-flow { stroke-dasharray: 10 8; animation: synf .8s linear infinite; }
+@keyframes synf { to { stroke-dashoffset: -36; } }
+@media (prefers-reduced-motion: reduce) { .syn-act, .syn-flow { animation: none; } }
 </style>
 </head>
 <body>
@@ -31226,6 +31232,108 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     o += (hl || []).filter((id) => SIMEL[id]).map((id) => { const x = id === "agent" ? (s.agent === "zone" ? 146 : tab ? 168 : 200) : id === "diff" && !tab && SIM.i >= 0 && false ? 0 : SIMEL[id][0]; const y = id === "agent" ? (s.agent === "zone" ? 142 : 314) : SIMEL[id][1] + (SIMEL[id][1] < 175 ? 14 : 30); return `<circle class="ssim-ring" cx="${x}" cy="${y}" r="17"/>`; }).join("");
     return `<svg class="schema ssim-svg" viewBox="0 0 360 362" role="img" aria-label="Schéma du SSI : étage et poste de sécurité" xmlns="http://www.w3.org/2000/svg">${o}</svg>`;
   }
+  /* ---------- Synoptique du SSI : toute l'installation en un grand schéma, à parcourir (glisser, zoom) ---------- */
+  Object.assign(SIMEL, {
+    uga: [520, 150, "UGA : unité de gestion d’alarme", "Partie du CMSI qui reçoit l’information des déclencheurs manuels ou du SDI et lance le processus d’alarme : temporisation, puis alarme générale."],
+    us: [520, 240, "US : unité de signalisation", "Partie du CMSI qui montre par des voyants si chaque DAS est en attente ou en sécurité, et les défauts (alimentation…)."],
+    ucmc: [520, 330, "UCMC : commande centralisée à la main", "Partie du CMSI avec laquelle l’agent commande les DAS à la main, depuis le poste."],
+    dac: [700, 300, "DAC : dispositif adaptateur de commande", "Il reçoit l’ordre de mise en sécurité et le transmet aux DAS dans la forme qu’ils comprennent (relayage)."],
+    ea: [345, 145, "Équipement d’alarme", "Il fait sonner l’alarme générale. Son type (1, 2a, 2b, 3 ou 4) est fixé par le règlement du bâtiment (MS 62)."],
+    dcs: [520, 240, "DCS : dispositif de commande avec signalisation", "En catégorie C : les commandes des DAS regroupées, avec des voyants, et une entrée qui permet à l’équipement d’alarme de déclencher les DAS."],
+    dcmr: [520, 240, "DCMR : dispositif de commandes manuelles regroupées", "En catégorie D : toutes les commandes manuelles des DAS regroupées au même endroit, chacune utilisable seule."],
+    dcm: [520, 240, "DCM : dispositif de commande manuelle", "En catégorie E : un boîtier de commande à la main pour un ou plusieurs DAS."],
+  });
+  const SYNG = { W: 1100, H: 700 };
+  function synSvg(s, hl, c) {
+    const T = (x, y, t, cl = "sts", a = "start") => `<text x="${x}" y="${y}" class="${cl}" text-anchor="${a}">${t}</text>`;
+    const tab = simTab(c), hasDet = c.ssi === "A", hasC = c.ssi === "A" || c.ssi === "B", spk = SIM.ev === "sprink";
+    const cmd = c.ssi === "C" ? "dcs" : c.ssi === "D" ? "dcmr" : c.ssi === "E" ? "dcm" : "";
+    const H = new Set(hl || []);
+    const dasIds = ["door", "clapet", "vent", "volet", "issue"];
+    if (hasC && dasIds.some((x) => H.has(x))) { H.add("cmsi"); H.add("dac"); }
+    if (cmd && dasIds.some((x) => H.has(x))) { H.add(cmd); H.add("dac"); }
+    if (H.has("diff")) { if (hasC) { H.add("cmsi"); H.add("uga"); } else H.add("ea"); }
+    if (H.has("cmsi") && s.tempo) H.add("uga");
+    if (H.has("ecs") && hasC && (s.ecs === "feu")) H.add("uga");
+    const on = (id) => H.has(id);
+    const N = {}; let o = "";
+    const box = (id, x, y, w, h, title, sub, st, fill) => {
+      N[id] = [x, y, w, h];
+      const act = on(id), f = fill || "var(--sv-panel)";
+      o += `<g data-act="ssi-el" data-v="${id}" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${f}" stroke="${act ? "var(--sv-red)" : "var(--sv-ink-2)"}" stroke-width="${act ? 4 : 1.6}"${act ? ' class="syn-act"' : ""}/>`
+        + T(x + 12, y + 24, title, "stb") + (sub ? T(x + 12, y + 44, sub, "sts") : "") + (st ? `<rect x="${x + 10}" y="${y + h - 30}" width="${w - 20}" height="22" rx="11" fill="${st[1]}"/>` + T(x + w / 2, y + h - 14, st[0], "stw-b", "middle") : "") + `</g>`;
+    };
+    const G = (x, y, w, h, t) => { o += `<rect class="s-group" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/>` + T(x + 14, y + 22, t, "s-group-t"); };
+    const RED = "var(--sv-red)", GRN = "var(--sv-green)", YEL = "#b7791f", GRY = "var(--sv-metal)", BLU = "var(--sv-blue)";
+    /* Zones */
+    G(8, 8, 232, 684, "TERRAIN · DÉTECTER");
+    G(252, 8, 368, 684, "POSTE DE SÉCURITÉ · DÉCIDER");
+    G(632, 8, 460, 684, "TERRAIN · METTRE EN SÉCURITÉ");
+    /* Feu */
+    if (s.fire) o += `<g data-act="ssi-el" data-v="fire" style="cursor:pointer"><rect x="20" y="600" width="208" height="80" rx="12" fill="var(--red-tint)" stroke="var(--sv-red)" stroke-width="2"/><path d="M52 668 q-8 -26 14 -46 q-2 16 10 20 q4 -12 -2 -22 q26 18 14 48 Z" fill="var(--sv-flame)" stroke="var(--sv-red-dark)"/>${T(100, 636, "FEU", "stb")}${T(100, 656, "bureau, zone 3", "sts")}</g>`;
+    /* Détection */
+    if (hasDet) box("det", 20, 100, 208, 110, "Détecteurs auto.", "zone 3 · fumée, chaleur", s.det ? ["ACTIVÉ", RED] : ["veille", GRN]);
+    else { N.det = null; o += `<rect x="20" y="100" width="208" height="110" rx="12" fill="none" stroke="var(--sv-line)" stroke-dasharray="6 5"/>` + T(32, 130, "Pas de détection", "st") + T(32, 150, "automatique dans", "sts") + T(32, 165, "ce SSI", "sts"); }
+    box("dm", 20, 240, 208, 110, "Déclencheurs manuels", "boîtiers rouges, ≈ 1,30 m", s.dm ? ["APPUYÉ", RED] : ["veille", GRN]);
+    if (spk) box("spk", 20, 380, 208, 100, "Tête de sprinkleur", "s’ouvre à la chaleur", s.spk === "open" ? ["ARROSE", BLU] : ["fermée", GRN]);
+    /* Poste */
+    if (tab) box("ecs", 266, 100, 160, 130, hasDet ? "ECS · tableau" : "Tableau d’alarme", hasDet ? "SDI : reçoit et affiche" : "type " + c.al, s.ecs === "feu" ? ["FEU ZONE 3", RED] : s.ecs === "derang" ? ["DÉRANGEMENT", YEL] : s.ecs === "secteur" ? ["DÉFAUT ALIM.", YEL] : ["veille", GRN]);
+    if (hasC) {
+      N.cmsi = [440, 90, 170, 340];
+      o += `<g data-act="ssi-el" data-v="cmsi" style="cursor:pointer"><rect x="440" y="90" width="170" height="340" rx="14" fill="none" stroke="${on("cmsi") ? RED : "var(--sv-ink)"}" stroke-width="${on("cmsi") ? 4 : 2}"${on("cmsi") ? ' class="syn-act"' : ""}/>${T(525, 82, "CMSI · centralisateur", "stb", "middle")}</g>`;
+      box("uga", 452, 104, 146, 92, "UGA", "gestion de l’alarme", s.ag ? ["ALARME GÉN.", RED] : s.tempo ? ["TEMPO ≤ 5 min", YEL] : ["veille", GRN]);
+      box("us", 452, 206, 146, 100, "US", "voyants des DAS", s.us === "attente" ? ["attente", GRN] : s.us === "clign" ? ["DÉFAUT POS.", YEL] : ["SÉCURITÉ", RED]);
+      box("ucmc", 452, 316, 146, 100, "UCMC", "commandes à la main", null);
+    } else if (cmd) box(cmd, 440, 180, 170, 140, cmd.toUpperCase(), cmd === "dcs" ? "commandes + voyants" : "commandes à la main", null);
+    if (!hasC && !tab) box("ea", 266, 100, 160, 130, "Alarme type " + c.al, c.al === "3" ? "blocs autonomes (Ma)" : "dispositif autonome", s.ag ? ["SONNE", RED] : ["veille", GRN]);
+    if (!hasC && tab) { N.ea = N.ecs; }
+    if (tab) box("aes", 440, 470, 170, 110, "AES", "alimente tableau et CMSI", s.power === "on" ? ["secteur OK", GRN] : ["SUR BATTERIES", YEL]);
+    box("agent", 266, 300, 160, 100, "Agent SSIAP", s.agent === "zone" ? "parti en levée de doute" : "au poste", null, s.agent === "zone" ? "var(--amber-tint)" : null);
+    box("pomp", 266, 450, 160, 90, "Pompiers", "18 ou 112", s.pomp ? ["ALERTÉS", RED] : null);
+    if (spk) box("pc", 20, 490, 208, 100, "Poste de contrôle", "sprinkleurs · cloche", s.cloche ? ["EAU COULE", RED] : ["veille", GRN]);
+    /* Mise en sécurité */
+    const dasLinked = hasC || !!cmd;
+    if (dasLinked) box("dac", 644, 250, 120, 110, "DAC", "relayage", null);
+    const dz = (id, y, t, sub, attente, secu, isSec) => box(id, 790, y, 290, 74, t, sub, isSec ? [secu, RED] : [attente, GRN]);
+    dz("door", 30, "Porte coupe-feu", "DAS compartimentage", "ouverte", "FERMÉE", s.door === "closed");
+    if (s.door === "stuck") o += T(1076, 54, "BLOQUÉE PAR UNE CALE", "stb", "end");
+    dz("clapet", 114, "Clapet coupe-feu", "DAS compartimentage", "ouvert", "FERMÉ", s.clapet === "closed");
+    dz("vent", 198, "Ventilation", "arrêt technique", "marche", "ARRÊTÉE", s.vent === "off");
+    dz("volet", 282, "Volet de désenfumage", "DAS désenfumage · couloir", "fermé", "OUVERT", s.volet === "open");
+    dz("exu", 366, "Exutoire d’escalier", "commande uniquement manuelle", "fermé", "OUVERT", s.exu === "open");
+    dz("issue", 450, "Issue de secours", "DAS évacuation", "verrouillée", "DÉVERROUILLÉE", s.issue === "unlock");
+    box("diff", 790, 560, 290, 110, "Diffuseurs sonores + flash", "alarme générale : évacuer", s.ag ? ["SONNENT", RED] : ["silence", GRN]);
+    /* Câbles */
+    const mid = (id, side) => { const b = N[id]; if (!b) return null; return side === "r" ? [b[0] + b[2], b[1] + b[3] / 2] : side === "l" ? [b[0], b[1] + b[3] / 2] : side === "t" ? [b[0] + b[2] / 2, b[1]] : [b[0] + b[2] / 2, b[1] + b[3]]; };
+    const L = [];
+    const link = (a, sa, b, sb, act, dash) => { const p = mid(a, sa), q = mid(b, sb); if (!p || !q) return; const mx = (p[0] + q[0]) / 2; L.push(`<path d="M${p[0]} ${p[1]} C${mx} ${p[1]} ${mx} ${q[1]} ${q[0]} ${q[1]}" fill="none" stroke="${act ? RED : "var(--sv-line)"}" stroke-width="${act ? 4 : 2}"${dash ? ' stroke-dasharray="8 6"' : ""}${act ? ' class="syn-flow"' : ""}/>`); };
+    const both = (a, b) => on(a) && on(b);
+    if (hasDet) link("det", "r", "ecs", "l", both("det", "ecs"));
+    if (tab) link("dm", "r", hasC && !hasDet ? "uga" : "ecs", "l", on("dm") && (on("ecs") || on("uga")));
+    else link("dm", "r", "ea", "l", on("dm") && on("ea"));
+    if (hasC && tab && hasDet) link("ecs", "r", "uga", "l", both("ecs", "uga") || both("ecs", "cmsi"));
+    if (hasC) { link("uga", "r", "diff", "l", both("uga", "diff")); link("ucmc", "r", "dac", "l", both("cmsi", "dac")); }
+    if (!hasC && tab) link("ecs", "b", "diff", "l", both("ecs", "diff") || on("diff"));
+    if (!hasC && !tab) link("ea", "r", "diff", "l", on("diff"));
+    if (cmd) { link(cmd, "r", "dac", "l", both(cmd, "dac"), c.ssi !== "C"); if (c.ssi === "C" && tab) link("ecs", "r", cmd, "l", on("ecs") && on(cmd), true); }
+    if (dasLinked) ["door", "clapet", "vent", "volet", "issue"].forEach((d) => link("dac", "r", d, "l", on("dac") && on(d)));
+    if (!dasLinked && (c.ssi === "")) o += T(785, 545, "Pas de SSI catégorisé : les DAS ne sont pas reliés à l’alarme.", "sts", "end");
+    if ((c.ssi === "D" || c.ssi === "E")) { link(tab ? "ecs" : "ea", "r", "door", "l", on("door") && (on("ecs") || on("ea") || on("diff")), true); link(tab ? "ecs" : "ea", "r", "issue", "l", on("issue") && (on("ecs") || on("ea") || on("diff")), true); }
+    if (tab) link("aes", "t", hasC ? "ucmc" : cmd || "ecs", hasC || cmd ? "b" : "r", on("aes"));
+    link(tab ? "ecs" : "ea", "b", "agent", "t", on("agent") && (on("ecs") || on("ea")));
+    link("agent", "b", "pomp", "t", on("pomp"));
+    if (spk) { link("spk", "b", "pc", "t", on("spk") && on("pc")); link("pc", "r", "agent", "l", on("pc")); }
+    o = L.join("") + o;
+    o += (hl || []).filter((id) => N[id]).map((id) => { const b = N[id]; return `<rect class="ssim-ring" x="${b[0] - 6}" y="${b[1] - 6}" width="${b[2] + 12}" height="${b[3] + 12}" rx="16"/>`; }).join("");
+    SYNG.N = N;
+    return `<svg class="schema syn-svg" viewBox="0 0 ${SYNG.W} ${SYNG.H}" style="width:${Math.round(SYNG.W * (SIM.z || 0.8))}px;max-width:none" role="img" aria-label="Synoptique du SSI" xmlns="http://www.w3.org/2000/svg">${o}</svg>`;
+  }
+  function synScroll() {
+    const w = $("#syn-wrap"), st = SIM.steps[SIM.i]; if (!w || !st || !SYNG.N) return;
+    const id = (st.hl || []).find((x) => SYNG.N[x]); if (!id) return;
+    const b = SYNG.N[id], z = SIM.z || 0.8;
+    w.scrollTo({ left: Math.max(0, (b[0] + b[2] / 2) * z - w.clientWidth / 2), top: Math.max(0, (b[1] + b[3] / 2) * z - w.clientHeight / 2), behavior: "smooth" });
+  }
   function simOut() {
     const c = simCfg(), evs = SIMEV.filter((e) => simEvOk(e, c));
     if (Array.isArray(c.r) || c.r === null || c.r === "non") { if (!evs.some((e) => e[0] === SIM.ev)) SIM.ev = evs[0][0]; }
@@ -31252,7 +31360,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         <label class="field"><span>${tx("Événement")}</span><select id="ssim-ev">${evs.map((e) => `<option value="${e[0]}"${SIM.ev === e[0] ? " selected" : ""}>${e[1]}</option>`).join("")}</select></label>
         <div class="chips"><button type="button" class="btn${SIM.mode === "voir" ? "" : " ghost"}" data-act="ssi-sim" data-v="m-voir">${icon("oeil")}${tx("Regarder")}</button><button type="button" class="btn${SIM.mode === "jeu" ? "" : " ghost"}" data-act="ssi-sim" data-v="m-jeu">${icon("quiz")}${tx("Jouer (questions)")}</button></div>
       </div>
-      <div id="ssim-svg">${simSvg(s, step ? step.hl : [], c)}</div>
+      <div class="chips"><button type="button" class="btn${SIM.view !== "plan" ? "" : " ghost"}" data-act="ssi-sim" data-v="v-syn">${tx("Schéma du SSI")}</button><button type="button" class="btn${SIM.view === "plan" ? "" : " ghost"}" data-act="ssi-sim" data-v="v-plan">${tx("Plan de l’étage")}</button>${SIM.view !== "plan" ? `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="z-" aria-label="Dézoomer">−</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z+" aria-label="Zoomer">+</button>` : ""}</div>
+      ${SIM.view !== "plan" ? `<p class="small muted">${tx("Faites glisser le schéma avec le doigt pour vous déplacer ; touchez un élément pour savoir à quoi il sert.")}</p><div id="syn-wrap" class="syn-wrap">${synSvg(s, step ? step.hl : [], c)}</div>` : `<div id="ssim-svg">${simSvg(s, step ? step.hl : [], c)}</div>`}
       ${el}
       <div class="chips ssim-bar"><button type="button" class="btn" data-act="ssi-sim" data-v="go">${icon("lecture")}${SIM.i < 0 ? tx("Démarrer") : tx("Recommencer")}</button>
       <button type="button" class="btn ghost" data-act="ssi-sim" data-v="prev"${SIM.i <= 0 ? " disabled" : ""}>${icon("precedent")}${tx("Précédent")}</button>
@@ -31260,7 +31369,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       <button type="button" class="btn ghost" data-act="ssi-sim" data-v="auto"${SIM.i < 0 ? " disabled" : ""}>${icon(SIM.play ? "pause" : "lecture")}${SIM.play ? tx("Pause") : tx("Lecture auto")}</button></div>
       <div class="result" aria-live="polite">${info}</div>`;
   }
-  function simDraw() { const el = $("#ssim"); if (el) el.innerHTML = simOut(); }
+  function simDraw() { const w = $("#syn-wrap"), keep = w ? [w.scrollLeft, w.scrollTop] : null; const el = $("#ssim"); if (el) el.innerHTML = simOut(); const w2 = $("#syn-wrap"); if (w2 && keep) { w2.scrollLeft = keep[0]; w2.scrollTop = keep[1]; } if (w2) setTimeout(synScroll, 30); }
   function simSay() {
     const st = SIM.steps[SIM.i];
     if (!st) return;
@@ -31276,6 +31385,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     else if (v === "next") { if (!auto && SIM.mode === "voir") SIM.play = false; if (SIM.i < SIM.steps.length - 1) { SIM.i++; SIM.pick = null; } }
     else if (v === "prev") { SIM.play = false; if (SIM.i > 0) { SIM.i--; SIM.pick = -1; } }
     else if (v === "auto") { SIM.play = !SIM.play; if (!SIM.play) { clearTimeout(SIM.tm); VX.stop(); } }
+    else if (v === "v-syn" || v === "v-plan") { SIM.view = v.slice(2); simDraw(); return; }
+    else if (v === "z+" || v === "z-") { SIM.z = Math.max(0.4, Math.min(1.6, Math.round(((SIM.z || 0.8) + (v === "z+" ? 0.2 : -0.2)) * 10) / 10)); simDraw(); return; }
     else if (v === "m-voir" || v === "m-jeu") { SIM.mode = v.slice(2); SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm); VX.stop(); }
     else if (v.startsWith("rep")) { SIM.pick = +v.slice(3); SIM.nq++; if (SIM.pick === 0) SIM.score++; }
     simDraw();
