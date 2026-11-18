@@ -30337,6 +30337,8 @@ function jChar(o = {}) {
       const all = (j.features || []).map((f) => batBuild(f, pt)).filter(Boolean);
       if (!all.length) { BAT.main = null; BAT.voisins = []; BAT.ok = false; BAT.msg = "Aucun bâtiment trouvé dans ce rayon. Augmentez le rayon ou déplacez le point."; BAT.busy = false; batDraw(); return; }
       all.sort((a, b) => (b.dedans - a.dedans) || (a.dist - b.dist));
+      if (!BAT.main || BAT.main.id !== all[0].id) { BAT.fi.type = ""; BAT.fi.cat = ""; BAT.fi.catMan = false; const ft = $("#bat-ft"), fc = $("#bat-fc"); if (ft) ft.value = ""; if (fc) fc.value = ""; const bt = $("#bat-t"); if (bt && !BAT.typeFresh) bt.value = ""; }
+      BAT.typeFresh = false;
       BAT.main = all[0]; BAT.voisins = all.slice(1, 13);
       BAT.bdnb = null; BAT.bdnbNote = "";
       let cle = BAT.cle, cc = BAT.cc;
@@ -30415,7 +30417,8 @@ function jChar(o = {}) {
     BAT.q = q;
     if (!batGate(() => batSearch(q))) return;
     const ph = batPhrase(q);
-    if (ph.type && $("#bat-t")) { $("#bat-t").value = ph.type; BAT.typeInit = ph.type; }
+    BAT.typeFresh = false;
+    if (ph.type && $("#bat-t")) { $("#bat-t").value = ph.type; BAT.typeInit = ph.type; BAT.typeFresh = true; }
     if (!ph.place) { BAT.msg = "Donnez une adresse, une ville ou un quartier, ou touchez « Ma position »."; BAT.cands = []; batDraw(); return; }
     BAT.busy = true; BAT.ok = false; BAT.msg = "Recherche en cours : adresse…"; batDraw();
     try {
@@ -30857,6 +30860,7 @@ function jChar(o = {}) {
     return ch;
   }
 
+  let SSF = { type: "", cat: "", som: false, sub: false, ne: "", job: "1" };
   /* ===== Section SSI, DAS et compartimentage ===== */
   const SSI_SEC = [
     ["SSI", "Le système de sécurité incendie exigé", "cloche", (r) => r.h === "SSI"],
@@ -30867,7 +30871,7 @@ function jChar(o = {}) {
     ["eclairage", "Éclairage de sécurité", "etincelle", (r) => r.h === "eclairage"],
   ];
   function ssiOut() {
-    const f = BAT.fi;
+    const f = SSF;
     if (!f.type) return `<p class="muted">${tx("Choisissez le type d’établissement pour afficher ce que les textes imposent.")}</p>`;
     const keep = FICHE_R.filter((r) => ficheKey(r, f));
     let out = `<div class="result"><p><strong>${icon("badge")} ${tx("SSIAP " + f.job + " · type " + f.type + (f.cat ? " · " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : " · toutes catégories"))}</strong></p>${ficheLegend()}</div>`;
@@ -30964,7 +30968,7 @@ function jChar(o = {}) {
   }
   const reqLab = (v) => (SSI_LAB[v.ssi] || SSI_LAB[""]) + " · " + AL_LAB(v.al) + (v.ags ? " avec alarme générale sélective" : "");
   function simCfg() {
-    const f = BAT.fi, r = ssiReq(f.type, f.cat, f.som);
+    const f = SSF, r = ssiReq(f.type, f.cat, f.som);
     if (Array.isArray(r)) {
       const v = r[Math.min(SIM.v, r.length - 1)], ssi = v.ssi === "CDE" ? SIM.cde : v.ssi;
       return { r, v, ssi, al: v.al === "libre" ? "4" : v.al, libre: v.al === "libre", ags: !!v.ags, noT: v.noT || "", dmDas: !!v.dmDas, ref: v.ref };
@@ -30974,7 +30978,7 @@ function jChar(o = {}) {
   const simTab = (c) => ["1", "2a", "2b"].includes(c.al);
   const simEvOk = (e, c) => e[2] === "*" || (e[2] === "A" && c.ssi === "A") || (e[2] === "T" && simTab(c));
   function ssiReqOut() {
-    const f = BAT.fi, r = ssiReq(f.type, f.cat, f.som), c = simCfg();
+    const f = SSF, r = ssiReq(f.type, f.cat, f.som), c = simCfg();
     const man = `<label class="field"><span>${tx("Catégorie de SSI à simuler")}</span><select id="ssim-man">${Object.keys(SIMCAT).map((k) => `<option value="${k}"${SIM.man === k ? " selected" : ""}>${SIMCAT[k].l}</option>`).join("")}</select></label>`;
     if (r === null) return `<p class="small muted">${tx("Choisissez le type et la catégorie du bâtiment : le simulateur montre alors le SSI exigé par le règlement. Sans bâtiment, choisissez une catégorie de SSI :")}</p>${man}`;
     if (r === "non") return `<p class="small">${tx("Ce type n’est pas encore dans le simulateur : ses règles sont dans la liste plus bas et sur Légifrance. Vous pouvez simuler une catégorie au choix :")}</p>${man}`;
@@ -31205,7 +31209,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   ];
   const SSI_QF = new Set(SSI_COURS.flatMap((x) => x[1]));
   function toolSSI() {
-    const f = BAT.fi;
+    /* La section SSI garde ses propres choix : elle ne modifie jamais la fiche de « Mon bâtiment ». Elle reprend le bâtiment trouvé, s’il y en a un. */
+    SSF = Object.assign({}, BAT.fi, { catMan: false });
+    const f = SSF;
     const cours = SSI_COURS.map(([t, ids]) => { const ok = ids.filter((id) => FI[id]); return ok.length ? `<div class="sec"><h3 class="lbl b">${tx(t)}</h3><div class="links">${ok.map(linkCard).join("")}</div></div>` : ""; }).join("");
     const html = `${toolHead("o-ssi")}
       <div class="result" id="ssi-intro"><p><strong>${tx("1. Votre bâtiment")}</strong> <span class="small muted">${tx("tout le reste s’adapte : SSI exigé, schéma, scénarios, questions et règles")}</span></p>
@@ -31227,9 +31233,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       const t = $("#ssi-t"), c = $("#ssi-c"), m = $("#ssi-m");
       if (!t) return;
       let ch = false;
-      if (BAT.fi.type !== t.value) { BAT.fi.type = t.value; ch = true; }
-      if (BAT.fi.cat !== c.value) { BAT.fi.cat = c.value; BAT.fi.catMan = true; ch = true; }
-      if (BAT.fi.som !== m.checked) { BAT.fi.som = m.checked; ch = true; }
+      if (SSF.type !== t.value) { SSF.type = t.value; ch = true; }
+      if (SSF.cat !== c.value) { SSF.cat = c.value; ch = true; }
+      if (SSF.som !== m.checked) { SSF.som = m.checked; ch = true; }
       if (ch) { SIM.v = 0; simReset(); ssiReqDraw(); simDraw(); ssiDraw(); return; }
       simSel();
     };
