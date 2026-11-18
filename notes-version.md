@@ -1,3 +1,6 @@
+- Réanimation de l’enfant et du nourrisson : les deux présentations sont maintenant affichées avec leurs sources (5 insufflations puis 15 compressions et 2 insufflations pour le secouriste du travail et les secouristes en équipe ; 30 et 2 dans certaines formations tout public)
+- Quiz corrigé : l’explication de la question « Cycle de RCP pour un enfant de 1 à 8 ans » contredisait la bonne réponse
+- Nouvelle vérification des calculateurs sur les textes officiels (catégorie, effectif, dégagements, extincteurs, visites de commission) : aucun écart trouvé
 - Vérification complète du contenu (fiches, quiz, schémas, simulateur, règles) : corrections d’après les textes officiels (Légifrance)
 - Simulateur SSI, type J : plus aucune temporisation (articles J 36 et J 37) ; scénarios « fausse alarme », « porte calée » et « sprinkleur » corrigés quand la temporisation est interdite (J, U avec sommeil, 5e catégorie avec sommeil)
 - Section SSI : parcs de stationnement de plus de 1 000 places avec sprinkleurs en alarme de type 3 (PS 27) ; chapiteaux sans étage ajoutés (CTS 28)
