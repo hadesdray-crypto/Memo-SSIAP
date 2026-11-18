@@ -23156,7 +23156,7 @@ F({
       ["Détecteur automatique (DAI)", "Sentir un début d’incendie (fumée, chaleur, flamme) et le signaler vite (MS 56 § 2)", "Au plafond des locaux surveillés"],
       ["Déclencheur manuel (DM)", "Une personne qui voit le feu donne l’alarme en appuyant", "Dans les circulations, à chaque niveau près des escaliers, au rez-de-chaussée près des sorties, à environ 1,30 m du sol (MS 65 § 1)"],
       ["Tableau de signalisation (ECS)", "Recevoir l’information, afficher la zone, donner l’alarme restreinte (MS 66 § 2)", "Lieu non accessible au public, surveillé pendant l’exploitation (MS 66 § 1)"],
-      ["Centralisateur (CMSI)", "Commander la mise en sécurité, à partir de la détection ou d’un ordre à la main", "Au poste de sécurité ; seulement en catégories A et B"],
+      ["Centralisateur (CMSI)", "Commander la mise en sécurité, à partir de la détection ou d’un ordre à la main. Il comprend toujours une UCMC, une US et une UGA, et parfois une UGIS (gestion des issues de secours)", "Au poste de sécurité ; seulement en catégories A et B"],
       ["UCMC, US, UGA", "Parties du CMSI : commandes à la main (UCMC), voyants qui montrent la position des DAS (US), gestion de l’alarme (UGA)", "Dans le CMSI"],
       ["DAS", "Changer d’état pour protéger sur place : porte coupe-feu, clapet, volet, exutoire, déverrouillage d’issue (MS 59)", "Partout dans le bâtiment"],
       ["DCM, DCMR, DCS, DAC", "Commandes à la main et boîtiers qui transmettent les ordres aux DAS (catégories C, D, E)", "Au poste ou près des zones"],
@@ -23176,7 +23176,7 @@ F({
     { t: "links", x: ["detecteurs", "declencheur-manuel", "tableau-ssi", "das", "ssi-das-etats", "ssi-alimentation", "l1-112-ssi-detection-cmsi-das", "l1-113-ssi-commande-alarme"] },
   ],
   retenir: ["DM à environ 1,30 m ; diffuseurs à 2,25 m au moins.", "Le CMSI n’existe qu’en catégories A et B.", "Zone d’alarme ⊃ zone de mise en sécurité ⊃ zone de détection."],
-  verif: ["Vérifié sur le texte officiel : MS 54, MS 55, MS 56, MS 59, MS 64, MS 65, MS 66, MS 70, EL 3, L 16, M 32, Y 21.", "Rôles du CMSI, de l’UCMC, de l’US, de l’UGA, des DCM, DCMR, DCS, DAC et des BAAS : définis par les normes NF S 61-931 à 61-938 (payantes, éditées par l’AFNOR) ; repris de la formation SSIAP 1, non lus dans les normes."],
+  verif: ["Vérifié sur le texte officiel : MS 54, MS 55, MS 56, MS 59, MS 64, MS 65, MS 66, MS 70, EL 3, L 16, M 32, Y 21.", "Rôles du CMSI, de l’UCMC, de l’US, de l’UGA, des DCM, DCMR, DCS, DAC et des BAAS : définis par les normes NF S 61-931 à 61-938 (payantes, éditées par l’AFNOR) ; repris du livre de formation SSIAP 1."],
   src: ["ssiLegi", "nfS61"],
 });
 F({
@@ -23207,7 +23207,7 @@ F({
     { t: "links", x: ["das", "compartimentage", "desenfumage", "l1-111-ssi-definition-niveaux"] },
   ],
   retenir: ["Attente = vie normale ; sécurité = protection.", "Catégories D et E : seulement portes et issues télécommandées par l’alarme."],
-  verif: ["Vérifié sur le texte officiel : MS 60, CO 47.", "Rupture ou émission de courant, DAS autonomes ou à énergie intrinsèque, classement par fonction : définis par la norme NF S 61-937 (payante) ; repris de la formation SSIAP 1, non lus dans la norme."],
+  verif: ["Vérifié sur le texte officiel : MS 60, CO 47.", "Rupture ou émission de courant, DAS autonomes ou à énergie intrinsèque, classement par fonction : définis par la norme NF S 61-937 (payante) ; repris du livre de formation SSIAP 1."],
   src: ["ssiLegi", "nfS61"],
 });
 F({
@@ -23228,11 +23228,12 @@ F({
       "Le désenfumage mécanique est alimenté par une AES conforme à la norme NF S 61-940, sauf exceptions (DF 3 § 3).",
     ] },
     { t: "ok", x: "Voyant de défaut d’alimentation au tableau : notez l’heure en main courante, prévenez le chef d’équipe et le mainteneur. Le SSI tourne sur batteries : il ne faut pas attendre qu’elles se vident." },
-    { t: "info", x: "La durée pendant laquelle les batteries doivent tenir est fixée par la norme NF S 61-940 (payante) : elle n’est pas reprise ici." },
+    { t: "kv", x: [["Autonomie", "Les sources de sécurité doivent faire fonctionner les installations de sécurité pendant **au moins 1 heure**. C’est le temps disponible pour mettre les occupants à l’abri : il faut l’utiliser pour évacuer."]] },
+    { t: "info", x: "Le détail par appareil (durées et essais des batteries) est fixé par la norme NF S 61-940." },
     { t: "links", x: ["tableau-ssi", "pb-ssi-reamement-defauts"] },
   ],
   retenir: ["AES = le SSI marche même sans courant normal.", "Contrôle au moins une fois par semaine (MS 69)."],
-  verif: ["Vérifié sur le texte officiel : EL 3, MS 69, DF 3.", "Le voyant exact et son nom dépendent du fabricant du tableau : lisez la notice de votre site."],
+  verif: ["Vérifié sur le texte officiel : EL 3, MS 69, DF 3. Autonomie d’au moins 1 heure : livre de formation SSIAP 1.", "Le voyant exact et son nom dépendent du fabricant du tableau : lisez la notice de votre site."],
   src: ["ssiLegi", "nfS61"],
 });
 F({
@@ -23321,6 +23322,31 @@ Qs("ssi-quel-batiment", "Immeuble de grande hauteur : quel SSI ?", "Catégorie A
 Qs("ssi-quel-batiment", "Lieu de culte (type V) : quelle alarme ?", "Type 4", ["Type 1", "Type 2a"], "V 12.");
 Qs("ssi-entretien", "Pour quels SSI le contrat d’entretien est-il obligatoire ?", "Catégories A et B", ["Toutes les catégories", "Aucune"], "MS 68.");
 Qs("ssi-entretien", "Vérification par organisme agréé des SSI A et B en exploitation ?", "Tous les 3 ans", ["Tous les 5 ans", "Chaque mois"], "MS 73 § 2.");
+})();
+
+
+/* Les 20 questions d'exemple du livre SSIAP 1, reformulées, avec la bonne réponse vérifiée dans les fiches de l'appli (le livre ne donnait pas les réponses). */
+(() => { const Qb = (f, q, good, bad, x) => D.quiz.push({ q, c: [good, ...bad], a: 0, f, x });
+Qb("triangle-du-feu", "Quels sont les trois côtés du triangle du feu ?", "Combustible, comburant, énergie d’activation", ["Combustible, carburant, énergie d’activation", "Compost, comburant, énergie d’inflammation", "Fumée, flamme, chaleur"], "Il faut les trois pour qu’un feu existe.");
+Qb("extincteurs", "Quels agents extincteurs trouve-t-on dans les extincteurs d’un établissement ?", "L’eau, le CO₂ et la poudre", ["Le sable et l’huile", "L’air comprimé seul", "Uniquement la mousse"], "La couverture anti-feu existe aussi, mais c’est un moyen d’étouffement, pas un agent contenu dans un extincteur.");
+Qb("erp", "Quel texte fixe le règlement de sécurité incendie des ERP du 1er groupe ?", "L’arrêté du 25 juin 1980 modifié", ["L’arrêté du 13 novembre 1990", "L’arrêté du 25 juin 1977", "L’arrêté du 8 août 1977"], "Arrêté du 25 juin 1980 modifié (règlement de sécurité ERP).");
+Qb("degagements", "Combien mesure une unité de passage (UP) ?", "0,60 m", ["0,90 m", "1,20 m", "1,40 m"], "Une UP mesure 0,60 m ; un dégagement d’une seule UP fait au moins 0,90 m.");
+Qb("erp-classement", "Lequel de ces établissements est de type L ?", "Une salle de cinéma", ["Une librairie", "Une salle de danse", "Une prison"], "Type L : salles d’audition, de réunion, de spectacles ou à usages multiples, dont les cinémas. La salle de danse est de type P.");
+Qb("erp-classement", "Lequel de ces établissements est de type S ?", "Une bibliothèque ou un centre de documentation", ["Une école", "Une salle d’exposition", "Un hôpital"], "Type S : bibliothèques et centres de documentation. École : R ; exposition : T ; hôpital : U.");
+Qb("l1-043-voie-engins", "Comment s’appelle la voie qui permet aux véhicules de secours d’arriver jusqu’au bâtiment ?", "La voie engins", ["La voie de façade", "La voie d’approche", "La voie piétonne"], "La voie engins est utilisable par les engins des sapeurs-pompiers.");
+Qb("igh", "Qu’est-ce qu’un immeuble GHZ ?", "Un immeuble surtout d’habitation, entre 28 et 50 m, avec d’autres locaux", ["Un immeuble sanitaire", "Un immeuble de bureaux", "Un dépôt d’archives"], "GHZ : usage principal d’habitation, plancher bas du dernier niveau entre 28 et 50 m, avec des locaux d’un autre usage.");
+Qb("igh", "Qu’est-ce qu’un immeuble GHS ?", "Un immeuble de dépôt d’archives", ["Un immeuble sanitaire", "Un immeuble d’enseignement", "Un immeuble d’habitation"], "GHS : dépôt d’archives. Sanitaire : GHU ; enseignement : GHR.");
+Qb("l1-108-colonnes-montantes-humides", "À partir de quelle hauteur un IGH doit-il avoir des colonnes humides (en charge) ?", "Plus de 50 m", ["Plus de 8 m", "Plus de 28 m", "Quand la commission le décide"], "Au-delà de 50 m, les engins des pompiers ne peuvent plus refouler assez haut (GH 55).");
+Qb("igh", "Quel texte fixe le règlement de sécurité des immeubles de grande hauteur ?", "L’arrêté du 30 décembre 2011", ["L’arrêté du 25 juin 1980", "L’arrêté du 16 novembre 1986", "L’arrêté du 18 octobre 1980"], "Arrêté du 30 décembre 2011 portant règlement de sécurité des IGH.");
+Qb("igh", "Quel est le principe de base de la sécurité en IGH ?", "Le compartimentage", ["L’évacuation générale immédiate de tout l’immeuble", "La sectorisation des escaliers", "L’absence de SSI"], "L’IGH est découpé en compartiments : on évacue d’abord le compartiment sinistré vers un compartiment à l’abri.");
+Qb("detecteurs", "Lequel n’est PAS un type de détecteur automatique d’incendie ?", "Réactif", ["Optique", "Thermostatique", "Thermovélocimétrique"], "On trouve des détecteurs de fumée (optiques…), de chaleur (thermostatiques, thermovélocimétriques) et de flamme.");
+Qb("ssi", "Qu’est-ce qui caractérise un SSI de catégorie A ?", "La détection automatique d’incendie", ["Les tirez-lâchez", "La seule présence de DAS", "Une unité d’aide à l’exploitation"], "La catégorie A est la seule à comprendre un système de détection automatique (SDI).");
+Qb("ssi", "Que veut dire SDI ?", "Système de détection incendie", ["Système de déclenchement infrarouge", "Système de détection informatisé", "Sonde de détection intelligente"], "SDI = système de détection incendie.");
+Qb("l1-079-ria", "Qu’est-ce qui fait partie de tout RIA ?", "Un robinet d’arrêt et un tuyau semi-rigide sur dévidoir", ["Un surpresseur à côté de chaque RIA", "Un raccord pour les pompiers", "Un extincteur à poudre"], "Le RIA comprend le dévidoir, le robinet d’alimentation (d’arrêt), le tuyau semi-rigide et la lance.");
+Qb("pb-extincteur-gestes-distances", "À quelle distance attaque-t-on un feu avec un extincteur à poudre ?", "3 à 4 m", ["Moins de 1 m", "1 à 2 m", "5 à 6 m"], "Ordre de grandeur INRS : 3 à 4 m pour la poudre ; la notice de l’appareil prime.");
+Qb("extincteurs-regles", "À quelle fréquence les extincteurs sont-ils vérifiés ?", "Une fois par an", ["Tous les trois mois", "Tous les six mois", "Tous les dix ans"], "Vérification au moins annuelle (MS 38, MS 73).");
+Qb("extincteur-utiliser", "Vous avez prévenu le PC d’un début de feu dans le local poubelles. Ensuite ?", "Je tente l’extinction sans me mettre en danger", ["Je retourne au PC chercher des instructions", "Je vais ouvrir la voie engins", "Je rassemble le personnel pour avoir du renfort"], "Feu naissant : alerter puis attaquer avec le moyen adapté, en gardant une sortie derrière soi.");
+Qb("pb-ssi-levee-de-doute", "En ronde, on vous signale une détection. Que faites-vous ?", "Je vais lever le doute sur place", ["Je retourne au PC au plus vite", "Je continue ma ronde en attendant", "J’appelle tout de suite les pompiers"], "Exploiter l’alarme restreinte, c’est vérifier sur place s’il y a un feu (MS 61 c).");
 })();
 
 /* schemas.js */
