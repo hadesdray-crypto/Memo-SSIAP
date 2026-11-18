@@ -1,3 +1,6 @@
+- Fiche métier : plus de 1700 règles (ajout de 380 règles : DAS, SSI, types J O U R S T V W X Y, parcs de stationnement, chapiteaux, structures gonflables…), toutes avec un extrait vérifié mot pour mot dans les textes
+- Fiche métier : le type, la catégorie et l’effectif viennent du bâtiment trouvé ; bloc « Calculé pour ce bâtiment » (niveaux, effectif, extincteurs, dégagements, résistance au feu, distance au voisin, service de sécurité des magasins)
+- Fiche métier : chaque calcul est marqué « Règle vérifiée sur le texte » ou « Approximatif : à préciser » quand il repose sur une surface, un nombre de niveaux ou une hauteur estimés
 - Fiche métier SSIAP 1, 2, 3 : placée juste sous la recherche d’adresse, avant le dossier du bâtiment
 - Fiche métier SSIAP : visible dès l’ouverture de « Mon bâtiment », sans avoir à chercher une adresse (choisir le type et la catégorie suffit)
 - Mon bâtiment : nouvelle « Fiche métier » SSIAP 1, 2 et 3 sous le calcul : par type et catégorie, ce qu’il faut connaître (service de sécurité, extincteurs, RIA, alarme, SSI, détection, désenfumage, éclairage, dégagements, registre, visites…)
