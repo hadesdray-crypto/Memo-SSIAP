@@ -30328,6 +30328,41 @@ function jChar(o = {}) {
     const per = (() => { let t = 0; for (let i = 0; i < ring.length - 1; i++) t += batDist(ring[i], ring[i + 1]); return t; })();
     return { per, id: f.id || p.cleabs, rnb: p.identifiants_rnb || "", ring, c, h, aire: Math.round(batArea(ring)), nature: p.nature || "", usage: p.usage_1 || "", usage2: p.usage_2 || "", etages: p.nombre_d_etages, logements: p.nombre_de_logements, murs: p.materiaux_des_murs, toit: p.materiaux_de_la_toiture, legere: !!p.construction_legere, maj: String(p.date_modification || "").slice(0, 10), pp: p.precision_planimetrique, pa: p.precision_altimetrique, dist: pt ? Math.round(batDist(pt, c)) : 0, dedans: pt ? batInside(ring, pt[0], pt[1]) : false };
   }
+  /* Activités réellement déclarées à l'adresse (répertoire Sirene de l'INSEE, API Recherche d'entreprises, sans clé). */
+  const NAF_ERP = [[/^56\.(10|21|29|30)/, "N", "restauration ou débit de boissons"], [/^55\.(10|20|30|90)/, "O", "hôtel ou hébergement"], [/^47\./, "M", "commerce de détail"], [/^85\.(10|20|31|32|41|42|51|52|53|59|60)/, "R", "enseignement"], [/^88\.91/, "R", "accueil de jeunes enfants"], [/^86\.10/, "U", "activité hospitalière"], [/^87\.(10|20|30)/, "J", "hébergement médico-social"], [/^(90\.04|59\.14)/, "L", "salle de spectacle ou cinéma"], [/^93\.(11|13)/, "X", "installation sportive"], [/^91\.02/, "Y", "musée"], [/^91\.01/, "S", "bibliothèque ou archives"], [/^94\.91/, "V", "culte"], [/^(64\.1|84\.1|84\.2)/, "W", "banque ou administration"], [/^92\.00/, "P", "jeux de hasard"], [/^82\.30/, "T", "salons et expositions"]];
+  const SUF = { b: "bis", bis: "bis", t: "ter", ter: "ter", q: "quater", quater: "quater" };
+  const adrNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  function adrParse(s) {
+    const m = adrNorm(s).match(/(?:^| )(\d+) ?(bis|ter|quater|b|t|q)? (.+?)(?: \d{5}|$)/);
+    return m ? { n: m[1], x: m[2] ? SUF[m[2]] : "", v: m[3].replace(/^(rue|avenue|av|boulevard|bd|place|pl|chemin|allee|impasse|quai|route|cours) /, "").split(" ").filter((w) => w.length > 2 && !/^(de|du|des|la|le|les)$/.test(w)) } : null;
+  }
+  /* Activités réellement déclarées à l'adresse (répertoire Sirene de l'INSEE, API Recherche d'entreprises, sans clé) : on ne garde que les établissements ouverts au numéro exact (bis, ter compris). */
+  async function batSirene() {
+    BAT.sir = []; BAT.sirType = ""; BAT.sirNote = "";
+    const pt = BAT.adrPt || BAT.pt, A = BAT.cle && BAT.adr ? adrParse(BAT.adr) : null;
+    try {
+      const L = [];
+      for (let page = 1; page <= 6; page++) {
+        const j = await batTimeout(`https://recherche-entreprises.api.gouv.fr/near_point?lat=${pt[1]}&long=${pt[0]}&radius=${A ? 0.015 : 0.01}&per_page=25&page=${page}&limite_matching_etablissements=10`);
+        (j && j.results || []).forEach((r) => (r.matching_etablissements || []).forEach((e) => {
+          if (e.etat_administratif && e.etat_administratif !== "A") return;
+          const lat = +e.latitude, lon = +e.longitude, d = isFinite(lat) && isFinite(lon) ? Math.round(batDist(pt, [lon, lat])) : 999;
+          if (A) { const E = adrParse(e.adresse); if (!E || E.n !== A.n || E.x !== A.x || !A.v.some((w) => E.v.includes(w))) return; }
+          else if (d > 10) return;
+          const naf = String(e.activite_principale || r.activite_principale || ""), m = NAF_ERP.find((x) => x[0].test(naf));
+          const nom = (e.liste_enseignes && e.liste_enseignes[0]) || e.nom_commercial || r.nom_complet || r.nom_raison_sociale || "";
+          L.push({ nom: String(nom).slice(0, 80), naf, t: m ? m[1] : "", l: m ? m[2] : "", adr: e.adresse || "", d });
+        }));
+        if (!j || !j.total_pages || page >= j.total_pages) break;
+      }
+      const seen = new Set(); BAT.sir = L.filter((x) => { const k = x.nom + x.naf; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => (b.t ? 1 : 0) - (a.t ? 1 : 0) || a.d - b.d).slice(0, 15);
+      const ts = [...new Set(BAT.sir.filter((x) => x.t).map((x) => x.t))];
+      if (ts.length === 1) BAT.sirType = ts[0];
+      else if (ts.length > 1) BAT.sirNote = "Plusieurs activités recevant du public à cette adresse (types " + ts.join(", ") + ") : bâtiment probablement mixte, choisissez le type de la partie qui vous concerne.";
+      else if (!BAT.sir.length) BAT.sirNote = A ? "Aucune entreprise en activité déclarée à ce numéro dans Sirene : type d’établissement à choisir." : "Sans adresse choisie, les activités déclarées ne sont pas recherchées au numéro exact : type d’établissement à choisir.";
+      else BAT.sirNote = "Les activités déclarées à cette adresse ne correspondent pas clairement à un type d’ERP : choisissez le type.";
+    } catch (e) { BAT.sirNote = "Le répertoire des entreprises (INSEE) n’a pas répondu : type d’établissement à choisir."; }
+  }
   async function batLoad() {
     BAT.busy = true; BAT.ok = false; BAT.msg = "Recherche en cours : bâtiments autour du point…"; batDraw();
     try {
@@ -30394,7 +30429,10 @@ function jChar(o = {}) {
           };
         } catch (e) { BAT.geoNote = "Géorisques n’a pas répondu : installations classées et cavités non affichées."; }
       }
+      BAT.adrPt = BAT.cle ? BAT.pt : null;
+      await batSirene();
       const ff = batFacts(), tt = $("#bat-t");
+      if (BAT.sirType && tt && !tt.value && [...tt.options].some((o) => o.value === BAT.sirType)) tt.value = BAT.sirType;
       BAT.askType = !(tt && tt.value); BAT.askSurf = !ff.plancher;
       BAT.ok = true;
       BAT.msg = "Bâtiment trouvé" + (BAT.adr ? " : " + BAT.adr : "") + ". " + (BAT.voisins.length ? BAT.voisins.length + " bâtiment" + (BAT.voisins.length > 1 ? "s" : "") + " voisin" + (BAT.voisins.length > 1 ? "s" : "") + " dans " + BAT.r + " m. " : "Aucun voisin dans " + BAT.r + " m. ") + "Fiche, volume 3D et calculs juste en dessous." + (BAT.askType ? " Choisissez le type d’établissement." : "") + (BAT.askSurf ? " Surface inconnue : saisissez-la dans « Corriger ou affiner »." : "");
@@ -30410,7 +30448,7 @@ function jChar(o = {}) {
     if (PRIV.reseauOk()) { BAT.gate = null; return true; }
     const t = PRIV.get().total;
     BAT.gate = t ? null : redo;
-    BAT.msg = t ? "Le mode « tout bloquer » est actif dans Confidentialité : désactivez-le pour chercher un bâtiment." : "Cette recherche envoie l’adresse ou la position à l’IGN et au CSTB (services publics). Autoriser la connexion pour l’appli ?";
+    BAT.msg = t ? "Le mode « tout bloquer » est actif dans Confidentialité : désactivez-le pour chercher un bâtiment." : "Cette recherche envoie l’adresse ou la position à l’IGN, au CSTB et à l’INSEE (services publics). Autoriser la connexion pour l’appli ?";
     batDraw(); return false;
   }
   async function batSearch(q) {
@@ -30569,6 +30607,8 @@ function jChar(o = {}) {
     return `<section class="sec"><h2 class="lbl b">Fiche du bâtiment</h2>
       ${disc("À vérifier avant validation. Les données ouvertes sont normalement sûres, mais elles peuvent être anciennes ou fausses. Les valeurs calculées ou estimées dépendent des règles et des estimations indiquées : confirmez-les sur place et avec le dossier de l’établissement.")}
       <dl class="kv">${rows}</dl><div class="result">
+      ${BAT.sir && BAT.sir.length ? `<p class="small"><strong>${tx("Activités déclarées à cette adresse (Sirene, INSEE)")}</strong></p><ul class="small">${BAT.sir.map((x) => `<li>${tx((x.nom || "Sans nom") + " · code d’activité " + x.naf + (x.t ? " · " + x.l + " → type " + x.t : ""))}</li>`).join("")}</ul>${BAT.sirType ? `<p class="small">${tx("Type d’établissement proposé d’après ces activités : " + BAT.sirType + ". C’est l’activité déclarée, pas le classement officiel : confirmez-le avec le registre de sécurité ou l’arrêté d’ouverture.")}</p>` : ""}` : ""}
+      ${BAT.sirNote ? `<p class="small">${tx(BAT.sirNote)}</p>` : ""}
       ${BAT.bdnbNote ? `<p class="small">${tx(BAT.bdnbNote)}</p>` : ""}
       ${BAT.urbaNote ? `<p class="small">${tx(BAT.urbaNote)}</p>` : ""}
       ${BAT.geoNote ? `<p class="small">${tx(BAT.geoNote)}</p>` : ""}
@@ -30797,6 +30837,7 @@ function jChar(o = {}) {
     const f = BAT.fi, jobs = [["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"]];
     if (!f.type) return `<p class="muted">${tx("Choisissez le type d’établissement pour afficher la fiche.")}</p>`;
     let out = `<div class="result"><p><strong>${icon("badge")} ${tx(jobs[+f.job - 1][1] + " · type " + f.type + (f.cat ? " · " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : "") + (f.ne === "n" ? " · neuf" : f.ne === "e" ? " · existant" : ""))}</strong></p>${ficheLegend()}</div>`;
+    if (BAT.main && BAT.sirType && f.type === BAT.sirType) out += `<p class="small muted">${tx("Type " + f.type + " proposé d’après les activités déclarées à cette adresse (Sirene, INSEE) : à confirmer avec le registre de sécurité. Vous pouvez le changer au-dessus.")}</p>`;
     out += ficheCalcul(f);
     out += `<div class="result"><p><strong>${icon("liste")} ${tx("À retenir en premier")}</strong></p>${ficheSummary(f)}</div>`;
     out += `<a class="btn" href="#o-ssi">${icon("cloche")} ${tx("Section complète : SSI, DAS et compartimentage")}</a>`;
@@ -30839,8 +30880,10 @@ function jChar(o = {}) {
   function ficheOutDraw() { const el = $("#bat-fiche-out"); if (el) el.innerHTML = ficheOut(); }
   function ficheDraw() {
     const el = $("#bat-fiche"); if (!el) return;
+    if ($("#bat-ft")) ficheRead();
     const t = $("#bat-t") ? $("#bat-t").value : "";
     if (!BAT.fi.type && t && t !== "AUT") BAT.fi.type = /^L/.test(t) ? "L" : t;
+    if (!BAT.fi.type && BAT.sirType) BAT.fi.type = BAT.sirType;
     if (!$("#bat-ft")) el.innerHTML = ficheShell();
     const C = BAT.calc;
     if (C && !BAT.fi.catMan) { const k = C.sv && C.pub < C.sv ? "5" : (C.tot > 1500 ? "1" : C.tot >= 701 ? "2" : C.tot >= 301 ? "3" : "4"); BAT.fi.cat = k; const sc = $("#bat-fc"); if (sc) sc.value = k; const ef = $("#bat-fe"); if (ef && !ef.value) ef.value = String(C.pub); const ep = $("#bat-fp"); if (ep && !ep.value && C.pers) ep.value = String(C.pers); }
@@ -31257,7 +31300,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         <label class="field"><span>Rayon autour du point pour les voisins</span><select id="bat-r"><option value="30">30 m</option><option value="60" selected>60 m</option><option value="100">100 m</option><option value="150">150 m</option></select></label>
         <div class="grid3">${numField("bat-s", "Surface accessible au public (m²)", "Préremplie avec la surface de plancher estimée si vous laissez vide.", "decimal")}${numField("bat-e", "Effectif connu", "Si vous le connaissez, il remplace le calcul.")}${numField("bat-p", "Personnel")}</div>
       </div></details>
-      <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
+      <p class="small muted">${tx("Chercher envoie l’adresse ou la position aux services publics (IGN, CSTB, INSEE) : rien d’autre, aucun compte. La connexion doit être activée avec l’icône en haut de l’écran.")}</p>
       <div id="bat-fiche"></div>
       <div id="bat-geo"></div>
       <div id="bat-actions"></div>
