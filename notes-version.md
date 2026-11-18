@@ -1,3 +1,7 @@
+- Section SSI : le type « IGH » est ajouté, avec ce qu’impose l’article GH 49 (SSI de catégorie A option IGH, pas de déclencheurs manuels, alarme dans le seul compartiment, mise en sécurité sans temporisation)
+- Quiz : 357 explications et une cinquantaine de questions ou réponses reformulées avec nos propres mots (même sens, mêmes chiffres)
+- Catégorie C du SSI : mention « non vérifié » ajoutée, car la norme NF S 61-931, payante, tranche ce point
+- Fiche métier : les 1 717 extraits ont été comparés par programme aux textes officiels en vigueur (copie Légifrance du 16/11/2026) : 1 701 retrouvés mot pour mot, 16 non comparables (tableaux et code de la construction), aucune erreur
 - Réanimation de l’enfant et du nourrisson : les deux présentations sont maintenant affichées avec leurs sources (5 insufflations puis 15 compressions et 2 insufflations pour le secouriste du travail et les secouristes en équipe ; 30 et 2 dans certaines formations tout public)
 - Quiz corrigé : l’explication de la question « Cycle de RCP pour un enfant de 1 à 8 ans » contredisait la bonne réponse
 - Nouvelle vérification des calculateurs sur les textes officiels (catégorie, effectif, dégagements, extincteurs, visites de commission) : aucun écart trouvé
