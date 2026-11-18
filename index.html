@@ -1452,6 +1452,9 @@ details summary { cursor: pointer; }
 .ssim-ch .btn { text-align: left; white-space: normal; justify-content: flex-start; }
 .ssim-kv dd { margin: 0; }
 @media (prefers-reduced-motion: reduce) { .ssim-ring, .ssim-blink { animation: none; } }
+.suj-d { border: 1px solid var(--line, rgba(127,127,127,.25)); border-radius: 12px; padding: 8px 10px; margin: 8px 0; }
+.suj-d > summary, .suj-more > summary { cursor: pointer; padding: 6px 0; }
+.suj-more { margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -28350,7 +28353,8 @@ const APP = (() => {
       <div class="page-h" style="flex-direction:row;align-items:center;gap:14px"><span class="ico ${r.co}" style="width:52px;height:52px">${icon(r.ic)}</span><div><h1>${tx(r.titre)}</h1><p>${tx(r.desc)}</p></div></div>
       ${apBtn(id)}
       ${filterBar()}
-      <div class="cards">${fs.length ? fs.map(ficheCard).join("") : `<p class="empty">Aucune fiche pour ce niveau dans cette rubrique.</p>`}</div>`;
+      <div class="cards">${fs.length ? fs.map(ficheCard).join("") : `<p class="empty">Aucune fiche pour ce niveau dans cette rubrique.</p>`}</div>
+      ${sujetsHTML(r.titre + " " + (r.desc || "") + " " + fs.slice(0, 30).map((f) => f.titre).join(" "), "", id)}`;
     return { html, title: r.titre, tab: r.tab, back: r.tab };
   }
 
@@ -28430,6 +28434,44 @@ const APP = (() => {
   const apRoute = (t) => { const [rid, fid] = t.slice(5).split("~"); return fid ? apLesson(rid, fid) : apPage(rid); };
   const apBtn = (rid) => { const ls = apLessons(rid); if (!ls.length) return ""; const d = apLoad(), n = ls.filter((l) => apOk(l, d)).length; return `<a class="card" href="#appr-${rid}"><span class="ico ${RU[rid].co}">${icon("badge")}</span><span class="t"><b>Apprentissage</b><span>Apprendre à faire, pas à pas · ${n} / ${ls.length} acquis</span><span class="mini"><i style="width:${Math.round((n / ls.length) * 100)}%"></i></span></span>${icon("chevron")}</a>`; };
 
+
+  /* ---------- Même sujet : tout ce qui parle du sujet, accessible depuis chaque page qui en parle ---------- */
+  const W = (x) => new RegExp("(?<![\\p{L}\\d])(?:" + x + ")(?![\\p{L}\\d])", "iu");
+  const SUJETS = [
+    { id: "ssi", t: "SSI, alarme et détection", re: W(String.raw`ssi|sdi|smsi|cmsi|ecs|uga|das|d[ée]tect\p{L}*|d[ée]clencheur|alarme|tableau de signalisation|baas|temporisation|lev[ée]e de doute`), o: ["o-ssi", "o-quiz"], p: ["p-levee-doute", "p-feu"] },
+    { id: "extinction", t: "Extinction : extincteurs, RIA, sprinkleurs, colonnes", re: W(String.raw`extincteur\p{L}*|ria|robinet d.incendie|sprinkl\p{L}*|colonne s[èe]che|colonne humide|extinction|poteau incendie|hydrant\p{L}*`), o: ["o-extincteurs", "o-quel-extincteur"], p: ["p-feu"] },
+    { id: "feu", t: "Le feu, les fumées et leurs dangers", re: W(String.raw`triangle du feu|t[ée]tra[èe]dre|combustion|classe\p{L}* de feu|fum[ée]es|embrasement|backdraft|propagation`), o: ["o-quel-extincteur"], p: ["p-feu"] },
+    { id: "desenfumage", t: "Désenfumage", re: W(String.raw`d[ée]senfumage|exutoire\p{L}*|volet\p{L}* de d[ée]senfumage`), o: ["o-ssi"], p: [] },
+    { id: "compartimentage", t: "Compartimentage et portes coupe-feu", re: W(String.raw`compartiment\p{L}*|coupe-feu|clapet\p{L}*|ventouse|isolement`), o: ["o-ssi"], p: [] },
+    { id: "evacuation", t: "Évacuation et dégagements", re: W(String.raw`d[ée]gagement\p{L}*|[ée]vacu\p{L}*|issue\p{L}* de secours|unit[ée]\p{L}* de passage|sortie\p{L}* de secours|transfert horizontal`), o: ["o-degagements", "o-effectif"], p: ["p-evacuer"] },
+    { id: "erp", t: "Classement des bâtiments (ERP, IGH)", re: W(String.raw`erp|igh|cat[ée]gorie d.[ée]tablissement|type d.[ée]tablissement|effectif|commission de s[ée]curit[ée]|classement`), o: ["o-batiment", "o-categorie", "o-effectif", "o-commission"], p: [] },
+    { id: "secours", t: "Secours à personne", re: W(String.raw`rcp|dae|d[ée]fibrillat\p{L}*|h[ée]morragie|malaise|[ée]touffement|secourisme|pls|sst|arr[êe]t cardiaque|br[ûu]lure`), o: [], p: ["p-arret-cardiaque", "p-malaise", "p-etouffement", "p-hemorragie"] },
+    { id: "electricite", t: "Électricité et énergies", re: W(String.raw`[ée]lectri\p{L}*|habilitation|h0b0|groupe [ée]lectrog[èe]ne|coupure|aes|gaz`), o: [], p: ["p-coupure", "p-gaz"] },
+    { id: "metier", t: "Métier SSIAP et service de sécurité", re: W(String.raw`ssiap ?[123]?|service de s[ée]curit[ée]|main courante|registre de s[ée]curit[ée]|ronde\p{L}*|poste de s[ée]curit[ée]|recyclage`), o: ["o-recyclage", "o-quiz"], p: [] },
+    { id: "aps", t: "Agent de sécurité privée (APS)", re: W(String.raw`aps|cnaps|carte professionnelle|palpation|l[ée]gitime d[ée]fense|s[ûu]ret[ée]|portique`), o: ["o-carte"], p: ["p-conflit", "p-colis", "p-attaque"] },
+  ];
+  let SUJ_IDX = null;
+  const sujTxt = (f) => (f.titre + " " + (f.mc || "")).toLowerCase();
+  function sujIndex() {
+    if (SUJ_IDX) return SUJ_IDX;
+    SUJ_IDX = {};
+    SUJETS.forEach((S) => { SUJ_IDX[S.id] = D.fiches.filter((f) => S.re.test(f.titre) || S.re.test(f.mc || "")).map((f) => f.id); });
+    return SUJ_IDX;
+  }
+  function sujetsHTML(txt, cur, rub, prefer) {
+    const idx = sujIndex();
+    let hits = SUJETS.map((S) => { const m = (txt.match(new RegExp(S.re.source, "giu")) || []).length; return { S, m: (prefer && prefer.includes(S.id) ? 1000 - prefer.indexOf(S.id) * 100 : 0) + m }; }).filter((x) => x.m > 0).sort((a, b) => b.m - a.m).slice(0, 3);
+    if (!hits.length) return "";
+    return `<section class="sec suj" data-tts="skip"><h2 class="lbl b">${tx("Sur le même sujet")}</h2>${hits.map(({ S }, n) => {
+      const sc = (id) => (S.re.test(FI[id].titre) ? 2 : 0) + (FI[id].r === rub ? 1 : 0);
+      const fi = idx[S.id].filter((id) => id !== cur && FI[id]).sort((a, b) => sc(b) - sc(a));
+      const top = [...S.o.filter((id) => id !== cur && TL[id]), ...S.p.filter((id) => id !== cur && PR[id])];
+      const first = top.concat(fi.slice(0, Math.max(0, 6 - top.length))), rest = fi.slice(Math.max(0, 6 - top.length));
+      if (!first.length) return "";
+      return `<details class="suj-d"${n === 0 ? " open" : ""}><summary><b>${tx(S.t)}</b> <span class="small muted">${first.length + rest.length} ${tx("pages")}</span></summary><div class="links">${first.map(linkCard).join("")}</div>${rest.length ? `<details class="suj-more"><summary>${tx("Voir les " + rest.length + " autres pages sur ce sujet")}</summary><div class="links">${rest.map(linkCard).join("")}</div></details>` : ""}</details>`;
+    }).join("")}</section>`;
+  }
+  const TOOL_SUJ = { "o-ssi": ["ssi", "compartimentage", "desenfumage"], "o-batiment": ["erp", "ssi", "extinction"], "o-categorie": ["erp"], "o-effectif": ["erp", "evacuation"], "o-degagements": ["evacuation"], "o-extincteurs": ["extinction"], "o-quel-extincteur": ["extinction", "feu"], "o-commission": ["erp"], "o-recyclage": ["metier"], "o-carte": ["aps"] };
   function pageFiche(id) {
     const f = FI[id];
     if (!f) return null;
@@ -28445,6 +28487,7 @@ const APP = (() => {
         ${f.retenir ? `<aside class="retenir"><p class="lbl">À retenir</p><ul>${f.retenir.map((x) => `<li>${icon("check")}<span>${md(x)}</span></li>`).join("")}</ul></aside>` : ""}
         <div class="body">${f.b.map(block).join("")}</div>
         <section class="sec" data-tts="skip"><h2 class="lbl g">Sources de cette fiche</h2><div class="srcs">${f.src.map(srcItem).join("")}</div>${verifNote()}${signalBtn(tx0(f.titre))}</section>
+        ${sujetsHTML(f.titre + " " + (f.mc || "") + " " + plain(f.clair), f.id, f.r)}
         ${prev || next ? `<nav class="pager" aria-label="Fiches de la rubrique">${prev ? `<a href="#f-${prev.id}"><span>Précédente</span><b>${tx(prev.titre)}</b></a>` : ""}${next ? `<a class="next" href="#f-${next.id}"><span>Suivante</span><b>${tx(next.titre)}</b></a>` : ""}</nav>` : ""}
       </article>`;
     return { html, title: f.titre, tab: r.tab, back: "r-" + r.id };
@@ -28462,6 +28505,7 @@ const APP = (() => {
       ${p.jamais && p.jamais.length ? `<section class="never"><p class="lbl">Jamais</p><ul>${p.jamais.map((x) => `<li>${icon("fermer")}<span>${md(x)}</span></li>`).join("")}</ul></section>` : ""}
       ${p.apres && p.apres.length ? `<section class="sec after"><h2 class="lbl g">Après</h2><ul>${p.apres.map((x) => `<li>${icon("check")}<span>${md(x)}</span></li>`).join("")}</ul></section>` : ""}
       ${p.liens && p.liens.length ? `<section class="sec"><h2 class="lbl b">Pour aller plus loin</h2><div class="links">${p.liens.map(linkCard).join("")}</div></section>` : ""}
+      ${sujetsHTML(p.titre + " " + plain(p.clair) + " " + p.etapes.join(" "), p.id, "")}
       <section class="sec" data-tts="skip"><h2 class="lbl g">Sources</h2>${p.src.length ? `<div class="srcs">${p.src.map(srcItem).join("")}</div>` : `<p class="practice">Bonne pratique professionnelle, à adapter aux consignes de votre site.</p>`}${verifNote()}${signalBtn(tx0(p.titre))}</section>
       <div class="chips">${PROC_RP[p.id] ? `<button type="button" class="btn" data-act="rp-dict" data-type="${PROC_RP[p.id]}">${icon("micro")}Raconter le rapport</button><button type="button" class="btn ghost" data-act="rp-new" data-type="${PROC_RP[p.id]}">${icon("registre")}Rédiger le rapport</button>` : ""}${favBtn(p.id)}</div>`;
     return { html, title: p.titre, tab: "urgence", back: "urgence" };
@@ -31269,7 +31313,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (t.startsWith("appr-")) return apRoute(t);
     if (t.startsWith("r-")) return pageRub(t.slice(2));
     if (t.startsWith("p-")) return pageProc(t);
-    if (TOOL_PAGES[t]) return TOOL_PAGES[t]();
+    if (TOOL_PAGES[t]) { const pg = TOOL_PAGES[t](); if (pg && TOOL_SUJ[t]) pg.html += sujetsHTML(TOOL_SUJ[t].map((k) => SUJETS.find((S) => S.id === k).t).join(" "), t, "", TOOL_SUJ[t]); return pg; }
     if (FI[t]) return pageFiche(t);
     return null;
   }
