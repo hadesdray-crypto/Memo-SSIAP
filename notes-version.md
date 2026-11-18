@@ -1,3 +1,4 @@
+- Fiche métier SSIAP : visible dès l’ouverture de « Mon bâtiment », sans avoir à chercher une adresse (choisir le type et la catégorie suffit)
 - Mon bâtiment : nouvelle « Fiche métier » SSIAP 1, 2 et 3 sous le calcul : par type et catégorie, ce qu’il faut connaître (service de sécurité, extincteurs, RIA, alarme, SSI, détection, désenfumage, éclairage, dégagements, registre, visites…)
 - Fiche métier : chaque règle porte son article, un extrait du texte et son degré de certitude ; fonctionne hors connexion ; choix neuf ou existant
 - Fiche métier : visites périodiques (GE 4), seuils de 5e catégorie (PE 2), service de sécurité des magasins et salles (M 29, L 14), registre de sécurité en vigueur depuis le 1er juillet 2026 (R143-44)

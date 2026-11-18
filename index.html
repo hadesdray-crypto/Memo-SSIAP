@@ -30371,7 +30371,6 @@ function jChar(o = {}) {
     return `<ul class="small">${L.join("")}</ul>`;
   }
   function ficheShell() {
-    if (!BAT.main) return "";
     const f = BAT.fi;
     const jobs = [["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"]];
     const inputs = `<div class="form"><label class="field"><span>${tx("Type d’établissement")}</span><select id="bat-ft"><option value="">Choisir…</option>${FICHE_TYPES.map(([k, l]) => `<option value="${k}"${f.type === k ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
@@ -30382,7 +30381,6 @@ function jChar(o = {}) {
     return `<section class="sec"><h2 class="lbl">${tx("Fiche métier : ce que le SSIAP doit connaître")}</h2><p class="small">${tx("Règles des textes officiels stockés dans l’appli (aucune connexion nécessaire). Chaque ligne donne l’article, l’extrait et son degré de certitude. Choisissez le type et la catégorie.")}</p>${inputs}<div id="bat-fiche-out"></div></section>`;
   }
   function ficheOut() {
-    if (!BAT.main) return "";
     const f = BAT.fi, jobs = [["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"]];
     if (!f.type) return `<p class="muted">${tx("Choisissez le type d’établissement pour afficher la fiche.")}</p>`;
     let out = `<div class="chips" role="tablist">${jobs.map(([k, l]) => `<button type="button" class="btn ${f.job === k ? "" : "ghost"}" data-act="fiche-job" data-j="${k}" role="tab" aria-selected="${f.job === k}">${l}</button>`).join("")}</div>`;
@@ -30404,7 +30402,6 @@ function jChar(o = {}) {
   function ficheOutDraw() { const el = $("#bat-fiche-out"); if (el) el.innerHTML = ficheOut(); }
   function ficheDraw() {
     const el = $("#bat-fiche"); if (!el) return;
-    if (!BAT.main) { el.innerHTML = ""; return; }
     const t = $("#bat-t") ? $("#bat-t").value : "";
     if (!BAT.fi.type && t && t !== "AUT") BAT.fi.type = /^L/.test(t) ? "L" : t;
     if (!$("#bat-ft")) el.innerHTML = ficheShell();
@@ -30458,7 +30455,7 @@ function jChar(o = {}) {
       const r = $("#bat-r"); if (r && +r.value !== BAT.r) { BAT.r = +r.value; if (BAT.pt && !BAT.busy) batLoad(); return; }
       const rot = $("#bat-rot"); if (rot && +rot.value !== BAT.rot) { BAT.rot = +rot.value; const el = $("#bat-3d svg"); if (el) el.outerHTML = bat3D(); }
       const c = $("#bat-calc"); if (c && BAT.main) c.innerHTML = batCalc();
-      if (BAT.main && ficheRead()) ficheOutDraw();
+      if (ficheRead()) ficheOutDraw();
     };
     return { html, title: TL["o-batiment"].t, tab: "outils", back: "outils", after, update };
   }
