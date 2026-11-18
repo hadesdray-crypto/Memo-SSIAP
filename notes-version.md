@@ -1,3 +1,12 @@
+- Vérification complète du contenu (fiches, quiz, schémas, simulateur, règles) : corrections d’après les textes officiels (Légifrance)
+- Simulateur SSI, type J : plus aucune temporisation (articles J 36 et J 37) ; scénarios « fausse alarme », « porte calée » et « sprinkleur » corrigés quand la temporisation est interdite (J, U avec sommeil, 5e catégorie avec sommeil)
+- Section SSI : parcs de stationnement de plus de 1 000 places avec sprinkleurs en alarme de type 3 (PS 27) ; chapiteaux sans étage ajoutés (CTS 28)
+- Grand schéma du SSI : textes des cartes plus cachés, titre qui ne chevauche plus, diffuseurs reliés à l’UGA
+- Fiches corrigées : classement des ERP (le personnel compte dans les 4 premières catégories, R. 143-19), sols et euroclasses, parc de stationnement des IGH (une communication admise), sas d’IGH, locaux à risques particuliers (sans public), colonne sèche (locaux à risques importants), sprinkleurs (pression en aval), directive ascenseurs, examen SSIAP 1 (règle du lieu), CO2 ininflammable
+- Quiz corrigés : module complémentaire 43 h 30, séquences de 10 h et 7 h, distances 30 m / 50 m, éclairage de sécurité, arrêté résistance au feu 2026, colonnes humides ERP / IGH, ascenseurs IGH, voie échelle en impasse, articles R. 143-2 et R. 143-19 ; majuscules et ponctuation
+- Schémas corrigés : SSI catégories A à E (alarme et commandes séparées), colonnes (60 m jusqu’au poteau), locaux à risques importants, accidents de trajet (axes), taux des commerces non alimentaires, textes qui se chevauchaient ou débordaient, lisibilité en thème sombre
+- Fiche métier : nombres affichés à la française, articles précisés (T 35, T 36, PS 36, PS 37, PU 2)
+- Obligation de sécurité de l’employeur : précision sur l’arrêt « Air France » (2015)
 - Livres de formation : les 20 questions d’exemple du livre SSIAP 1 sont maintenant dans le quiz (reformulées, bonne réponse vérifiée dans les fiches)
 - SSI : autonomie des sources de sécurité (au moins 1 heure) et composition du CMSI (UCMC, US, UGA, UGIS) d’après le livre de formation SSIAP 1
 - Section SSI : nouveau grand « Schéma du SSI » à parcourir au doigt, avec zoom : tous les éléments nommés (détecteurs, déclencheurs, tableau, CMSI avec UGA, US et UCMC, DAC, portes et clapets coupe-feu, ventilation, désenfumage, issues, diffuseurs, AES, agent, pompiers), adapté au SSI du bâtiment choisi (A, B, C, D, E ou alarme seule)
