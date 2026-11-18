@@ -30296,7 +30296,7 @@ function jChar(o = {}) {
       BAT.main = all[0]; BAT.voisins = all.slice(1, 13);
       BAT.bdnb = null; BAT.bdnbNote = "";
       let cle = BAT.cle, cc = BAT.cc;
-      if (!cle) {
+      if (!cle && !BAT.noAdr) {
         try {
           const rv = await batTimeout(`https://data.geopf.fr/geocodage/reverse?lon=${pt[0]}&lat=${pt[1]}&limit=1`);
           const ft = rv.features && rv.features[0];
@@ -30379,7 +30379,11 @@ function jChar(o = {}) {
       BAT.cands = (j.features || []).map((f) => ({ lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], label: f.properties.label, id: f.properties.type === "housenumber" ? f.properties.id : "", cc: f.properties.citycode, type: f.properties.type, score: f.properties.score }));
       if (!BAT.cands.length) { BAT.msg = "Aucune adresse trouvée. Précisez avec la ville ou le code postal."; BAT.ok = false; BAT.busy = false; batDraw(); return; }
       BAT.busy = false;
-      if (BAT.cands.length === 1 || (BAT.cands[0].score > 0.85 && BAT.cands[0].type === "housenumber")) { batPick(0); return; }
+      BAT.gpsList = 0;
+      const nm = ph.place.match(/^\s*(\d+)\s*(bis|ter|quater|quinquies|[a-h](?![a-z]))?/i);
+      const okNum = (c) => !nm || c.label.toLowerCase().startsWith(nm[1] + (nm[2] ? " " + nm[2].toLowerCase() : "") + " ");
+      const top = BAT.cands[0];
+      if ((BAT.cands.length === 1 && okNum(top)) || (top.score > 0.85 && top.type === "housenumber" && okNum(top) && !(BAT.cands[1] && BAT.cands[1].type === "housenumber" && BAT.cands[1].score > top.score - 0.02))) { batPick(0); return; }
       BAT.ok = false; BAT.msg = "Plusieurs adresses trouvées : touchez la bonne."; batDraw();
     } catch (e) {
       BAT.busy = false; BAT.msg = batErr("Le service d’adresses n’a pas répondu. Réessayez."); batDraw();
@@ -30388,18 +30392,61 @@ function jChar(o = {}) {
   function batPick(i) {
     const c = BAT.cands[i]; if (!c) return;
     BAT.pt = [c.lon, c.lat]; BAT.adr = c.label; BAT.cle = c.id; BAT.cc = c.cc; BAT.cands = [];
+    if (BAT.gpsList && BAT.gpsPt && c.id) { const l = batConf().filter((x) => x.id !== c.id || batDist([x.glon, x.glat], BAT.gpsPt) > 60); l.unshift({ id: c.id, label: c.label, cc: c.cc, lon: c.lon, lat: c.lat, glon: BAT.gpsPt[0], glat: BAT.gpsPt[1] }); store.set("bat-conf", l.slice(0, 30)); }
+    BAT.gpsList = 0; BAT.gpsAuto = 0; BAT.noAdr = 0;
     batLoad();
   }
+  /* Position : plusieurs mesures (satellites, Wi-Fi et antennes du réseau mobile, mélangés par le téléphone), on garde les plus précises. */
   function batGps() {
     if (!batGate(batGps)) return;
     if (!navigator.geolocation) { BAT.ok = false; BAT.msg = "La position n’est pas disponible sur cet appareil. Écrivez une adresse."; batDraw(); return; }
-    BAT.busy = true; BAT.ok = false; BAT.msg = "Recherche de votre position… (jusqu’à 20 secondes)"; batDraw();
-    navigator.geolocation.getCurrentPosition((p) => { BAT.pt = [p.coords.longitude, p.coords.latitude]; BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.cands = []; BAT.gpsPrec = p.coords.accuracy; batLoad(); }, (er) => {
+    BAT.busy = true; BAT.ok = false; BAT.cands = []; BAT.msg = "Recherche de votre position : plusieurs mesures, 15 secondes au plus…"; batDraw();
+    const pts = []; let done = false, wid = null, t1 = 0;
+    const fin = () => {
+      if (done) return; done = true; clearTimeout(t1); try { navigator.geolocation.clearWatch(wid); } catch (e) { /* rien */ }
+      if (!pts.length) { BAT.busy = false; BAT.msg = "Position introuvable. Activez la localisation du téléphone (mode « haute précision »), approchez-vous d’une fenêtre, ou écrivez l’adresse."; batDraw(); return; }
+      pts.sort((x, y) => x.acc - y.acc);
+      const good = pts.filter((p) => p.acc <= pts[0].acc * 1.5).slice(0, 5), w = good.map((p) => 1 / (p.acc * p.acc)), sw = w.reduce((x, y) => x + y, 0);
+      BAT.pt = [good.reduce((x, p, i) => x + p.lon * w[i], 0) / sw, good.reduce((x, p, i) => x + p.lat * w[i], 0) / sw];
+      BAT.gpsPt = BAT.pt.slice(); BAT.gpsPrec = Math.round(pts[0].acc); BAT.gpsN = pts.length;
+      BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.noAdr = 0;
+      batGpsAdr();
+    };
+    const err = (er) => { if (pts.length) { fin(); return; } done = true; clearTimeout(t1); try { navigator.geolocation.clearWatch(wid); } catch (e) { /* rien */ }
       BAT.busy = false; BAT.ok = false;
-      BAT.msg = er && er.code === 1 ? "Position refusée. Autorisez la position pour l’appli dans les réglages du téléphone (Applications, Mémo SSIAP, Autorisations), ou écrivez une adresse." : er && er.code === 3 ? "La position met trop de temps. Allez près d’une fenêtre ou écrivez une adresse." : "Position introuvable. Activez la localisation du téléphone, ou écrivez une adresse.";
-      batDraw();
-    }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 });
+      BAT.msg = er && er.code === 1 ? "Position refusée. Autorisez la position pour l’appli dans les réglages du téléphone (Applications, Mémo SSIAP, Autorisations), ou écrivez une adresse." : "Position introuvable. Activez la localisation du téléphone, approchez-vous d’une fenêtre, ou écrivez une adresse.";
+      batDraw(); };
+    try {
+      wid = navigator.geolocation.watchPosition((p) => {
+        if (done) return;
+        pts.push({ lon: p.coords.longitude, lat: p.coords.latitude, acc: p.coords.accuracy || 999 });
+        BAT.msg = "Mesure " + pts.length + " : précision " + Math.round(Math.min(...pts.map((x) => x.acc))) + " m. Je continue pour affiner…"; batDraw();
+        if (pts.length >= 3 && p.coords.accuracy <= 8) fin();
+      }, err, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+    } catch (e) { err(null); return; }
+    t1 = setTimeout(fin, 15000);
   }
+  const batConf = () => store.get("bat-conf", []);
+  async function batGpsAdr() {
+    const pt = BAT.pt, R = Math.max(30, (BAT.gpsPrec || 30) + 15);
+    BAT.msg = "Recherche des adresses autour de vous…"; batDraw();
+    let c = [];
+    try {
+      const rv = await batTimeout(`https://data.geopf.fr/geocodage/reverse?lon=${pt[0]}&lat=${pt[1]}&limit=20&index=address`);
+      c = (rv.features || []).filter((f) => f.properties && f.properties.type === "housenumber").map((f) => ({ lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], label: f.properties.label, id: f.properties.id, cc: f.properties.citycode, type: "housenumber", d: Math.round(batDist(pt, f.geometry.coordinates)) })).filter((x) => x.d <= R);
+    } catch (e) { /* sans adresse */ }
+    const conf = batConf().filter((x) => batDist(pt, [x.glon, x.glat]) <= R);
+    conf.forEach((x) => { const i = c.findIndex((y) => y.id === x.id); const o = { lon: x.lon, lat: x.lat, label: x.label, id: x.id, cc: x.cc, type: "housenumber", d: Math.round(batDist(pt, [x.lon, x.lat])), conf: 1 }; if (i >= 0) c.splice(i, 1); c.unshift(o); });
+    const seen = new Set(); c = c.filter((x) => (seen.has(x.id) ? false : seen.add(x.id))).sort((x, y) => (y.conf || 0) - (x.conf || 0) || x.d - y.d).slice(0, 8);
+    BAT.busy = false;
+    const pr = "Position mesurée " + BAT.gpsN + " fois, précision " + BAT.gpsPrec + " m. ";
+    if (!c.length) { BAT.msg = pr + "Aucune adresse connue à moins de " + R + " m : le bâtiment est cherché à partir de la position seule."; batLoad(); return; }
+    if (c.length === 1 && c[0].conf) { BAT.cands = c; BAT.gpsAuto = 1; batPick(0); return; }
+    BAT.cands = c; BAT.gpsList = 1; BAT.ok = false;
+    BAT.msg = pr + "Plusieurs adresses sont possibles à cette distance : touchez celle où vous êtes. La plus proche n’est pas toujours la bonne (numéros « bis », bâtiments mitoyens).";
+    batDraw();
+  }
+  function batNoPick() { BAT.noAdr = 1; BAT.cands = []; BAT.gpsList = 0; BAT.adr = ""; BAT.cle = ""; BAT.cc = ""; BAT.bdnbNote = "Aucune adresse choisie : bâtiment cherché à partir de la position seule."; batLoad(); }
   /* Données déduites du bâtiment principal : chaque valeur garde sa provenance. */
   function batFacts() {
     const m = BAT.main; if (!m) return null;
@@ -30633,7 +30680,7 @@ function jChar(o = {}) {
   function batDraw() {
     const set = (id, h) => { const el = $("#" + id); if (el) el.innerHTML = h; };
     if (!$("#bat-msg")) return;
-    const cands = BAT.cands.length > 1 ? `<div class="cards">${BAT.cands.map((c, i) => `<button type="button" class="btn ghost" data-act="bat-pick" data-i="${i}" style="text-align:left">${tx(c.label)}</button>`).join("")}</div>` : "";
+    const cands = BAT.cands.length > 1 || BAT.gpsList ? `<div class="cards">${BAT.cands.map((c, i) => `<button type="button" class="btn ghost" data-act="bat-pick" data-i="${i}" style="text-align:left">${tx(c.label)}${c.d != null ? `<span class="small muted"> · ${tx("à " + c.d + " m")}${c.conf ? tx(" · déjà confirmée ici") : ""}</span>` : ""}</button>`).join("")}${BAT.gpsList ? `<button type="button" class="btn ghost" data-act="bat-nopick" style="text-align:left">${tx("Aucune de ces adresses : continuer avec la position seule")}</button>` : ""}</div>` : "";
     set("bat-msg", (BAT.msg ? (BAT.ok ? `<div class="result"><p><strong>${tx(BAT.msg)}</strong></p></div>` : `<p class="${BAT.busy ? "small" : "small"}" aria-live="polite"><strong>${tx(BAT.msg)}</strong></p>`) : "") + (BAT.gate ? `<div class="chips"><button type="button" class="btn" data-act="bat-net">Autoriser la connexion</button></div>` : "") + cands);
     $$('[data-act="bat-find"],[data-act="bat-gps"]').forEach((x) => { x.disabled = !!BAT.busy; });
     const nd = $("#bat-need"), fn = $("#bat-fine");
@@ -30693,7 +30740,7 @@ function jChar(o = {}) {
       <div class="grid3">${numField("bat-fe", "Effectif du public", "", "numeric")}${numField("bat-fp", "Personnel", "", "numeric")}</div><label class="field"><span>${tx("Neuf ou existant")}</span><select id="bat-fn"><option value=""${f.ne === "" ? " selected" : ""}>Les deux</option><option value="n"${f.ne === "n" ? " selected" : ""}>Neuf</option><option value="e"${f.ne === "e" ? " selected" : ""}>Existant</option></select></label>
       <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="bat-fs"${f.sub ? " checked" : ""}> ${tx("Sous-sol accessible au public")}</span></label>
       <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="bat-fm"${f.som ? " checked" : ""}> ${tx("Locaux réservés au sommeil")}</span></label></div>`;
-    return `<section class="sec"><h2 class="lbl">${tx("Fiche métier : ce que le SSIAP doit connaître")}</h2><p class="small">${tx("Règles des textes officiels stockés dans l’appli (aucune connexion nécessaire). Chaque ligne donne l’article, l’extrait et son degré de certitude. Choisissez le type et la catégorie.")}</p>${inputs}<div id="bat-fiche-out"></div></section>`;
+    return `<section class="sec"><h2 class="lbl">${tx("Fiche métier : ce que le SSIAP doit connaître")}</h2><p><a class="btn" href="#o-ssi">${icon("cloche")}${tx("Voir le SSI de ce bâtiment : schéma, simulateur et jeu")}</a></p><p class="small">${tx("Règles des textes officiels stockés dans l’appli (aucune connexion nécessaire). Chaque ligne donne l’article, l’extrait et son degré de certitude. Choisissez le type et la catégorie.")}</p>${inputs}<div id="bat-fiche-out"></div></section>`;
   }
   const FICHE_IC = { "service-securite": "personnes", personnel: "badge", extinction: "extincteur", RIA: "goutte", colonnes: "goutte", hydrants: "goutte", alarme: "cloche", SSI: "cloche", detection: "oeil", desenfumage: "gaz", eclairage: "etincelle", degagements: "sortie", effectif: "personnes", isolement: "porte", stabilite: "immeuble", amenagements: "colis", electricite: "eclair", gaz: "gaz", chauffage: "flamme", ascenseurs: "ascenseur", signalisation: "attention", accessibilite: "personnes", sommeil: "lune", documents: "registre", verifications: "check", autre: "info" };
   const ficheRow = (r) => `<li>${tx(r.e)}${r.v ? " <b>" + tx(r.v) + "</b>" : ""}${r.k ? `<br><span class="muted">${tx("Condition : " + r.k)}</span>` : ""}<br><span class="pill ${r.z === "t" ? "green" : "amber"}">${FICHE_ST[r.z === "t" ? "c" : r.z]}</span> <span class="muted">${tx(r.a + " · « " + r.q + " »")}</span></li>`;
@@ -31528,6 +31575,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       case "bat-go": prefill.bat = b.dataset.q; go("o-batiment"); break;
       case "bat-find": batSearch($("#bat-q").value); break;
       case "bat-gps": batGps(); break;
+      case "bat-nopick": batNoPick(); break;
       case "fiche-job": { BAT.fi.job = b.dataset.j || "1"; store.set("fi-job", BAT.fi.job); [...$$(".fiche-job")].forEach((el) => (el.innerHTML = ficheJobBar().replace(/^<div[^>]*>|<\/div>$/g, ""))); ficheOutDraw(); if (typeof ssiDraw === "function") ssiDraw(); break; }
       case "bat-photo": { const on = !store.get("bat-photo", 0); store.set("bat-photo", on ? 1 : 0); if (on && !PRIV.reseauOk()) { batGate(() => batDraw()); break; } batDraw(); break; }
       case "bat-geo-on": case "bat-geo-off": { store.set("bat-geo", b.dataset.act === "bat-geo-on" ? 1 : 0); if (b.dataset.act === "bat-geo-on" && !PRIV.reseauOk()) { batGate(() => { if (BAT.pt) batLoad(); }); break; } if (BAT.pt && !BAT.busy) batLoad(); else batDraw(); break; }
