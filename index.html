@@ -1455,8 +1455,72 @@ details summary { cursor: pointer; }
 .suj-d { border: 1px solid var(--line, rgba(127,127,127,.25)); border-radius: 12px; padding: 8px 10px; margin: 8px 0; }
 .suj-d > summary, .suj-more > summary { cursor: pointer; padding: 6px 0; }
 .suj-more { margin-top: 6px; }
-.syn-wrap { overflow: auto; max-height: 62vh; max-height: 62dvh; border: 1px solid var(--sv-line); border-radius: 14px; touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; background: var(--surface); }
-.syn-svg { display: block; height: auto; }
+.tw-wrap { width: 100%; aspect-ratio: 2800 / 4180; max-height: 58vh; max-height: max(58dvh, 300px); border: 1px solid var(--sv-line); border-radius: 14px; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; background: var(--surface); cursor: grab; --tw: #1f62b3; }
+.tw-band { margin: 8px 0; padding: 8px 12px; border-left: 4px solid var(--sv-red); background: var(--surface-2, var(--surface)); border-radius: 8px; font-size: .92rem; }
+.tw-cA { --tw: #1f62b3; } .tw-cB { --tw: #6b3fa0; } .tw-cC { --tw: #0f7a80; } .tw-cD { --tw: #a35a00; } .tw-cE { --tw: #4d7c0f; } .tw-cN { --tw: #b03a82; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tw-cA { --tw: #6aa9f0; } :root:not([data-theme="light"]) .tw-cB { --tw: #b493e6; } :root:not([data-theme="light"]) .tw-cC { --tw: #4cc3c9; } :root:not([data-theme="light"]) .tw-cD { --tw: #e3a04a; } :root:not([data-theme="light"]) .tw-cE { --tw: #9ccc50; } :root:not([data-theme="light"]) .tw-cN { --tw: #e07fb5; } }
+:root[data-theme="dark"] .tw-cA { --tw: #6aa9f0; } :root[data-theme="dark"] .tw-cB { --tw: #b493e6; } :root[data-theme="dark"] .tw-cC { --tw: #4cc3c9; } :root[data-theme="dark"] .tw-cD { --tw: #e3a04a; } :root[data-theme="dark"] .tw-cE { --tw: #9ccc50; } :root[data-theme="dark"] .tw-cN { --tw: #e07fb5; }
+.tw-leg { line-height: 1.7; }
+.tw-sw { display: inline-block; width: 1.1em; height: .8em; border-radius: 3px; vertical-align: -0.05em; margin: 0 .3em 0 .5em; border: 2px solid var(--tw); background: color-mix(in srgb, var(--tw) 22%, var(--surface)); }
+.tw-sw.off { border-color: var(--sv-metal); background: var(--sv-panel); opacity: .7; }
+.tw-sw.opt { border: 2px dashed var(--sv-ink-2); background: var(--surface); }
+.tw-sw.act { border-color: var(--sv-red); background: color-mix(in srgb, var(--sv-red) 18%, var(--surface)); }
+.tw-svg { display: block; width: 100%; height: 100%; }
+.tw-svg text { font-family: var(--font); fill: var(--sv-ink); }
+.tw-back { fill: var(--surface); }
+.tw-zone { fill: var(--sv-panel); stroke: var(--sv-line); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.tw-svg .tw-z { font-size: 100px; font-weight: 800; letter-spacing: .04em; fill: var(--sv-ink-2); }
+.tw-svg .tw-zc { fill: var(--tw); }
+.tw-svg .tw-zs { font-size: 44px; font-weight: 600; fill: var(--sv-ink-2); }
+.tw-cbg { fill: color-mix(in srgb, var(--tw) 14%, var(--surface)); stroke: var(--tw); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.tw-svg .tw-cl { font-weight: 800; fill: var(--tw); }
+.tw-svg .tw-ct { font-weight: 800; letter-spacing: .03em; }
+.tw-svg .tw-cr { font-weight: 600; fill: var(--sv-ink-2); }
+.tw-svg .tw-lt { font-weight: 800; letter-spacing: .06em; fill: var(--sv-ink-2); }
+.tw-svg .tw-lg { font-weight: 600; }
+.tw-m { color: var(--tw); cursor: pointer; }
+.tw-m .tw-bg { fill: color-mix(in srgb, var(--tw) 13%, var(--surface)); stroke: var(--tw); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.tw-m .tw-fr { fill: color-mix(in srgb, var(--tw) 5%, var(--surface)); }
+.tw-p { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.tw-svg .tw-n { font-weight: 800; }
+.tw-svg .tw-r { font-weight: 500; fill: var(--sv-ink-2); }
+.tw-svg .tw-t { font-weight: 700; fill: var(--tw); }
+.tw-svg .tw-x { font-style: italic; font-weight: 600; fill: var(--sv-ink-2); }
+.tw-svg .tw-s { font-weight: 800; fill: #fff; letter-spacing: .03em; }
+.tw-off { color: var(--sv-metal); }
+.tw-off .tw-bg { fill: var(--sv-panel); stroke: var(--sv-line); }
+.tw-off .tw-p, .tw-off .tw-n, .tw-off .tw-r, .tw-off .tw-t { opacity: .45; }
+.tw-svg .tw-off .tw-t { fill: var(--sv-ink-2); }
+.tw-opt { color: var(--sv-ink-2); }
+.tw-opt .tw-bg { fill: var(--surface); stroke: var(--sv-ink-2); stroke-dasharray: 7 5; stroke-width: 1.4; }
+.tw-svg .tw-opt .tw-t { fill: var(--sv-ink-2); }
+.tw-fire { color: var(--sv-red); }
+.tw-fire .tw-bg { fill: color-mix(in srgb, var(--sv-red) 14%, var(--surface)); stroke: var(--sv-red); }
+.tw-m.tw-act .tw-bg { stroke: var(--sv-red); stroke-width: 4; }
+.tw-m.tw-sel .tw-bg { stroke-width: 4; }
+.tw-ring { fill: none; stroke: var(--sv-red); stroke-width: 3; stroke-dasharray: 8 6; vector-effect: non-scaling-stroke; animation: ssimp 1.1s ease-in-out infinite; pointer-events: none; }
+.tw-w { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.tw-wl { stroke: var(--tw); stroke-width: 2.2; }
+.tw-wd { stroke: var(--tw); stroke-width: 1.8; stroke-dasharray: 6 5; }
+.tw-wo { stroke: var(--sv-line); stroke-width: 1.2; stroke-dasharray: 2 5; }
+.tw-wa { stroke: var(--sv-red); stroke-width: 4; }
+.tw-wx { stroke: var(--sv-red); stroke-width: 3; stroke-dasharray: 3 6; }
+.tw-svg .tw-zd { font-weight: 800; fill: var(--tw); }
+.tw-hb { fill: color-mix(in srgb, var(--tw) 14%, var(--surface)); stroke: var(--tw); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.tw-hoff .tw-hb { fill: var(--sv-panel); stroke: var(--sv-line); }
+.tw-svg .tw-hoff text { fill: var(--sv-ink-2); opacity: .6; }
+.tw-hsep { stroke: var(--tw); stroke-width: 1.5; vector-effect: non-scaling-stroke; fill: none; opacity: .5; }
+.tw-web { fill: none; stroke: var(--sv-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.tw-var .btn { min-height: 36px; padding: 4px 10px; font-size: .85rem; }
+/* variante 1, épurée : pas de cadres de zones, fils plus épais, phrase de rôle seulement de près */
+.tw-v1 .tw-zone { fill: none; stroke: none; }
+.tw-v1 .tw-m .tw-bg { stroke-width: 1.5; }
+.tw-v1 .tw-wl { stroke-width: 3.2; }
+.tw-v1 .tw-wd { stroke-width: 2.4; }
+.tw-v1 .tw-wo { stroke-width: 1; opacity: .6; }
+.tw-v1.tw-far .tw-rz { display: none; }
+.tw-v2 .tw-wl { stroke-width: 2.6; }
+@media (prefers-reduced-motion: reduce) { .tw-ring { animation: none; } }
 .syn-act { animation: ssimp 1.1s ease-in-out infinite; }
 .syn-flow { stroke-dasharray: 10 8; animation: synf .8s linear infinite; }
 @keyframes synf { to { stroke-dashoffset: -36; } }
@@ -24787,13 +24851,24 @@ function VOIX(h) {
     try { SS.cancel(); } catch (e) { /* rien */ }
   }
   const frVoices = () => voices.filter((v) => /^fr(?:$|[-_])/i.test(v.lang || ""));
-  function voice() {
-    const list = frVoices();
+  /* Voix d'homme ou de femme : on ne le sait que par le nom que donne l'appareil (« male », « homme », un prénom connu, ou les codes de la voix Google : frb et frd pour un homme, fra, frc et vlf pour une femme). Sinon : inconnu, on ne devine pas. */
+  const prenom = (l) => new RegExp("(?:^|[^a-zà-ÿ])(?:" + l + ")(?![a-zà-ÿ])", "i");
+  const G_F = prenom("am[ée]lie|audrey|aur[ée]lie|marie|julie|hortense|denise|[ée]lo[iï]se|sylvie|caroline|chantal|virginie|brigitte|vivienne|charline|ariane|coralie|jacqueline|jos[ée]phine|yvette|c[ée]leste"), G_M = prenom("thomas|henri|paul|claude|daniel|nicolas|jacques|guillaume|antoine|jean|g[ée]rard|fabrice|r[ée]my|alain|j[ée]r[ôo]me|maurice|yves|thierry");
+  const genre = (v) => { const n = ((v && v.name) || "") + " " + ((v && v.voiceURI) || ""); return /female|femme|f[ée]minin|fr-fr-x-(?:fra|frc|vlf)|fr-ca-x-ca[ac]/i.test(n) || G_F.test(n) ? "f" : /male|homme|masculin|fr-fr-x-fr[bd]|fr-ca-x-ca[bd]/i.test(n) || G_M.test(n) ? "m" : ""; };
+  /* Choix automatique : français de France, voix du téléphone, et une voix d'homme quand l'appareil en annonce une. Le choix fait dans les Réglages passe toujours avant. */
+  const pick = (list) => {
     if (prefs.uri) { const v = list.find((x) => x.voiceURI === prefs.uri); if (v) return v; }
     const off = navigator.onLine === false;
-    const sc = (v) => (/^fr[-_]fr/i.test(v.lang) ? 4 : /^fr[-_](?:be|ch|lu)/i.test(v.lang) ? 2 : 1) + (v.localService ? 3 : 0) + (v.default ? 1 : 0) - (off && !v.localService ? 20 : 0);
+    const sc = (v) => (/^fr[-_]fr/i.test(v.lang) ? 4 : /^fr[-_](?:be|ch|lu)/i.test(v.lang) ? 2 : 1) + (v.localService ? 3 : 0) + (v.default ? 1 : 0) + (genre(v) === "m" ? (/^fr[-_]fr/i.test(v.lang) ? 5 : 2) : 0) - (off && !v.localService ? 20 : 0);
     return list.slice().sort((a, b) => sc(b) - sc(a))[0] || null;
-  }
+  };
+  function voice() { return pick(frVoices()); }
+  /* Voix du moteur du téléphone (appli Android) : le module les donne dans un ordre fixe, on parle avec le rang de la voix choisie. */
+  let natV = [];
+  const natLoad = () => (NAT ? natCall("getSupportedVoices").then((r) => { natV = ((r && r.voices) || []).map((v, i) => Object.assign({}, v, { i, nat: true })).filter((v) => /^fr(?:$|[-_])/i.test(v.lang || "")); try { document.dispatchEvent(new Event("vx-voix")); } catch (e) { /* rien */ } }).catch(() => { natV = []; }) : Promise.resolve());
+  /* On n'impose une voix au moteur que si elle a été choisie dans les Réglages ou si c'est une voix d'homme reconnue ; sinon le téléphone garde sa voix habituelle. */
+  const natOpt = () => { const v = natV.length ? pick(natV) : null; return v && (v.voiceURI === prefs.uri || genre(v) === "m") ? { voice: v.i } : {}; };
+  if (NAT) natLoad();
 
   /* ---------- Texte prononçable ---------- */
   const KEEP = new Set(["SAMU", "SMUR", "AFNOR", "APSAD", "CNAPS", "SDIS", "CODIS", "CERFA", "OTAN", "ONU", "MAC", "NON", "OUI", "FEU", "STOP", "GAZ", "EAU", "TOUT", "PAS", "LES", "DES", "UNE"]);
@@ -24935,7 +25010,7 @@ function VOIX(h) {
     if (NAT) {
       /* Voix du téléphone. Une phrase « lue » en un clin d'œil, sans erreur, veut dire que le moteur n'a rien dit : après 3 fois, on prévient. */
       const t0 = Date.now();
-      natCall("speak", { text: c.t, lang: "fr-FR", rate: prefs.rate, pitch: 1, volume: 1, queueStrategy: 0 })
+      natCall("speak", Object.assign({ text: c.t, lang: "fr-FR", rate: prefs.rate, pitch: 1, volume: 1, queueStrategy: 0 }, natOpt()))
         .then(() => {
           if (my !== gen) return;
           if (c.t.length > 25 && Date.now() - t0 < 150) { errs++; if (errs >= 3) { stop(); helpToast("silence"); return; } } else errs = 0;
@@ -25069,6 +25144,7 @@ function VOIX(h) {
       try { const r = await natCall("isLanguageSupported", { lang: "fr-FR" }); fr = !!(r && r.supported); } catch (e) { moteur = false; err = codeOf(e); }
       if (moteur && !fr) { try { const l = await natCall("getSupportedLanguages"); fr = !!(l && (l.languages || []).some((x) => /^fr/i.test(String(x)))); } catch (e) { /* rien */ } }
       nat.sonde = true; nat.moteur = moteur; nat.fr = fr;
+      if (moteur && !natV.length) { try { await natLoad(); } catch (e) { /* rien */ } }
       return { moteur, fr, err };
     }
     return { moteur: webOk, fr: webOk && frVoices().length > 0, err: webOk ? "" : "absent" };
@@ -25077,7 +25153,7 @@ function VOIX(h) {
   function essai(texte) {
     cancelNow(); active = false; paused = false; Q = []; highlight(null); bar();
     const t0 = Date.now();
-    if (NAT) return natCall("speak", { text: texte, lang: "fr-FR", rate: 1, pitch: 1, volume: 1, queueStrategy: 0 }).then(() => ({ ok: true, ms: Date.now() - t0 }), (e) => ({ ok: false, code: codeOf(e) }));
+    if (NAT) return natCall("speak", Object.assign({ text: texte, lang: "fr-FR", rate: 1, pitch: 1, volume: 1, queueStrategy: 0 }, natOpt())).then(() => ({ ok: true, ms: Date.now() - t0 }), (e) => ({ ok: false, code: codeOf(e) }));
     if (!webOk) return Promise.resolve({ ok: false, code: "absent" });
     return new Promise((res) => {
       let u, fini = false, tm = null;
@@ -25097,12 +25173,13 @@ function VOIX(h) {
   function status() {
     if (NAT) {
       const ok = !nat.sonde || (nat.moteur && nat.fr);
-      return { ok: true, n: ok ? 1 : 0, v: ok ? { name: "Voix du téléphone", lang: "fr-FR", localService: true } : null, local: true, list: [], native: true };
+      const nv = ok && natV.length && natOpt().voice != null ? pick(natV) : null;
+      return { ok: true, n: ok ? Math.max(1, natV.length) : 0, v: ok ? nv || { name: "Voix du téléphone", lang: "fr-FR", localService: true } : null, local: nv ? !!nv.localService : true, list: ok ? natV : [], native: true };
     }
     const list = frVoices(), v = voice();
     return { ok: ttsOk, n: list.length, v, local: v ? !!v.localService : false, list };
   }
-  const voiceLabel = (v) => `${v.name}${v.lang ? ` (${v.lang.replace("_", "-")})` : ""}${v.localService ? "" : " · en ligne"}`;
+  const voiceLabel = (v) => { const g = genre(v), code = v.nat ? String(v.voiceURI || "").replace(/^fr-[a-z]{2}-x-/i, "").replace(/-(?:local|network|language)$/i, "") : ""; return `${v.nat ? (g === "m" ? "Voix d’homme" : g === "f" ? "Voix de femme" : "Voix") + (code ? " " + code : "") : v.name}${v.lang ? ` (${v.lang.replace("_", "-")})` : ""}${!v.nat && g ? (g === "m" ? " · voix d’homme" : " · voix de femme") : ""}${v.localService ? "" : " · en ligne"}`; };
   function setVoice(uri) { prefs.uri = uri || ""; savePrefs(); }
   function setQuiz(on) { prefs.quiz = !!on; savePrefs(); }
 
@@ -25223,7 +25300,7 @@ function VOIX(h) {
   const micHTML = (target, status, labelTxt = "Dicter", cls = "") => `<button type="button" class="mic${cls ? " " + cls : ""}" data-act="vx-mic" data-target="${esc(target)}" data-status="${esc(status)}" data-label="${esc(labelTxt)}" aria-pressed="false">${icon("micro")}<span class="mic-l">${esc(labelTxt)}</span></button>`;
 
   return {
-    ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, status, voiceLabel, setVoice, setRate, stepRate, setQuiz,
+    ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, status, voiceLabel, genre, setVoice, setRate, stepRate, setQuiz,
     speedHTML, updSpeed, ratePop, popOpen, rateTxt, rateWord, probe, essai, installer, natif: NAT, isApp,
     get prefs() { return prefs; }, get active() { return active; }, get paused() { return paused; },
     listen, stopMic, toggleMic, micHTML, sttMsg,
@@ -28708,7 +28785,7 @@ const APP = (() => {
   function pageReglages() {
     const vs = VX.status(), ia = IAX.cfg;
     const voiceSel = vs.n && vs.list.length
-     ?`<label class="field"><span>Voix</span><select data-set="voice"><option value="">Automatique</option>${vs.list.map((v) => `<option value="${esc(v.voiceURI)}"${VX.prefs.uri === v.voiceURI ? " selected" : ""}>${esc(VX.voiceLabel(v))}</option>`).join("")}</select></label>`
+     ?`<label class="field"><span>Voix</span><select data-set="voice"><option value="">Automatique (une voix d’homme si l’appareil en indique une)</option>${vs.list.map((v) => `<option value="${esc(v.voiceURI)}"${VX.prefs.uri === v.voiceURI ? " selected" : ""}>${esc(VX.voiceLabel(v))}</option>`).join("")}</select></label>`
       : "";
     const voiceSt = !vs.ok ? VX.ABSENT
       : !vs.n ? "Aucune voix française n’est installée sur cet appareil pour le moment : voir ci-dessous comment l’ajouter."
@@ -31312,7 +31389,7 @@ function jChar(o = {}) {
     agent: [168, 296, "L’agent SSIAP", "Il surveille le tableau, lève le doute, donne l’alarme, alerte et accueille les secours."],
     pomp: [250, 296, "Sapeurs-pompiers", "Ils doivent être alertés sans retard (MS 70 § 1) : 18 ou 112."],
   };
-  const SIM = { man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
+  const SIM = { tw: +store.get("ssi-plan") || 1, man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
   const SSI_LAB = { A: "SSI de catégorie A", B: "SSI de catégorie B", C: "SSI de catégorie C", D: "SSI de catégorie D", E: "SSI de catégorie E", CDE: "SSI de catégorie C, D ou E", "": "Pas de catégorie de SSI imposée" };
   const AL_LAB = (a) => (a === "libre" ? "alarme au choix de l’exploitant" : "alarme de type " + a);
   const RV = (cond, ssi, al, ref, o) => Object.assign({ cond, ssi, al, ref }, o || {});
@@ -31535,107 +31612,437 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     o += (hl || []).filter((id) => SIMEL[id]).map((id) => { const x = id === "agent" ? (s.agent === "zone" ? 146 : tab ? 168 : 200) : id === "diff" && !tab && SIM.i >= 0 && false ? 0 : SIMEL[id][0]; const y = id === "agent" ? (s.agent === "zone" ? 142 : 314) : SIMEL[id][1] + (SIMEL[id][1] < 175 ? 14 : 30); return `<circle class="ssim-ring" cx="${x}" cy="${y}" r="17"/>`; }).join("");
     return `<svg class="schema ssim-svg" viewBox="0 0 360 362" role="img" aria-label="Schéma du SSI : étage et poste de sécurité" xmlns="http://www.w3.org/2000/svg">${o}</svg>`;
   }
-  /* ---------- Synoptique du SSI : toute l'installation en un grand schéma, à parcourir (glisser, zoom) ---------- */
+  /* ---------- Toile du SSI : toute l'installation sur un seul grand dessin (pincer pour zoomer, glisser, toucher deux fois) ---------- */
   Object.assign(SIMEL, {
-    uga: [520, 150, "UGA : unité de gestion d’alarme", "Partie du CMSI qui reçoit l’information des déclencheurs manuels ou du SDI et lance le processus d’alarme : temporisation, puis alarme générale."],
-    us: [520, 240, "US : unité de signalisation", "Partie du CMSI qui montre par des voyants si chaque DAS est en attente ou en sécurité, et les défauts (alimentation…)."],
-    ucmc: [520, 330, "UCMC : commande centralisée à la main", "Partie du CMSI avec laquelle l’agent commande les DAS à la main, depuis le poste."],
-    dac: [700, 300, "DAC : dispositif adaptateur de commande", "Il reçoit l’ordre de mise en sécurité et le transmet aux DAS dans la forme qu’ils comprennent (relayage)."],
-    ea: [345, 145, "Équipement d’alarme", "Il fait sonner l’alarme générale. Son type (1, 2a, 2b, 3 ou 4) est fixé par le règlement du bâtiment (MS 62)."],
-    dcs: [520, 240, "DCS : dispositif de commande avec signalisation", "En catégorie C : les commandes des DAS regroupées, avec des voyants, et une entrée qui permet à l’équipement d’alarme de déclencher les DAS."],
-    dcmr: [520, 240, "DCMR : dispositif de commandes manuelles regroupées", "En catégorie D : toutes les commandes manuelles des DAS regroupées au même endroit, chacune utilisable seule."],
-    dcm: [520, 240, "DCM : dispositif de commande manuelle", "En catégorie E : un boîtier de commande à la main pour un ou plusieurs DAS."],
+    uga: [0, 0, "UGA : unité de gestion d’alarme", "Partie du CMSI qui reçoit l’information des déclencheurs manuels ou du SDI et lance le processus d’alarme : temporisation, puis alarme générale."],
+    us: [0, 0, "US : unité de signalisation", "Partie du CMSI qui montre par des voyants si chaque DAS est en attente ou en sécurité, et les défauts (alimentation…)."],
+    ucmc: [0, 0, "UCMC : commande centralisée à la main", "Partie du CMSI avec laquelle l’agent commande les DAS à la main, depuis le poste."],
+    dac: [0, 0, "DAC : dispositif adaptateur de commande", "Il reçoit l’ordre de mise en sécurité et le transmet aux DAS dans la forme qu’ils comprennent (relayage)."],
+    ea: [0, 0, "Équipement d’alarme", "Il fait sonner l’alarme générale. Son type (1, 2a, 2b, 3 ou 4) est fixé par le règlement du bâtiment (MS 62)."],
+    dcs: [0, 0, "DCS : dispositif de commande avec signalisation", "En catégorie C : les commandes des DAS regroupées, avec des voyants, et une entrée qui permet à l’équipement d’alarme de déclencher les DAS."],
+    dcmr: [0, 0, "DCMR : dispositif de commandes manuelles regroupées", "En catégorie D : toutes les commandes manuelles des DAS regroupées au même endroit, chacune utilisable seule."],
+    dcm: [0, 0, "DCM : dispositif de commande manuelle", "En catégorie E : un boîtier de commande à la main pour un ou plusieurs DAS."],
+    zd: [0, 0, "Zones de détection", "Une zone de détection est une partie du bâtiment surveillée par un groupe de détecteurs ou de déclencheurs manuels, qui a sa propre signalisation au tableau : l’agent sait tout de suite où aller (MS 54)."],
+    flash: [0, 0, "Flashs lumineux", "Ils clignotent pendant l’alarme générale : ils aident les personnes qui entendent mal (MS 64 § 3)."],
+    baas: [0, 0, "BAAS : blocs autonomes d’alarme sonore", "Des diffuseurs d’alarme qui ont leur propre batterie. Type Pr (principal) et type Sa (satellite) pour l’alarme de type 2b, type Ma (à main) pour l’alarme de type 3. Avec les types 1 et 2a, des blocs de type Sa peuvent remplacer les diffuseurs sonores. Hors de portée du public, à 2,25 m au moins (MS 65 § 3)."],
+    asc: [0, 0, "Non-arrêt des ascenseurs", "Sur ordre de mise en sécurité, les ascenseurs ne s’arrêtent plus au niveau touché par le feu. Cette fonction dépend du site ; le règlement la cite par exemple pour le type U avec locaux à sommeil (U 44 § 3)."],
+    report: [0, 0, "Report d’alarme, tableau répétiteur", "Il répète l’alarme restreinte ailleurs que devant le tableau, pour que le personnel rejoigne vite le tableau (MS 66 § 1). Le tableau répétiteur est une option de l’équipement d’alarme ; le règlement en demande un à chaque niveau en type J (J 37 § 4)."],
+    secteur: [0, 0, "Courant normal", "L’alimentation électrique habituelle du bâtiment. Si elle est coupée, l’alimentation de sécurité (AES) prend le relais (EL 3)."],
   });
-  const SYNG = { W: 1100, H: 700 };
-  function synSvg(s, hl, c) {
-    const T = (x, y, t, cl = "sts", a = "start") => `<text x="${x}" y="${y}" class="${cl}" text-anchor="${a}">${t}</text>`;
-    const tab = simTab(c), hasDet = c.ssi === "A", hasC = c.ssi === "A" || c.ssi === "B", spk = SIM.ev === "sprink";
-    const cmd = c.ssi === "C" ? "dcs" : c.ssi === "D" ? "dcmr" : c.ssi === "E" ? "dcm" : "";
-    const H = new Set(hl || []);
-    const dasIds = ["door", "clapet", "vent", "volet", "issue"];
-    if (hasC && dasIds.some((x) => H.has(x))) { H.add("cmsi"); H.add("dac"); }
-    if (cmd && dasIds.some((x) => H.has(x))) { H.add(cmd); H.add("dac"); }
-    if (H.has("diff")) { if (hasC) { H.add("cmsi"); H.add("uga"); } else H.add("ea"); }
-    if (H.has("cmsi") && s.tempo) H.add("uga");
-    if (H.has("ecs") && hasC && (s.ecs === "feu")) H.add("uga");
-    const on = (id) => H.has(id);
-    const N = {}; let o = "";
-    const box = (id, x, y, w, h, title, sub, st, fill) => {
-      N[id] = [x, y, w, h];
-      const act = on(id), f = fill || "var(--sv-panel)";
-      o += `<g data-act="ssi-el" data-v="${id}" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${f}" stroke="${act ? "var(--sv-red)" : "var(--sv-ink-2)"}" stroke-width="${act ? 4 : 1.6}"${act ? ' class="syn-act"' : ""}/>`
-        + T(x + 12, y + 24, title, "stb") + (sub ? T(x + 12, y + 44, sub, "sts") : "") + (st ? `<rect x="${x + 10}" y="${y + h - 26}" width="${w - 20}" height="20" rx="10" fill="${st[1]}"/>` + T(x + w / 2, y + h - 11, st[0], "stw-b", "middle") : "") + `</g>`;
-    };
-    const G = (x, y, w, h, t) => { o += `<rect class="s-group" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/>` + T(x + 14, y + 22, t, "s-group-t"); };
-    const RED = "var(--sv-red)", GRN = "var(--sv-green)", YEL = "#b7791f", GRY = "var(--sv-metal)", BLU = "var(--sv-blue)";
-    /* Zones */
-    G(8, 8, 232, 684, "TERRAIN · DÉTECTER");
-    G(252, 8, 368, 684, "POSTE DE SÉCURITÉ · DÉCIDER");
-    G(632, 8, 460, 684, "TERRAIN · METTRE EN SÉCURITÉ");
-    /* Feu */
-    if (s.fire) o += `<g data-act="ssi-el" data-v="fire" style="cursor:pointer"><rect x="20" y="600" width="208" height="80" rx="12" fill="var(--red-tint)" stroke="var(--sv-red)" stroke-width="2"/><path d="M52 668 q-8 -26 14 -46 q-2 16 10 20 q4 -12 -2 -22 q26 18 14 48 Z" fill="var(--sv-flame)" stroke="var(--sv-red-dark)"/>${T(100, 636, "FEU", "stb")}${T(100, 656, "bureau, zone 3", "sts")}</g>`;
-    /* Détection */
-    if (hasDet) box("det", 20, 100, 208, 110, "Détecteurs auto.", "zone 3 · fumée, chaleur", s.det ? ["ACTIVÉ", RED] : ["veille", GRN]);
-    else { N.det = null; o += `<rect x="20" y="100" width="208" height="110" rx="12" fill="none" stroke="var(--sv-line)" stroke-dasharray="6 5"/>` + T(32, 130, "Pas de détection", "st") + T(32, 150, "automatique dans", "sts") + T(32, 165, "ce SSI", "sts"); }
-    box("dm", 20, 240, 208, 110, "Déclencheurs manuels", "boîtiers rouges, ≈ 1,30 m", s.dm ? ["APPUYÉ", RED] : ["veille", GRN]);
-    if (spk) box("spk", 20, 380, 208, 100, "Tête de sprinkleur", "s’ouvre à la chaleur", s.spk === "open" ? ["ARROSE", BLU] : ["fermée", GRN]);
-    /* Poste */
-    if (tab) box("ecs", 266, 100, 160, 130, hasDet ? "ECS · tableau" : "Tableau d’alarme", hasDet ? "SDI : reçoit et affiche" : "type " + c.al, s.ecs === "feu" ? ["FEU ZONE 3", RED] : s.ecs === "derang" ? ["DÉRANGEMENT", YEL] : s.ecs === "secteur" ? ["DÉFAUT ALIM.", YEL] : ["veille", GRN]);
-    if (hasC) {
-      N.cmsi = [440, 90, 170, 340];
-      o += `<g data-act="ssi-el" data-v="cmsi" style="cursor:pointer"><rect x="440" y="90" width="170" height="340" rx="14" fill="none" stroke="${on("cmsi") ? RED : "var(--sv-ink)"}" stroke-width="${on("cmsi") ? 4 : 2}"${on("cmsi") ? ' class="syn-act"' : ""}/>${T(525, 82, "CMSI · centralisateur", "stb", "middle")}</g>`;
-      box("uga", 452, 104, 146, 92, "UGA", "gestion de l’alarme", s.ag ? ["ALARME GÉN.", RED] : s.tempo ? ["TEMPO ≤ 5 min", YEL] : ["veille", GRN]);
-      box("us", 452, 206, 146, 100, "US", "voyants des DAS", s.us === "attente" ? ["attente", GRN] : s.us === "clign" ? ["DÉFAUT POS.", YEL] : ["SÉCURITÉ", RED]);
-      box("ucmc", 452, 316, 146, 100, "UCMC", "commandes à la main", null);
-    } else if (cmd) box(cmd, 440, 180, 170, 140, cmd.toUpperCase(), cmd === "dcs" ? "commandes + voyants" : "commandes à la main", null);
-    if (!hasC && !tab) box("ea", 266, 100, 160, 130, "Alarme type " + c.al, c.al === "3" ? "blocs autonomes (Ma)" : "dispositif autonome", s.ag ? ["SONNE", RED] : ["veille", GRN]);
-    if (!hasC && tab) { N.ea = N.ecs; }
-    if (tab) box("aes", 440, 470, 170, 110, "AES", "alimente tableau et CMSI", s.power === "on" ? ["secteur OK", GRN] : ["SUR BATTERIES", YEL]);
-    box("agent", 266, 300, 160, 100, "Agent SSIAP", s.agent === "zone" ? "parti en levée de doute" : "au poste", null, s.agent === "zone" ? "var(--amber-tint)" : null);
-    box("pomp", 266, 450, 160, 90, "Pompiers", "18 ou 112", s.pomp ? ["ALERTÉS", RED] : null);
-    if (spk) box("pc", 20, 490, 208, 100, "Poste de contrôle", "sprinkleurs · cloche", s.cloche ? ["EAU COULE", RED] : ["veille", GRN]);
-    /* Mise en sécurité */
-    const dasLinked = hasC || !!cmd;
-    if (dasLinked) box("dac", 644, 250, 120, 110, "DAC", "relayage", null);
-    const dz = (id, y, t, sub, attente, secu, isSec) => box(id, 790, y, 290, 80, t, sub, isSec ? [secu, RED] : [attente, GRN]);
-    dz("door", 40, "Porte coupe-feu", "DAS compartimentage", "ouverte", "FERMÉE", s.door === "closed");
-    if (s.door === "stuck") o += T(1076, 64, "BLOQUÉE PAR UNE CALE", "stb", "end");
-    dz("clapet", 124, "Clapet coupe-feu", "DAS compartimentage", "ouvert", "FERMÉ", s.clapet === "closed");
-    dz("vent", 208, "Ventilation", "arrêt technique", "marche", "ARRÊTÉE", s.vent === "off");
-    dz("volet", 292, "Volet de désenfumage", "DAS désenfumage · couloir", "fermé", "OUVERT", s.volet === "open");
-    dz("exu", 376, "Exutoire d’escalier", "commande uniquement manuelle", "fermé", "OUVERT", s.exu === "open");
-    dz("issue", 460, "Issue de secours", "DAS évacuation", "verrouillée", "DÉVERROUILLÉE", s.issue === "unlock");
-    box("diff", 790, 560, 290, 110, "Diffuseurs sonores + flash", "alarme générale : évacuer", s.ag ? ["SONNENT", RED] : ["silence", GRN]);
-    /* Câbles */
-    const mid = (id, side) => { const b = N[id]; if (!b) return null; return side === "r" ? [b[0] + b[2], b[1] + b[3] / 2] : side === "l" ? [b[0], b[1] + b[3] / 2] : side === "t" ? [b[0] + b[2] / 2, b[1]] : [b[0] + b[2] / 2, b[1] + b[3]]; };
-    const L = [];
-    const link = (a, sa, b, sb, act, dash) => { const p = mid(a, sa), q = mid(b, sb); if (!p || !q) return; const mx = (p[0] + q[0]) / 2; L.push(`<path d="M${p[0]} ${p[1]} C${mx} ${p[1]} ${mx} ${q[1]} ${q[0]} ${q[1]}" fill="none" stroke="${act ? RED : "var(--sv-line)"}" stroke-width="${act ? 4 : 2}"${dash ? ' stroke-dasharray="8 6"' : ""}${act ? ' class="syn-flow"' : ""}/>`); };
-    const both = (a, b) => on(a) && on(b);
-    if (hasDet) link("det", "r", "ecs", "l", both("det", "ecs"));
-    if (tab) link("dm", "r", hasC && !hasDet ? "uga" : "ecs", "l", on("dm") && (on("ecs") || on("uga")));
-    else link("dm", "r", "ea", "l", on("dm") && on("ea"));
-    if (hasC && tab && hasDet) link("ecs", "r", "uga", "l", both("ecs", "uga") || both("ecs", "cmsi"));
-    if (hasC) { const ag = both("uga", "diff"); L.push(`<path d="M598 150 H622 V615 H790" fill="none" stroke="${ag ? RED : "var(--sv-line)"}" stroke-width="${ag ? 4 : 2}"${ag ? ' class="syn-flow"' : ""}/>`); link("ucmc", "r", "dac", "l", both("cmsi", "dac")); }
-    if (!hasC && tab) link("ecs", "b", "diff", "l", both("ecs", "diff") || on("diff"));
-    if (!hasC && !tab) link("ea", "r", "diff", "l", on("diff"));
-    if (cmd) { link(cmd, "r", "dac", "l", both(cmd, "dac"), c.ssi !== "C"); if (c.ssi === "C" && tab) link("ecs", "r", cmd, "l", on("ecs") && on(cmd), true); }
-    if (dasLinked) ["door", "clapet", "vent", "volet", "issue"].forEach((d) => link("dac", "r", d, "l", on("dac") && on(d)));
-    if (!dasLinked && (c.ssi === "")) o += T(785, 545, "Pas de SSI catégorisé : les DAS ne sont pas reliés à l’alarme.", "sts", "end");
-    if ((c.ssi === "D" || c.ssi === "E")) { link(tab ? "ecs" : "ea", "r", "door", "l", on("door") && (on("ecs") || on("ea") || on("diff")), true); link(tab ? "ecs" : "ea", "r", "issue", "l", on("issue") && (on("ecs") || on("ea") || on("diff")), true); }
-    if (tab) link("aes", "t", hasC ? "ucmc" : cmd || "ecs", hasC || cmd ? "b" : "r", on("aes"));
-    link(tab ? "ecs" : "ea", "b", "agent", "t", on("agent") && (on("ecs") || on("ea")));
-    link("agent", "b", "pomp", "t", on("pomp"));
-    if (spk) { link("spk", "b", "pc", "t", on("spk") && on("pc")); link("pc", "r", "agent", "l", on("pc")); }
-    o = L.join("") + o;
-    o += (hl || []).filter((id) => N[id]).map((id) => { const b = N[id]; return `<rect class="ssim-ring" x="${b[0] - 6}" y="${b[1] - 6}" width="${b[2] + 12}" height="${b[3] + 12}" rx="16"/>`; }).join("");
-    SYNG.N = N;
-    return `<svg class="schema syn-svg" viewBox="0 0 ${SYNG.W} ${SYNG.H}" style="width:${Math.round(SYNG.W * (SIM.z || 0.8))}px;max-width:none" role="img" aria-label="Synoptique du SSI" xmlns="http://www.w3.org/2000/svg">${o}</svg>`;
+  const TW = { W: 2800, H: 4180, max: 1.25, cx: 1400, cy: 2090, s: 0, pw: 0, ph: 0, key: "", raf: 0, B: {}, act: [], ptr: new Map(), g: null, lt: null, tm: 0 };
+  /* Pictogrammes : un petit module par élément, même trait partout (case de 100 × 100, couleur héritée du module). */
+  const TWP = {
+    fire: `<path d="M50 92 C22 92 16 66 34 46 C36 58 44 60 46 52 C50 38 42 26 50 8 C56 30 82 44 78 68 C76 84 64 92 50 92 Z"/><path d="M50 92 C40 92 36 80 44 70 C48 76 54 72 52 62 C62 70 64 92 50 92 Z" fill="currentColor"/>`,
+    det: `<path d="M8 22 H92"/><path d="M26 22 V32 A24 20 0 0 0 74 32 V22"/><circle cx="50" cy="38" r="4" fill="currentColor"/><path d="M34 70 q7 8 0 16 M50 64 q8 10 0 22 M66 70 q7 8 0 16"/>`,
+    dm: `<rect x="16" y="16" width="68" height="68" rx="8"/><rect x="33" y="33" width="34" height="34" rx="3"/><circle cx="50" cy="50" r="6" fill="currentColor"/>`,
+    zd: `<rect x="12" y="12" width="76" height="76" rx="6"/><path d="M50 12 V88 M12 50 H88"/><rect x="56" y="18" width="26" height="26" rx="3" fill="currentColor"/>`,
+    spk: `<path d="M8 20 H92 M50 20 V38"/><rect x="40" y="38" width="20" height="14" rx="2"/><path d="M50 60 L28 90 M50 60 V92 M50 60 L72 90" stroke-dasharray="7 8"/>`,
+    pc: `<path d="M40 6 V30 M40 70 V94"/><circle cx="40" cy="50" r="20"/><path d="M28 50 H52 M40 38 V62"/><path d="M60 50 H74"/><path d="M74 38 A12 12 0 0 1 74 62 Z" fill="currentColor"/>`,
+    ecs: `<rect x="10" y="12" width="80" height="76" rx="7"/><rect x="22" y="24" width="56" height="22" rx="3"/><circle cx="28" cy="64" r="6" fill="currentColor"/><circle cx="50" cy="64" r="6"/><circle cx="72" cy="64" r="6"/>`,
+    cmsi: `<rect x="10" y="12" width="80" height="76" rx="7"/><path d="M10 38 H90 M10 62 H90"/><circle cx="26" cy="25" r="5" fill="currentColor"/><circle cx="26" cy="50" r="5" fill="currentColor"/><circle cx="26" cy="75" r="5" fill="currentColor"/><path d="M42 25 H76 M42 50 H76 M42 75 H76"/>`,
+    uga: `<path d="M26 66 C26 30 36 20 46 20 C56 20 66 30 66 66 Z"/><path d="M18 66 H74"/><circle cx="46" cy="78" r="5" fill="currentColor"/><circle cx="78" cy="26" r="14"/><path d="M78 18 V26 L84 30"/>`,
+    us: `<rect x="10" y="18" width="80" height="64" rx="7"/><circle cx="30" cy="38" r="7" fill="currentColor"/><circle cx="50" cy="38" r="7"/><circle cx="70" cy="38" r="7"/><circle cx="30" cy="62" r="7"/><circle cx="50" cy="62" r="7" fill="currentColor"/><circle cx="70" cy="62" r="7"/>`,
+    ucmc: `<rect x="10" y="18" width="80" height="64" rx="7"/><rect x="22" y="30" width="16" height="16" rx="3"/><rect x="42" y="30" width="16" height="16" rx="3"/><rect x="62" y="30" width="16" height="16" rx="3"/><path d="M24 66 H44"/><circle cx="66" cy="64" r="8" fill="currentColor"/>`,
+    ea: `<rect x="12" y="12" width="76" height="76" rx="8"/><path d="M34 62 C34 38 40 30 50 30 C60 30 66 38 66 62 Z"/><path d="M28 62 H72"/><circle cx="50" cy="72" r="4" fill="currentColor"/>`,
+    dcs: `<rect x="10" y="16" width="80" height="68" rx="7"/><circle cx="28" cy="36" r="6" fill="currentColor"/><circle cx="50" cy="36" r="6"/><circle cx="72" cy="36" r="6"/><rect x="21" y="56" width="14" height="14" rx="3"/><rect x="43" y="56" width="14" height="14" rx="3"/><rect x="65" y="56" width="14" height="14" rx="3"/>`,
+    dcmr: `<rect x="10" y="16" width="80" height="68" rx="7"/><rect x="21" y="28" width="14" height="14" rx="3"/><rect x="43" y="28" width="14" height="14" rx="3"/><rect x="65" y="28" width="14" height="14" rx="3"/><rect x="21" y="56" width="14" height="14" rx="3"/><rect x="43" y="56" width="14" height="14" rx="3"/><rect x="65" y="56" width="14" height="14" rx="3"/>`,
+    dcm: `<rect x="24" y="12" width="52" height="76" rx="8"/><circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="5" fill="currentColor"/>`,
+    dac: `<rect x="24" y="24" width="52" height="52" rx="6"/><path d="M4 50 H24 M76 36 H96 M76 64 H96"/><path d="M36 50 H44 L50 38 L56 62 L60 50 H66"/>`,
+    issue: `<rect x="18" y="10" width="46" height="80" rx="3"/><rect x="31" y="50" width="20" height="16" rx="2" fill="currentColor"/><path d="M35 50 V44 A6 6 0 0 1 47 44 V50"/><path d="M72 50 H94 M86 42 L94 50 L86 58"/>`,
+    door: `<path d="M16 90 V10 H60 V90"/><path d="M60 10 L84 20 V96 L60 90"/><circle cx="68" cy="56" r="3" fill="currentColor"/><rect x="24" y="44" width="12" height="12" rx="2" fill="currentColor"/>`,
+    clapet: `<path d="M6 30 H94 M6 70 H94"/><path d="M34 68 L66 32"/><circle cx="50" cy="50" r="5" fill="currentColor"/>`,
+    vent: `<circle cx="50" cy="50" r="38"/><circle cx="50" cy="50" r="6" fill="currentColor"/><path d="M50 44 C42 34 44 22 52 16 C58 26 56 36 50 44 Z"/><path d="M55 53 C67 51 77 58 78 68 C66 69 58 62 55 53 Z"/><path d="M45 53 C39 63 28 68 19 63 C24 53 35 50 45 53 Z"/>`,
+    volet: `<rect x="16" y="16" width="56" height="68" rx="4"/><path d="M26 32 H62 M26 50 H62 M26 68 H62"/><path d="M80 62 q8 -8 0 -16 q-8 -8 0 -16"/>`,
+    exu: `<path d="M6 76 H34 M70 76 H94"/><path d="M34 76 L66 44"/><path d="M44 68 q8 -8 0 -16 M58 30 q8 -8 0 -16"/>`,
+    asc: `<rect x="18" y="10" width="64" height="80" rx="5"/><path d="M50 10 V90"/><path d="M27 42 L34 30 L41 42 Z" fill="currentColor"/><path d="M59 58 L66 70 L73 58 Z" fill="currentColor"/>`,
+    diff: `<path d="M14 40 H30 L52 22 V78 L30 60 H14 Z"/><path d="M64 38 q10 12 0 24 M76 28 q18 22 0 44"/>`,
+    flash: `<circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="5" fill="currentColor"/><path d="M50 10 V24 M50 76 V90 M10 50 H24 M76 50 H90 M22 22 L32 32 M68 68 L78 78 M78 22 L68 32 M32 68 L22 78"/>`,
+    baas: `<rect x="8" y="26" width="84" height="48" rx="7"/><path d="M22 40 V60 M32 40 V60 M42 40 V60"/><rect x="56" y="42" width="22" height="16" rx="2"/><path d="M78 47 H83 V53 H78"/><path d="M62 50 H68 M65 47 V53"/>`,
+    secteur: `<path d="M56 6 L24 54 H46 L40 94 L76 42 H54 Z"/>`,
+    aes: `<rect x="10" y="28" width="72" height="48" rx="6"/><path d="M82 42 H90 V62 H82"/><path d="M24 52 H38 M31 45 V59 M56 52 H70"/>`,
+    agent: `<circle cx="50" cy="26" r="14"/><path d="M36 20 H64" /><path d="M20 92 V70 C20 54 34 48 50 48 C66 48 80 54 80 70 V92"/><path d="M58 64 H70" />`,
+    report: `<rect x="28" y="34" width="44" height="56" rx="6"/><circle cx="50" cy="52" r="6" fill="currentColor"/><path d="M40 72 H60"/><path d="M36 22 q14 -12 28 0 M26 12 q24 -18 48 0"/>`,
+    pomp: `<path d="M6 44 H58 V74 H6 Z"/><path d="M58 52 H76 L92 64 V74 H58"/><circle cx="24" cy="78" r="9"/><circle cx="74" cy="78" r="9"/><path d="M10 32 H56 M18 32 V44 M30 32 V44 M42 32 V44"/>`,
+  };
+  /* Modules de la toile : place [x, y, largeur, hauteur], taille (G grand, M moyen, P petit), nom court et rôle en une phrase. */
+  const TWM = {
+    fire: { b: [80, 910, 560, 150], z: "P", row: 1, n: "Départ de feu", r: "Bureau, zone 3 (scénarios)." },
+    det: { b: [80, 1085, 560, 460], z: "M", n: "Détecteurs automatiques", r: "Ils sentent la fumée, la chaleur ou la flamme et préviennent le tableau." },
+    dm: { b: [80, 1570, 560, 460], z: "M", n: "Déclencheurs manuels", r: "On appuie pour donner l’alarme. Boîtiers rouges, près des escaliers." },
+    spk: { b: [80, 2055, 560, 420], z: "P", n: "Sprinkleurs", r: "La tête chauffée par le feu s’ouvre et arrose." },
+    pc: { b: [80, 2500, 560, 420], z: "P", n: "Poste de contrôle des sprinkleurs", r: "L’eau qui coule fait sonner sa cloche et prévient le poste." },
+    zd: { b: [1080, 910, 780, 220], z: "M", row: 1, n: "Zones de détection", r: "Le tableau montre la zone d’où vient le signal : l’agent sait où aller." },
+    ecs: { b: [1080, 1150, 320, 640], z: "G", n: "ECS", r: "Le tableau : il reçoit les signaux, affiche la zone et sonne au poste : c’est l’alarme restreinte." },
+    uga: { b: [1500, 1300, 340, 360], z: "P", n: "UGA", r: "Elle gère l’alarme : temporisation, puis alarme générale." },
+    us: { b: [1500, 1680, 340, 360], z: "P", n: "US", r: "Ses voyants montrent si les DAS sont en attente ou en sécurité." },
+    ucmc: { b: [1500, 2060, 340, 340], z: "P", n: "UCMC", r: "Pour commander les DAS à la main, depuis le poste." },
+    ea: { b: [1080, 1820, 320, 600], z: "M", n: "Alarme sans CMSI", r: "Tableau d’alarme ou dispositif autonome (types 2b, 3 et 4)." },
+    dcs: { b: [1080, 2460, 240, 400], z: "P", n: "DCS", r: "Catégorie C : commandes des DAS regroupées, avec voyants." },
+    dcmr: { b: [1350, 2460, 240, 400], z: "P", n: "DCMR", r: "Catégorie D : commandes manuelles des DAS regroupées." },
+    dcm: { b: [1620, 2460, 240, 400], z: "P", n: "DCM", r: "Catégorie E : un boîtier de commande à la main." },
+    dac: { b: [1990, 2000, 240, 480], z: "M", n: "DAC", r: "Il reçoit l’ordre et le transmet aux DAS (relayage)." },
+    issue: { b: [2330, 1050, 400, 370], z: "P", n: "Issues de secours verrouillées", t: "DAS · évacuation", r: "Elles se déverrouillent à l’alarme générale." },
+    door: { b: [2330, 1448, 400, 370], z: "P", n: "Portes coupe-feu", t: "DAS · compartimentage", r: "Elles se ferment pour bloquer le feu et la fumée." },
+    clapet: { b: [2330, 1846, 400, 370], z: "P", n: "Clapets coupe-feu", t: "DAS · compartimentage", r: "Ils ferment les conduits d’air." },
+    vent: { b: [2330, 2244, 400, 370], z: "P", n: "Ventilation", t: "arrêt technique", r: "La ventilation de confort est arrêtée." },
+    volet: { b: [2330, 2642, 400, 370], z: "P", n: "Volets de désenfumage", t: "DAS · désenfumage", r: "Ils s’ouvrent pour faire sortir la fumée des couloirs." },
+    exu: { b: [2330, 3040, 400, 370], z: "P", n: "Exutoire d’escalier", t: "désenfumage", r: "Commande uniquement à la main (MS 60 § 1)." },
+    asc: { b: [2330, 3438, 400, 370], z: "P", n: "Non-arrêt des ascenseurs", r: "L’ascenseur ne s’arrête plus au niveau touché par le feu." },
+    diff: { b: [730, 190, 420, 460], z: "M", n: "Diffuseurs sonores", r: "Ils donnent l’alarme générale : tout le monde évacue." },
+    flash: { b: [1190, 190, 420, 460], z: "M", n: "Flashs lumineux", r: "Pour les personnes qui entendent mal (MS 64 § 3)." },
+    baas: { b: [1650, 190, 420, 460], z: "M", n: "BAAS", r: "Des blocs d’alarme sonore qui ont leur propre batterie." },
+    secteur: { b: [80, 3160, 400, 560], z: "M", n: "Courant normal", r: "L’électricité habituelle du bâtiment." },
+    aes: { b: [510, 3160, 390, 560], z: "M", n: "AES", r: "Ses batteries prennent le relais si le courant normal est coupé (EL 3)." },
+    pomp: { b: [1040, 3160, 400, 400], z: "M", n: "Sapeurs-pompiers", r: "Alertés sans retard : 18 ou 112 (MS 70 § 1)." },
+    agent: { b: [1470, 3160, 390, 400], z: "M", n: "Agent au poste de sécurité", r: "Il surveille le tableau, lève le doute, donne l’alarme et alerte." },
+    report: { b: [1040, 3590, 820, 240], z: "P", row: 1, n: "Report d’alarme", r: "Il répète l’alarme restreinte ailleurs : tableau répétiteur, récepteur porté par le personnel." },
+  };
+  const TWZ = { G: [150, 58, 32], M: [130, 50, 32], P: [100, 42, 28] };
+  const TWCM = [1440, 1150, 420, 1270];
+  /* Sigle ou nom court écrit en gros, nom complet officiel, et 1 si c'est un sigle. Sources : glossaire et fiches SSI de l'appli, règlement (MS 53 et suivants). */
+  const TWN = {
+    fire: ["Feu", "départ de feu", 0], det: ["Détecteurs", "détecteurs automatiques", 0], dm: ["DM", "déclencheur manuel", 1], spk: ["Sprinkleurs", "extinction automatique à eau", 0], pc: ["Poste", "de contrôle des sprinkleurs", 0],
+    zd: ["ZD", "zone de détection", 1], ecs: ["ECS", "équipement de contrôle et de signalisation", 1], uga: ["UGA", "unité de gestion d’alarme", 1], us: ["US", "unité de signalisation", 1], ucmc: ["UCMC", "unité de commande manuelle centralisée", 1],
+    ea: ["EA", "équipement d’alarme", 1], dcs: ["DCS", "dispositif de commande avec signalisation", 1], dcmr: ["DCMR", "dispositif de commandes manuelles regroupées", 1], dcm: ["DCM", "dispositif de commande manuelle", 1], dac: ["DAC", "dispositif adaptateur de commande", 1],
+    issue: ["Issues", "issues de secours verrouillées (DAS)", 0], door: ["Portes", "portes coupe-feu (DAS)", 0], clapet: ["Clapets", "clapets coupe-feu (DAS)", 0], vent: ["Ventilation", "arrêt de la ventilation", 0], volet: ["Volets", "volets de désenfumage (DAS)", 0], exu: ["Exutoire", "exutoire d’escalier", 0], asc: ["Ascenseurs", "non-arrêt des ascenseurs", 0],
+    diff: ["DS", "diffuseur sonore", 1], flash: ["Flashs", "flashs lumineux", 0], baas: ["BAAS", "bloc autonome d’alarme sonore", 1], secteur: ["Secteur", "courant normal", 0], aes: ["AES", "alimentation électrique de sécurité", 1],
+    pomp: ["Pompiers", "sapeurs-pompiers", 0], agent: ["Agent", "agent au poste de sécurité", 0], report: ["Report", "report d’alarme", 0],
+  };
+  /* Variante 2 (toile) : anneau (rayon), angle en degrés (0 à droite, 90 en bas) et rayon de la bulle, selon l'importance. */
+  const TWR = {
+    ecs: [880, 203, 185], ea: [880, 240, 170], uga: [880, 285, 165], us: [880, 322, 165], ucmc: [880, 358, 165], dcs: [880, 40, 150], dcmr: [880, 68, 150], dcm: [880, 96, 150],
+    zd: [1420, 203, 170], baas: [1420, 262, 180], diff: [1420, 285, 200], flash: [1420, 308, 170], dac: [1420, 30, 200], agent: [1420, 118, 190], aes: [1420, 146, 190],
+    fire: [2000, 174, 150], det: [2000, 196, 200], dm: [2000, 216, 200], spk: [2000, 236, 160], pc: [2000, 256, 160], issue: [2000, 336, 170], door: [2000, 354, 170], clapet: [2000, 12, 170], vent: [2000, 30, 170], volet: [2000, 48, 170], asc: [2000, 66, 150], exu: [2000, 84, 160], pomp: [2000, 106, 185], report: [2000, 128, 150], secteur: [2000, 150, 165],
+  };
+  /* Taille du dessin selon la variante choisie (SIM.tw : 1 épurée, 2 toile, 3 blocs complets). */
+  function twDim() { const v2 = SIM.tw === 2, w = v2 ? 4800 : 2800, h = v2 ? 4800 : 4180; if (TW.W !== w || TW.H !== h) { TW.W = w; TW.H = h; TW.s = 0; TW.key = ""; } }
+  const twCat = (c) => (c.ssi ? c.ssi : "N");
+  const twWrap = (t, n) => { const out = []; let l = ""; String(t).replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ").replace(/§ /g, "§ ").split(" ").forEach((w) => { if (l && (l + " " + w).length > n) { out.push(l); l = w; } else l = l ? l + " " + w : w; }); if (l) out.push(l); return out; };
+  /* Ce que ce bâtiment a : « on » présent, « off » pas dans ce bâtiment, « opt » selon le site. Mêmes règles que simSteps. */
+  function twHas(c) {
+    const tab = simTab(c), A = c.ssi === "A", hasC = A || c.ssi === "B", cmd = c.ssi === "C" ? "dcs" : c.ssi === "D" ? "dcmr" : c.ssi === "E" ? "dcm" : "", linked = hasC || !!cmd, sp = SIM.ev === "sprink" && A;
+    const o = { fire: "opt", det: A ? "on" : "off", dm: "on", spk: sp ? "on" : "opt", pc: sp ? "on" : "opt", zd: tab ? "on" : "off", ecs: A ? "on" : "off", cmsi: hasC ? "on" : "off", uga: hasC ? "on" : "off", us: hasC ? "on" : "off", ucmc: hasC ? "on" : "off", ea: hasC ? "off" : "on", dcs: "off", dcmr: "off", dcm: "off", dac: linked ? "on" : "off",
+      diff: c.al === "2b" || c.al === "3" ? "off" : "on", flash: "on", baas: c.al === "2b" || c.al === "3" ? "on" : c.al === "4" ? "off" : "opt", secteur: "on", aes: tab ? "on" : "off", agent: "on", pomp: "on", report: !tab ? "off" : c.v && SSF.type === "J" ? "on" : "opt", asc: linked && c.v && SSF.type === "U" && A ? "on" : "opt" };
+    ["issue", "door", "clapet", "vent", "volet", "exu"].forEach((k) => { o[k] = linked ? "on" : "opt"; });
+    if (cmd) o[cmd] = "on";
+    return o;
   }
+  /* Phrase de légende : le bâtiment choisi et ce que le règlement lui demande. */
+  function twLegend(c) {
+    const f = SSF, res = (c.ssi ? "SSI de catégorie " + c.ssi : "pas de catégorie de SSI imposée (alarme seule)") + ", " + (c.libre ? "alarme au choix de l’exploitant (exemple montré : type 4)" : "alarme de type " + c.al) + (c.ags ? " avec alarme générale sélective" : "");
+    if (!c.v) return (f.type === "IGH" ? "IGH : le simulateur montre un exemple de bâtiment de type ERP" : f.type ? "Type " + f.type + " : pas encore dans le simulateur, exemple montré" : "Exemple, sans bâtiment choisi") + " : " + res + ".";
+    const lettre = /^[J-Y]$/.test(f.type);
+    return "Ce bâtiment : type " + f.type + (lettre && f.cat ? ", " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : "") + (f.som && lettre ? ", locaux à sommeil" : "") + " → " + res + (c.v.ssi === "CDE" ? " (le règlement laisse le choix entre C, D et E)" : "") + " (" + c.ref + ").";
+  }
+  function synSvg(s, hl, c) {
+    const tab = simTab(c), A = c.ssi === "A", hasC = A || c.ssi === "B", cmd = c.ssi === "C" ? "dcs" : c.ssi === "D" ? "dcmr" : c.ssi === "E" ? "dcm" : "", linked = hasC || !!cmd, DE = c.ssi === "D" || c.ssi === "E";
+    const has = twHas(c), run = SIM.i >= 0, snd = has.baas === "on" ? "baas" : "diff", tabId = A ? "ecs" : hasC ? "uga" : "ea";
+    const RED = "var(--sv-red)", GRN = "var(--sv-green)", YEL = "#b7791f", BLU = "var(--sv-blue)";
+    /* Éléments actifs à cette étape : ceux de simSteps, traduits vers les modules de la toile, plus ceux que le signal traverse. */
+    const src = new Set(hl || []), H = new Set(), M = new Set();
+    src.forEach((id) => { if (id === "ecs") M.add(tabId); else if (id === "diff") { M.add(snd); M.add("flash"); } else if (id === "cmsi") { if (hasC) M.add("cmsi"); else if (cmd) M.add(cmd); } else if (TWM[id]) M.add(id); });
+    M.forEach((x) => H.add(x));
+    /* Le fil vers un DAS ne s'allume que si l'étape lui donne un ordre (pas quand on le montre seulement, par exemple la porte calée). */
+    const delta = (SIM.steps[SIM.i] || {}).s || {}, ordre = ["door", "clapet", "vent", "volet", "issue", "us"].some((k) => k in delta);
+    const dasIds = ["door", "clapet", "vent", "volet", "issue"], dasOn = ordre ? dasIds.filter((x) => H.has(x)) : [];
+    if (hasC && dasOn.length) { H.add("cmsi"); H.add("dac"); }
+    if (cmd && dasOn.some((x) => !DE || (x !== "door" && x !== "issue"))) { H.add(cmd); H.add("dac"); }
+    if (src.has("diff")) { if (hasC) { H.add("cmsi"); H.add("uga"); } else H.add("ea"); }
+    if (H.has("cmsi") && s.tempo) H.add("uga");
+    if (src.has("ecs") && A && s.ecs === "feu") H.add("uga");
+    if (tab && (H.has("det") || H.has("dm")) && H.has(tabId)) H.add("zd");
+    if (H.has("uga")) H.add("cmsi");
+    const on = (id) => H.has(id), both = (a, b) => H.has(a) && H.has(b);
+    const T = (x, y, t, cl, a, fs) => `<text x="${x}" y="${Math.round(y)}" class="${cl}"${a ? ` text-anchor="${a}"` : ""}${fs ? ` font-size="${fs}"` : ""}>${esc(t)}</text>`;
+    const pic = (id, x, y, k) => `<g class="tw-p" transform="translate(${x} ${y}) scale(${k / 100})">${TWP[id]}</g>`;
+    /* États affichés pendant un scénario */
+    const ecsSt = s.ecs === "feu" ? ["FEU ZONE 3", RED] : s.ecs === "derang" ? ["DÉRANGEMENT", YEL] : s.ecs === "secteur" ? ["DÉFAUT ALIM.", YEL] : ["veille", GRN];
+    const ST = {
+      det: s.det ? ["ACTIVÉ", RED] : ["veille", GRN], dm: s.dm ? ["APPUYÉ", RED] : ["veille", GRN],
+      spk: s.spk === "open" ? ["ARROSE", BLU] : ["fermée", GRN], pc: s.cloche ? ["EAU COULE", RED] : ["veille", GRN],
+      ecs: ecsSt, uga: s.ag ? ["ALARME GÉNÉRALE", RED] : s.tempo ? ["TEMPO ≤ 5 min", YEL] : ["veille", GRN],
+      us: s.us === "attente" ? ["attente", GRN] : s.us === "clign" ? ["DÉFAUT DE POSITION", YEL] : ["SÉCURITÉ", RED],
+      ea: tab ? (s.ag ? ["ALARME GÉNÉRALE", RED] : ecsSt) : s.ag ? ["SONNE", RED] : ["veille", GRN],
+      door: s.door === "closed" ? ["FERMÉE", RED] : s.door === "stuck" ? ["BLOQUÉE PAR UNE CALE", YEL] : ["ouverte", GRN],
+      clapet: s.clapet === "closed" ? ["FERMÉ", RED] : ["ouvert", GRN], vent: s.vent === "off" ? ["ARRÊTÉE", RED] : ["marche", GRN],
+      volet: s.volet === "open" ? ["OUVERT", RED] : ["fermé", GRN], exu: s.exu === "open" ? ["OUVERT", RED] : ["fermé", GRN],
+      issue: s.issue === "unlock" ? ["DÉVERROUILLÉES", RED] : ["verrouillées", GRN],
+      diff: s.ag ? ["SONNENT", RED] : ["silence", GRN], baas: s.ag ? ["SONNENT", RED] : ["silence", GRN], flash: s.ag ? ["CLIGNOTENT", RED] : ["éteints", GRN],
+      secteur: s.power === "on" ? ["présent", GRN] : ["COUPÉ", RED], aes: s.power === "on" ? ["en charge", GRN] : ["SUR BATTERIES", YEL],
+      agent: s.agent === "zone" ? ["sur place, zone 3", YEL] : ["au poste", GRN], pomp: s.pomp ? ["ALERTÉS", RED] : null,
+    };
+    /* Textes qui changent selon le bâtiment */
+    const NM = {}, RL = {}, TG = {};
+    if (has.report === "opt") TG.report = "selon le site";
+    if (!hasC) {
+      if (tab) { NM.ea = "Tableau d’alarme"; RL.ea = "Sans CMSI : il reçoit les déclencheurs manuels et lance l’alarme."; }
+      else if (c.al === "3") { NM.ea = "Alarme de type 3"; RL.ea = "Pas de tableau : un déclencheur manuel fait sonner les blocs autonomes."; }
+      else { NM.ea = "Alarme de type 4"; RL.ea = "Pas de tableau : un dispositif sonore autonome (cloche, bloc…)."; }
+    }
+    if (c.al === "4") { NM.diff = "Dispositif sonore autonome"; RL.diff = "Il donne l’alarme générale : tout le monde évacue."; }
+    if (has.baas === "on") RL.baas = c.al === "3" ? "Blocs de type Ma : ils sonnent dès qu’on appuie sur un déclencheur." : "Un bloc principal (Pr) et des blocs satellites (Sa), avec leur batterie.";
+    if (has.baas === "opt") RL.baas = "Des blocs satellites (Sa) peuvent remplacer les diffuseurs sonores.";
+    if (c.ssi === "B") RL.uga = "Elle reçoit les déclencheurs manuels et gère l’alarme : temporisation, puis alarme générale.";
+    if (s.fire) { NM.fire = "FEU"; RL.fire = "Bureau, zone 3, 1er étage."; } else if (s.smoke) { NM.fire = "Poussière de travaux"; RL.fire = "Pas de feu. Bureau, zone 3."; }
+    /* Sigle (ou nom court) en gros, et nom complet officiel : les mêmes dans les trois variantes. */
+    const sig = (id) => !!TWN[id][2], lab = (id) => (id === "fire" && (s.fire || s.smoke) ? (s.fire ? "FEU" : "Poussière") : id === "diff" && c.al === "4" ? "Dispositif sonore" : TWN[id][0]);
+    const full = (id) => (id === "ea" ? "équipement d’alarme" + (hasC ? " sans CMSI" : " de type " + c.al) : id === "diff" && c.al === "4" ? "autonome (cloche, bloc…)" : id === "fire" && s.smoke && !s.fire ? "pas de feu" : TWN[id][1]);
+    const V = SIM.tw === 1 || SIM.tw === 2 ? SIM.tw : 3, OY = V === 2 ? 0 : 300;
+    const B = {}; let cards = "", rings = "", o = "";
+    const absent = c.v ? "pas dans ce bâtiment" : "pas dans cette catégorie";
+    const stOf = (id) => (id === "fire" ? (s.fire ? "fire" : "opt") : has[id]);
+    const cls = (id, st) => `tw-m tw-${st}${on(id) ? " tw-act" : ""}${SIM.el === id ? " tw-sel" : ""}`;
+    const W = []; let wire, cut;
+    const ok = (id) => has[id] !== "off", op = (id) => has[id] === "opt";
+    const wcls = (lit, act, dash) => `tw-w${lit ? (dash ? " tw-wd" : " tw-wl") : " tw-wo"}${lit && act ? " tw-wa syn-flow" : ""}`;
+    const sdiOn = A, smsiOn = !!c.ssi;
+    if (V === 2) {
+      /* ===== Variante 2 : la toile d'araignée. Le SSI au centre, les éléments en bulles sur trois anneaux, les fils en rayons et en arcs. ===== */
+      const C0 = 2400, rd = Math.PI / 180, pol = (r, a) => [Math.round(C0 + r * Math.cos(a * rd)), Math.round(C0 + r * Math.sin(a * rd))];
+      const arc = (r, a0, a1) => { let d = ((a1 - a0) % 360 + 360) % 360; const sw = d <= 180 ? 1 : 0; if (!sw) d = 360 - d; const q = pol(r, a1); return `A${r} ${r} 0 ${d > 180 ? 1 : 0} ${sw} ${q[0]} ${q[1]}`; };
+      const RM = { "ecs>uga": 555, "ea>dcs": 555, "spk>pc": 1715, "aes>ecs": 555, "aes>ucmc": 555, "aes>dcs": 555, "aes>dcmr": 555, "aes>dcm": 555, "aes>ea": 555, "pc>agent": 2250 };
+      const path = (a, b) => {
+        if (a === "hub") { const q = TWR[b], p0 = pol(400, q[1]), p1 = pol(q[0] - q[2], q[1]); return `M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}`; }
+        const p = TWR[a], q = TWR[b];
+        if (Math.abs(p[1] - q[1]) < 0.5) { const sg = q[0] > p[0] ? 1 : -1, p0 = pol(p[0] + sg * p[2], p[1]), p1 = pol(q[0] - sg * q[2], q[1]); return `M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}`; }
+        const rm = RM[a + ">" + b] || (Math.min(p[0], q[0]) === 880 ? 1132 : 1715), p0 = pol(p[0] + (rm > p[0] ? p[2] : -p[2]), p[1]), p1 = pol(rm, p[1]), p3 = pol(q[0] + (rm > q[0] ? q[2] : -q[2]), q[1]);
+        return `M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]} ${arc(rm, p[1], q[1])} L${p3[0]} ${p3[1]}`;
+      };
+      wire = (a, b, d, lit, act, dash, base) => { if (!lit && !base) return; W.push(`<path class="${wcls(lit, act, dash)}" d="${path(a === "cmsi" ? "ucmc" : a, b === "cmsi" ? "ucmc" : b)}"/>`); };
+      cut = () => W.push(`<path class="tw-w tw-wx" d="${path("secteur", "aes")}"/>`);
+      /* trame de la toile : anneaux et rayons, très discrets */
+      o += [880, 1420, 2000].map((r) => `<circle class="tw-web" cx="${C0}" cy="${C0}" r="${r}"/>`).join("") + [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((a) => { const p0 = pol(400, a), p1 = pol(2200, a); return `<path class="tw-web" d="M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}"/>`; }).join("");
+      /* familles, écrites dans les coins */
+      const famT = (x, y, a, t) => T(x, y, t, "tw-z", a, 130), famS = (x, y, a, t, k) => T(x, y + k * 62, t, "tw-zs", a, 50);
+      o += famT(80, 170, "", "DÉTECTER") + famS(80, 250, "", "ZD : zone de détection", 0);
+      o += famT(4720, 170, "end", "ÉVACUER") + famS(4720, 250, "end", "ZA : zone de diffusion d’alarme", 0);
+      o += famT(4720, 4590, "end", "METTRE EN") + famT(4720, 4730, "end", "SÉCURITÉ") + famS(4720, 4330, "end", "DAS : dispositif actionné de sécurité", 0) + famS(4720, 4330, "end", "ZS : zone de mise en sécurité", 1);
+      o += famT(80, 4730, "", "ALIMENTER") + famT(1560, 4770, "middle", "AGIR");
+      /* le centre : SSI, avec ses deux moitiés SDI et SMSI */
+      o += `<g class="tw-cart"><circle class="tw-cbg" cx="${C0}" cy="${C0}" r="400"/>` + T(C0, C0 - 205, "SSI", "tw-cl", "middle", 170) + T(C0, C0 - 140, "système de sécurité incendie", "tw-ct", "middle", 44) + T(C0, C0 - 76, c.ssi ? "catégorie " + c.ssi + " · alarme " + (c.libre ? "au choix" : "de type " + c.al) : "alarme seule · " + (c.libre ? "au choix" : "type " + c.al), "tw-cr", "middle", 40)
+        + `<path class="tw-hsep" d="M${C0 - 380} ${C0 - 40} H${C0 + 380} M${C0} ${C0 - 40} V${C0 + 380}"/>`
+        + `<g class="${sdiOn ? "tw-hon" : "tw-hoff"}">` + T(C0 - 175, C0 + 60, "SDI", "tw-cl", "middle", 96) + ["système de", "détection", "incendie"].map((l, k) => T(C0 - 170, C0 + 112 + k * 40, l, "tw-ct", "middle", 34)).join("") + T(C0 - 150, C0 + 262, sdiOn ? "détecter" : absent, "tw-x", "middle", sdiOn ? 34 : 24) + `</g>`
+        + `<g class="${smsiOn ? "tw-hon" : "tw-hoff"}">` + T(C0 + 175, C0 + 60, "SMSI", "tw-cl", "middle", 96) + ["système de", "mise en sécurité", "incendie"].map((l, k) => T(C0 + 170, C0 + 112 + k * 40, l, "tw-ct", "middle", 34)).join("") + T(C0 + 150, C0 + 262, smsiOn ? "mettre en sécurité" : absent, "tw-x", "middle", smsiOn ? 30 : 24) + `</g></g>`;
+      /* le CMSI : un secteur qui regroupe UGA, US et UCMC */
+      { const a0 = 271, a1 = 372, p0 = pol(690, a0), p1 = pol(1075, a0), p2 = pol(1075, a1), p3 = pol(690, a1), t = pol(880, 303.5);
+        const cb = ["uga", "us", "ucmc"].map((k) => { const q = pol(TWR[k][0], TWR[k][1]); return [q[0] - TWR[k][2], q[1] - TWR[k][2], q[0] + TWR[k][2], q[1] + TWR[k][2]]; }), bx = Math.min(...cb.map((q) => q[0])), by = Math.min(...cb.map((q) => q[1]));
+        B.cmsi = [bx, by, Math.max(...cb.map((q) => q[2])) - bx, Math.max(...cb.map((q) => q[3])) - by];
+        o += `<g class="${cls("cmsi", has.cmsi)}" data-tw="cmsi"><path class="tw-bg tw-fr" d="M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]} A1075 1075 0 0 1 ${p2[0]} ${p2[1]} L${p3[0]} ${p3[1]} A690 690 0 0 0 ${p0[0]} ${p0[1]} Z"/>${T(t[0], t[1] - 44, "CMSI", "tw-n", "middle", 60)}${["centralisateur", "de mise en", "sécurité", "incendie"].concat(has.cmsi === "off" ? ["pas dans ce", c.v ? "bâtiment" : "cas"] : []).map((l, k) => T(t[0], t[1] - 14 + k * 27, l, k > 3 ? "tw-x" : "tw-t", "middle", k > 3 ? 20 : 23)).join("")}</g>`; }
+      /* une bulle par élément */
+      Object.keys(TWR).forEach((id) => {
+        const [rr, an, R] = TWR[id], [x, y] = pol(rr, an), st = stOf(id), L0 = lab(id), F0 = sig(id) || id === "ea" || full(id) !== TWM[id].n ? full(id) : "";
+        B[id] = [x - R, y - R, 2 * R, 2 * R];
+        const ic = R * 0.46, fs = Math.min(R * 0.4, (2 * R - 44) / (L0.length * 0.62));
+        let g = `<circle class="tw-bg" cx="${x}" cy="${y}" r="${R}"/>` + pic(id, x - ic / 2, y - R * 0.86, ic) + T(x, y + R * 0.1, L0, "tw-n", "middle", fs.toFixed(1));
+        /* nom complet : lignes centrées, coupées selon la largeur de la bulle à cette hauteur ; réduit s'il ne tient pas */
+        const words = F0 ? twWrap(F0, 200)[0].split(" ") : [];
+        for (let z = 0, done = !words.length; z < 6 && !done; z++) {
+          const ff = R * 0.165 * (1 - z * 0.08), y0 = y + R * 0.1 + ff * 1.5, out = []; let ln = "", k = 0;
+          const cap = (kk) => { const dy = y0 + kk * ff * 1.24 - y + ff * 0.2; return Math.floor((2 * Math.sqrt(Math.max(1, R * R - dy * dy)) - 40) / (ff * 0.6)); };
+          words.forEach((w0) => { if (ln && (ln + " " + w0).length > cap(k)) { out.push(ln); k++; ln = w0; } else ln = ln ? ln + " " + w0 : w0; }); if (ln) out.push(ln);
+          done = out.every((l, kk) => l.length <= cap(kk)) && y0 + (out.length - 1) * ff * 1.24 < y + R * 0.8;
+          if (done || z === 5) out.forEach((l, kk) => { g += T(x, y0 + kk * ff * 1.24, l, "tw-t", "middle", ff.toFixed(1)); });
+        }
+        const pill = run && st !== "off" && ST[id] && (st !== "opt" || on(id) || ST[id][1] !== GRN) ? ST[id] : null, note = st === "off" ? absent : st === "opt" && id !== "fire" ? "selon le site" : "";
+        if (pill) { const pw = Math.max(R * 1.5, pill[0].length * 17 + 40); g += `<rect x="${x - pw / 2}" y="${y + R - 26}" width="${pw}" height="52" rx="26" fill="${pill[1]}"/>` + T(x, y + R + 10, pill[0], "tw-s", "middle", 27); }
+        else if (note) g += T(x, y + R + 34, note, "tw-x", "middle", 27);
+        cards += `<g class="${cls(id, st)}" data-tw="${id}">${g}</g>`;
+        if (M.has(id)) rings += `<circle class="tw-ring" cx="${x}" cy="${y}" r="${R + 18}"/>`;
+      });
+      if (M.has("cmsi")) rings += `<circle class="tw-ring" cx="${pol(880, 322)[0]}" cy="${pol(880, 322)[1]}" r="${165 + 18}"/>`;
+      if (!linked) o += twWrap("Pas de SSI catégorisé : les DAS ne sont pas reliés à l’alarme.", 34).map((l, k) => T(4720, 4100 + k * 50, l, "tw-x", "end", 40)).join("");
+      wire("hub", "agent", "", true, on("agent") && (src.has("ecs") || M.has("ea")), 0, 1);
+    } else {
+      /* ===== Variantes 1 et 3 : disposition en blocs. La 1 est épurée (sigle en gros, phrase de rôle seulement de près), la 3 garde tout le texte. ===== */
+      wire = (a, b, d, lit, act, dash, base) => { if (!lit && !base) return; W.push(`<path class="${wcls(lit, act, dash)}" d="${d}"/>`); };
+      cut = () => W.push(`<path class="tw-w tw-wx" d="M480 3440 H510"/>`);
+      const card = (id) => {
+        const m = TWM[id], [x, y, w, h] = m.b, st = stOf(id), pad = 24, ic = TWZ[m.z][0] * (V === 1 && !m.row ? 0.8 : 1);
+        B[id] = [x, y + OY, w, h];
+        const name = V === 1 || sig(id) ? lab(id) : NM[id] || m.n, role = RL[id] || m.r;
+        const tag = V === 1 ? (sig(id) || id === "ea" || full(id) !== m.n ? full(id) : "") : [sig(id) ? full(id) : "", TG[id] || m.t || ""].filter(Boolean).join(" · ");
+        const note = st === "off" ? absent : st === "opt" && id !== "fire" && !m.row ? "selon le site" : "";
+        const pill = run && st !== "off" && !m.row && ST[id] && (st !== "opt" || on(id) || ST[id][1] !== GRN) ? ST[id] : null, foot = !m.row && (ST[id] || note) ? 64 : note ? 40 : 0;
+        const side = w - pad * 2 - ic - 22, fullw = w - pad * 2, mid = V === 1 && !m.row;
+        let L = null;
+        for (let k = 0; k < 9 && !(L && L.ok); k++) {
+          const f = 1 - k * 0.06, fn = TWZ[m.z][1] * f * (V === 1 ? 1.7 : 1), ft = TWZ[m.z][2] * f * (V === 1 ? 1.25 : 1.12), fr = TWZ[m.z][2] * f * (V === 1 ? 0.78 : 1), lh = fn * 1.1, cs = Math.floor(side / (fn * 0.62)), cf = Math.floor(fullw / (fn * 0.62));
+          const wide = mid || (!m.row && (side < 120 || name.split(" ").some((q) => q.length > cs))), nl = twWrap(name, wide ? cf : cs), tw0 = m.row ? side : fullw;
+          const tl = tag ? twWrap(tag, Math.floor(tw0 / (ft * 0.6))) : [], rl = twWrap(role, Math.floor(tw0 / (fr * 0.58))), nh = nl.length * lh, txt = tl.length * ft * 1.2 + rl.length * fr * (V === 1 ? 1.3 : 1.22) + (mid ? 10 : 0);
+          const need = m.row ? Math.max(ic, nh + 4 + txt) + (note ? 36 : 0) : (wide ? ic + 8 + nh + 6 : Math.max(ic, nh) + 12) + txt + foot;
+          L = { fn, fr, ft, lh, wide, nl, tl, rl, nh, ok: need <= h - pad * 2 && nl.every((q) => q.length <= (wide ? cf : cs)) };
+        }
+        const { fn, fr, ft, lh, wide, nl, tl, rl, nh } = L, cx = x + w / 2, an = mid ? "middle" : "";
+        let g = `<rect class="tw-bg" x="${x}" y="${y}" width="${w}" height="${h}" rx="26"/>` + pic(id, mid ? cx - ic / 2 : x + pad, y + pad, ic), ty;
+        const tx0 = mid ? cx : m.row ? x + pad + ic + 22 : x + pad;
+        if (wide) { ty = y + pad + ic + 8; nl.forEach((l, k) => { g += T(mid ? cx : x + pad, ty + fn * 0.86 + k * lh, l, "tw-n", an, fn.toFixed(1)); }); ty += nh + 6; }
+        else { const y0 = m.row ? y + pad : y + pad + Math.max(0, (ic - nh) / 2); nl.forEach((l, k) => { g += T(x + pad + ic + 22, y0 + fn * 0.86 + k * lh, l, "tw-n", "", fn.toFixed(1)); }); ty = m.row ? y0 + nh + 4 : y + pad + Math.max(ic, nh) + 12; }
+        tl.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-t", an, ft.toFixed(1)); ty += ft * 1.2; });
+        if (mid) ty += 10;
+        rl.forEach((l, k) => { g += T(tx0, ty + fr * 0.9 + k * fr * (V === 1 ? 1.3 : 1.22), l, "tw-r tw-rz", an, fr.toFixed(1)); });
+        if (pill) g += `<rect x="${x + pad}" y="${y + h - pad - 50}" width="${fullw}" height="50" rx="25" fill="${pill[1]}"/>` + T(cx, y + h - pad - 16, pill[0], "tw-s", "middle", Math.min(27, Math.floor(fullw / (pill[0].length * 0.66))));
+        else if (note) g += T(cx, y + h - pad - 6, note, "tw-x", "middle", Math.min(26, Math.floor(fullw / (note.length * 0.5))));
+        cards += `<g class="${cls(id, st)}" data-tw="${id}">${g}</g>`;
+        if (M.has(id)) rings += `<rect class="tw-ring" x="${x - 16}" y="${y - 16}" width="${w + 32}" height="${h + 32}" rx="38"/>`;
+      };
+      /* Grandes zones : lisibles de loin */
+      const zone = (x, y, w, h, lines, cl) => `<rect class="tw-zone" x="${x}" y="${y}" width="${w}" height="${h}" rx="56"/>` + lines.map((l, k) => T(x + 40, y + 118 + k * 104, l, "tw-z" + (cl || ""))).join("");
+      o += zone(700, 40, 1400, 640, ["ÉVACUER"]) + zone(40, 760, 640, 2200, ["DÉTECTER"]) + zone(1000, 760, 900, 2140, ["SSI"], " tw-zc") + zone(1960, 760, 800, 3080, ["METTRE EN", "SÉCURITÉ"]) + zone(40, 3000, 900, 840, ["ALIMENTER"]) + zone(1000, 3000, 900, 840, ["AGIR"]);
+      o += T(1860, 850, "système de sécurité incendie", "tw-zs", "end", 40) + T(1860, 892, "au poste de sécurité", "tw-x", "end", 28) + T(2060, 140, "ZA : zone de diffusion d’alarme", "tw-zs", "end", 44);
+      o += T(2110, 1140, "DAS", "tw-zd", "middle", 84) + ["dispositif", "actionné", "de sécurité"].map((l, k) => T(2110, 1196 + k * 46, l, "tw-zs", "middle", 40)).join("") + T(2110, 1400, "ZS", "tw-zd", "middle", 64) + ["zone de mise", "en sécurité"].map((l, k) => T(2110, 1446 + k * 40, l, "tw-zs", "middle", 34)).join("");
+      /* Cartouche : la catégorie, visible de loin */
+      o += `<g class="tw-cart"><rect class="tw-cbg" x="40" y="40" width="620" height="640" rx="56"/>` + (c.ssi ? T(350, 150, "SSI DE CATÉGORIE", "tw-ct", "middle", 54) + T(350, 470, c.ssi, "tw-cl", "middle", 330) : T(350, 190, "ALARME", "tw-cl", "middle", 120) + T(350, 320, "SEULE", "tw-cl", "middle", 120) + T(350, 430, "pas de catégorie de SSI", "tw-ct", "middle", 44))
+        + T(350, 570, c.libre ? "alarme au choix" : "alarme de type " + c.al, "tw-ct", "middle", 60) + T(350, 640, c.v ? c.ref : "exemple", "tw-cr", "middle", 40) + `</g>`;
+      /* Légende des couleurs */
+      const lg = (k, cl, t) => `<g class="tw-m ${cl}"><rect class="tw-bg" x="2190" y="${150 + k * 124}" width="110" height="84" rx="20"/></g>` + T(2330, 205 + k * 124, t, "tw-lg", "", 42);
+      o += `<rect class="tw-zone" x="2140" y="40" width="620" height="640" rx="56"/>` + T(2190, 118, "LÉGENDE", "tw-lt", "", 50) + lg(0, "tw-on", c.v ? "dans ce bâtiment" : "dans cette catégorie") + lg(1, "tw-off", absent) + lg(2, "tw-opt", "selon le site") + lg(3, "tw-on tw-act", "signal en cours");
+      /* Cadre du CMSI */
+      B.cmsi = [TWCM[0], TWCM[1] + OY, TWCM[2], TWCM[3]];
+      o += `<g class="${cls("cmsi", has.cmsi)}" data-tw="cmsi"><rect class="tw-bg tw-fr" x="${TWCM[0]}" y="${TWCM[1]}" width="${TWCM[2]}" height="${TWCM[3]}" rx="34"/>${pic("cmsi", 1464, 1168, 84)}${T(1562, 1218, "CMSI", "tw-n", "", 56)}${T(1562, 1250, "centralisateur de mise", has.cmsi === "off" ? "tw-r" : "tw-t", "", 25)}${T(1562, 1280, has.cmsi === "off" ? absent : "en sécurité incendie", has.cmsi === "off" ? "tw-x" : "tw-t", "", has.cmsi === "off" ? 23 : 25)}</g>`;
+      Object.keys(TWM).forEach(card);
+      if (M.has("cmsi")) rings += `<rect class="tw-ring" x="${TWCM[0] - 16}" y="${TWCM[1] - 16}" width="${TWCM[2] + 32}" height="${TWCM[3] + 32}" rx="46"/>`;
+      if (!linked) o += twWrap("Pas de SSI catégorisé : les DAS ne sont pas reliés à l’alarme.", 15).map((l, k) => T(1995, 3030 + k * 36, l, "tw-x", "", 28)).join("");
+      wire("hub", "agent", `M1665 2900 V3160`, true, on("agent") && (src.has("ecs") || M.has("ea")), 0, 1);
+    }
+    /* Fils : les mêmes liaisons dans les trois variantes (tracé en blocs donné ici ; la toile calcule ses rayons et ses arcs). */
+    const Bk = (id) => { const b = B[id]; return [b[0], b[1] - OY, b[2], b[3]]; };
+    const P = (id, side, f) => { const b = Bk(id), q = f == null ? 0.5 : f; return side === "r" ? [b[0] + b[2], b[1] + b[3] * q] : side === "l" ? [b[0], b[1] + b[3] * q] : side === "t" ? [b[0] + b[2] * q, b[1]] : [b[0] + b[2] * q, b[1] + b[3]]; };
+    const bz = (p, q) => { const mx = (p[0] + q[0]) / 2; return `M${p[0]} ${p[1]} C${mx} ${p[1]} ${mx} ${q[1]} ${q[0]} ${q[1]}`; };
+    const pl = (pts) => { let d = `M${pts[0][0]} ${pts[0][1]}`; for (let k = 1; k < pts.length - 1; k++) { const a = pts[k - 1], b = pts[k], e = pts[k + 1], r = 36, la = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, le = Math.hypot(e[0] - b[0], e[1] - b[1]) || 1, ra = Math.min(r, la / 2), re = Math.min(r, le / 2); d += ` L${Math.round(b[0] - (b[0] - a[0]) / la * ra)} ${Math.round(b[1] - (b[1] - a[1]) / la * ra)} Q${b[0]} ${b[1]} ${Math.round(b[0] + (e[0] - b[0]) / le * re)} ${Math.round(b[1] + (e[1] - b[1]) / le * re)}`; } const z = pts[pts.length - 1]; return d + ` L${z[0]} ${z[1]}`; };
+    wire("det", "zd", bz(P("det", "r"), P("zd", "l", 0.35)), A, both("det", "ecs"), 0, 1);
+    wire("dm", "zd", bz(P("dm", "r"), P("zd", "l", 0.65)), tab, on("dm") && on(tabId), 0, 1);
+    wire("dm", "ea", bz(P("dm", "r"), P("ea", "l", 0.62)), !tab, both("dm", "ea"));
+    wire("zd", "ecs", `M1240 1130 V1150`, A, on("zd") && on("ecs"), 0, 1);
+    wire("zd", "uga", pl([[1420, 1130], [1420, 1480], [1500, 1480]]), hasC && !A, on("zd") && on("uga"));
+    wire("zd", "ea", pl([[1100, 1130], [1100, 1140], [1040, 1140], [1040, 2000], [1080, 2000]]), tab && !hasC, on("zd") && on("ea"));
+    wire("ecs", "uga", `M1400 1480 H1500`, A, both("ecs", "uga"), 0, 1);
+    /* alarme : de l'UGA (ou de l'équipement d'alarme) vers les diffuseurs, les flashs et les blocs */
+    [["diff", 940], ["flash", 1400], ["baas", 1860]].forEach(([id, x]) => {
+      wire("uga", id, pl([[1840, 1480], [1930, 1480], [1930, 720], [x, 720], [x, 650]]), hasC && ok(id), on(id) && on("uga"), op(id), id !== "baas");
+      wire("ea", id, pl([[1080, 1900], [955, 1900], [955, 720], [x, 720], [x, 650]]), !hasC && ok(id), on(id) && (on("ea") || !tab), op(id));
+    });
+    /* mise en sécurité : CMSI ou commande → DAC → DAS */
+    wire("cmsi", "dac", bz([1860, 2050], P("dac", "l", 0.3)), hasC, both("cmsi", "dac"), 0, 1);
+    [["dcs", 1200], ["dcmr", 1470], ["dcm", 1740]].forEach(([id, x]) => wire(id, "dac", pl([[x + 50, 2860], [x + 50, 2950], [2110, 2950], [2110, 2480]]), cmd === id, both(id, "dac"), DE, 1));
+    wire("ea", "dcs", `M1200 2420 V2460`, c.ssi === "C" && tab, both("ea", "dcs"), 1, 1);
+    ["issue", "door", "clapet", "vent", "volet", "asc"].forEach((d) => { const q = P(d, "l"); wire("dac", d, `M2230 2240 C2300 2240 2262 ${q[1]} ${q[0]} ${q[1]}`, linked, both("dac", d), op(d) || DE, 1); });
+    if (DE) [["issue", 0.3], ["door", 0.3]].forEach(([d, f]) => { const q = P(d, "l", f); wire("ea", d, pl([[1300, 2420], [1300, 2440], [1930, 2440], [1930, 1022], [2282, 1022], [2282, q[1]], [q[0], q[1]]]), true, on(d) && (on("ea") || on(snd)), 1); });
+    /* alimentation */
+    if (tab && s.power === "off") cut(); else wire("secteur", "aes", `M480 3440 H510`, tab, on("aes"), 0, 1);
+    wire("aes", "ecs", pl([[900, 3440], [985, 3440], [985, 1650], [1080, 1650]]), A, on("aes"), 0, 1);
+    wire("aes", "cmsi", pl([[900, 3440], [985, 3440], [985, 2440], [1650, 2440], [1650, 2420]]), hasC, on("aes"), 0, 1);
+    if (tab && !hasC) wire("aes", cmd || "ea", cmd === "dcs" ? pl([[900, 3440], [985, 3440], [985, 2660], [1080, 2660]]) : cmd ? pl([[900, 3440], [985, 3440], [985, 2925], [cmd === "dcmr" ? 1420 : 1690, 2925], [cmd === "dcmr" ? 1420 : 1690, 2860]]) : pl([[900, 3440], [985, 3440], [985, 2330], [1080, 2330]]), true, on("aes"));
+    /* les personnes */
+    wire("agent", "pomp", `M1470 3360 H1440`, true, on("pomp"), 0, 1);
+    wire("agent", "report", `M1665 3560 V3590`, ok("report"), false, op("report"), 1);
+    wire("spk", "pc", `M360 2475 V2500`, true, both("spk", "pc"), op("spk"), 1);
+    wire("pc", "agent", pl([[640, 2710], [925, 2710], [925, 2975], [1600, 2975], [1600, 3160]]), true, on("pc"), op("pc"), 1);
+    TW.B = B; TW.act = [...H].filter((x) => B[x]);
+    twDim();
+    const vb = TW.s ? `${TW.cx - TW.pw / TW.s / 2} ${TW.cy - TW.ph / TW.s / 2} ${TW.pw / TW.s} ${TW.ph / TW.s}` : `0 0 ${TW.W} ${TW.H}`;
+    /* Bandeau du haut (variantes en blocs) : le SSI et ses deux moitiés */
+    const half = (x, w, okk, t) => `<g class="${okk ? "tw-hon" : "tw-hoff"}"><rect class="tw-hb" x="${x}" y="176" width="${w}" height="104" rx="30"/>${T(x + w / 2, 247, t + (okk ? "" : " · " + absent), "tw-ct", "middle", okk ? 54 : 40)}</g>`;
+    const band = V === 2 ? "" : `<g class="tw-cart">${T(1400, 128, "SSI : système de sécurité incendie", "tw-cl", "middle", 118)}${half(40, 1370, sdiOn, "SDI : système de détection incendie")}${half(1430, 1330, smsiOn, "SMSI : système de mise en sécurité incendie")}</g>`;
+    return `<svg id="tw-svg" class="tw-svg tw-v${V}" viewBox="${vb}" role="img" aria-label="Schéma du SSI, système de sécurité incendie : le tableau au centre, les autres éléments autour" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-6000" y="-6000" width="${TW.W + 12000}" height="${TW.H + 12000}"/>${band}<g${OY ? ` transform="translate(0 ${OY})"` : ""}>${o}${W.join("")}${cards}${rings}</g></svg>`;
+  }
+  /* ----- Vue de la toile : zoom et déplacement (on change la fenêtre du dessin, il reste net) ----- */
+  const twFit = () => Math.min(TW.pw / TW.W, TW.ph / TW.H) || 0.1;
+  const twAll = () => ({ cx: TW.W / 2, cy: TW.H / 2, s: twFit() });
+  function twClamp(v) {
+    v.s = Math.max(twFit(), Math.min(TW.max, v.s));
+    const vw = TW.pw / v.s, vh = TW.ph / v.s;
+    v.cx = vw >= TW.W ? TW.W / 2 : Math.max(vw / 2, Math.min(TW.W - vw / 2, v.cx));
+    v.cy = vh >= TW.H ? TW.H / 2 : Math.max(vh / 2, Math.min(TW.H - vh / 2, v.cy));
+    return v;
+  }
+  function twApply() {
+    const svg = $("#tw-svg"); if (!svg || !TW.s || !TW.pw) return;
+    const vw = TW.pw / TW.s, vh = TW.ph / TW.s;
+    svg.setAttribute("viewBox", `${(TW.cx - vw / 2).toFixed(1)} ${(TW.cy - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
+    svg.classList.toggle("tw-far", TW.s < 0.3);
+  }
+  function twStop() { if (TW.raf) cancelAnimationFrame(TW.raf); TW.raf = 0; }
+  /* Va en douceur vers une vue { cx, cy, s } */
+  function twGo(t, ms) {
+    twStop(); twClamp(t);
+    const a = { cx: TW.cx, cy: TW.cy, s: TW.s || t.s }, calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!ms || calm) { Object.assign(TW, t); twApply(); return; }
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / ms), e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      TW.s = a.s * Math.pow(t.s / a.s, e); TW.cx = a.cx + (t.cx - a.cx) * e; TW.cy = a.cy + (t.cy - a.cy) * e; twApply();
+      TW.raf = p < 1 ? requestAnimationFrame(step) : 0;
+    };
+    TW.raf = requestAnimationFrame(step);
+  }
+  /* Vue qui cadre la partie active de l'étape */
+  function twTarget() {
+    const ids = TW.act || []; if (!ids.length) return twAll();
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    ids.forEach((id) => { const b = TW.B[id]; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[0] + b[2]); y1 = Math.max(y1, b[1] + b[3]); });
+    const m = 110;
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(0.55, TW.pw / (x1 - x0 + m * 2), TW.ph / (y1 - y0 + m * 2)) };
+  }
+  function twZoom(k, px, py) {
+    const x = px == null ? TW.pw / 2 : px, y = py == null ? TW.ph / 2 : py, wx = TW.cx + (x - TW.pw / 2) / TW.s, wy = TW.cy + (y - TW.ph / 2) / TW.s;
+    const s = Math.max(twFit(), Math.min(TW.max, TW.s * k));
+    twGo({ s, cx: wx - (x - TW.pw / 2) / s, cy: wy - (y - TW.ph / 2) / s }, 260);
+  }
+  /* Branche les doigts sur la toile : un doigt glisse, deux doigts pincent, deux touches rapprochées agrandissent, une touche présente l'élément. */
+  function twBind() {
+    const w = $("#tw-wrap"); if (!w) return;
+    twDim(); TW.pw = w.clientWidth; TW.ph = w.clientHeight; if (!TW.pw || !TW.ph) return;
+    if (!TW.s) Object.assign(TW, twAll());
+    twClamp(TW); twApply();
+    if (w.dataset.tw) return; w.dataset.tw = "1";
+    TW.ptr.clear(); TW.g = null;
+    const pt = (e) => { const r = w.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    w.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" && e.button) return;
+      twStop(); try { w.setPointerCapture(e.pointerId); } catch (x) { /* rien */ }
+      const p = pt(e), m = e.target.closest && e.target.closest("[data-tw]");
+      TW.ptr.set(e.pointerId, p);
+      if (TW.ptr.size === 1) TW.g = { t: Date.now(), p0: p, moved: false, id: m ? m.dataset.tw : "" }; else if (TW.g) TW.g.moved = true;
+    });
+    w.addEventListener("pointermove", (e) => {
+      const a = TW.ptr.get(e.pointerId); if (!a) return;
+      const b = pt(e);
+      if (TW.ptr.size === 1) {
+        if (TW.g && !TW.g.moved && Math.hypot(b[0] - TW.g.p0[0], b[1] - TW.g.p0[1]) < 8) return;
+        if (TW.g) TW.g.moved = true;
+        TW.cx -= (b[0] - a[0]) / TW.s; TW.cy -= (b[1] - a[1]) / TW.s;
+      } else {
+        let o = null; TW.ptr.forEach((v, k) => { if (k !== e.pointerId && !o) o = v; });
+        const d0 = Math.hypot(a[0] - o[0], a[1] - o[1]) || 1, d1 = Math.hypot(b[0] - o[0], b[1] - o[1]) || 1, m0 = [(a[0] + o[0]) / 2, (a[1] + o[1]) / 2], m1 = [(b[0] + o[0]) / 2, (b[1] + o[1]) / 2];
+        const wx = TW.cx + (m0[0] - TW.pw / 2) / TW.s, wy = TW.cy + (m0[1] - TW.ph / 2) / TW.s;
+        TW.s = Math.max(twFit(), Math.min(TW.max, TW.s * d1 / d0));
+        TW.cx = wx - (m1[0] - TW.pw / 2) / TW.s; TW.cy = wy - (m1[1] - TW.ph / 2) / TW.s;
+      }
+      TW.ptr.set(e.pointerId, b); twClamp(TW); twApply(); e.preventDefault();
+    });
+    const up = (e) => {
+      if (!TW.ptr.has(e.pointerId)) return;
+      const p = pt(e), g = TW.g; TW.ptr.delete(e.pointerId);
+      if (TW.ptr.size || !g) return;
+      TW.g = null;
+      if (e.type !== "pointerup" || g.moved || Date.now() - g.t > 450) return;
+      const now = Date.now();
+      if (TW.lt && now - TW.lt.t < 330 && Math.hypot(p[0] - TW.lt.p[0], p[1] - TW.lt.p[1]) < 44) { clearTimeout(TW.tm); TW.lt = null; if (TW.s > TW.max * 0.8) twGo(twAll(), 420); else twZoom(2.4, p[0], p[1]); return; }
+      TW.lt = { t: now, p };
+      clearTimeout(TW.tm);
+      if (g.id && SIMEL[g.id]) TW.tm = setTimeout(() => simEl(g.id), 300);
+    };
+    w.addEventListener("pointerup", up); w.addEventListener("pointercancel", up);
+    w.addEventListener("wheel", (e) => { if (!e.ctrlKey) return; e.preventDefault(); const p = pt(e); twStop(); const wx = TW.cx + (p[0] - TW.pw / 2) / TW.s, wy = TW.cy + (p[1] - TW.ph / 2) / TW.s; TW.s = Math.max(twFit(), Math.min(TW.max, TW.s * Math.exp(-e.deltaY / 200))); TW.cx = wx - (p[0] - TW.pw / 2) / TW.s; TW.cy = wy - (p[1] - TW.ph / 2) / TW.s; twClamp(TW); twApply(); }, { passive: false });
+    if (!TW.rs) { TW.rs = 1; window.addEventListener("resize", () => { const x = $("#tw-wrap"); if (!x || !x.clientWidth) return; const all = TW.s <= twFit() * 1.02; TW.pw = x.clientWidth; TW.ph = x.clientHeight; if (all) Object.assign(TW, twAll()); twClamp(TW); twApply(); }); }
+  }
+  /* À chaque nouvelle étape, la vue se cadre toute seule sur la partie active ; sinon elle ne bouge pas. */
   function synScroll() {
-    const w = $("#syn-wrap"), st = SIM.steps[SIM.i]; if (!w || !st || !SYNG.N) return;
-    const id = (st.hl || []).find((x) => SYNG.N[x]); if (!id) return;
-    const b = SYNG.N[id], z = SIM.z || 0.8;
-    w.scrollTo({ left: Math.max(0, (b[0] + b[2] / 2) * z - w.clientWidth / 2), top: Math.max(0, (b[1] + b[3] / 2) * z - w.clientHeight / 2), behavior: "smooth" });
+    if (!$("#tw-wrap") || !TW.pw) return;
+    const c = simCfg(), key = [SIM.ev, SIM.i, c.ssi, c.al, SSF.type, SSF.cat].join("|");
+    if (key === TW.key) return;
+    const first = !TW.key; TW.key = key;
+    twGo(SIM.i >= 0 ? twTarget() : twAll(), first ? 0 : 700);
   }
   function simOut() {
     const c = simCfg(), evs = SIMEV.filter((e) => simEvOk(e, c));
@@ -31651,20 +32058,25 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (ask) info += `<div class="ssim-q"><p><strong>${tx("À vous : que se passe-t-il ?")}</strong></p><p>${tx(q.p)}</p><div class="ssim-ch">${(step.ord || (step.ord = shuffle([0, 1, 2]))).map((k) => `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="rep${k}">${tx(q.c[k])}</button>`).join("")}</div></div>`;
       else {
         if (q && SIM.mode === "jeu") info += `<div class="call call-${SIM.pick === 0 ? "ok" : "warn"}" role="note">${icon(SIM.pick === 0 ? "ok" : "attention")}<div><p class="lbl">${SIM.pick === 0 ? tx("Bonne réponse") : tx("Pas tout à fait : la bonne réponse est")} ${SIM.pick === 0 ? "" : "« " + tx(q.c[0]) + " »"}</p><p>${tx(q.x)}</p></div></div>`;
-        info += `<dl class="kv ssim-kv"><div><dt>${tx("Ce qui se passe")}</dt><dd>${tx(step.quoi)}</dd></div>${step.tab ? `<div><dt>${tx("Au tableau")}</dt><dd>${tx(step.tab)}</dd></div>` : ""}${step.agent ? `<div><dt>${tx("L’agent")}</dt><dd>${tx(step.agent)}</dd></div>` : ""}${step.ref ? `<div><dt>${tx("Règle")}</dt><dd>${tx(step.ref)}</dd></div>` : ""}</dl>`;
+        info += `<dl class="kv ssim-kv">${SIM.view !== "plan" ? "" : `<div><dt>${tx("Ce qui se passe")}</dt><dd>${tx(step.quoi)}</dd></div>`}${step.tab ? `<div><dt>${tx("Au tableau")}</dt><dd>${tx(step.tab)}</dd></div>` : ""}${step.agent ? `<div><dt>${tx("L’agent")}</dt><dd>${tx(step.agent)}</dd></div>` : ""}${step.ref ? `<div><dt>${tx("Règle")}</dt><dd>${tx(step.ref)}</dd></div>` : ""}</dl>`;
         if (q && SIM.mode === "voir") info += `<p class="small"><strong>${tx("Question :")}</strong> ${tx(q.p)} <strong>${tx(q.c[0])}</strong>. ${tx(q.x)}</p>`;
       }
       if (SIM.i === SIM.steps.length - 1 && SIM.mode === "jeu" && SIM.nq) info += `<p><strong>${tx("Score")} : ${SIM.score} / ${SIM.nq}</strong></p>`;
     }
     const el = SIM.el && SIMEL[SIM.el] ? `<div class="call call-info" role="note">${icon("info")}<div><p class="lbl">${tx(SIMEL[SIM.el][2])}</p><p>${tx(SIMEL[SIM.el][3])}</p></div></div>` : "";
     const waiting = step && step.q && SIM.mode === "jeu" && SIM.pick == null;
+    const toile = SIM.view !== "plan";
+    const band = step ? `<div class="tw-band"><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(step.quoi)}</div>` : "";
     return `<div class="form ssim-f">
         <p class="small"><strong>${tx("Simulé")} :</strong> ${tx(c.ssi ? "SSI de catégorie " + c.ssi : "pas de catégorie de SSI imposée")}, ${tx(c.libre ? "alarme au choix (exemple : type 4)" : "alarme de type " + c.al)}${c.ags ? tx(", alarme générale sélective") : ""}${c.ex ? tx(" (exemple)") : ""}</p>
         <label class="field"><span>${tx("Événement")}</span><select id="ssim-ev">${evs.map((e) => `<option value="${e[0]}"${SIM.ev === e[0] ? " selected" : ""}>${e[1]}</option>`).join("")}</select></label>
         <div class="chips"><button type="button" class="btn${SIM.mode === "voir" ? "" : " ghost"}" data-act="ssi-sim" data-v="m-voir">${icon("oeil")}${tx("Regarder")}</button><button type="button" class="btn${SIM.mode === "jeu" ? "" : " ghost"}" data-act="ssi-sim" data-v="m-jeu">${icon("quiz")}${tx("Jouer (questions)")}</button></div>
       </div>
-      <div class="chips"><button type="button" class="btn${SIM.view !== "plan" ? "" : " ghost"}" data-act="ssi-sim" data-v="v-syn">${tx("Schéma du SSI")}</button><button type="button" class="btn${SIM.view === "plan" ? "" : " ghost"}" data-act="ssi-sim" data-v="v-plan">${tx("Plan de l’étage")}</button>${SIM.view !== "plan" ? `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="z-" aria-label="Dézoomer">−</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z+" aria-label="Zoomer">+</button>` : ""}</div>
-      ${SIM.view !== "plan" ? `<p class="small muted">${tx("Faites glisser le schéma avec le doigt pour vous déplacer ; touchez un élément pour savoir à quoi il sert.")}</p><div id="syn-wrap" class="syn-wrap">${synSvg(s, step ? step.hl : [], c)}</div>` : `<div id="ssim-svg">${simSvg(s, step ? step.hl : [], c)}</div>`}
+      <div class="chips"><button type="button" class="btn${toile ? "" : " ghost"}" data-act="ssi-sim" data-v="v-syn">${tx("Schéma du SSI")}</button><button type="button" class="btn${toile ? " ghost" : ""}" data-act="ssi-sim" data-v="v-plan">${tx("Plan de l’étage")}</button>${toile ? `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="z+" aria-label="${tx("Zoomer")}">+</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z-" aria-label="${tx("Dézoomer")}">−</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z0">${tx("Tout voir")}</button>` : ""}</div>
+      ${toile ? `<p class="small tw-leg tw-c${twCat(c)}"><strong>${tx(twLegend(c))}</strong><br><span class="tw-sw on"></span>${tx(c.v ? "dans ce bâtiment" : "dans cette catégorie")} <span class="tw-sw off"></span>${tx(c.v ? "pas dans ce bâtiment" : "pas dans cette catégorie")} <span class="tw-sw opt"></span>${tx("selon le site")} <span class="tw-sw act"></span>${tx("signal en cours")}</p>
+      <div class="chips tw-var" role="group" aria-label="${tx("Choix du plan")}">${[[1, "Plan simple"], [2, "Plan en toile"], [3, "Plan détaillé"]].map(([k, l]) => `<button type="button" class="btn${SIM.tw === k ? "" : " ghost"}" data-act="ssi-sim" data-v="tw${k}">${k}. ${tx(l)}</button>`).join("")}</div>
+      <div id="tw-wrap" class="tw-wrap tw-c${twCat(c)}" style="aspect-ratio:${SIM.tw === 2 ? "1 / 1" : "2800 / 4180"}">${synSvg(s, step ? step.hl : [], c)}</div>
+      ${band}<p class="small muted">${tx("Pincez avec deux doigts pour zoomer, glissez pour vous déplacer, touchez deux fois pour agrandir. Touchez un élément : il se présente.")}</p>` : `<div id="ssim-svg">${simSvg(s, step ? step.hl : [], c)}</div>`}
       ${el}
       <div class="chips ssim-bar"><button type="button" class="btn" data-act="ssi-sim" data-v="go">${icon("lecture")}${SIM.i < 0 ? tx("Démarrer") : tx("Recommencer")}</button>
       <button type="button" class="btn ghost" data-act="ssi-sim" data-v="prev"${SIM.i <= 0 ? " disabled" : ""}>${icon("precedent")}${tx("Précédent")}</button>
@@ -31672,7 +32084,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       <button type="button" class="btn ghost" data-act="ssi-sim" data-v="auto"${SIM.i < 0 ? " disabled" : ""}>${icon(SIM.play ? "pause" : "lecture")}${SIM.play ? tx("Pause") : tx("Lecture auto")}</button></div>
       <div class="result" aria-live="polite">${info}</div>`;
   }
-  function simDraw() { const w = $("#syn-wrap"), keep = w ? [w.scrollLeft, w.scrollTop] : null; const el = $("#ssim"); if (el) el.innerHTML = simOut(); const w2 = $("#syn-wrap"); if (w2 && keep) { w2.scrollLeft = keep[0]; w2.scrollTop = keep[1]; } if (w2) setTimeout(synScroll, 30); }
+  function simDraw() { const el = $("#ssim"); if (el) el.innerHTML = simOut(); twBind(); synScroll(); }
   function simSay() {
     const st = SIM.steps[SIM.i];
     if (!st) return;
@@ -31689,7 +32101,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     else if (v === "prev") { SIM.play = false; if (SIM.i > 0) { SIM.i--; SIM.pick = -1; } }
     else if (v === "auto") { SIM.play = !SIM.play; if (!SIM.play) { clearTimeout(SIM.tm); VX.stop(); } }
     else if (v === "v-syn" || v === "v-plan") { SIM.view = v.slice(2); simDraw(); return; }
-    else if (v === "z+" || v === "z-") { SIM.z = Math.max(0.4, Math.min(1.6, Math.round(((SIM.z || 0.8) + (v === "z+" ? 0.2 : -0.2)) * 10) / 10)); simDraw(); return; }
+    else if (v === "z+" || v === "z-") { twZoom(v === "z+" ? 1.6 : 1 / 1.6); return; }
+    else if (v === "z0") { twGo(twAll(), 420); return; }
+    else if (/^tw[123]$/.test(v)) { SIM.tw = +v.slice(2); store.set("ssi-plan", SIM.tw); TW.s = 0; TW.key = ""; simDraw(); return; }
     else if (v === "m-voir" || v === "m-jeu") { SIM.mode = v.slice(2); SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm); VX.stop(); }
     else if (v.startsWith("rep")) { SIM.pick = +v.slice(3); SIM.nq++; if (SIM.pick === 0) SIM.score++; }
     simDraw();
@@ -31729,9 +32143,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       <div id="ssi-req">${ssiReqOut()}</div>
         <div class="chips"><a class="btn ghost" href="#ssim-h">${icon("lecture")}${tx("Simulateur")}</a><a class="btn ghost" href="#ssi-bat">${icon("immeuble")}${tx("Règles détaillées")}</a><a class="btn ghost" href="#ssi-cours">${icon("registre")}${tx("Cours")}</a><button type="button" class="btn ghost" data-act="ssi-quiz">${icon("quiz")}${tx("Quiz SSI")}</button></div></div>
       <div class="sec"><h3 class="lbl b" id="ssim-h">${tx("2. Simulateur de ce bâtiment, étape par étape")}</h3>
-        <p class="small muted">${tx("Schéma simplifié d’un étage et du poste de sécurité, avec les équipements de ce SSI. Chaque étape dit où ça se passe, ce que montre le tableau, ce que fait l’agent et l’article du règlement. En mode « Jouer », l’animation s’arrête et vous demande la suite.")}</p>
+        <p class="small muted">${tx("Un grand schéma du SSI, avec le tableau au centre et tous les équipements autour ; le plan d’un étage reste disponible. Chaque étape dit où ça se passe, ce que montre le tableau, ce que fait l’agent et l’article du règlement. En mode « Jouer », l’animation s’arrête et vous demande la suite.")}</p>
         <div id="ssim">${simOut()}</div>
-        <p class="small muted">${tx("Sur un vrai site, le moment exact où chaque DAS bascule est écrit dans le dossier du SSI ; les noms des voyants dépendent du fabricant.")}</p></div>
+        <p class="small muted">${tx("Le schéma montre ce que le règlement exige pour ce bâtiment : un site peut avoir plus d’équipements. Sur un vrai site, le moment exact où chaque DAS bascule est écrit dans le dossier du SSI ; les noms des voyants dépendent du fabricant.")}</p></div>
       <div class="sec" id="ssi-bat"><h3 class="lbl b">${tx("3. Toutes les règles SSI de ce bâtiment")}</h3>
       <div id="ssi-out">${ssiOut()}</div></div>
       <div id="ssi-cours">${cours}</div>
@@ -31746,7 +32160,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (ch) { SIM.v = 0; simReset(); ssiReqDraw(); simDraw(); ssiDraw(); return; }
       simSel();
     };
-    return { html, title: TL["o-ssi"].t, tab: "outils", back: "outils", update };
+    return { html, title: TL["o-ssi"].t, tab: "outils", back: "outils", update, after: () => { TW.key = ""; twBind(); synScroll(); } };
   }
   function toolBatiment() {
     const html = `${toolHead("o-batiment")}
@@ -32754,6 +33168,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     window.addEventListener("popstate", onPopState);
     document.addEventListener("pointerdown", () => { if (NAV.exiting) navArm(); }, true);
     document.addEventListener("click", (e) => { if (VX.popOpen() && !e.target.closest("#tts-pop, #tts-rate")) VX.ratePop(false); }, true);
+    document.addEventListener("vx-voix", () => { if (curTok === "reglages" && !/^(?:INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || "")) rerender(); });
     window.addEventListener("offline", () => toast("Hors connexion : tout le mémo reste disponible."));
     window.addEventListener("online", () => veilleFetch(3600e3));
     { const t0 = current(); stack.length = 0; if (TOPS.has(t0)) { stack.push("accueil"); if (t0 !== "accueil") stack.push(t0); } else stack.push(t0); }
