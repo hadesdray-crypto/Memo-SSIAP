@@ -1,3 +1,4 @@
+- Nouvelle vidéo (2 min) « Le triangle du feu » : les trois éléments, comment éteindre un feu, et que faire devant une porte chaude ou froide ; dans la fiche « Le triangle du feu » et dans le cours SSIAP 1 (théorie du feu) ; fonctionne sans connexion
 - Jeu : plusieurs tests peuvent être en cours en même temps ; chacun est gardé, même après fermeture de l’appli, et se reprend à la question où vous étiez (liste « Tests en cours » sur le menu du jeu et sur la carte du métier)
 - Jeu : toucher une étape déjà commencée la reprend au lieu de la recommencer ; « Arrêter cette étape » l’efface
 - Quiz : plusieurs quiz peuvent être en cours en même temps (examen blanc, quiz rapide, par thème…) ; liste « Quiz en cours » sur le menu des quiz

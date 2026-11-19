@@ -30,6 +30,7 @@ jobs:
           mkdir dist
           # veille.json : état de la veille au moment de la fabrication, pour que la page Veille ait un contenu même hors ligne.
           cp index.html manifest.webmanifest icon-192.png icon-512.png maskable-512.png apple-touch-icon.png favicon-32.png veille.json dist/
+          cp -r videos dist/
           # Numéro de version de l'application (sert à savoir si une mise à jour existe).
           sed -i "s/const APK_VERSION = 0;/const APK_VERSION = ${{ github.run_number }};/" dist/index.html
           grep -q "const APK_VERSION = ${{ github.run_number }};" dist/index.html
