@@ -29290,6 +29290,8 @@ const APP = (() => {
     else if (mode === "ssi") { list = shuffle(QZ.filter((q) => SSI_QF.has(q.f) || q.f.startsWith("ssi-"))).slice(0, 10); label = "Quiz SSI"; }
     else if (mode === "theme") { list = shuffle(qpool(state.qniv, th)).slice(0, 10); label = RU[th].titre; }
     else { list = shuffle(qpool(state.qniv)).slice(0, 10); label = "Quiz rapide"; }
+    const enc = qEC().find((x) => x.mode === mode && (x.th || "") === (th || ""));
+    if (enc) { quiz = enc; return; }
     quiz = { mode, th, label, qs: list.map((q) => ({ ...q, ch: shuffle(q.c.map((t, i) => ({ t, ok: i === q.a }))) })), i: 0, picked: [], done: false };
   }
   function finishQuiz() {
@@ -29307,7 +29309,8 @@ const APP = (() => {
     const good = Object.values(qst.q).filter((e) => e.last === 1).length;
     const ths = D.rubriques.filter((r) => QZ.some((q) => q.th === r.id));
     const bigBtn = (m, ic, co, t, d, dis) => `<button type="button" class="card" data-act="qz-start" data-m="${m}"${dis ? " disabled" : ""}><span class="ico ${co}">${icon(ic)}</span><span class="t"><b>${tx(t)}</b><span>${tx(d)}</span></span>${icon("chevron")}</button>`;
-    return `${quizSaved ? `<button type="button" class="card" data-act="qz-resume"><span class="ico green">${icon("lecture")}</span><span class="t"><b>Reprendre le quiz en cours</b><span>${tx(quizSaved.label)} · question ${quizSaved.i + 1} / ${quizSaved.qs.length}</span></span>${icon("chevron")}</button>` : ""}<div class="filters" role="group" aria-label="Niveau des questions">${[["", "Tous niveaux"], ["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"], ["APS", "APS"]].map(([v, l]) => `<button type="button" data-act="qz-niv" data-v="${v}" aria-pressed="${state.qniv === v}">${l}</button>`).join("")}</div>
+    const enc = qEC();
+    return `${enc.length ? `<p class="sec-h" style="margin:4px 0 6px">${enc.length > 1 ? `Quiz en cours (${enc.length})` : "Quiz en cours"}</p>` + enc.map((q) => `<button type="button" class="card" data-act="qz-resume" data-key="${esc(qECkey(q))}"><span class="ico green">${icon("lecture")}</span><span class="t"><b>Reprendre : ${tx(q.label)}</b><span>question ${Math.min(q.i + 1, q.qs.length)} / ${q.qs.length}</span></span>${icon("chevron")}</button>`).join("") : ""}<div class="filters" role="group" aria-label="Niveau des questions">${[["", "Tous niveaux"], ["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"], ["APS", "APS"]].map(([v, l]) => `<button type="button" data-act="qz-niv" data-v="${v}" aria-pressed="${state.qniv === v}">${l}</button>`).join("")}</div>
       ${VX.ttsOk ? `<label class="tick say-opt"><input type="checkbox" data-set="quizvoice"${VX.prefs.quiz ? " checked" : ""}><span>${icon("hautparleur")}Lire les questions et les corrections à voix haute</span></label>` : ""}
       <div class="cards">
         ${bigBtn("quick", "quiz", "green", "Quiz rapide", `10 questions au hasard parmi ${qpool(state.qniv).length}, avec la correction expliquée.`)}
@@ -29354,11 +29357,16 @@ const APP = (() => {
       ${Object.keys(byTh).length ? `<section class="sec"><h2 class="lbl a">Thèmes à retravailler</h2><div class="cards">${Object.entries(byTh).sort((a, b) => b[1] - a[1]).map(([t, k]) => card("r-" + t, RU[t].ic, RU[t].co, RU[t].titre, `${k} erreur${k > 1 ? "s" : ""} dans ce quiz`)).join("")}</div></section>` : ""}
       ${list.length ? `<section class="sec"><h2 class="lbl">${exam ? "Correction" : "Vos erreurs"}</h2><div class="cards">${list.map((x) => `<div class="corr ${x.mine && x.mine.ok ? "ok" : "ko"}"><p class="qq" style="font-size:1rem">${tx(x.q.q)}</p><p style="margin:0">${x.mine ? `Votre réponse : ${tx(x.mine.t)}` : "Pas de réponse"}${x.mine && x.mine.ok ? " ✓" : ""}</p>${x.mine && x.mine.ok ? "" : `<p style="margin:0"><strong>${tx("Bonne réponse : " + x.good.t)}</strong></p>`}${x.q.x ? `<p class="small muted" style="margin:0">${tx(x.q.x)}</p>` : ""}${x.q.f ? `<a class="small" href="#${tok(x.q.f)}">${tx("Fiche : " + titleOf(x.q.f))}</a>` : x.q.src && x.q.src.titre ? `<span class="small muted">${tx("Source : " + x.q.src.titre + (x.q.src.reference ? " — " + x.q.src.reference : ""))}</span>` : ""}</div>`).join("")}</div></section>` : ""}`;
   }
-  let quizSaved = null;
-  /* Retour : question ou résultat -> menu des quiz (le quiz en cours est mis de côté) ; false sur le menu */
-  function quizRetour() { if (!quiz) return false; if (!quiz.done) quizSaved = quiz; quiz = null; render(); window.scrollTo(0, 0); return true; }
+  /* Quiz en cours : chaque quiz commencé est gardé (même après fermeture de l'appli) jusqu'à la fin ou à « Arrêter » */
+  const qEC = () => { const l = store.get("quiz-encours", []); return Array.isArray(l) ? l : []; };
+  const qECkey = (q) => q.mode + "|" + (q.th || "");
+  const qECdel = (q) => { if (q) store.set("quiz-encours", qEC().filter((x) => qECkey(x) !== qECkey(q))); };
+  const qECput = (q) => { if (!q || q.done) return; q.ts = Date.now(); store.set("quiz-encours", [q].concat(qEC().filter((x) => qECkey(x) !== qECkey(q))).slice(0, 20)); };
+  /* Retour : question ou résultat -> menu des quiz (le quiz en cours reste gardé) ; false sur le menu */
+  function quizRetour() { if (!quiz) return false; if (!quiz.done) qECput(quiz); quiz = null; render(); window.scrollTo(0, 0); return true; }
   function toolQuiz() {
-    if (curTok !== null && curTok !== "o-quiz" && quiz) { if (!quiz.done) quizSaved = quiz; quiz = null; }
+    if (curTok !== null && curTok !== "o-quiz" && quiz) { if (!quiz.done) qECput(quiz); quiz = null; }
+    if (quiz) { if (quiz.done) qECdel(quiz); else qECput(quiz); }
     const body = !quiz ? quizHub() : quiz.done ? quizResult() : quizQuestion();
     return { html: `${toolHead("o-quiz")}${body}`, title: TL["o-quiz"].t, tab: "outils", back: "outils", retour: quizRetour, after: quizAutoSay };
   }
@@ -29681,7 +29689,8 @@ function jChar(o = {}) {
     J.rage = 0;
     const st = jStages(cat, mode)[k];
     if (!st) return;
-    J.saved = null;
+    const enc = jEC().find((x) => x.pid === (jP && jP.id) && x.cat === cat && x.mode === mode && x.k === k);
+    if (enc) { J.run = enc; J.view = "play"; return; }
     J.run = { pid: jP && jP.id, t0: Date.now(), cat, mode, k, qs: shuffle(st.slice()).map(jPrep), i: 0, picked: [], res: [], seq: [], done: false };
     J.view = "play";
   }
@@ -29705,7 +29714,12 @@ function jChar(o = {}) {
   }
   const jHome = () => { clearInterval(jTimer); J.view = "hub"; J.run = null; BT = null; };
   /* Met de côté l'étape en cours (reprise possible depuis le menu du jeu) */
-  const jPark = () => { if (J.view === "play" && J.run && !J.run.done) J.saved = J.run; };
+  /* Tests en cours : chaque étape commencée est gardée (même après fermeture de l'appli) jusqu'à la fin ou à « Arrêter cette étape » */
+  const jEC = () => { const l = store.get("jeu-encours", []); return Array.isArray(l) ? l : []; };
+  const jECkey = (r) => r.pid + "|" + r.cat + "|" + r.mode + "|" + r.k;
+  const jECdel = (r) => { if (r) store.set("jeu-encours", jEC().filter((x) => jECkey(x) !== jECkey(r))); };
+  const jECput = (r) => { if (!r || r.done || !r.qs || !JCAT[r.cat]) return; r.ts = Date.now(); store.set("jeu-encours", [r].concat(jEC().filter((x) => jECkey(x) !== jECkey(r))).slice(0, 40)); };
+  const jPark = () => { if (J.view === "play" && J.run && !J.run.done) jECput(J.run); };
   /* Bouton Retour : recule d'un écran dans le jeu ; false sur le menu du jeu (on quitte vers l'accueil) */
   function jRetour() {
     if (!jP) return false;
@@ -29715,7 +29729,12 @@ function jChar(o = {}) {
     if (v !== "hub") { if (v === "creer") J.cr = null; jHome(); jGo(); return true; }
     return false;
   }
-  const jResumeBtn = () => { const r = J.saved; if (!r || !jP || r.pid !== jP.id) return ""; const c = JCAT[r.cat]; return `<button type="button" class="card" data-act="jx-resume"><span class="ico green">${icon("lecture")}</span><span class="t"><b>Reprendre l’étape en cours</b><span>${tx(c ? c.t : "")} · étape ${r.k + 1} · question ${r.i + 1} / ${r.qs.length}</span></span>${icon("chevron")}</button>`; };
+  const jResumeBtn = (seulCat) => {
+    if (!jP) return "";
+    const l = jEC().filter((r) => r.pid === jP.id && JCAT[r.cat] && (!seulCat || (r.cat === J.cat && r.mode === J.mode)));
+    if (!l.length) return "";
+    return `<p class="sec-h" style="margin:4px 0 6px">${l.length > 1 ? `Tests en cours (${l.length})` : "Test en cours"}</p>` + l.map((r) => `<button type="button" class="card" data-act="jx-resume" data-key="${esc(jECkey(r))}"><span class="ico green">${icon("lecture")}</span><span class="t"><b>Reprendre : ${tx(JCAT[r.cat].t)}</b><span>${r.mode === "examen" ? "" : "Entraînement · "}étape ${r.k + 1} · question ${Math.min(r.i + 1, r.qs.length)} / ${r.qs.length} · ${r.res.filter(Boolean).length} juste${r.res.filter(Boolean).length > 1 ? "s" : ""}</span></span>${icon("chevron")}</button>`).join("");
+  };
   const jMenuBtn = () => `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-menu">Menu du jeu</button></nav>`;
 
   /* ----- Battle : 2 à 4 joueurs sur un seul téléphone ----- */
@@ -30115,7 +30134,7 @@ function jChar(o = {}) {
     const hop = J.hop != null && J.hop + 1 === cur ? J.hop : null;
     J.hop = null;
     const msg = g === 100 ? `${jConf()}<div class="jx-dipl"><b>🎓 Diplômé à 100 %… dans le jeu !</b><p>D’après l’appli, vous avez tellement bien répondu que vous ne pouvez plus rater. C’est un clin d’œil 😄 : l’examen, lui, se prépare avec votre centre de formation et les textes officiels.</p></div>` : (mode === "examen" && g != null ? `<p class="muted" style="margin:0">${JMSG.filter((m) => g >= m[0] && g < 100).pop()[1]}</p>` : "");
-    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>${jResumeBtn()}
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>${jResumeBtn(true)}
       <section class="jx-job">${jMe({ job: c.id, size: 66, mood: "ok", cls: "idle", label: "Ton personnage" })}<div style="flex:1;display:flex;flex-direction:column"><small style="opacity:.85;font-size:.78rem">Parcours : devenir</small><b style="font:700 1.1rem/1.15 var(--font-d)">${tx(JTITRES[c.id] || c.t)}</b></div>${jRing(g, true)}</section>
       <div class="filters" role="group" aria-label="Type de questions"><button type="button" data-act="jx-mode" data-v="examen" aria-pressed="${mode === "examen"}">Examen</button><button type="button" data-act="jx-mode" data-v="culture" aria-pressed="${mode === "culture"}">Culture, pour aller plus loin</button></div>
       ${mode === "examen" ? `<p class="muted" style="margin:0">${jPool(c.id, "examen").filter((q) => s.ok[q.id]).length} questions maîtrisées sur ${jPool(c.id, "examen").length}.</p>` : `<p class="muted" style="margin:0">Questions bonus : elles ne comptent pas dans la jauge du diplôme.</p>`}
@@ -30218,6 +30237,7 @@ function jChar(o = {}) {
   function pageJeu() {
     let body;
     if (curTok !== null && curTok !== "jeu" && jP && (J.view === "play" || J.view === "bplay")) { jPark(); jHome(); }
+    if (J.view === "play" && J.run) { if (J.run.done) jECdel(J.run); else jECput(J.run); }
     if (!jP) { if (J.view !== "creer") jCrOpen(null); body = jCreer(); }
     else if (J.view === "profil" || J.view === "creer") body = jCreer();
     else if (J.view === "equipe") body = jEquipe();
@@ -30311,9 +30331,9 @@ function jChar(o = {}) {
       }
       case "jx-next": r.seq = []; if (r.i + 1 < r.qs.length) r.i++; else jFinish(); jGo(); return true;
       case "jx-goto": { const el = document.getElementById(b.dataset.t); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); return true; }
-      case "jx-quit": J.view = "cat"; J.run = null; J.saved = null; jGo(); return true;
+      case "jx-quit": jECdel(J.run); J.view = "cat"; J.run = null; jGo(); return true;
       case "jx-menu": jPark(); jHome(); jGo(); return true;
-      case "jx-resume": { const s0 = J.saved; J.saved = null; if (s0 && jP && s0.pid === jP.id) { J.run = s0; J.cat = s0.cat; J.mode = s0.mode; J.view = "play"; } jGo(); return true; }
+      case "jx-resume": { const s0 = jEC().find((x) => jECkey(x) === b.dataset.key); if (s0 && jP && s0.pid === jP.id) { J.run = s0; J.cat = s0.cat; J.mode = s0.mode; J.view = "play"; } jGo(); return true; }
       case "jx-bsetup": J.view = "bsetup"; BT = null; clearInterval(jTimer); jGo(); return true;
       case "jx-bn": case "jx-br": case "jx-bt": case "jx-bm": case "jx-bc": {
         $$("[data-bn]").forEach((el) => (B.names[+el.dataset.bn] = el.value.trim().slice(0, 14)));
@@ -32134,8 +32154,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       case "ap-redo": apS[b.dataset.key] = { i: 0, p: [] }; rerender(); break;
       case "ap-mark": { const d = apLoad(), k = b.dataset.key; d[k] = { ...(d[k] || {}), manual: !(d[k] && d[k].manual) }; store.set("appr", d); rerender(); break; }
       case "qz-menu": quizRetour(); break;
-      case "qz-resume": if (quizSaved) { quiz = quizSaved; quizSaved = null; } render(); window.scrollTo(0, 0); break;
-      case "qz-start": quizSaved = null; startQuiz(b.dataset.m, b.dataset.th); render(); window.scrollTo(0, 0); break;
+      case "qz-resume": { const q0 = qEC().find((x) => qECkey(x) === b.dataset.key); if (q0) quiz = q0; render(); window.scrollTo(0, 0); break; }
+      case "qz-start": startQuiz(b.dataset.m, b.dataset.th); render(); window.scrollTo(0, 0); break;
       case "qz-pick": {
         if (!quiz || quiz.done) break;
         const exam = quiz.mode === "exam", k = +b.dataset.k;
@@ -32146,9 +32166,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         break;
       }
       case "qz-next": if (!quiz || quiz.picked[quiz.i] == null) break; if (quiz.i + 1 >= quiz.qs.length) finishQuiz(); else quiz.i++; render(); window.scrollTo(0, 0); break;
-      case "qz-quit": quiz = null; quizSaved = null; render(); window.scrollTo(0, 0); toast("Quiz arrêté."); break;
+      case "qz-quit": qECdel(quiz); quiz = null; render(); window.scrollTo(0, 0); toast("Quiz arrêté."); break;
       case "qz-home": quiz = null; render(); window.scrollTo(0, 0); break;
-      case "qz-again": startQuiz(quiz.mode, quiz.th); render(); window.scrollTo(0, 0); break;
+      case "qz-again": qECdel(quiz); startQuiz(quiz.mode, quiz.th); render(); window.scrollTo(0, 0); break;
       case "qz-reset": state.qreset = true; rerender(); break;
       case "qz-reset-no": state.qreset = false; rerender(); break;
       case "qz-reset-yes": qst = { q: {}, s: [] }; qsave(); state.qreset = false; rerender(); toast("Résultats effacés."); break;

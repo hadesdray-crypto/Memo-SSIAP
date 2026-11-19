@@ -1,3 +1,6 @@
+- Jeu : plusieurs tests peuvent être en cours en même temps ; chacun est gardé, même après fermeture de l’appli, et se reprend à la question où vous étiez (liste « Tests en cours » sur le menu du jeu et sur la carte du métier)
+- Jeu : toucher une étape déjà commencée la reprend au lieu de la recommencer ; « Arrêter cette étape » l’efface
+- Quiz : plusieurs quiz peuvent être en cours en même temps (examen blanc, quiz rapide, par thème…) ; liste « Quiz en cours » sur le menu des quiz
 - Bouton Retour : il recule toujours d’un écran, jusqu’à l’accueil, dans toutes les parties de l’appli (corrigé : il pouvait sauter directement à l’accueil)
 - Jeu : Retour ramène de la question à la carte, puis au menu du jeu, puis à l’accueil ; bouton « Menu du jeu » en haut de chaque partie
 - Jeu : l’étape en cours n’est plus perdue : « Reprendre l’étape en cours » sur le menu ; en revenant d’une autre page, on arrive sur le menu du jeu
