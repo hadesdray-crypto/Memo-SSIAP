@@ -1,5 +1,10 @@
+- Mon bâtiment : le bon bâtiment est trouvé plus sûrement (tous les bâtiments officiels d’une adresse, cadastre, cours intérieures comptées dans la surface, numéros bis, ter et lettres A, B, C… bien compris)
+- Mon bâtiment : chaque résultat indique si le choix est « Sûr », « Probable » ou « À confirmer », et pourquoi
+- Mon bâtiment : sans numéro, ou quand plusieurs bâtiments sont possibles, l’appli ne devine plus : touchez votre bâtiment dans la liste ou sur le plan numéroté
+- Mon bâtiment : position mieux mesurée (mesures aberrantes écartées) ; au-delà de 25 m d’imprécision, aucun bâtiment n’est choisi tout seul
+- Mon bâtiment : les informations complémentaires arrivent en même temps, la fiche s’affiche plus vite
 - Section SSI : le type « IGH » est ajouté, avec ce qu’impose l’article GH 49 (SSI de catégorie A option IGH, pas de déclencheurs manuels, alarme dans le seul compartiment, mise en sécurité sans temporisation)
-- Quiz : 357 explications et une cinquantaine de questions ou réponses reformulées avec nos propres mots (même sens, mêmes chiffres)
+- Quiz : 352 explications et une cinquantaine de questions ou réponses reformulées avec nos propres mots (même sens, mêmes chiffres)
 - Catégorie C du SSI : mention « non vérifié » ajoutée, car la norme NF S 61-931, payante, tranche ce point
 - Fiche métier : les 1 717 extraits ont été comparés par programme aux textes officiels en vigueur (copie Légifrance du 16/11/2026) : 1 701 retrouvés mot pour mot, 16 non comparables (tableaux et code de la construction), aucune erreur
 - Réanimation de l’enfant et du nourrisson : les deux présentations sont maintenant affichées avec leurs sources (5 insufflations puis 15 compressions et 2 insufflations pour le secouriste du travail et les secouristes en équipe ; 30 et 2 dans certaines formations tout public)
