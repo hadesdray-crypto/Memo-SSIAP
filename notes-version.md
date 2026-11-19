@@ -1,3 +1,8 @@
+- Bouton Retour : il recule toujours d’un écran, jusqu’à l’accueil, dans toutes les parties de l’appli (corrigé : il pouvait sauter directement à l’accueil)
+- Jeu : Retour ramène de la question à la carte, puis au menu du jeu, puis à l’accueil ; bouton « Menu du jeu » en haut de chaque partie
+- Jeu : l’étape en cours n’est plus perdue : « Reprendre l’étape en cours » sur le menu ; en revenant d’une autre page, on arrive sur le menu du jeu
+- Quiz : bouton « Menu des quiz », Retour ramène au menu, et « Reprendre le quiz en cours »
+- Jeu : icônes de l’appli à la place des émoticônes (écouter, micro, sons, menu)
 - Mon bâtiment : nouveau bloc « Les essentiels pour ce bâtiment » : SSI et alarme exigés, desserte par les secours, distances maximales jusqu’aux sorties, escaliers, colonnes sèches, éclairage de sécurité, chacun avec son article
 - Magasins (M 29) : le chef de service SSIAP 3 exigé au-delà de 9 000 personnes s’ajoute aux agents du tableau (il n’est pas compté dedans)
 - Seuils de la 5e catégorie vérifiés sur l’article PE 2 en vigueur ; ajout des gares aériennes et des salles visées depuis le 1er janvier 2026 (salles de pari, salles polyvalentes)

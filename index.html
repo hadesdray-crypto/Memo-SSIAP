@@ -29307,7 +29307,7 @@ const APP = (() => {
     const good = Object.values(qst.q).filter((e) => e.last === 1).length;
     const ths = D.rubriques.filter((r) => QZ.some((q) => q.th === r.id));
     const bigBtn = (m, ic, co, t, d, dis) => `<button type="button" class="card" data-act="qz-start" data-m="${m}"${dis ? " disabled" : ""}><span class="ico ${co}">${icon(ic)}</span><span class="t"><b>${tx(t)}</b><span>${tx(d)}</span></span>${icon("chevron")}</button>`;
-    return `<div class="filters" role="group" aria-label="Niveau des questions">${[["", "Tous niveaux"], ["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"], ["APS", "APS"]].map(([v, l]) => `<button type="button" data-act="qz-niv" data-v="${v}" aria-pressed="${state.qniv === v}">${l}</button>`).join("")}</div>
+    return `${quizSaved ? `<button type="button" class="card" data-act="qz-resume"><span class="ico green">${icon("lecture")}</span><span class="t"><b>Reprendre le quiz en cours</b><span>${tx(quizSaved.label)} · question ${quizSaved.i + 1} / ${quizSaved.qs.length}</span></span>${icon("chevron")}</button>` : ""}<div class="filters" role="group" aria-label="Niveau des questions">${[["", "Tous niveaux"], ["1", "SSIAP 1"], ["2", "SSIAP 2"], ["3", "SSIAP 3"], ["APS", "APS"]].map(([v, l]) => `<button type="button" data-act="qz-niv" data-v="${v}" aria-pressed="${state.qniv === v}">${l}</button>`).join("")}</div>
       ${VX.ttsOk ? `<label class="tick say-opt"><input type="checkbox" data-set="quizvoice"${VX.prefs.quiz ? " checked" : ""}><span>${icon("hautparleur")}Lire les questions et les corrections à voix haute</span></label>` : ""}
       <div class="cards">
         ${bigBtn("quick", "quiz", "green", "Quiz rapide", `10 questions au hasard parmi ${qpool(state.qniv).length}, avec la correction expliquée.`)}
@@ -29330,7 +29330,7 @@ const APP = (() => {
     const answered = p != null, ok = answered && q.ch[p].ok, good = q.ch.find((c) => c.ok);
     const sc = quiz.qs.slice(0, quiz.i + (answered ? 1 : 0)).filter((x, i) => x.ch[quiz.picked[i]] && x.ch[quiz.picked[i]].ok).length;
     const cls = (c, k) => (exam || !answered ? "" : c.ok ? "good" : k === p ? "bad" : "");
-    return `<div class="quiz">
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="qz-menu">Menu des quiz</button></nav><div class="quiz">
       <div class="qmeta"><span>${tx(quiz.label)} · question ${quiz.i + 1} / ${n}</span>${exam ? "" : `<span>Score : ${sc}</span>`}</div>
       <div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${quiz.i}"><i style="width:${(quiz.i / n) * 100}%"></i></div>
       <div class="qq-row"><p class="qq">${tx(q.q)}</p>${VX.ttsOk ? `<button type="button" class="say" data-act="qz-say" aria-label="Écouter la question et les réponses">${icon("hautparleur")}</button>` : ""}</div>
@@ -29354,9 +29354,13 @@ const APP = (() => {
       ${Object.keys(byTh).length ? `<section class="sec"><h2 class="lbl a">Thèmes à retravailler</h2><div class="cards">${Object.entries(byTh).sort((a, b) => b[1] - a[1]).map(([t, k]) => card("r-" + t, RU[t].ic, RU[t].co, RU[t].titre, `${k} erreur${k > 1 ? "s" : ""} dans ce quiz`)).join("")}</div></section>` : ""}
       ${list.length ? `<section class="sec"><h2 class="lbl">${exam ? "Correction" : "Vos erreurs"}</h2><div class="cards">${list.map((x) => `<div class="corr ${x.mine && x.mine.ok ? "ok" : "ko"}"><p class="qq" style="font-size:1rem">${tx(x.q.q)}</p><p style="margin:0">${x.mine ? `Votre réponse : ${tx(x.mine.t)}` : "Pas de réponse"}${x.mine && x.mine.ok ? " ✓" : ""}</p>${x.mine && x.mine.ok ? "" : `<p style="margin:0"><strong>${tx("Bonne réponse : " + x.good.t)}</strong></p>`}${x.q.x ? `<p class="small muted" style="margin:0">${tx(x.q.x)}</p>` : ""}${x.q.f ? `<a class="small" href="#${tok(x.q.f)}">${tx("Fiche : " + titleOf(x.q.f))}</a>` : x.q.src && x.q.src.titre ? `<span class="small muted">${tx("Source : " + x.q.src.titre + (x.q.src.reference ? " — " + x.q.src.reference : ""))}</span>` : ""}</div>`).join("")}</div></section>` : ""}`;
   }
+  let quizSaved = null;
+  /* Retour : question ou résultat -> menu des quiz (le quiz en cours est mis de côté) ; false sur le menu */
+  function quizRetour() { if (!quiz) return false; if (!quiz.done) quizSaved = quiz; quiz = null; render(); window.scrollTo(0, 0); return true; }
   function toolQuiz() {
+    if (curTok !== null && curTok !== "o-quiz" && quiz) { if (!quiz.done) quizSaved = quiz; quiz = null; }
     const body = !quiz ? quizHub() : quiz.done ? quizResult() : quizQuestion();
-    return { html: `${toolHead("o-quiz")}${body}`, title: TL["o-quiz"].t, tab: "outils", back: "outils", after: quizAutoSay };
+    return { html: `${toolHead("o-quiz")}${body}`, title: TL["o-quiz"].t, tab: "outils", back: "outils", retour: quizRetour, after: quizAutoSay };
   }
   /* Lecture automatique : la question quand elle s'affiche, puis la correction */
   function quizAutoSay() {
@@ -29677,7 +29681,8 @@ function jChar(o = {}) {
     J.rage = 0;
     const st = jStages(cat, mode)[k];
     if (!st) return;
-    J.run = { t0: Date.now(), cat, mode, k, qs: shuffle(st.slice()).map(jPrep), i: 0, picked: [], res: [], seq: [], done: false };
+    J.saved = null;
+    J.run = { pid: jP && jP.id, t0: Date.now(), cat, mode, k, qs: shuffle(st.slice()).map(jPrep), i: 0, picked: [], res: [], seq: [], done: false };
     J.view = "play";
   }
   function jAnswer(ok) {
@@ -29699,6 +29704,19 @@ function jChar(o = {}) {
     jGain(r.xp);
   }
   const jHome = () => { clearInterval(jTimer); J.view = "hub"; J.run = null; BT = null; };
+  /* Met de côté l'étape en cours (reprise possible depuis le menu du jeu) */
+  const jPark = () => { if (J.view === "play" && J.run && !J.run.done) J.saved = J.run; };
+  /* Bouton Retour : recule d'un écran dans le jeu ; false sur le menu du jeu (on quitte vers l'accueil) */
+  function jRetour() {
+    if (!jP) return false;
+    const v = J.view;
+    if (v === "play") { const c = J.run && J.run.cat; jPark(); J.run = null; if (c) J.cat = c; J.view = J.cat ? "cat" : "hub"; jGo(); return true; }
+    if (v === "bplay") { clearInterval(jTimer); BT = null; J.view = "bsetup"; jGo(); return true; }
+    if (v !== "hub") { if (v === "creer") J.cr = null; jHome(); jGo(); return true; }
+    return false;
+  }
+  const jResumeBtn = () => { const r = J.saved; if (!r || !jP || r.pid !== jP.id) return ""; const c = JCAT[r.cat]; return `<button type="button" class="card" data-act="jx-resume"><span class="ico green">${icon("lecture")}</span><span class="t"><b>Reprendre l’étape en cours</b><span>${tx(c ? c.t : "")} · étape ${r.k + 1} · question ${r.i + 1} / ${r.qs.length}</span></span>${icon("chevron")}</button>`; };
+  const jMenuBtn = () => `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-menu">Menu du jeu</button></nav>`;
 
   /* ----- Battle : 2 à 4 joueurs sur un seul téléphone ----- */
   function jBStart() {
@@ -29742,7 +29760,7 @@ function jChar(o = {}) {
   const jRing = (p, big) => `<span class="jx-ring${big ? " big" : ""}" style="--p:${p == null ? 0 : p}"><b>${p == null ? "–" : p + "%"}</b></span>`;
   function jHeader() {
     const rk = jRank(), pct = rk.nx ? Math.min(100, ((jP.xp - rk.from) / (rk.nx - rk.from)) * 100) : 100;
-    return `<section class="jx-hero"><span class="jx-av" aria-hidden="true">${jMe({ size: 56, mood: "ok" })}</span><div class="jx-me"><b>${tx(jP.pseudo)}</b><span>${tx(rk.t)} · ${jP.xp} points</span><div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${pct}%"></i></div><small>${rk.nx ? `Encore ${rk.nx - jP.xp} points pour devenir ${tx(rk.nxt)}` : "Rang maximum atteint"}</small></div>${jP.serie.n > 0 && jP.serie.d >= jDay(Date.now() - 864e5) ? `<span class="jx-flame" title="Jours de suite">🔥<b>${jP.serie.n}</b></span>` : ""}</section><div class="jx-hb"><button type="button" data-act="jx-eq"><span aria-hidden="true">👥</span> Qui joue ?${jTeam.length > 1 ? " (" + jTeam.length + ")" : ""}</button><button type="button" data-act="jx-cr-edit" data-id="${jP.id}"><span aria-hidden="true">🎭</span> Mon personnage</button></div>`;
+    return `<section class="jx-hero"><span class="jx-av" aria-hidden="true">${jMe({ size: 56, mood: "ok" })}</span><div class="jx-me"><b>${tx(jP.pseudo)}</b><span>${tx(rk.t)} · ${jP.xp} points</span><div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${pct}%"></i></div><small>${rk.nx ? `Encore ${rk.nx - jP.xp} points pour devenir ${tx(rk.nxt)}` : "Rang maximum atteint"}</small></div>${jP.serie.n > 0 && jP.serie.d >= jDay(Date.now() - 864e5) ? `<span class="jx-flame" title="Jours de suite">🔥<b>${jP.serie.n}</b></span>` : ""}</section><div class="jx-hb"><button type="button" data-act="jx-eq">${icon("personnes")} Qui joue ?${jTeam.length > 1 ? " (" + jTeam.length + ")" : ""}</button><button type="button" data-act="jx-cr-edit" data-id="${jP.id}">${icon("badge")} Mon personnage</button></div>`;
   }
   function jProfile() {
     const first = !jP;
@@ -29758,13 +29776,13 @@ function jChar(o = {}) {
       const n = jPool(c.id, "examen").length + jPool(c.id, "culture").length, g = jGauge(c.id);
       return `<button type="button" class="jx-job-card" data-act="jx-cat" data-c="${c.id}"${n ? "" : " disabled"}><span class="e" aria-hidden="true">${jMe({ job: c.id, size: 56, mood: "ok" })}</span><small>Devenir</small><b>${tx(JTITRES[c.id] || c.t)}</b><span class="m">${jRing(g)}<span>${n ? n + " question" + (n > 1 ? "s" : "") : "Bientôt disponible"}</span></span></button>`;
     }).join("");
-    return `<div class="page-h"><h1>Jeu</h1><p>Prépare ton diplôme en jouant, seul ou à plusieurs.</p></div>${jHeader()}
-      <div class="jx-modes"><button type="button" class="jx-mode" data-act="jx-goto" data-t="jx-parcours"><span class="e">🗺️</span><b>Parcours</b><span>Seul, étape par étape sur la carte</span></button><button type="button" class="jx-mode b" data-act="jx-bsetup"><span class="e">🏁</span><b>Course et combat</b><span>De 2 à 10 joueurs, on se passe le téléphone</span></button></div>
+    return `<div class="page-h"><h1>Jeu</h1><p>Prépare ton diplôme en jouant, seul ou à plusieurs.</p></div>${jHeader()}${jResumeBtn()}
+      <div class="jx-modes"><button type="button" class="jx-mode" data-act="jx-goto" data-t="jx-parcours"><span class="e">${icon("carte")}</span><b>Parcours</b><span>Seul, étape par étape sur la carte</span></button><button type="button" class="jx-mode b" data-act="jx-bsetup"><span class="e">${icon("personnes")}</span><b>Course et combat</b><span>De 2 à 10 joueurs, on se passe le téléphone</span></button></div>
       <section class="sec" id="jx-parcours"><h2 class="lbl a">Parcours : choisis ton métier</h2><div class="jx-jobs">${cards}</div>
-        <button type="button" class="card" data-act="jx-grand"><span class="ico amber">🌍</span><span class="t"><b>Voir la grande carte (aperçu)</b><span>Un seul chemin, du stagiaire au chef de service.</span></span>${icon("chevron")}</button></section>
+        <button type="button" class="card" data-act="jx-grand"><span class="ico amber">${icon("carte")}</span><span class="t"><b>Voir la grande carte (aperçu)</b><span>Un seul chemin, du stagiaire au chef de service.</span></span>${icon("chevron")}</button></section>
       <section class="sec" id="jx-combat"><h2 class="lbl b">Course et combat</h2><button type="button" class="card jx-battle" data-act="jx-bsetup"><span class="ico red">${icon("personnes")}</span><span class="t"><b>Toute une classe, de 2 à 10 joueurs</b><span>Course jusqu’au diplôme ou combat aux points. Un seul téléphone, on se le passe.</span></span>${icon("chevron")}</button>
-        <div class="card" aria-disabled="true" style="opacity:.6"><span class="ico">📡</span><span class="t"><b>Course en direct, chacun son téléphone</b><span>Bientôt disponible : il faudra brancher le serveur.</span></span></div></section>
-      <p style="margin:0"><button type="button" class="btn-link" data-act="jx-pedit">Modifier mon profil</button> · <button type="button" class="btn-link" data-act="jx-snd">${jP.snd === false ? "🔇 Sons coupés" : "🔊 Sons du jeu"}</button> · <a href="#jeu-import">Ajouter des questions</a></p>
+        <div class="card" aria-disabled="true" style="opacity:.6"><span class="ico">${icon("telephone")}</span><span class="t"><b>Course en direct, chacun son téléphone</b><span>Bientôt disponible : il faudra brancher le serveur.</span></span></div></section>
+      <p style="margin:0"><button type="button" class="btn-link" data-act="jx-pedit">Modifier mon profil</button> · <button type="button" class="btn-link" data-act="jx-snd">${jP.snd === false ? icon("stop") + "Sons coupés" : icon("hautparleur") + "Sons du jeu"}</button> · <a href="#jeu-import">Ajouter des questions</a></p>
       ${disc("Jeu d’entraînement : il aide à retenir, il ne remplace ni la formation, ni les textes officiels. La jauge mesure ce que vous avez retenu dans l’appli, pas votre résultat à l’examen.")}`;
   }
   const JMSG = [[0, "Chaque grand pompier a commencé par un premier pas."], [25, "Ça démarre bien, continuez comme ça."], [50, "La moitié du chemin est faite."], [75, "Vous êtes presque au bout, ne lâchez rien."], [100, ""]];
@@ -29880,7 +29898,7 @@ function jChar(o = {}) {
   function jVoiceBar() {
     if (!VX || !VX.ttsOk) return "";
     const q = (J.view === "play" && J.run && !J.run.done && J.run.qs[J.run.i].type !== "terrain" && J.run.picked[J.run.i] == null) || (J.view === "bplay" && BT && BT.step === "q");
-    return `<div class="jx-vb tts-skip" data-tts="skip"><button type="button" data-act="jx-say"><span aria-hidden="true">🔊</span> Écouter</button>${q && VX.sttOk ? `<button type="button" data-act="jx-listen"><span aria-hidden="true">🎤</span> Répondre à voix haute</button>` : ""}<button type="button" data-act="jx-auto" aria-pressed="${jP && jP.vocal !== false}">Lecture auto : ${jP && jP.vocal !== false ? "oui" : "non"}</button></div><p id="jx-vs" class="small muted" role="status" aria-live="polite" style="margin:0"></p>`;
+    return `<div class="jx-vb tts-skip" data-tts="skip"><button type="button" data-act="jx-say">${icon("hautparleur")} Écouter</button>${q && VX.sttOk ? `<button type="button" data-act="jx-listen">${icon("micro")} Répondre à voix haute</button>` : ""}<button type="button" data-act="jx-auto" aria-pressed="${jP && jP.vocal !== false}">Lecture auto : ${jP && jP.vocal !== false ? "oui" : "non"}</button></div><p id="jx-vs" class="small muted" role="status" aria-live="polite" style="margin:0"></p>`;
   }
   const JNUM = { a: 0, ah: 0, un: 0, une: 0, "1": 0, premiere: 0, premier: 0, b: 1, be: 1, bi: 1, deux: 1, "2": 1, seconde: 1, deuxieme: 1, c: 2, ce: 2, se: 2, si: 2, trois: 2, "3": 2, troisieme: 2, d: 3, de: 3, quatre: 3, "4": 3, quatrieme: 3 };
   function jHear(txt, q) {
@@ -30097,7 +30115,7 @@ function jChar(o = {}) {
     const hop = J.hop != null && J.hop + 1 === cur ? J.hop : null;
     J.hop = null;
     const msg = g === 100 ? `${jConf()}<div class="jx-dipl"><b>🎓 Diplômé à 100 %… dans le jeu !</b><p>D’après l’appli, vous avez tellement bien répondu que vous ne pouvez plus rater. C’est un clin d’œil 😄 : l’examen, lui, se prépare avec votre centre de formation et les textes officiels.</p></div>` : (mode === "examen" && g != null ? `<p class="muted" style="margin:0">${JMSG.filter((m) => g >= m[0] && g < 100).pop()[1]}</p>` : "");
-    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>
+    return `<nav class="crumb"><button type="button" class="btn-link" data-act="jx-hub">Jeu</button></nav>${jResumeBtn()}
       <section class="jx-job">${jMe({ job: c.id, size: 66, mood: "ok", cls: "idle", label: "Ton personnage" })}<div style="flex:1;display:flex;flex-direction:column"><small style="opacity:.85;font-size:.78rem">Parcours : devenir</small><b style="font:700 1.1rem/1.15 var(--font-d)">${tx(JTITRES[c.id] || c.t)}</b></div>${jRing(g, true)}</section>
       <div class="filters" role="group" aria-label="Type de questions"><button type="button" data-act="jx-mode" data-v="examen" aria-pressed="${mode === "examen"}">Examen</button><button type="button" data-act="jx-mode" data-v="culture" aria-pressed="${mode === "culture"}">Culture, pour aller plus loin</button></div>
       ${mode === "examen" ? `<p class="muted" style="margin:0">${jPool(c.id, "examen").filter((q) => s.ok[q.id]).length} questions maîtrisées sur ${jPool(c.id, "examen").length}.</p>` : `<p class="muted" style="margin:0">Questions bonus : elles ne comptent pas dans la jauge du diplôme.</p>`}
@@ -30135,7 +30153,7 @@ function jChar(o = {}) {
         <button type="button" class="btn" data-act="jx-next">${r.i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button>`;
     }
     const ok0 = answered ? r.res[r.i] : null, scene = `<div class="jx-quiz-s">${jClassScene({ t: answered ? (ok0 ? "ok" : "ko") : (r.i === 0 && !r.seen ? "intro" : ""), n: r.i + r.k, k: r.k, cat: r.cat })}</div>`;
-    return `<div class="quiz">${head}${body}${scene}${fb}<p style="margin:0"><button type="button" class="btn-link" data-act="jx-quit">Arrêter cette étape</button></p></div>`;
+    return `${jMenuBtn()}<div class="quiz">${head}${body}${scene}${fb}<p style="margin:0"><button type="button" class="btn-link" data-act="jx-quit">Arrêter cette étape</button></p></div>`;
   }
   function jResult() {
     const r = J.run, n = r.qs.length, next = jStages(r.cat, r.mode)[r.k + 1];
@@ -30143,7 +30161,7 @@ function jChar(o = {}) {
       <b>${r.sc} / ${n}</b>
       <p>${r.stars ? (r.stars === 3 ? "Sans faute, bravo !" : "Étape réussie !") : "Il manque un peu pour valider l’étape."} ${r.stars ? `+${r.xp} points de bonus.` : "Relisez les corrections et réessayez."}</p>
       ${r.stars && next ? `<button type="button" class="btn" data-act="jx-stage" data-k="${r.k + 1}">Étape suivante</button>` : ""}
-      ${r.stars ? "" : `<button type="button" class="btn ghost" data-act="jx-rage">😤 ${J.rage ? "Revoir la scène" : "Péter un câble"}</button>`}
+      ${r.stars ? "" : `<button type="button" class="btn ghost" data-act="jx-rage">${icon("eclair")}${J.rage ? "Revoir la scène" : "Péter un câble"}</button>`}
       <button type="button" class="btn ghost" data-act="jx-stage" data-k="${r.k}">Rejouer cette étape</button>
       <button type="button" class="btn ghost" data-act="jx-cat" data-c="${r.cat}">Retour à la carte</button></div>`;
   }
@@ -30199,16 +30217,17 @@ function jChar(o = {}) {
   }
   function pageJeu() {
     let body;
+    if (curTok !== null && curTok !== "jeu" && jP && (J.view === "play" || J.view === "bplay")) { jPark(); jHome(); }
     if (!jP) { if (J.view !== "creer") jCrOpen(null); body = jCreer(); }
     else if (J.view === "profil" || J.view === "creer") body = jCreer();
     else if (J.view === "equipe") body = jEquipe();
     else if (J.view === "cat") body = jCat();
     else if (J.view === "grand") body = jGrand();
-    else if (J.view === "play") body = J.run ? (J.run.done ? jResult() : jPlay()) : jHub();
+    else if (J.view === "play") body = J.run ? (J.run.done ? jMenuBtn() + jResult() : jPlay()) : jHub();
     else if (J.view === "bsetup") body = jBSetup();
-    else if (J.view === "bplay" && BT) body = jBPlay();
+    else if (J.view === "bplay" && BT) body = jMenuBtn() + jBPlay();
     else body = jHub();
-    return { html: jVoiceBar() + body, title: "Jeu", tab: "jeu", back: "accueil", after: () => { jAutoSay(); if (J.view === "creer") jCrAfter(); if (J.view === "play" && J.run && !J.run.seen) setTimeout(() => { if (J.run) J.run.seen = true; }, 2000); if (J.view === "cat") { J.focusHere = false; jWorldInit(); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
+    return { html: jVoiceBar() + body, title: "Jeu", tab: "jeu", back: "accueil", retour: jRetour, after: () => { jAutoSay(); if (J.view === "creer") jCrAfter(); if (J.view === "play" && J.run && !J.run.seen) setTimeout(() => { if (J.run) J.run.seen = true; }, 2000); if (J.view === "cat") { J.focusHere = false; jWorldInit(); } if (J.view === "bplay" && BT && BT.step === "q") { if (!BT.deadline || BT.deadline < Date.now() - 1) BT.deadline = BT.deadline || Date.now() + JT; jTimerStart(); } } };
   }
   function pageJeuImport() {
     return { html: `<nav class="crumb"><a href="#jeu">Jeu</a></nav><div class="page-h"><h1>Ajouter des questions</h1><p>Collez un lot de questions au format JSON, ou choisissez le fichier. Les questions sans source, avec une erreur de format ou déjà présentes sont écartées.</p></div>
@@ -30292,7 +30311,9 @@ function jChar(o = {}) {
       }
       case "jx-next": r.seq = []; if (r.i + 1 < r.qs.length) r.i++; else jFinish(); jGo(); return true;
       case "jx-goto": { const el = document.getElementById(b.dataset.t); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); return true; }
-      case "jx-quit": J.view = "cat"; J.run = null; jGo(); return true;
+      case "jx-quit": J.view = "cat"; J.run = null; J.saved = null; jGo(); return true;
+      case "jx-menu": jPark(); jHome(); jGo(); return true;
+      case "jx-resume": { const s0 = J.saved; J.saved = null; if (s0 && jP && s0.pid === jP.id) { J.run = s0; J.cat = s0.cat; J.mode = s0.mode; J.view = "play"; } jGo(); return true; }
       case "jx-bsetup": J.view = "bsetup"; BT = null; clearInterval(jTimer); jGo(); return true;
       case "jx-bn": case "jx-br": case "jx-bt": case "jx-bm": case "jx-bc": {
         $$("[data-bn]").forEach((el) => (B.names[+el.dataset.bn] = el.value.trim().slice(0, 14)));
@@ -31836,6 +31857,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (RD && RD.retour()) return true;
     if (PO && PO.retour()) return true;
     if (VX.popOpen()) { VX.ratePop(false); return true; }
+    if (cur && typeof cur.retour === "function" && cur.retour()) return true;
     if (stack.length > 1) { stack.pop(); navTo(stack[stack.length - 1], true); return true; }
     if (curTok !== "accueil") {
       const b = cur && cur.back && cur.back !== curTok ? cur.back : "accueil";
@@ -31865,6 +31887,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (current() !== curTok) navTo(current());
       return;
     }
+    /* l'entrée « base » peut porter une ancienne adresse : on remet celle de la page affichée avant de reculer */
+    if (st.memo === "root" && curTok) { try { history.replaceState(st, "", navUrl()); } catch (er) { /* rien */ } }
     if (st.memo === "top") { appBack(); try { history.replaceState(st, "", navUrl()); } catch (er) { /* rien */ } return; }
     if (appBack()) { navArm(); return; }
     NAV.exiting = true;
@@ -32109,7 +32133,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       case "ap-next": { const L = apFind(b.dataset.key), st = apS[b.dataset.key]; if (L && st) { st.i++; if (st.i >= L.situations.length) { const sc = L.situations.map(apQ).filter((q, k) => st.p[k] === q.a).length, d = apLoad(), o = d[L.key] || {}; d[L.key] = { ...o, best: Math.max(o.best || 0, sc), total: L.situations.length, d: Date.now() }; store.set("appr", d); } } rerender(); break; }
       case "ap-redo": apS[b.dataset.key] = { i: 0, p: [] }; rerender(); break;
       case "ap-mark": { const d = apLoad(), k = b.dataset.key; d[k] = { ...(d[k] || {}), manual: !(d[k] && d[k].manual) }; store.set("appr", d); rerender(); break; }
-      case "qz-start": startQuiz(b.dataset.m, b.dataset.th); render(); window.scrollTo(0, 0); break;
+      case "qz-menu": quizRetour(); break;
+      case "qz-resume": if (quizSaved) { quiz = quizSaved; quizSaved = null; } render(); window.scrollTo(0, 0); break;
+      case "qz-start": quizSaved = null; startQuiz(b.dataset.m, b.dataset.th); render(); window.scrollTo(0, 0); break;
       case "qz-pick": {
         if (!quiz || quiz.done) break;
         const exam = quiz.mode === "exam", k = +b.dataset.k;
@@ -32120,7 +32146,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         break;
       }
       case "qz-next": if (!quiz || quiz.picked[quiz.i] == null) break; if (quiz.i + 1 >= quiz.qs.length) finishQuiz(); else quiz.i++; render(); window.scrollTo(0, 0); break;
-      case "qz-quit": quiz = null; render(); window.scrollTo(0, 0); toast("Quiz arrêté."); break;
+      case "qz-quit": quiz = null; quizSaved = null; render(); window.scrollTo(0, 0); toast("Quiz arrêté."); break;
       case "qz-home": quiz = null; render(); window.scrollTo(0, 0); break;
       case "qz-again": startQuiz(quiz.mode, quiz.th); render(); window.scrollTo(0, 0); break;
       case "qz-reset": state.qreset = true; rerender(); break;
