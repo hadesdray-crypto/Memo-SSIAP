@@ -2805,11 +2805,11 @@ D.typesERP = [
   { l: "REF", n: "Refuges de montagne" },
 ];
 /* Seuils d'assujettissement (5e catégorie si l'effectif du PUBLIC n'atteint pas ces nombres).
-   null = pas de seuil propre pour ce niveau. Sources : SDIS 86 (2024) et Service-public. */
+   null = pas de seuil propre pour ce niveau. Sources : SDIS 86 (2024) et Service-public ; tableau de l’article PE 2 en vigueur lu sur Légifrance le 19/11/2026 : seuils identiques. */
 D.seuils5 = [
-  { id: "J-PA", type: "J", act: "Accueil de personnes âgées", ss: null, et: null, res: 25, tot: 100, note: "Seuil de 25 résidents et de 100 personnes au total (Service-public)." },
+  { id: "J-PA", type: "J", act: "Accueil de personnes âgées", ss: null, et: null, res: 25, tot: 100, note: "Seuil de 25 résidents et de 100 personnes au total (Service-public ; PE 2)." },
   { id: "J-PH", type: "J", act: "Accueil de personnes handicapées", ss: null, et: null, res: 20, tot: 100, note: "Seuil de 20 résidents et de 100 personnes au total (Service-public)." },
-  { id: "L-reu", type: "L", act: "Salles de conférences, de réunions, associatives, de quartier, multimédia", ss: 100, et: null, tot: 200 },
+  { id: "L-reu", type: "L", act: "Salles de conférences, de réunions, associatives, de quartier, multimédia", ss: 100, et: null, tot: 200, note: "Depuis le 1er janvier 2026, cette ligne de l’article PE 2 vise aussi les salles de pari, les salles polyvalentes à dominante sportive de 1 200 m² ou plus (ou de moins de 6,50 m sous plafond) et les autres salles polyvalentes qui ne relèvent pas du type X." },
   { id: "L-spe", type: "L", act: "Salles de spectacles, de projection, cabarets", ss: 20, et: null, tot: 50 },
   { id: "M", type: "M", act: "Magasins de vente", ss: 100, et: 100, tot: 200 },
   { id: "N", type: "N", act: "Restaurants et débits de boissons", ss: 100, et: 200, tot: 200 },
@@ -2828,6 +2828,7 @@ D.seuils5 = [
   { id: "Y", type: "Y", act: "Musées", ss: 100, et: 100, tot: 200 },
   { id: "PA", type: "PA", act: "Établissements de plein air", ss: null, et: null, tot: 300 },
   { id: "OA", type: "OA", act: "Hôtels-restaurants d’altitude", ss: null, et: null, tot: 20 },
+  { id: "GA", type: "GA", act: "Gares aériennes", ss: null, et: null, tot: 200, note: "Les gares souterraines et mixtes sont classées dans le 1er groupe quel que soit l’effectif (PE 2)." },
 ];
 /* Périodicité des visites périodiques (GE 4, en vigueur depuis le 1er janvier 2015), en années. */
 D.ge4 = {
@@ -30977,7 +30978,7 @@ function jChar(o = {}) {
         const c = batCat(e, pub), c0 = batCat(e, lo), c1 = batCat(e, hi);
         return `<div><dt>${tx(e.t)}</dt><dd>${tx(fmtN(pub) + " personnes" + (f.inc ? "" : " (entre " + fmtN(lo) + " et " + fmtN(hi) + ")") + " · par niveau (le plus chargé, " + fmtN(nv) + " personnes) : " + g.deg + (!f.inc && gh.deg !== g.deg ? " à " + gh.deg : "") + " dégagement" + (g.deg > 1 ? "s" : "") + (g.up ? ", " + g.up + (!f.inc && gh.up !== g.up ? " à " + gh.up : "") + " UP" : "") + " · catégorie (public seul) : " + (f.inc || c0 === c1 ? c : c0 + " à " + c1))}</dd></div>`;
       }).join("");
-      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx((f.inc ? "Taux d’approximation non connu (la source ne publie pas la marge de la surface). " : "Taux d’approximation : environ ± " + f.pct + " % sur la surface de plancher. ") + "Toute la surface est comptée comme accessible au public avec la densité la plus forte du type : c’est un maximum, l’effectif réel est souvent plus bas. Les dégagements se calculent niveau par niveau (CO 38) ; l’escalier compte le cumul des niveaux qu’il dessert (CO 38 § 2). La catégorie compte public et personnel : le personnel s’ajoute. Les seuils de la 5e catégorie viennent d’une synthèse du service public et sont à vérifier dans l’article PE 2. Choisissez le type pour affiner.")}</p>`;
+      out += `<h3 class="lbl">${tx("Selon le type d’établissement, sur " + fmtN(f.plancher) + " m² de plancher estimés")}</h3><dl class="kv">${rows}</dl><p class="small muted">${tx((f.inc ? "Taux d’approximation non connu (la source ne publie pas la marge de la surface). " : "Taux d’approximation : environ ± " + f.pct + " % sur la surface de plancher. ") + "Toute la surface est comptée comme accessible au public avec la densité la plus forte du type : c’est un maximum, l’effectif réel est souvent plus bas. Les dégagements se calculent niveau par niveau (CO 38) ; l’escalier compte le cumul des niveaux qu’il dessert (CO 38 § 2). La catégorie compte public et personnel : le personnel s’ajoute. Les seuils de la 5e catégorie sont ceux du tableau de l’article PE 2 en vigueur (vérifié sur Légifrance le 19/11/2026). Choisissez le type pour affiner.")}</p>`;
     }
     if (!t) { out += `<p class="muted">${tx("Choisissez le type d’établissement plus haut pour le calcul détaillé.")}</p></section>`; return out; }
     const e = EFF.find((x) => x.id === t);
@@ -31108,6 +31109,7 @@ function jChar(o = {}) {
     let out = `<div class="result"><p><strong>${icon("badge")} ${tx(jobs[+f.job - 1][1] + " · type " + f.type + (f.cat ? " · " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : "") + (f.ne === "n" ? " · neuf" : f.ne === "e" ? " · existant" : ""))}</strong></p>${ficheLegend()}</div>`;
     if (BAT.main && BAT.sirType && f.type === BAT.sirType) out += `<p class="small muted">${tx("Type " + f.type + " proposé d’après les activités déclarées à cette adresse (Sirene, INSEE) : à confirmer avec le registre de sécurité. Vous pouvez le changer au-dessus.")}</p>`;
     out += ficheCalcul(f);
+    out += ficheEssentiels(f);
     out += `<div class="result"><p><strong>${icon("liste")} ${tx("À retenir en premier")}</strong></p>${ficheSummary(f)}</div>`;
     out += `<a class="btn" href="#o-ssi">${icon("cloche")} ${tx("Section complète : SSI, DAS et compartimentage")}</a>`;
     const keep = FICHE_R.filter((r) => ficheKey(r, f));
@@ -31135,7 +31137,7 @@ function jChar(o = {}) {
       if (C.sv) li("Seuil de 5e catégorie du type : " + C.sv + " personnes.", "PE 2 § 1", false);
       li("Extincteurs, au minimum : " + C.ext1 + " (1er groupe) ou " + C.ext5 + " (5e catégorie).", "MS 39 § 2 : un appareil pour 200 m² et par niveau, deux au minimum ; PE 26 § 1 : un pour 300 m² et par niveau. La surface par niveau est estimée par l’emprise au sol. Les risques particuliers (cuisine, chaufferie, local électrique) demandent des appareils en plus", true);
       li("Dégagements pour le niveau le plus chargé : " + (C.dg || "").replace(/ /g, " ") + ".", "CO 38 (1er groupe) ou PE 11 (5e catégorie) ; dépend de l’effectif du niveau le plus chargé, estimé", true);
-      if (f.type === "M") li(C.pub === 4000 ? "Service de sécurité : l’effectif de 4 000 personnes exactement n’est couvert ni par le paragraphe 1 (inférieur à 4 000) ni par le paragraphe 2 (supérieur à 4 000) : à préciser avec la commission." : C.pub < 4000 ? "Service de sécurité : agents désignés par l’exploitant et entraînés." : "Service de sécurité : agents de sécurité incendie ; " + (C.pub <= 6000 ? "3 agents dont 1 SSIAP 2" : C.pub <= 9000 ? "4 agents dont 1 SSIAP 2" : C.pub <= 12000 ? "5 agents dont 1 SSIAP 2 et un SSIAP 3 au-dessus de 9 000 personnes" : C.pub <= 15000 ? "6 agents dont 1 SSIAP 2 et un SSIAP 3" : C.pub <= 18000 ? "7 agents dont 1 SSIAP 2 et un SSIAP 3" : C.pub <= 21000 ? "8 agents dont 1 SSIAP 2 et un SSIAP 3" : C.pub <= 24000 ? "9 agents dont 1 SSIAP 2 et un SSIAP 3" : C.pub <= 27000 ? "10 agents dont 1 SSIAP 2 et un SSIAP 3" : "11 agents dont 1 SSIAP 2 et un SSIAP 3") + ".", "M 29 § 1 à 4 ; texte : effectif théorique du public, à vérifier", true);
+      if (f.type === "M") li(C.pub === 4000 ? "Service de sécurité : l’effectif de 4 000 personnes exactement n’est couvert ni par le paragraphe 1 (inférieur à 4 000) ni par le paragraphe 2 (supérieur à 4 000) : à préciser avec la commission." : C.pub < 4000 ? "Service de sécurité : agents désignés par l’exploitant et entraînés." : "Service de sécurité : agents de sécurité incendie ; " + (C.pub <= 6000 ? "3 agents dont 1 SSIAP 2" : C.pub <= 9000 ? "4 agents dont 1 SSIAP 2" : C.pub <= 12000 ? "5 agents dont 1 SSIAP 2" : C.pub <= 15000 ? "6 agents dont 1 SSIAP 2" : C.pub <= 18000 ? "7 agents dont 1 SSIAP 2" : C.pub <= 21000 ? "8 agents dont 1 SSIAP 2" : C.pub <= 24000 ? "9 agents dont 1 SSIAP 2" : C.pub <= 27000 ? "10 agents dont 1 SSIAP 2" : "11 agents dont 1 SSIAP 2") + (C.pub > 9000 ? ", plus un chef de service SSIAP 3 qui dirige le service, en plus de ces agents" : "") + ".", "M 29 § 1 à 4 (tableau vérifié sur Légifrance le 19/11/2026) ; calculé sur l’effectif théorique du public, à vérifier", true);
     }
     const c = f.cat;
     if (/^[1-4]$/.test(c)) {
@@ -31145,6 +31147,38 @@ function jChar(o = {}) {
     }
     if (!L.length) return "";
     return `<div class="result"><p><strong>${icon("immeuble")} ${tx("Calculé pour ce bâtiment")}</strong> <span class="pill amber">Calculé</span> <span class="small muted">${tx("à vérifier avant validation")}</span></p><ul class="small">${L.join("")}</ul></div>`;
+  }
+  /* Les essentiels d'après les textes, pour ce bâtiment : chaque ligne cite son article (texte en vigueur au 16/11/2026). */
+  function ficheEssentiels(f) {
+    const B = BAT.main, c = f.cat, t = f.type, L = [];
+    const li = (a, b, ok) => L.push(`<li>${tx(a)} <span class="small muted">${tx(b)}</span> <span class="pill ${ok ? "green" : "amber"}">${ok ? "Règle vérifiée sur le texte" : "Dépend d’une mesure : à vérifier sur place"}</span></li>`);
+    const fa = B ? batFacts() : null;
+    let hb = null;
+    if (fa && fa.niv) hb = Math.max(0, (fa.niv - 1) * 3); else if (fa && fa.h != null) hb = Math.max(0, fa.h - 3);
+    const hTxt = hb == null ? "hauteur inconnue" : "plancher bas du dernier niveau estimé à environ " + fmtN(Math.round(hb)) + " m";
+    const pres = (x) => hb != null && Math.abs(hb - x) <= 3;
+    if (typeof ssiReq === "function" && t) {
+      const r = ssiReq(t, c, f.som);
+      if (r === "igh") li("SSI de catégorie A, option IGH.", "GH 49 § 1", true);
+      else if (Array.isArray(r)) r.forEach((v) => li("SSI et alarme" + (v.cond ? " (" + v.cond + ")" : "") + " : " + reqLab(v) + ".", v.ref, true));
+      else if (r === "cat") li("SSI et alarme : choisissez la catégorie, le SSI exigé en dépend.", "MS 53 § 3 et règlement du type", true);
+    }
+    if (/^[1-4]$/.test(c)) {
+      li("Desserte par les secours : dernier niveau accessible au public à moins de 8 m du sol : espaces libres ou voies engins ; à plus de 8 m : voies échelles (" + hTxt + (pres(8) ? ", proche du seuil" : "") + ").", "CO 1 § 3 a ; CO 2", !(hb == null || pres(8)));
+      li("Distance maximale à parcourir : au rez-de-chaussée, 50 m jusqu’à une sortie s’il y a le choix entre plusieurs sorties, 30 m sinon ; en étage et en sous-sol, 40 m jusqu’à un escalier protégé (30 m depuis un cul-de-sac) et 30 m jusqu’à un escalier non protégé.", "CO 43 § 2 ; CO 49 § 2", true);
+      li("Escaliers : l’effectif qui compte pour un escalier cumule son niveau et ceux qu’il dessert au-dessus (ou en dessous pour les sous-sols).", "CO 38 § 2", true);
+      li("Colonnes sèches : obligatoires si des locaux à risques importants sont en étage à plus de 18 m de la voie des engins (" + hTxt + ").", "MS 18 § 1", hb != null && hb + 3 < 18);
+    }
+    if (c === "5") {
+      li("Accès des secours : dernier niveau à plus de 8 m du niveau d’accès des pompiers : une façade avec des baies accessibles aux échelles aériennes (" + hTxt + (pres(8) ? ", proche du seuil" : "") + ").", "PE 7", !(hb == null || pres(8)));
+      li("Escaliers protégés si l’établissement occupe tout le bâtiment et que le plancher bas accessible au public est à plus de 8 m (cas particuliers des bureaux et des escaliers monumentaux).", "PE 11 § 1", !(hb == null || pres(8)));
+      li("Pas de cul-de-sac de plus de 10 m ; au-delà de 50 personnes, les portes vers l’extérieur s’ouvrent dans le sens de la sortie.", "PE 11 § 2 et § 3", true);
+      li("Colonnes sèches dans les escaliers protégés si le plancher bas le plus élevé est à plus de 18 m de la voie des engins (" + hTxt + ").", "PE 26 § 2", hb != null && hb + 3 < 18);
+    }
+    if (/^[1-4]$/.test(c)) li("Éclairage de sécurité : en veille pendant l’exploitation ; il tient au moins 1 heure si le courant normal disparaît.", "EC 7", true);
+    if (c === "5") li("Éclairage de sécurité d’évacuation obligatoire dans les escaliers, dans les circulations de plus de 10 m ou au trajet compliqué, et dans les salles de plus de 100 m².", "PE 24 § 2", true);
+    if (!L.length) return "";
+    return `<div class="result"><p><strong>${icon("liste")} ${tx("Les essentiels pour ce bâtiment")}</strong></p><ul class="small">${L.join("")}</ul><p class="small muted">${tx("Les autres règles du type et de la catégorie sont détaillées plus bas, rubrique par rubrique.")}</p></div>`;
   }
   function ficheOutDraw() { const el = $("#bat-fiche-out"); if (el) el.innerHTML = ficheOut(); }
   function ficheDraw() {

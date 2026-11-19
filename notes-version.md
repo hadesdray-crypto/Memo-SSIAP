@@ -1,3 +1,7 @@
+- Mon bâtiment : nouveau bloc « Les essentiels pour ce bâtiment » : SSI et alarme exigés, desserte par les secours, distances maximales jusqu’aux sorties, escaliers, colonnes sèches, éclairage de sécurité, chacun avec son article
+- Magasins (M 29) : le chef de service SSIAP 3 exigé au-delà de 9 000 personnes s’ajoute aux agents du tableau (il n’est pas compté dedans)
+- Seuils de la 5e catégorie vérifiés sur l’article PE 2 en vigueur ; ajout des gares aériennes et des salles visées depuis le 1er janvier 2026 (salles de pari, salles polyvalentes)
+- Tableaux vérifiés sur le texte officiel : visites de la commission (GE 4), résistance au feu (CO 12), couvertures (CO 17), magasins (M 29), salles de spectacles (L 14)
 - Mon bâtiment : le bon bâtiment est trouvé plus sûrement (tous les bâtiments officiels d’une adresse, cadastre, cours intérieures comptées dans la surface, numéros bis, ter et lettres A, B, C… bien compris)
 - Mon bâtiment : chaque résultat indique si le choix est « Sûr », « Probable » ou « À confirmer », et pourquoi
 - Mon bâtiment : sans numéro, ou quand plusieurs bâtiments sont possibles, l’appli ne devine plus : touchez votre bâtiment dans la liste ou sur le plan numéroté
