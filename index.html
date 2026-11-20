@@ -326,6 +326,13 @@ main > * { min-width: 0; }
 .card > .ic:last-child { color: var(--ink-3); width: 1.2rem; height: 1.2rem; }
 .count { font-size: .75rem; font-weight: 700; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
 
+.card.sc-big { border: 2px solid var(--red-bg); min-height: 76px; width: 100%; text-align: left; }
+.card.sc-big .t b { font-size: 1.1rem; }
+.sc-qt { margin: 0; font: 700 1.45rem/1.2 var(--font-d); overflow-wrap: anywhere; }
+.choice.sc-choice { grid-template-columns: minmax(0, 1fr); }
+.choice.sc-choice button { min-height: 72px; font-size: 1.1rem; font-weight: 700; padding: 12px 16px; }
+.sc-rappel .t, .sc-non .t { min-width: 0; overflow-wrap: anywhere; }
+.btn.sc-ok { min-height: 60px; font-size: 1.1rem; width: 100%; }
 .verif {
   display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: var(--radius); background: var(--surface);
   border: 1px solid var(--line); text-decoration: none; color: var(--ink);
@@ -1528,8 +1535,13 @@ details summary { cursor: pointer; }
 .tw-hsep { stroke: var(--tw); stroke-width: 1.5; vector-effect: non-scaling-stroke; fill: none; opacity: .5; }
 .tw-web { fill: none; stroke: var(--sv-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .tw-var .btn { min-height: 36px; padding: 4px 10px; font-size: .85rem; }
-.tw-mots .btn { flex: 1; justify-content: center; }
+.tw-mots { flex-wrap: nowrap; gap: 6px; }
+.tw-mots .btn { flex: 1 1 0; min-width: 0; justify-content: center; padding: 6px 4px; font-size: .86rem; line-height: 1.15; white-space: normal; text-align: center; }
+.tw-svg .tw-e { font-weight: 600; font-style: italic; fill: var(--sv-ink); }
+.tw-svg .tw-off .tw-e { opacity: .45; }
+.tw-band .tw-b2 { display: block; margin-top: 4px; font-size: .86em; color: var(--ink-2); }
 .tw-svg .tw-zt { font-weight: 800; fill: var(--sv-ink-2); }
+.tw-svg .tw-zu { font-weight: 600; fill: var(--sv-ink-2); }
 .tw-ar { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .tw-ar.tw-arl { stroke: var(--tw); } .tw-arh.tw-arl { fill: var(--tw); }
 .tw-ar.tw-aro { stroke: var(--sv-line); } .tw-arh.tw-aro { fill: var(--sv-line); }
@@ -3614,6 +3626,69 @@ D.procedures.push(
 }
 );
 
+/* data/98b-scene.js : « Décrire la situation » (conduites nouvelles, sources, données du moteur) */
+Object.assign(D.sources, {
+  sc_epilepsie: { t: "Comprendre l’épilepsie : causes, symptômes et traitements (que faire devant une crise)", o: "Santé.fr, service public d’information en santé (ministère chargé de la santé)", u: "https://www.sante.fr/epilepsie", k: "officiel" },
+  sc_suicide: { t: "Que faire et à qui s’adresser face à une crise suicidaire ? (3114, 15, 112)", o: "Santé.fr, service public d’information en santé (ministère chargé de la santé)", u: "https://www.sante.fr/node/3485559", k: "officiel" },
+  sc_cambriolage: { t: "Dépliant « Contre les cambriolages, ayez les bons réflexes » (rubrique « En cas de cambriolage »)", o: "Ministère de l’Intérieur, diffusé par la préfecture du Puy-de-Dôme", u: "https://www.puy-de-dome.gouv.fr/contenu/telechargement/8508/103785/file/depliant.pdf", k: "officiel" },
+  sc_ppms: { t: "Guide « Mettre à jour le PPMS attentat-intrusion », partie 7 : réagir en cas d’alerte à la bombe ou de découverte d’un objet suspect (annexe 1 du Bulletin officiel n° 15 du 13 avril 2017)", o: "Ministère de l’Éducation nationale", u: "https://lyon7-la-mulatiere.circo.ac-lyon.fr/spip/IMG/pdf/ensel450_annexe1_751703.pdf", k: "officiel" },
+});
+D.procedures.push(
+{
+  id: "p-convulsions",
+  titre: "Crise avec convulsions",
+  ic: "croix",
+  co: "green",
+  appel: ["15", "112"],
+  clair: "On protège la personne des chocs, on ne bloque pas ses mouvements, on ne met rien dans sa bouche, et on regarde l’heure.",
+  etapes: ["Regarder l’heure : la durée de la crise servira au médecin.", "Faire de la place autour d’elle et écarter ce qui peut la blesser. Glisser un vêtement plié sous sa tête, retirer ses lunettes.", "Desserrer ses vêtements.", "Dès que c’est possible, l’installer sur le côté, en position latérale de sécurité.", "Rester près d’elle, la laisser récupérer au calme et la surveiller.", "Demander un avis médical (15) si la crise dure plus de 5 minutes, si les crises s’enchaînent, si elle ne reprend pas conscience dans les 10 minutes ou si elle s’est blessée."],
+  jamais: ["Empêcher ses mouvements.", "Mettre les doigts dans sa bouche.", "Lui donner à boire ou un médicament.", "La déplacer pendant la crise, sauf si l’endroit est dangereux."],
+  apres: ["Si elle ne répond pas et ne respire plus : massage cardiaque et défibrillateur.", "Noter l’heure, la durée et les gestes faits dans la main courante."],
+  liens: ["pa-pls", "pa-bilan", "pa-malaise"],
+  src: ["sc_epilepsie"],
+},
+{
+  id: "p-suicide",
+  titre: "Personne qui veut mettre fin à ses jours",
+  ic: "coeur",
+  co: "green",
+  appel: ["15", "112", "3114"],
+  clair: "Danger tout de suite : 15 ou 112. Sinon, le 3114 répond jour et nuit. On prend toujours la personne au sérieux.",
+  etapes: ["Danger immédiat (la personne est en train de passer à l’acte ou s’apprête à le faire) : appeler le 15 ou le 112.", "Prendre ses paroles au sérieux : des idées de suicide sont toujours un signal d’alarme.", "Une personne présente peut agir et aider : la crise peut s’arrêter à tout moment avec une aide adaptée.", "Hors danger immédiat : appeler le 3114, numéro national de prévention du suicide, gratuit, confidentiel, ouvert 24 h sur 24. Un professionnel formé évalue la situation et oriente. La personne, un proche ou un professionnel peuvent appeler.", "Suivre les consignes données au téléphone et les consignes de votre site."],
+  jamais: ["Prendre ses paroles à la légère."],
+  apres: ["Le 3114 répond aussi aux témoins et aux collègues touchés par l’événement."],
+  liens: ["pa-alerte", "pa-bilan"],
+  src: ["sc_suicide"],
+},
+{
+  id: "p-intrusion",
+  titre: "Intrusion ou cambriolage en cours",
+  ic: "bouclier",
+  co: "amber",
+  appel: ["17", "112"],
+  clair: "Suivez d’abord les consignes de votre site. Repères tirés d’un document du ministère de l’Intérieur sur les cambriolages : pas de risque inutile, on alerte le 17, on ne touche à rien.",
+  etapes: ["Ne prendre aucun risque inutile si les auteurs sont encore sur place.", "Alerter tout de suite la police ou la gendarmerie : 17 ou 112. Prévenir ensuite selon les consignes de votre site.", "Retenir ce qui aidera à les identifier : nombre, vêtements, façon de parler, véhicule, direction de fuite.", "Ne toucher à rien : objets, portes, fenêtres. Protéger les traces, dedans comme dehors.", "Interdire l’accès à la zone jusqu’à l’arrivée des forces de l’ordre.", "Pour le reste, suivre les consignes de votre site."],
+  jamais: ["Se mettre en danger pour arrêter quelqu’un.", "Ranger ou nettoyer avant le passage de la police."],
+  apres: ["Rédiger un compte rendu précis : heure, lieu, faits, signalements.", "La victime dépose plainte : elle sert aux enquêteurs pour recouper les faits."],
+  liens: ["aps-article-73", "aps-pouvoirs", "aps-legitime-defense"],
+  src: ["sc_cambriolage", "cpp"],
+},
+{
+  id: "p-alerte-bombe",
+  titre: "Alerte à la bombe",
+  ic: "alerte",
+  co: "amber",
+  appel: ["17", "112"],
+  clair: "Suivez d’abord les consignes de votre site. Repères tirés d’un guide officiel du ministère de l’Éducation nationale : on alerte le 17, on éloigne les personnes, on ne touche à aucun objet suspect. Évacuer ou mettre à l’abri : la consigne du site et les forces de l’ordre décident.",
+  etapes: ["Appeler le 17 (police ou gendarmerie) : dire ce qui a été annoncé, le lieu exact et qui rappeler.", "Prévenir le responsable du site ou le poste de sécurité : la décision d’évacuer ou de mettre à l’abri revient à la personne désignée par les consignes de votre site et aux forces de l’ordre.", "Éloigner les personnes de l’endroit désigné ; si nécessaire, les regrouper dans un espace fermé et éloigné.", "Ne manipuler et ne déplacer aucun objet suspect.", "Mettre en place un premier périmètre de sécurité en attendant les forces de l’ordre, et le faire respecter."],
+  jamais: ["Toucher, ouvrir ou déplacer un objet suspect."],
+  apres: ["Suivre les consignes des forces de l’ordre.", "Noter l’heure et les faits dans la main courante."],
+  liens: ["p-colis", "p-evacuer", "lsst-23-attaque-terroriste"],
+  src: ["sc_ppms"],
+}
+);
+D.scene = {"version":1,"corrections":[["\\b(?:sa|ca|ça) (sent|sens|brule|crame|fume|flambe|saigne|pue|coule|sonne|chauffe|tape|degenere)","ca $1"],["\\bca sens\\b","ca sent"],["\\b(?:de la|la|des|une|d une|plein de|beaucoup de|pas de|sans|aucune) fumer\\b","de la fumee"],["\\bfumees\\b","fumee"],["\\bfeux\\b","feu"],["\\b(?:assenseur|ascenceur|acenseur|ascensseur|assanseur|ascensceur|asenseur|ascensseurs|ascenseurs)\\b","ascenseur"],["\\b(?:exctincteur|extincteure|estincteur|extinteur|extincteurs)\\b","extincteur"],["\\bmal aise\\b","malaise"],["\\b(?:malese|malaize|malaises)\\b","malaise"],["\\b(?:etoufe|etoufes|etouffes|etouffent)\\b","etouffe"],["\\b(?:segne|seigne|saignes|saignent|sainge)\\b","saigne"],["\\b(?:respir|respires|respirent|respir e)\\b","respire"],["\\b(?:repon|repons|reponds|repondent)\\b","repond"],["\\b(?:enconscient|inconscien|inconsient|inconssient|inconcient|un conscient|in conscient|inconscients)\\b","inconscient"],["\\b(?:enconsciente|inconsiente|inconssiente|inconciente|inconscientes)\\b","inconsciente"],["\\b(?:hemoragie|emoragie|emorragie|hemorragies|hemoragi)\\b","hemorragie"],["\\b(?:epilepsi|epilepsy|epilepcie|epileptique|epileptiques)\\b","epilepsie"],["\\b(?:bagare|bagares|bagarres|baguarre)\\b","bagarre"],["\\baggress","agress"],["\\b(?:intrution|intrusions|intruzion)\\b","intrusion"],["\\barret cardiac\\b","arret cardiaque"],["\\b(?:cardiac|cardiaques)\\b","cardiaque"],["\\b(?:electrocute|electrocutee|electrocuter|electrocution|electrise|electrisee|electriser)\\b","electrisation"],["\\b(?:coliss|colie|colis suspects)\\b","colis"],["\\b(?:evacuassion|evacuations)\\b","evacuation"],["\\b(?:bourre|bourree|bourres|pompette|torche|torchee|defonce|defoncee|saoul|saoule|soul|soule|ivres|alcoolise|alcoolisee|en etat d ivresse|ivre mort|ivre morte)\\b","ivre"],["\\btombe(?:e|s|es)? dans les pommes\\b","evanoui"],["\\b(?:evanouie|evanouis|evanouit|evanouir|evanouissement)\\b","evanoui"],["\\b(?:plus de|pas de|aucun) pouls\\b","sans_pouls"],["\\b(?:ne|n) (?:respire|ventile) (?:pas|plus)\\b","ne_respire_pas"],["\\b(?:respire|ventile) (?:pas|plus)\\b(?! (?:vite|fort|facilement|lentement))","ne_respire_pas"],["\\b(?:a |s est )?arrete(?:e)? de respirer\\b","ne_respire_pas"],["\\b(?:plus|pas) de (?:respiration|souffle)\\b|\\baucune respiration\\b|\\bsans respiration\\b|\\baucun souffle\\b","ne_respire_pas"],["\\b(bras|jambe|main|cote|pied|doigts?|visage)( droite?| gauche)? (?:ne |n )?(?:bouge|repond|reagit) (?:pas|plus)\\b","$1$2 membre_inerte"],["\\b(?:ne|n) (?:repond|reagit|bouge|parle) (?:pas|plus)\\b","ne_repond_pas"],["\\b(?:repond|reagit|bouge) (?:pas|plus)\\b(?! (?:tres|trop|bien|vraiment))","ne_repond_pas"],["\\b(?:aucune|sans|pas de) reaction\\b","ne_repond_pas"],["\\b(?:ne|n)? ?se reveille (?:pas|plus)\\b","ne_repond_pas"]],"composes":[["\\bcoups? de feu\\b|\\bca tire\\b|\\bfusillade\\b|\\btirs?\\b(?= (?:dans|sur|a l|au))","tir_arme"],["\\barmes? a feu\\b","arme_tir"],["\\bpermis (?:de )?feu\\b","permis_feu"],["\\bpoints? chauds?\\b","point_chaud"],["\\b(?:portes? )?coupe feu\\b|\\bpare flammes?\\b|\\bportes? cf\\b","porte_coupe_feu"],["\\balarmes? (?:incendie|feu)\\b","alarme_incendie"],["\\bdetect(?:eur|eurs|ion) (?:de fumee|incendie|d incendie|de chaleur|optique)\\b","detecteur_inc"],["\\b(?:systeme de )?securite incendie\\b","ssi"],["\\bexercice (?:incendie|d evacuation|d incendie)\\b","exercice_evac"],["\\b(?:issues?|sorties?|portes?) de secours\\b","issue_secours"],["\\bfeux? (?:rouges?|verts?|tricolores?|de signalisation|d artifice)\\b","signal_route"],["\\b(?:plus|pas) (?:de |d )(?:courant|electricite|lumiere|jus)\\b|\\bplus rien ne marche\\b","coupure_courant"],["\\b(?:plus|pas) (?:de |d )(?:eau)\\b","sans_eau"],["\\bfausse alarme\\b","fausse_alarme"],["\\bposte de securite\\b|\\bpc securite\\b","pc_securite"],["\\bil y a\\b|\\by a\\b","ya"],["\\b(?:odeur|ca sent|sent|sens|pue) (?:de |le |du |un peu le |fort le |comme du |comme le |d )?(?:plastique |cable |caoutchouc |fil )?(?:brule|crame|roussi|chaud|fondu)\\b","odeur_brule"],["\\b(?:centrale|tableau|baie|armoire) (?:incendie|d incendie|d alarme|de detection)\\b","tableau ssi"],["\\b(?:consignes?|formation|registre|commission|plan|risque) (?:incendie|d incendie)\\b","doc_incendie"]],"faits":{"respire":{"inconnu":["\\b(?:sais|sait|vois|voit) pas (?:si|s) (?:il|elle|ca)? ?respire","\\bpas sur (?:qu|que) ?(?:il|elle)? ?respire","\\b(?:si|s) (?:il|elle) respire\\b"],"non":["\\bne_respire_pas\\b","\\brespire (?:tres )?(?:mal|bizarrement|difficilement)? ?par a coups\\b","\\bgasps?\\b","\\bsans_pouls\\b","\\barret respiratoire\\b"],"oui":["\\brespire\\b","\\brespiration (?:normale|presente|reguliere|ok)\\b","\\b(?:son |le )?ventre se souleve\\b"]},"repond":{"oui":["\\b(?:a |ont )repris connaissance\\b","\\bpas (?:evanoui|perdu connaissance|tombe dans les pommes)\\b","\\b(?:est |s est )?reven(?:u|ue) a (?:lui|elle)\\b","\\b(?:s est |est )reveille","\\b(?:n est |est )?pas inconscient","\\b(?:il|elle) (?:me |nous )?(?:repond|parle|crie|hurle|pleure|gemit)\\b","\\best (?:bien |toujours |encore )?conscient","\\b(?:il|elle) (?:me |nous )?dit\\b","\\b(?:il|elle) se plaint\\b","\\b(?:il|elle|qui) (?:a|dit avoir) (?:tres )?mal\\b","\\b(?:il|elle) demande\\b"],"non":["\\bne_repond_pas\\b","\\bimpossible de (?:le |la |les )?reveiller\\b","\\b(?:n arrive|arrive|arrivons|peut) pas a (?:le |la |les )?reveiller\\b","\\binconscient","\\bsans connaissance\\b","\\bperd(?:u|re|s|ent)? connaissance\\b","\\bperte de connaissance\\b","\\bevanoui\\b","\\binanime","\\bdans le coma\\b"]},"saigne":{"non":["\\b(?:ne |n )?saigne (?:pas|plus)\\b","\\bpas (?:beaucoup|trop|enormement|plein) de sang\\b","\\bpas de (?:sang|saignement)\\b","\\bsaigne (?:un peu|a peine|legerement|presque pas)\\b","\\b(?:petite?|legere?|simple) (?:coupure|entaille|plaie|ecorchure|egratignure|eraflure|bobo)\\b","\\b(?:egratignure|ecorchure|eraflure)\\b"],"oui":["\\bsaigne (?:beaucoup|abondamment|enormement|fort|a flots?|de partout|sans arret)\\b","\\bhemorragie\\b","\\bpisse le sang\\b","\\bgicle\\b","\\b(?:plein|beaucoup|enormement|mare|flaque|trop) de sang\\b","\\bdu sang partout\\b","\\b(?:se vide|perd (?:beaucoup de |tout |enormement de )?(?:son |du )?sang)\\b","\\bsaignement (?:abondant|important|grave)\\b","\\bsang qui (?:coule|gicle|jaillit)\\b","\\b(?:arrete|arrive) pas (?:a arreter|d arreter|de saigner)\\b","\\bsaigne (?:de la|du|a la|au) (?:cuisse|bras|cou|jambe|gorge|ventre|poignet)\\b"]},"flammes":{"non":["\\b(?:pas|aucune?|sans|ni|plus) (?:de |d |un |une |le |la |du )?(?:flammes?|feu|incendie)\\b","\\bfausse_alarme\\b","\\b(?:vois|voit|voyons) (?:rien|pas)\\b"],"oui":["\\bflammes?\\b","\\bca (?:brule|crame|flambe)\\b","\\b(?:en|prend|pris|prendre|prennent) feu\\b","\\bincendie\\b","\\b(?:un|le|du|debut de|depart de|d un) feu\\b","\\bfeu (?:de|dans|au|a l|sur|d)\\b","\\bembras","\\ben train de (?:bruler|cramer)\\b","\\b(?:brule|crame|flambe)\\b"]},"fumee":{"non":["\\b(?:pas|aucune?|sans|ni|plus) (?:de |d )?(?:la )?fumee\\b","\\bfausse_alarme\\b","\\b(?:vois|voit|voyons) (?:rien|pas)\\b"],"oui":["\\bfumee\\b","\\bca fume\\b","\\benfume","\\bqui fume\\b"]},"arme":{"non":["\\b(?:pas|sans|aucune) (?:d |de )?arme","\\bnon arme","\\bpas arme"],"oui":["\\barme","\\bcouteau","\\bfusil","\\bpistolet","\\btir_arme\\b","\\btireur","\\bmachette","\\bkalach","\\brevolver","\\bflingue","\\bcutter\\b","\\bhache\\b","\\bsabre\\b"]},"agressif":{"non":["\\b(?:pas|plus|sans) (?:du tout )?(?:agressi|violen|menacan|d agressi)","\\b(?:calme|tranquille|gentil|gentille)\\b","\\bmenace\\w* (?:de |d )(?:tomber|s effondrer|s ecrouler|ceder)\\b"],"oui":["\\bagressi","\\bviolen","\\bmenac","\\binsult","\\benerve","\\bfrappe\\b","\\bcrache"]},"dedans":{"non":["\\bya personne (?:dedans|a l interieur|dans)\\b","\\bpersonne (?:dedans|a l interieur)\\b(?! (?:est|qui|a|ne))","\\b(?:cabine|ascenseur) (?:est )?vide\\b","\\bsans personne\\b"],"oui":["\\b(?:coince|bloque|enferme|prisonni)\\w* (?:dans|dedans|a l interieur)","\\b(?:quelqu un|des gens|du monde|une personne|des personnes|\\d+ personnes) (?:dedans|a l interieur|dans (?:l |la |un )?(?:ascenseur|cabine))"]},"blesse":{"non":["\\b(?:pas|aucun|sans|ni) (?:de |d )?(?:blesse|victime|bobo)","\\bpersonne (?:n est|de) blesse","\\b(?:que|juste) (?:de la|des) (?:tole|degats materiels)\\b","\\bdegats materiels\\b","\\brien de grave\\b"],"oui":["\\bblesse","\\bvictime","\\bsaigne","\\ba mal\\b","\\bdouleur","\\bcoince(?:e)? (?:dans|sous)","\\brenvers(?:e|ee|er) (?:un|une|quelqu)","\\ba ete (?:renverse|percute|heurte)","\\bpercute (?:un|une) (?:pieton|personne|enfant|dame|homme)"]},"enfant":{"oui":["\\b(?:enfants?|bebes?|nourrissons?|gamine?s?|gosses?|bambins?|petit garcon|petite fille|petit de \\d+ ans|\\d+ mois)\\b"]}},"questions":{"repond":{"texte":"La personne répond quand vous lui parlez ?","aide":"Parlez-lui fort, demandez-lui de serrer votre main ou d’ouvrir les yeux.","reponses":[["Oui, elle répond",{"repond":"oui"}],["Non, aucune réaction",{"repond":"non"}],["Je ne sais pas",{"repond":"doute"}]]},"respire":{"texte":"La personne respire ?","aide":"Regardez si le ventre ou la poitrine se soulève, 10 secondes au maximum.","reponses":[["Oui, elle respire",{"respire":"oui"}],["Non, ou seulement par à-coups",{"respire":"non"}],["Je ne sais pas vérifier",{"respire":"doute"}]]},"saigne":{"texte":"Elle saigne beaucoup ?","aide":"Du sang qui coule sans s’arrêter ou qui imbibe un tissu en quelques secondes.","reponses":[["Oui, beaucoup",{"saigne":"oui"}],["Non",{"saigne":"non"}],["Je ne sais pas",{"saigne":"doute"}]]},"feuvisible":{"texte":"Vous voyez des flammes ou de la fumée ?","aide":"","reponses":[["Oui",{"feuvisible":"oui"}],["Non, rien de visible",{"feuvisible":"non"}],["Je ne sais pas",{"feuvisible":"doute"}]]},"blesse":{"texte":"Y a-t-il un blessé ?","aide":"","reponses":[["Oui",{"blesse":"oui"}],["Non, personne",{"blesse":"non"}],["Je ne sais pas",{"blesse":"doute"}]]},"agressif":{"texte":"La personne est agressive ou menaçante ?","aide":"","reponses":[["Oui",{"agressif":"oui"}],["Non, elle est calme",{"agressif":"non"}],["Je ne sais pas",{"agressif":"doute"}]]},"arme":{"texte":"La personne a une arme ou menace quelqu’un ?","aide":"","reponses":[["Oui",{"arme":"oui"}],["Non",{"arme":"non"}],["Je ne sais pas",{"arme":"doute"}]]}},"vocabulaire":["ascenseur","extincteur","incendie","flammes","inconscient","inconsciente","hemorragie","malaise","etouffe","etouffement","respire","respiration","evanoui","convulsions","convulse","epilepsie","agressif","agressive","agression","bagarre","intrusion","cambriolage","effraction","suspect","suspecte","abandonne","evacuation","evacuer","alarme","sirene","derangement","coupure","courant","electricite","inondation","fuite","brulure","poitrine","paralyse","saigne","saignement","blesse","blessee","victime","couteau","pistolet","portique","palpation","desoriente","suicide","suicider","accident","voiture","parking","produit","chimique","tempete","tombee","escalier","fumee","odeur","menace","insulte","violent","violente","declencheur","detecteur","defibrillateur","cardiaque","connaissance","soudure","meulage","chalumeau","handicape","fauteuil","bousculade"],"situations":[{"gravite":3,"priorite":92,"numeros":["18","112"],"motifs":[["\\bflammes?\\b",3],["\\bincendie\\b",3],["\\bca (?:brule|crame|flambe)\\b",3],["\\b(?:en|prend|pris|prendre|prennent) feu\\b",3],["\\b(?:un|le|du|debut de|depart de|d un|debut d|depart d) feu\\b",3],["\\bfeu (?:de|dans|au|a l|sur|d|en)\\b",3],["\\bembras",3],["\\b(?:en train de )?(?:brule|bruler|crame|cramer|flambe)\\b(?! (?:a|au|aux|la|le|les|sa|son|ses|un|une|\\w+ee?) ?(?:main|bras|doigt|jambe|visage|pied|peau))",2],["\\bfeu\\b",2],["\\bqui brule\\b",2],["\\b(?:poubelle|voiture|vehicule|camion|scooter|carton|palette|rideau|canape|matelas|friteuse|four|moteur|armoire|tableau|local|reserve|cuisine|batiment|toit|papier|bois|benne|container|conteneur|hotte)\\w* (?:\\w+ ){0,3}(?:brule|crame|flambe)\\b",3],["\\b(?:brule|crame|flambe) (?:dans|au|a l|devant|derriere|sous) ",3]],"exclure":["\\b(?:s est|me suis|est|a ete|etre|s etre) (?:gravement |un peu |legerement )?brule"],"aiguillage":[],"propositions":[],"aussi":[],"id":"feu","famille":"incendie","titre":"Feu, flammes","statut":"existante","cible":"p-feu"},{"gravite":3,"priorite":91,"numeros":["18","112"],"motifs":[["\\bfumee\\b",3],["\\bca fume\\b",3],["\\benfume",3],["\\bqui fume\\b",2]],"exclure":["\\b(?:qui fume|fume) (?:une|sa|des|un) (?:cigarette|clope|joint)","\\b(?:fumeur|fumeurs|fumer une)\\b"],"aiguillage":[],"propositions":[],"aussi":[],"id":"fumee","famille":"incendie","titre":"Fumée","statut":"existante","cible":"p-feu"},{"gravite":2,"priorite":43,"numeros":["18","112"],"motifs":[["\\bodeur_brule\\b",3],["\\b(?:odeur|sent|sens|pue) (?:de |la |de la )?fumee\\b",3],["\\bodeur (?:de |d )?(?:brule|crame|roussi|cable|fil brule|electrique|court circuit)",3],["\\bodeur suspecte\\b",2],["\\bca sent (?:bizarre|fort|mauvais)\\b",1]],"exclure":[],"aiguillage":[{"si":{"feuvisible":"oui"},"vers":"feu"}],"propositions":["p-levee-doute","p-feu","f-rondes"],"aussi":[],"id":"odeur-brule","famille":"incendie","titre":"Odeur de brûlé, sans flamme ni fumée visible","statut":"orientee","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour une odeur de brûlé sans flamme ni fumée : suivez les consignes de votre site. Les conduites proposées ci-dessous existent dans l’appli pour le cas où un feu ou une alarme se confirme."},{"gravite":2,"priorite":44,"numeros":["18"],"motifs":[["\\balarme_incendie\\b",3],["\\blevee de doute\\b",3],["\\b(?:alarme|sirene)s? (?:qui )?(?:sonne|retentit|s est declenchee|se declenche|a sonne|generale|restreinte)",3],["\\b(?:tableau|ecs|cmsi|ssi|centrale) (?:en|est en|affiche une|indique une|passe en) (?:alarme|feu)",3],["\\b(?:zone|detecteur_inc|detecteur|declencheur|point) \\w* ?\\w* ?(?:en alarme|en feu|s est declenche|a declenche|declenche|sonne|bipe)",3],["\\bdeclencheur manuel\\b|\\bbris de glace\\b|\\bboitier rouge\\b",3],["\\bdetecteur_inc\\b",2],["\\b(?:ca|l alarme|alarme|une alarme|sirene) sonne\\b",2],["\\balarme\\b",1],["\\bfausse_alarme\\b",2],["\\bvoyants? (?:rouge|feu|alarme)\\b",3],["\\b(?:alarme|sirene)s? (?:d evacuation |generale |d alarme )?.{0,12}\\b(?:declench|sonne|retenti|hurle)",4]],"exclure":["\\b(?:alarme|sirene) (?:intrusion|anti intrusion|antivol|anti vol|voiture|portique|du portique)","\\bportique\\b","\\bderangement\\b"],"aiguillage":[{"si":{"feuvisible":"oui"},"vers":"feu","demander":false}],"propositions":[],"aussi":["f-pb-ssi-alarme-feu-pas-a-pas"],"id":"alarme-incendie","famille":"incendie","titre":"L’alarme incendie sonne","statut":"existante","cible":"p-levee-doute"},{"gravite":2,"priorite":42,"numeros":["18"],"motifs":[["\\bevacu",3],["\\bfaire sortir (?:tout le monde|les gens|le public|les clients|le personnel)",3],["\\bpoint de rassemblement\\b",3],["\\b(?:guide|serre) file",3],["\\bvider (?:le batiment|l etage|le magasin|la salle)",3]],"exclure":[],"aiguillage":[{"si":{"feuvisible":"oui"},"vers":"feu","demander":false}],"propositions":[],"aussi":[],"id":"evacuation","famille":"incendie","titre":"Faire évacuer","statut":"existante","cible":"p-evacuer"},{"gravite":2,"priorite":45.5,"numeros":["18"],"motifs":[["\\b(?:evacu|sortir|descendre|faire descendre)\\w* .{0,40}\\b(?:fauteuil|handicap|mobilite reduite|pmr|aveugle|malvoyant|sourd|bequilles|deambulateur|invalide)",4],["\\b(?:fauteuil|handicap|mobilite reduite|pmr|bequilles|deambulateur|invalide)\\w* .{0,60}\\b(?:evacu|descendre|escalier|sortir|alarme)",4],["\\bespace d attente\\b|\\beas\\b",3],["\\b(?:ne )?peut pas (?:descendre|prendre l escalier|prendre les escaliers|marcher)\\b.{0,40}\\b(?:evacu|alarme|feu|sortir)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-evacuation"],"id":"evacuation-handicap","famille":"incendie","titre":"Évacuer une personne handicapée ou qui ne peut pas descendre","statut":"existante","cible":"p-evacuer"},{"gravite":1,"priorite":20,"numeros":[],"motifs":[["\\bderangement\\b",3],["\\b(?:voyant|led|lumiere) (?:jaune|orange)\\b",3],["\\b(?:tableau|ecs|cmsi|ssi|centrale) .{0,30}\\b(?:defaut|bipe|bip|panne|hors service|erreur)",3],["\\bdefaut (?:sur|du|au|de) (?:le |la )?(?:tableau|ssi|ecs|cmsi|centrale|ligne|batterie|zone)",3],["\\b(?:rearme|rearmer|rearmement)\\b",3],["\\bzone hors service\\b",3],["\\bdefaut\\w* .{0,30}\\b(?:ssi|tableau|ecs|cmsi|centrale)\\b",3],["\\bdefaut (?:secteur|batterie|ligne|alimentation|terre|chargeur)\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-tableau-ssi"],"id":"derangement-ssi","famille":"incendie","titre":"Dérangement ou défaut au tableau du SSI","statut":"existante","cible":"f-pb-ssi-reamement-defauts"},{"gravite":1,"priorite":19,"numeros":[],"motifs":[["\\bporte_coupe_feu\\b",3],["\\bporte\\w* .{0,25}\\b(?:calee?s?|cale|bloquee?s? ouverte)",3],["\\b(?:ferme porte|ventouse)\\b",3],["\\bporte .{0,30}\\bne se (?:ferme|referme) (?:pas|plus)",2],["\\bissue_secours .{0,30}\\b(?:bloque|encombre|ferme a cle|verrouille|condamne|obstrue|cadenas)",3],["\\b(?:bloque|encombre|verrouille|condamne|obstrue|cadenas)\\w* .{0,30}\\bissue_secours",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-rondes","f-das","f-degagements"],"id":"porte-coupe-feu","famille":"incendie","titre":"Porte coupe-feu bloquée, calée ou qui ne ferme plus","statut":"existante","cible":"f-compartimentage","note":"La cible est une fiche de cours (pas une conduite pas à pas) : signaler et suivre les consignes de votre site."},{"gravite":2,"priorite":46.5,"numeros":[],"motifs":[["\\bpermis_feu\\b",3],["\\bpoint_chaud\\b",3],["\\b(?:soud|meul|chalumeau|disqueuse|decoup\\w* au|tronconn|decapeur)\\w*",3],["\\b(?:ouvriers?|entreprise|travaux) .{0,40}\\betincelles?\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-l1-136-permis-de-feu","f-pd-atex-permis-feu"],"id":"point-chaud","famille":"incendie","titre":"Travaux par point chaud sans permis de feu","statut":"existante","cible":"f-permis-de-feu"},{"gravite":3,"priorite":90,"numeros":["18","112","0 800 47 33 33"],"motifs":[["\\b(?:odeur|sent|sens|pue|fuite|fuit) .{0,12}\\bgaz\\b",4],["\\bgaz\\b",3],["\\b(?:oeuf|oeufs) pourris?\\b",3],["\\bgrdf\\b",3]],"exclure":["\\bdetecteur de gaz\\b","\\bgaz lacrymo","\\bbombe lacrymo"],"aiguillage":[],"propositions":[],"aussi":[],"id":"gaz","famille":"incendie","titre":"Odeur ou fuite de gaz","statut":"existante","cible":"p-gaz"},{"gravite":2,"priorite":46,"numeros":["18","112"],"motifs":[["\\b(?:detecteur de gaz|explosimetre|detecteur gaz|alarme gaz)\\b",4],["\\batex\\b",2]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["p-gaz","f-pd-atex-regles-essentielles"],"id":"detecteur-gaz","famille":"incendie","titre":"Un détecteur de gaz sonne","statut":"existante","cible":"f-pd-atex-detecteurs-gaz"},{"gravite":1,"priorite":25,"numeros":[],"motifs":[["\\b(?:pompiers?|secours|samu|ambulance|camion) .{0,20}\\b(?:arrive|arrivent|sont la|devant|a l entree|sur place)",3],["\\b(?:accueil|accueillir|guider|attendre) .{0,15}\\b(?:pompiers?|secours|samu)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":[],"id":"accueil-secours","famille":"incendie","titre":"Accueillir les pompiers","statut":"existante","cible":"p-accueil-secours"},{"gravite":2,"priorite":30,"numeros":["18","112","15","17"],"motifs":[["\\b(?:quoi|que|comment) (?:dire|faut il dire|je dis) .{0,20}\\b(?:secours|pompiers?|samu|15|18|112|telephone)",3],["\\b(?:quel|quelle) numero\\b",3],["\\bmessage d alerte\\b",3],["\\b(?:comment|je dois|faut) (?:appeler|alerter|prevenir) (?:les )?(?:secours|pompiers?|samu)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":[],"id":"appel-secours","famille":"incendie","titre":"Appeler les secours : quoi dire","statut":"existante","cible":"p-appel"},{"gravite":2,"priorite":29,"numeros":[],"motifs":[["\\b(?:comment|utilis|servir|sers|marche|prendre|quel)\\w* .{0,25}\\bextincteur",3],["\\bextincteur .{0,25}\\b(?:comment|utilis|servir|marche|lequel)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-classes-de-feux"],"id":"extincteur","famille":"incendie","titre":"Se servir d’un extincteur","statut":"existante","cible":"f-extincteur-utiliser"},{"gravite":2,"priorite":40,"numeros":[],"motifs":[["\\bfr alert\\b|\\bfralert\\b",4],["\\bsignal national\\b",4],["\\bsirene (?:de la ville|de la mairie|dehors|exterieure|d alerte|des pompiers dehors)",3],["\\b(?:alerte|message) (?:de la prefecture|du gouvernement|sur (?:tous )?les telephones)",3],["\\b(?:se )?confine",2],["\\b(?:accident industriel|nuage toxique|usine .{0,20}explos)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-lsst-21-consignes-fr-alert"],"id":"alerte-populations","famille":"incendie","titre":"Sirène d’alerte des populations ou message FR-Alert","statut":"existante","cible":"f-lsst-20-alerte-populations"},{"gravite":3,"priorite":84,"numeros":["15","18","112"],"motifs":[["\\bne_respire_pas\\b",5],["\\barret cardiaque\\b|\\barret du coeur\\b|\\barret cardio",5],["\\bsans_pouls\\b",4],["\\b(?:coeur|coeur s est|coeur a) (?:ne bat plus|arrete|lache|s arrete)",4],["\\bmassage cardiaque\\b|\\bmasser\\b|\\brcp\\b|\\breanim",3],["\\bgasps?\\b|\\brespire .{0,12}par a coups\\b",4],["\\b(?:tout|toute|devient|est) (?:bleu|bleue|violet|violette)\\b",2]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pa-rcp","f-pa-dae"],"id":"arret-cardiaque","famille":"secours","titre":"Ne répond pas et ne respire pas","statut":"existante","cible":"p-arret-cardiaque","enfantAussi":["f-lsst-46-compressions-enfant"]},{"gravite":3,"priorite":83,"numeros":["15","18","112"],"motifs":[["\\bne_repond_pas\\b",4],["\\binconscient",4],["\\bsans connaissance\\b|\\bperd(?:u|re|s|ent)? connaissance\\b|\\bperte de connaissance\\b",4],["\\bevanoui\\b",4],["\\binanime",4],["\\bdans le coma\\b",4],["\\b(?:allonge|etendu|gisant|couche|affale|ecroule|effondre)\\w* .{0,20}\\b(?:par terre|au sol|sur le sol|sur le trottoir|dans le couloir|dans le hall|dans l escalier|dans les toilettes)",2],["\\bs est (?:ecroule|effondre)",2]],"exclure":[],"aiguillage":[{"si":{"respire":"non"},"vers":"arret-cardiaque"},{"si":{"respire":"oui"},"vers":"inconscient-respire"}],"propositions":[],"aussi":[],"id":"inconscient","famille":"secours","titre":"Personne qui ne répond pas","statut":"existante","cible":"f-pa-bilan","note":"Si vous ne savez pas vérifier la respiration : la fiche « Le bilan » montre comment faire en 10 secondes."},{"gravite":3,"priorite":82,"numeros":["15","18","112"],"motifs":[["\\bpls\\b|\\bposition laterale\\b",4],["\\b(?:mettre|tourner|installer) .{0,20}sur le cote\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-lsst-41-repond-pas-respire"],"id":"inconscient-respire","famille":"secours","titre":"Ne répond pas mais respire","statut":"existante","cible":"f-pa-pls"},{"gravite":3,"priorite":85,"numeros":["15","18","112"],"motifs":[["\\betouff",4],["\\b(?:avale|avaler) de travers\\b",4],["\\b(?:coince|bloque|reste)\\w* dans la gorge\\b",4],["\\bfausse route\\b",4],["\\b(?:mains|main) (?:a|sur) la gorge\\b",3],["\\b(?:n arrive|arrive|peut) (?:plus|pas) (?:a )?(?:respirer|parler|tousser)\\b.{0,40}\\b(?:mange|repas|bonbon|morceau|avale|nourriture|viande|pain)",4],["\\b(?:mange|repas|bonbon|morceau|avale|nourriture|viande|pain)\\w*\\b.{0,50}\\b(?:n arrive|arrive|peut) (?:plus|pas) (?:a )?(?:respirer|parler|tousser)",4],["\\bheimlich\\b",4],["\\bs etrangle\\b",3]],"exclure":["\\b(?:m|l|les) etouffe (?:pas|de chaleur)\\b","\\bfumee\\b.{0,30}\\betouff"],"aiguillage":[],"propositions":[],"aussi":[],"id":"etouffement","famille":"secours","titre":"Une personne s’étouffe","statut":"existante","cible":"p-etouffement"},{"gravite":3,"priorite":86,"numeros":["15","18","112"],"motifs":[["\\bhemorragie\\b",4],["\\bsaigne (?:beaucoup|abondamment|enormement|fort|a flots?|de partout|sans arret)\\b",4],["\\bpisse le sang\\b|\\bgicle\\b|\\bse vide de son sang\\b",4],["\\b(?:plein|beaucoup|enormement|mare|flaque|trop) de sang\\b|\\bdu sang partout\\b",4],["\\bperd (?:beaucoup de |tout |enormement de )?(?:son |du )?sang\\b",4],["\\bsaignement (?:abondant|important|grave)\\b",4],["\\bsang qui (?:coule|gicle|jaillit)\\b",3],["\\b(?:arrete|arrive) pas (?:a arreter|d arreter|de saigner)\\b",4],["\\bgarrot\\b|\\bpansement compressif\\b",3],["\\b(?:ouvert|tranche|entaille|sectionne|coupe)\\w* (?:la |le |l |une |un )?(?:veine|artere|gorge|poignet|cuisse|main|bras|doigt|jambe)",3],["\\b(?:doigt|main|bras|jambe|pied) (?:arrache|sectionne|coupe net|ampute)",4],["\\bcoup de couteau\\b|\\bpoignarde",3],["\\bsaigne (?:de la|du|a la|au) (?:cuisse|bras|cou|jambe|gorge|ventre|poignet)\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pa-hemorragie"],"id":"hemorragie","famille":"secours","titre":"Saignement abondant","statut":"existante","cible":"p-hemorragie"},{"gravite":2,"priorite":50,"numeros":["15"],"motifs":[["\\bplaie",3],["\\b(?:coupure|entaille|ecorchure|egratignure|eraflure)",3],["\\bs est (?:coupe|ouvert|entaille)",3],["\\bsaigne\\b",3],["\\b(?:du|le) sang\\b",2],["\\b(?:plante|enfonce)\\w* dans (?:la|le|l|sa|son)",3],["\\bbout de verre\\b|\\beclat de verre\\b",2]],"exclure":["\\bcoupure (?:generale|de courant|d electricite|electrique|de secteur|edf|d eau|de gaz|du reseau)\\b","\\bcoupure_courant\\b"],"aiguillage":[{"si":{"saigne":"oui"},"vers":"hemorragie"}],"propositions":[],"aussi":[],"id":"plaie","famille":"secours","titre":"Plaie, coupure, saignement","statut":"existante","cible":"f-pa-plaies","note":"Saignement du nez : pas de conduite propre dans l’appli (non vérifié)."},{"gravite":2,"priorite":52,"numeros":["15"],"motifs":[["\\bmalaise\\b",3],["\\b(?:senti|sentie) (?:mal|pas bien|tres mal|faible)\\b|\\bpas (?:senti|sentie) bien\\b",3],["\\b(?:se sent|sens|sent) (?:pas bien|tres mal|mal|faible|bizarre|pas tres bien)\\b",3],["\\b(?:ne|n)? ?(?:va|vais) pas bien\\b",3],["\\bvertige",3],["\\btete (?:qui |lui )?tourne\\b|\\btourne de l oeil\\b",3],["\\b(?:tout|toute|tres) (?:pale|blanc|blanche|blemes?)\\b|\\best pale\\b",3],["\\b(?:en sueurs?|transpire beaucoup|sueurs froides|a des sueurs)\\b",3],["\\b(?:nausee|envie de vomir|vomi|vomit|a vomi)\\w*",2],["\\bdiabet|\\bhypoglyc|\\bmanque de sucre\\b",3],["\\b(?:mal (?:a la|au) (?:tete|ventre|coeur))\\b",2],["\\b(?:du mal|des difficultes|de la peine|n arrive pas|arrive pas|arrive plus|peine) a respirer\\b|\\brespire (?:mal|difficilement|vite|fort)\\b|\\bessouffle|\\bcrise d asthme\\b|\\basthm",3],["\\bcrise d angoisse\\b|\\bcrise de panique\\b|\\btetanie\\b|\\bspasmophilie\\b",3],["\\b(?:va|allait|failli|manque de) (?:tomber|s evanouir)\\b",2],["\\bfaible\\b|\\bfatigue\\b|\\btremble\\b",1],["\\bmalade\\b",2]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pa-malaise"],"id":"malaise","famille":"secours","titre":"Malaise","statut":"existante","cible":"p-malaise"},{"gravite":3,"priorite":65,"numeros":["15"],"motifs":[["\\b(?:mal|douleur|serre|serrement|oppression|pression|etau|poids|brulure)\\w* .{0,25}\\b(?:poitrine|thorax|torse|coeur|cage thoracique)",4],["\\b(?:poitrine|thorax) .{0,20}\\b(?:serre|mal|douleur|ecrase)",4],["\\bcrise cardiaque\\b|\\binfarctus\\b",4],["\\bdouleur\\w* (?:dans le|au|qui descend dans le) bras gauche\\b|\\bmal au bras gauche\\b|\\bmal a la machoire\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pa-malaise","f-lsst-34-malaise"],"id":"douleur-poitrine","famille":"secours","titre":"Douleur dans la poitrine","statut":"existante","cible":"p-malaise","note":"L’appli traite la douleur à la poitrine dans la conduite « Malaise » (appel du 15)."},{"gravite":3,"priorite":66,"numeros":["15"],"motifs":[["\\bavc\\b|\\baccident vasculaire\\b|\\battaque cerebrale\\b",4],["\\b(?:bouche|visage|levre|figure|sourire)\\w* .{0,25}\\b(?:de travers|tordue?|deforme|tombe|affaisse|paralyse|qui pend)",4],["\\b(?:bras|jambe|main|cote)\\w* .{0,25}\\b(?:paralyse|ne bouge plus|engourdi|sans force|ne repond plus|qui tombe|bouge plus|membre_inerte)",4],["\\bmembre_inerte\\b",4],["\\bparalys\\w* (?:d un|du|de tout un) cote\\b|\\bhemiplegi",4],["\\b(?:n arrive plus|arrive plus|narrive plus|du mal|peine) a (?:parler|articuler|trouver ses mots)\\b|\\b(?:parle|parole) (?:bizarre|bizarrement|n importe comment|de travers|difficile|confuse)\\b|\\bbafouille\\b|\\bmots? (?:sortent|sort) pas\\b|\\bdit n importe quoi\\b",3],["\\bfaiblesse d un cote\\b|\\bne sent plus (?:son|sa|le|la) (?:bras|jambe|main)",4]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pa-malaise","f-lsst-34-malaise"],"id":"avc","famille":"secours","titre":"Signes d’AVC (visage, bras, parole)","statut":"existante","cible":"p-malaise","note":"L’appli traite les signes d’AVC dans la conduite « Malaise » (appel du 15 sans attendre)."},{"gravite":2,"priorite":56,"numeros":["15","18","112"],"motifs":[["\\bbrulures?\\b",3],["\\b(?:s est|me suis|est|a ete|etre|s etre) (?:gravement |un peu |legerement )?brule",4],["\\bebouillant",4],["\\bcloques?\\b",3],["\\b(?:brule|bruler)\\w* (?:a|au|aux|la|le|les|sa|son|ses) ?(?:la |le |l )?(?:main|bras|doigt|jambe|visage|pied|peau|cuisse|dos)",4],["\\b(?:eau|huile|cafe|the|soupe|vapeur) (?:bouillante?|brulante?|chaude?) .{0,25}\\b(?:sur|renvers)",3],["\\brenvers\\w* .{0,25}\\b(?:eau|huile|cafe|the|soupe) (?:bouillante?|brulante?|chaude?)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-lsst-37-brulures"],"id":"brulure","famille":"secours","titre":"Brûlure","statut":"existante","cible":"f-pa-brulures"},{"gravite":2,"priorite":55,"numeros":["15","18","112"],"motifs":[["\\b(?:produit|acide|javel|soude|detergent|solvant|ammoniaque|decapant|chlore|eau de javel)\\w* .{0,40}\\b(?:yeux|oeil|peau|visage|main|bras|avale|bu|boit|figure|projection|eclabouss)",4],["\\b(?:recu|pris|projection|eclabouss|avale|bu)\\w* .{0,30}\\b(?:produit|acide|javel|soude|detergent|solvant|ammoniaque|decapant|chlore)",4],["\\bbrulure\\w* chimique",4]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pa-brulures"],"id":"chimique-personne","famille":"secours","titre":"Produit chimique sur une personne ou avalé","statut":"existante","cible":"f-lsst-38-brulures-chimiques"},{"gravite":2,"priorite":54,"numeros":["15","18","112"],"motifs":[["\\b(?:est |a |s est |ont |sont )?(?:tombe|tombee|tombes|tomber|chute|chuter|degringole|devale|glisse|glissee|glisser|trebuche)\\b",3],["\\bune chute\\b",3],["\\b(?:s est|me suis|a du se|s etre) (?:casse|fracture|foule|tordu|deboite|luxe)\\w*",3],["\\b(?:jambe|bras|poignet|cheville|genou|nez|doigt|pied|epaule|hanche|cotes?|col du femur)\\w* (?:casse|fracture|foule|tordu|deboite|luxe)\\w*",3],["\\b(?:entorse|fracture|foulure|luxation)\\b",3],["\\b(?:cogne|tape|heurte|frappe)\\w* (?:la|sa|le) tete\\b|\\bcoup sur la tete\\b|\\btraumatisme\\b|\\btrauma\\b",3],["\\bmal (?:au|a la|aux) (?:dos|cou|nuque|jambe|cheville|genou|poignet|hanche|bras|epaule|cotes)\\b",3],["\\bne peut (?:plus|pas) (?:se relever|bouger|marcher|se lever)\\b|\\b(?:arrive|peut) (?:plus|pas) (?:a )?(?:se relever|se lever|marcher)\\b",3],["\\b(?:os|jambe|bras|poignet|cheville) (?:qui sort|de travers|deforme|en angle)",3],["\\brecu .{0,20}\\bsur (?:la tete|le pied|le dos|la jambe)",3],["\\b(?:par terre|au sol)\\b",1]],"exclure":["\\btombe en panne\\b","\\b(?:failli|va|allait|vont|manque de|peur de|risque de|menace de) (?:tomber|chuter|glisser)\\b","\\b(?:arbre|branche|tuiles?|toiture|panneau|echafaudage|cable|fil|ligne|plafond|objet|carton|palette)\\w* .{0,25}\\btombe\\w*","\\best tombe sur (?:un colis|un sac|une valise|un individu|des jeunes)","\\btombe(?:e)? (?:a l eau|dans l eau|dans le bassin|dans la piscine)"],"aiguillage":[{"si":{"repond":"doute"},"vers":"inconscient","demander":false},{"si":{"repond":"non"},"vers":"inconscient"},{"si":{"saigne":"oui"},"vers":"hemorragie","demander":false}],"propositions":[],"aussi":["f-lsst-39-douleur-mouvements"],"id":"chute","famille":"secours","titre":"Chute, choc, fracture","statut":"existante","cible":"f-pa-traumatisme"},{"gravite":3,"priorite":96,"numeros":["15","18","112"],"motifs":[["\\belectrisation\\b",5],["\\b(?:pris|prend|prendre|recu|recoit|ramasse) (?:le |du |une |un coup de |une decharge de )?(?:jus|courant|decharge|chataigne|coup de jus|220|380)\\b",5],["\\bcoup de (?:jus|courant)\\b|\\bdecharge electrique\\b",5],["\\b(?:colle|accroche|agrippe|touche)\\w* .{0,25}\\b(?:cable|fil|armoire electrique|tableau electrique|prise|ligne)",4],["\\b(?:cable|fil|ligne)\\w* .{0,25}\\b(?:tombe au sol|a terre|denude|haute tension)\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-hab-accident-electrique"],"id":"electrisation","famille":"secours","titre":"Accident électrique","statut":"existante","cible":"f-pa-accident-electrique"},{"gravite":2,"priorite":58,"numeros":["15","112"],"motifs":[["\\bconvuls",4],["\\bepilepsie\\b",4],["\\b(?:tremble|secoue|gigote|se tord|s agite)\\w* (?:de partout|dans tous les sens|par terre|au sol|de tout son corps)",4],["\\b(?:secousses|spasmes|soubresauts)\\b",3],["\\b(?:se raidit|tout raide|toute raide|yeux revulses|bave|mousse a la bouche|ecume)\\b",3],["\\bfait une crise\\b",2]],"exclure":["\\bcrise (?:cardiaque|d angoisse|de panique|d asthme|de nerfs|de colere)\\b"],"aiguillage":[],"propositions":[],"aussi":[],"id":"convulsions","famille":"secours","titre":"Crise avec convulsions","statut":"nouvelle","cible":"p-convulsions"},{"gravite":2,"priorite":53,"numeros":["15"],"motifs":[["\\bcoup de (?:chaleur|chaud|soleil)\\b|\\binsolation\\b|\\bcanicule\\b|\\bdeshydrat",4],["\\b(?:malaise|mal|faible|rouge|tete qui tourne)\\w* .{0,40}\\b(?:chaleur|soleil|trop chaud|canicule)",3],["\\b(?:chaleur|soleil|trop chaud|canicule)\\w* .{0,40}\\b(?:malaise|se sent mal|faible|tete qui tourne|vertige)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["p-malaise"],"id":"chaleur","famille":"secours","titre":"Malaise dû à la chaleur","statut":"existante","cible":"f-lsst-35-malaise-suite"},{"gravite":2,"priorite":28,"numeros":[],"motifs":[["\\b(?:comment|utilis|servir|pos|mettre|coll|ou)\\w* .{0,25}\\b(?:defibrillateur|dae|electrodes)\\b",3],["\\b(?:defibrillateur|dae)\\b",2]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":[],"id":"defibrillateur","famille":"secours","titre":"Se servir du défibrillateur","statut":"existante","cible":"f-pa-dae"},{"gravite":3,"priorite":70,"numeros":["15","112","3114"],"motifs":[["\\bsuicid",5],["\\b(?:veut|va|menace de|parle de|envie de|dit qu (?:il|elle) va|dit vouloir) (?:se |en )?(?:tuer|mourir|finir|foutre en l air|jeter|sauter|pendre|faire du mal|supprimer|balancer)\\b",5],["\\bmettre fin a ses jours\\b|\\ben finir avec la vie\\b|\\bplus envie de vivre\\b|\\bveut plus vivre\\b",5],["\\b(?:sur le rebord|enjambe|de l autre cote du garde corps|sur le toit|sur le parapet|au bord du vide)\\b.{0,50}\\b(?:sauter|jeter|vide|menace)",4],["\\b(?:s est|se) (?:taille|ouvert|ouvre)\\w* les veines\\b|\\bs est pendu",5],["\\b(?:avale|pris) (?:plein de|trop de|une boite de|des boites de|tous ses) (?:medicaments|cachets|comprimes)",4]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":[],"id":"suicide","famille":"secours","titre":"Personne qui veut mettre fin à ses jours","statut":"nouvelle","cible":"p-suicide","note":"Blessure ou perte de connaissance : les gestes de secours habituels s’appliquent aussi."},{"gravite":3,"priorite":60,"numeros":["15","18","112","17"],"motifs":[["\\b(?:est|a l air|semble|trouve|decouvert|retrouve)\\w* .{0,15}\\b(?:mort|morte|decede|decedee|sans vie)\\b",4],["\\b(?:cadavre|un corps|un mort|une morte|deces|decede|decedee|sans vie)\\b",4],["\\b(?:mort|morte)\\b",3]],"exclure":["\\bmort de (?:rire|peur|fatigue|faim)\\b","\\bpoint mort\\b","\\bivre mort","\\bangle mort\\b","\\bmenace\\w* de mort\\b"],"aiguillage":[],"propositions":["p-arret-cardiaque","p-appel"],"aussi":[],"id":"deces","famille":"secours","titre":"Personne trouvée sans vie","statut":"non-couverte","cible":null,"note":"Aucune conduite propre dans l’appli. Un agent ne peut pas constater un décès : sans réponse et sans respiration, la conduite « Ne répond pas et ne respire pas » s’applique et les secours décident de la suite."},{"gravite":3,"priorite":61,"numeros":["18","112","15"],"motifs":[["\\bnoy(?:e|ee|er|ade)\\b|\\bse noie\\b",4],["\\btombe(?:e)? (?:a l eau|dans l eau|dans le bassin|dans la piscine|dans la fontaine|dans le canal)",4],["\\b(?:sorti|repeche)\\w* de l eau\\b",4]],"exclure":[],"aiguillage":[{"si":{"repond":"doute"},"vers":"inconscient","demander":false},{"si":{"repond":"non"},"vers":"inconscient"}],"propositions":["f-pa-protection","f-pa-bilan"],"aussi":[],"id":"noyade","famille":"secours","titre":"Personne tombée à l’eau, noyade","statut":"non-couverte","cible":null,"note":"Aucune conduite propre à la noyade dans l’appli. Une fois la personne hors de l’eau, le bilan habituel s’applique."},{"gravite":3,"priorite":59,"numeros":["15","112"],"motifs":[["\\baccouch",4],["\\bcontractions?\\b",3],["\\bperd(?:u|re)? les eaux\\b",4],["\\b(?:femme )?enceinte\\b",2],["\\ble bebe arrive\\b",4]],"exclure":[],"aiguillage":[],"propositions":["p-malaise","p-appel"],"aussi":[],"id":"accouchement","famille":"secours","titre":"Accouchement, femme enceinte en difficulté","statut":"non-couverte","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour un accouchement : le 15 est le numéro des urgences médicales."},{"gravite":2,"priorite":49,"numeros":["15","17"],"motifs":[["\\bivre\\b",3],["\\b(?:a |ont |avait )?(?:trop|beaucoup) bu\\b|\\ba bu\\b",3],["\\btitube",3],["\\b(?:drogue|droguee|drogues|camee?|shoote|overdose|sous stupefiants|sous l effet)\\b",3],["\\b(?:sent|pue) l alcool\\b",3],["\\balcool\\b",2]],"exclure":[],"aiguillage":[{"si":{"repond":"doute"},"vers":"inconscient","demander":false},{"si":{"repond":"non"},"vers":"inconscient"},{"si":{"agressif":"oui"},"vers":"conflit"}],"propositions":["p-malaise","p-conflit"],"aussi":[],"id":"ivre","famille":"secours","titre":"Personne ivre ou sous l’effet d’un produit","statut":"orientee","cible":null,"note":"Aucune conduite propre à l’ivresse dans l’appli. Si la personne va mal : conduite « Malaise » (15). Si elle devient agressive : « Personne agressive » (17)."},{"gravite":2,"priorite":35,"numeros":["15","17"],"motifs":[["\\bdesorient",4],["\\b(?:ne sait|sait) (?:plus|pas) (?:ou (?:il|elle) est|qui (?:il|elle) est|ou (?:il|elle) habite|comment (?:il|elle) s appelle)",4],["\\balzheimer\\b",4],["\\b(?:confus|confuse|hagard|hagarde)\\b",3],["\\b(?:personne agee|papi|mamie|vieux monsieur|vieille dame|monsieur age|dame agee) .{0,30}\\b(?:perdu|perdue|erre|egare|seule?)\\b",3],["\\b(?:erre|deambule) (?:dans|sans but)",2],["\\b(?:il|elle|qui) (?:est|a l air|semble) (?:completement |totalement )?(?:perdu|perdue)\\b",2]],"exclure":[],"aiguillage":[],"propositions":["p-malaise"],"aussi":[],"id":"desoriente","famille":"secours","titre":"Personne désorientée ou perdue","statut":"non-couverte","cible":null,"note":"Aucune conduite propre dans l’appli. Si la personne semble malade ou blessée : conduite « Malaise » (15). Sinon, suivez les consignes de votre site."},{"gravite":3,"priorite":100,"numeros":["17","112","18"],"motifs":[["\\btir_arme\\b|\\barme_tir\\b",5],["\\b(?:tireur|terroriste|attentat|otages?|kalach\\w*|fusillade)\\b",5],["\\b(?:arme|armee|armes)\\b",4],["\\b(?:couteau|fusil|pistolet|machette|revolver|flingue|hache|sabre|cutter)\\b",4],["\\b(?:tire|tirent) sur (?:les gens|la foule|tout le monde|des gens)",5],["\\b(?:poignarde|attaque (?:au|a la|a l))",4],["\\bvoiture .{0,20}\\bfonce\\w* (?:sur|dans) (?:la foule|les gens)",5]],"exclure":["\\balarme","\\bcoup de couteau\\b(?=.{0,40}\\b(?:s est|accident|en cuisine))","\\b(?:s est|me suis|s etre) (?:\\w+ ){1,4}(?:couteau|cutter|hache|sabre)\\b","\\b(?:couteau|cutter) (?:de cuisine|a pain|de boucher)\\b"],"aiguillage":[],"propositions":[],"aussi":["f-lsst-23-attaque-terroriste"],"id":"attaque","famille":"surete","titre":"Attaque, individu armé","statut":"existante","cible":"p-attaque"},{"gravite":2,"priorite":47,"numeros":["17","112"],"motifs":[["\\bagressi",3],["\\binsult",3],["\\bmenac",3],["\\b(?:enerve|enervee|furieux|furieuse|hysterique|en colere|excite|excitee|hors de lui|hors d elle|pete un cable|pete les plombs|vener)\\b",3],["\\b(?:crie|hurle|gueule|braille|vocifere)\\w* (?:juste |fort |tres fort |encore )?(?:sur|apres|contre)\\b",3],["\\b(?:s en prend|s en prennent|embrouille|cherche la merde|cherche des noises|provoque)\\b",3],["\\bviolen",3],["\\bcrache\\w* (?:sur|a la figure|au visage)",3],["\\b(?:refuse|veut pas|veulent pas) (?:de )?(?:partir|sortir|quitter)\\b",2],["\\bagress",3],["\\b(?:bouscul|pouss)\\w* (?:un|une|le|la|l|mon|ma|des|les) ",2],["\\bharcel",3]],"exclure":["\\bmenace\\w* (?:de |d )(?:tomber|s effondrer|s ecrouler|ceder|rompre|se decrocher|pluie|orage)\\b","\\bvent (?:tres )?violent\\b|\\b(?:orage|pluie|choc|chute)s? violente?s?\\b"],"aiguillage":[],"propositions":[],"aussi":["f-aps-legitime-defense","f-aps-pouvoirs"],"id":"conflit","famille":"surete","titre":"Personne agressive","statut":"existante","cible":"p-conflit"},{"gravite":2,"priorite":48,"numeros":["17","112"],"motifs":[["\\bbagarre\\b|\\brixe\\b|\\bbaston\\b",4],["\\bse (?:battent|bat|tapent|frappent|cognent|bastonnent|foutent sur la gueule|mettent dessus|sont battus)\\b",4],["\\b(?:coups? de poing|coups? de pied|coup de boule|coup de tete)\\b",3],["\\ben viennent aux mains\\b|\\ben train de se battre\\b",4],["\\b(?:frappe|tabasse|cogne|tape)\\w* (?:un|une|le|la|l|quelqu|sa|son|des|les) ",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-aps-legitime-defense"],"id":"bagarre","famille":"surete","titre":"Bagarre","statut":"existante","cible":"p-conflit","note":"L’appli n’a pas de conduite propre à la bagarre : la conduite « Personne agressive » s’applique (renfort, pas de contact physique, 17)."},{"gravite":1,"priorite":22,"numeros":["17"],"motifs":[["\\b(?:vol|vols|voleur|voleuse|voleurs)\\b",3],["\\b(?:a |ont |est en train de |vient de |vu )?(?:vole|voler|volent|pique|piquer|chourave|derobe|subtilise)\\b",3],["\\bflagrant delit\\b|\\barticle 73\\b|\\bpickpocket\\b",4],["\\b(?:parti|sorti|passe)\\w* sans payer\\b|\\bcach\\w* .{0,25}\\b(?:dans son sac|sous sa veste|sous son manteau|dans sa poche)",3],["\\b(?:interpell|retenir|apprehend)\\w*",2]],"exclure":["\\bvol (?:d oiseau|plane)\\b","\\ben plein vol\\b"],"aiguillage":[],"propositions":[],"aussi":["f-aps-pouvoirs","p-conflit"],"id":"vol","famille":"surete","titre":"Vol constaté, flagrant délit","statut":"existante","cible":"f-aps-article-73"},{"gravite":2,"priorite":45,"numeros":["17","112"],"motifs":[["\\bintrus",4],["\\bcambriol",4],["\\beffraction\\b",4],["\\b(?:porte|fenetre|vitre|serrure|grille|rideau|cadenas|portail|carreau)\\w* .{0,20}\\b(?:force|forcee|fracture|fracturee|casse|cassee|brise|brisee|defonce|defoncee|arrache|decoupe)",3],["\\b(?:force|fracture|casse|brise|defonce)\\w* (?:la|une|le|un|les) (?:porte|fenetre|vitre|serrure|grille|cadenas|portail|carreau)",3],["\\b(?:entre|rentre|penetre|introduit|escalade|saute|passe)\\w* .{0,40}\\b(?:sans autorisation|sans badge|par effraction|par la fenetre|par dessus|la cloture|le grillage|le mur|le portail|zone interdite|par l issue)",3],["\\b(?:pas|rien) a faire (?:la|ici)\\b|\\bnon autorisee?s?\\b|\\bsans autorisation\\b",2],["\\b(?:quelqu un|des gens|des jeunes|individus?|un type|un mec|un homme|des personnes|du monde|squatteurs?) .{0,30}\\b(?:dans (?:le|les|la|l) (?:locaux|batiment|entrepot|reserve|parking|chantier|site|magasin|bureaux?|sous sol|toit|local)|sur le (?:toit|site|chantier))\\b.{0,30}\\b(?:ferme|nuit|interdit|normalement|alors que)",3],["\\b(?:rode|rodent|rodeur|traine|trainent|squatt)\\w*",2],["\\balarme (?:intrusion|anti intrusion)\\b",4]],"exclure":[],"aiguillage":[{"si":{"arme":"oui"},"vers":"attaque","demander":false}],"propositions":[],"aussi":["f-aps-article-73","f-aps-pouvoirs"],"id":"intrusion","famille":"surete","titre":"Intrusion, cambriolage en cours","statut":"nouvelle","cible":"p-intrusion"},{"gravite":3,"priorite":78,"numeros":["17","112"],"motifs":[["\\b(?:colis|sac|sacoche|valise|bagage|paquet|carton|objet|sac a dos|cartable|glaciere|mallette)\\w* .{0,30}\\b(?:suspecte?s?|abandonne|abandonnee|oublie|oubliee|laisse|laissee|seule?|sans proprietaire|sans personne|sans surveillance|a personne|traine|bizarre|louche|depuis (?:un moment|longtemps|une heure))",4],["\\b(?:colis|objet|paquet|sac|bagage) (?:suspect|pieg)",4],["\\bcolis\\b",2],["\\b(?:fils? qui (?:depasse|sort)|tic tac)\\b",3]],"exclure":["\\b(?:vole|voler|pique|arrache)\\w* .{0,15}\\b(?:sac|valise|bagage)","\\b(?:fouille|ouvrir|inspection|controle)\\w* .{0,25}\\bsac\\b"],"aiguillage":[],"propositions":[],"aussi":[],"id":"colis","famille":"surete","titre":"Colis, sac ou objet suspect","statut":"existante","cible":"p-colis"},{"gravite":3,"priorite":77,"numeros":["17","112"],"motifs":[["\\bbombe\\b(?! lacrymo)",4],["\\b(?:menace|alerte|appel|message|mail|courrier)\\w* .{0,30}\\b(?:bombe|explosif|explosion|tout faire sauter|faire sauter)",5],["\\b(?:va|vont|veut) (?:tout )?(?:faire sauter|faire exploser|exploser)\\b",4],["\\bengin explosif\\b|\\bexplosifs?\\b",3]],"exclure":["\\bbombe (?:lacrymo|de peinture|aerosol|anti)"],"aiguillage":[],"propositions":[],"aussi":["p-colis"],"id":"alerte-bombe","famille":"surete","titre":"Alerte à la bombe","statut":"nouvelle","cible":"p-alerte-bombe"},{"gravite":2,"priorite":39,"numeros":["17"],"motifs":[["\\b(?:enfant|gamin|gamine|petit|petite|gosse|bebe|fils|fille|garcon)\\w* .{0,25}\\b(?:perdu|perdue|egare|egaree|tout seul|toute seule|seule?|introuvable|disparu|disparue|cherche (?:sa|ses|son) (?:maman|mere|papa|pere|parents))",4],["\\b(?:perdu|cherche|retrouve pas|trouve plus|trouve pas)\\w* .{0,15}\\b(?:son|sa|ses|leur|un|une) (?:fils|fille|enfants?|petite?|gamine?|bebe|gosse)",4],["\\b(?:pleure|pleurait)\\b.{0,30}\\b(?:sa maman|ses parents|sa mere|son papa)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":[],"id":"enfant-perdu","famille":"surete","titre":"Enfant perdu ou parent qui cherche son enfant","statut":"non-couverte","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour un enfant perdu : suivez les consignes de votre site."},{"gravite":3,"priorite":62,"numeros":["18","112","17"],"motifs":[["\\bmouvements? de foule\\b|\\bbousculade\\b",4],["\\b(?:pietin|ecras)\\w*",3],["\\b(?:ca pousse|les gens poussent|tout le monde pousse|foule compacte|trop de monde|ca se bouscule|c est la panique|panique generale|tout le monde court)\\b",3],["\\bfoule\\b",2]],"exclure":[],"aiguillage":[],"propositions":["p-evacuer","p-appel"],"aussi":[],"id":"foule","famille":"surete","titre":"Mouvement de foule, bousculade","statut":"non-couverte","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour un mouvement de foule (pas de source officielle française trouvée) : suivez les consignes de votre site."},{"gravite":1,"priorite":18,"numeros":[],"motifs":[["\\bportique\\b",3],["\\b(?:detecteur de metaux|raquette|magnetometre)\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pc-raquette-technique"],"id":"portique","famille":"surete","titre":"Le portique de détection sonne","statut":"existante","cible":"f-ptq-alarme-conduite"},{"gravite":1,"priorite":17,"numeros":[],"motifs":[["\\b(?:refuse|veut pas|veulent pas|refusent)\\w* .{0,30}\\b(?:ouvrir|montrer|controle|fouille|inspection|palpation|presenter|badge|sac|billet)",4],["\\b(?:fouill|inspect|ouvrir|regarder dans)\\w* .{0,20}\\b(?:sac|bagage|valise|coffre|sacoche)",3],["\\b(?:sans badge|pas de badge|pas son badge|oublie son badge|sans billet|badge perime)\\b",3],["\\bcontrole d acces\\b|\\bfiltrage\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pd-aps-fouille-bagage","f-pd-aps-controle-acces","f-aps-pouvoirs"],"id":"refus-controle","famille":"surete","titre":"Refus de contrôle du sac ou de l’accès","statut":"existante","cible":"f-pd-aps-inspection-sac"},{"gravite":1,"priorite":16,"numeros":[],"motifs":[["\\bpalp",4],["\\bfouille (?:au corps|corporelle)\\b",4]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pc-palpation-cadre-technique"],"id":"palpation","famille":"surete","titre":"Palpation de sécurité","statut":"existante","cible":"f-pd-aps-palpation"},{"gravite":1,"priorite":21,"numeros":[],"motifs":[["\\b(?:rayons? x|rx|tunnel (?:a |de )?bagages?|scanner (?:a |de )?bagages?|tapis du scanner|machine a rayons)\\b",4],["\\b(?:bagage|sac|valise)\\w* .{0,20}\\b(?:coince|bloque)\\w* .{0,20}\\b(?:tapis|tunnel|machine|scanner)",4],["\\b(?:image|ecran)\\w* .{0,25}\\b(?:suspecte?|bizarre|douteuse|arme|forme d)",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-pro-rx-regles-operateur","f-rx-couleurs"],"id":"rayons-x","famille":"surete","titre":"Appareil à rayons X : bagage coincé, panne, image douteuse","statut":"existante","cible":"f-pc-rx-arret-urgence-bagage-coince"},{"gravite":2,"priorite":60,"numeros":["18"],"motifs":[["\\bascenseur\\b",3],["\\b(?:cabine|monte charge)\\b",3],["\\bentre deux etages\\b",3]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-l1-100-procedure-degagement"],"id":"ascenseur","famille":"technique","titre":"Ascenseur bloqué ou en panne","statut":"existante","cible":"p-ascenseur"},{"gravite":1,"priorite":24,"numeros":[],"motifs":[["\\bcoupure_courant\\b",4],["\\b(?:coupure|panne) (?:generale )?(?:de |d |du )?(?:courant|electricite|electrique|secteur|edf|enedis|lumiere)\\b|\\b(?:coupure|panne) generale\\b",4],["\\b(?:disjonct|black out|blackout)\\w*",4],["\\b(?:tout (?:est|s est) eteint|dans le noir|plus rien ne s allume|tout a saute|les plombs ont saute|courant a saute|lumieres? (?:se sont|s est) eteinte?s?)\\b",4]],"exclure":[],"aiguillage":[],"propositions":[],"aussi":["f-eclairage-securite","f-hab-agent-terrain"],"id":"coupure","famille":"technique","titre":"Coupure de courant","statut":"existante","cible":"p-coupure"},{"gravite":1,"priorite":23,"numeros":[],"motifs":[["\\b(?:fuite|fuit)\\b(?!.{0,12}\\bgaz\\b)",3],["\\binond",4],["\\bdegats? des eaux\\b",4],["\\b(?:eau|flotte)\\w* .{0,20}\\b(?:coule|partout|par terre|au sol|du plafond|monte|deborde|ruisselle|gicle)",4],["\\b(?:coule|goutte|ruisselle|pisse)\\w* .{0,20}\\b(?:plafond|mur|faux plafond|eau|canalisation|tuyau)",3],["\\b(?:canalisation|tuyau|conduite|sprinkleur|ria|chasse d eau|robinet|ballon d eau)\\w* .{0,20}\\b(?:pete|petee|perce|percee|casse|cassee|eclate|eclatee|creve|crevee|fuit|coule|lache)",4],["\\b(?:deborde|refoule)\\w*",3],["\\b(?:pieds dans l eau|sous l eau|plein d eau)\\b",3]],"exclure":["\\bfuite (?:de gaz|d huile|de carburant|d essence)\\b","\\b(?:pris|prend|prennent) la fuite\\b|\\ben fuite\\b"],"aiguillage":[],"propositions":[],"aussi":[],"id":"eau","famille":"technique","titre":"Fuite d’eau, inondation","statut":"existante","cible":"p-eau"},{"gravite":2,"priorite":41,"numeros":["18","15","112"],"motifs":[["\\baccident\\w* .{0,30}\\b(?:voiture|vehicule|camion|scooter|moto|velo|trottinette|parking|route|circulation|chariot|engin|bus)",4],["\\b(?:voiture|vehicule|camion|scooter|moto|velo|trottinette|chariot|engin|bus)\\w* .{0,40}\\b(?:accident|percut|renvers|collision|accroch|rentre\\w* (?:dedans|dans)|tape|fonce dans|heurt|carton|tonneau)",4],["\\b(?:renverse|percute|fauche|heurte|ecrase)\\w* par (?:une|un|le|la) (?:voiture|vehicule|camion|scooter|moto|velo|trottinette|chariot|engin|bus)",5],["\\b(?:collision|accrochage|carambolage)\\b",4],["\\brentre\\w* dedans\\b",4]],"exclure":[],"aiguillage":[{"si":{"blesse":"oui","repond":"non"},"vers":"inconscient"},{"si":{"blesse":"oui"},"vers":"chute"}],"propositions":[],"aussi":["f-lsst-16-proteger"],"id":"accident-vehicule","famille":"technique","titre":"Accident de véhicule (parking, voie d’accès)","statut":"existante","cible":"f-pa-protection","note":"Sans blessé : la fiche explique comment sécuriser la zone ; pour la suite, suivez les consignes de votre site."},{"gravite":2,"priorite":38,"numeros":["18","112"],"motifs":[["\\b(?:produit|bidon|fut|acide|javel|solvant|carburant|essence|gasoil|huile|peinture|ammoniaque|chlore|liquide)\\w* .{0,30}\\b(?:renvers|deverse|fuit|perce|coule|se repand|repandu|eventre|flaque)",4],["\\b(?:renvers|deverse|flaque|fuite)\\w* .{0,25}\\b(?:produit|bidon|fut|acide|javel|solvant|carburant|essence|gasoil|huile|peinture|ammoniaque|chlore|liquide (?:bizarre|inconnu|suspect))",4],["\\b(?:odeur|vapeurs?|emanations?) (?:chimique|de solvant|de javel|d ammoniaque|de chlore|toxique|d essence|qui pique)",3],["\\bproduit (?:chimique|dangereux|toxique|corrosif)",3]],"exclure":["\\bgaz\\b"],"aiguillage":[],"propositions":["f-lsst-17-dangers-thermique-toxique","f-pa-protection","f-lsst-38-brulures-chimiques"],"aussi":[],"id":"produit-chimique","famille":"technique","titre":"Produit chimique renversé","statut":"non-couverte","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour un produit renversé : suivez les consignes de votre site. Les fiches proposées traitent du danger toxique et d’une personne touchée par le produit."},{"gravite":2,"priorite":34,"numeros":["18","17"],"motifs":[["\\b(?:chien|chiens|molosse|pitbull|serpent|sanglier|rat|rats|essaim|guepes|frelons|abeilles|animal|animaux|chat sauvage|renard)\\b",3],["\\b(?:mordu|mordue|morsure|pique par|piquee? par)\\b",3]],"exclure":["\\bmaitre chien\\b|\\bagent cynophile\\b|\\bchien guide\\b"],"aiguillage":[],"propositions":["f-pa-plaies"],"aussi":[],"id":"animal","famille":"technique","titre":"Animal dangereux ou errant","statut":"non-couverte","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour un animal dangereux : suivez les consignes de votre site. Personne mordue : fiche « Plaies »."},{"gravite":2,"priorite":33,"numeros":["18","112"],"motifs":[["\\b(?:tempete|orage|ouragan|tornade|grele|verglas|bourrasque|rafales?|foudre|intemperies|vigilance (?:rouge|orange)|crue)\\b",4],["\\bvent (?:violent|tres fort|fort)\\b|\\bneige\\b",3],["\\b(?:arbre|branche|toiture|tuiles?|bardage|echafaudage|panneau)\\w* .{0,25}\\b(?:tombe|arrache|envole|menace de tomber|se decroche|decroche)",3]],"exclure":[],"aiguillage":[],"propositions":["f-lsst-21-consignes-fr-alert","f-lsst-20-alerte-populations"],"aussi":[],"id":"intemperies","famille":"technique","titre":"Tempête, orage, neige, intempéries","statut":"non-couverte","cible":null,"note":"Aucune conduite vérifiée dans l’appli pour les intempéries : suivez les consignes de votre site."}],"nouvelles":{"p-convulsions":{"id":"p-convulsions"},"p-suicide":{"id":"p-suicide"},"p-intrusion":{"id":"p-intrusion"},"p-alerte-bombe":{"id":"p-alerte-bombe"}}};
+
 /* data/99-annexes.js */
 /* Numéros d'urgence */
 D.numeros = [
@@ -3623,6 +3698,7 @@ D.numeros = [
   { n: "17", tel: "17", l: "Police, gendarmerie", d: "Agression, intrusion, attaque, vol, colis suspect.", src: "gend114", main: true },
   { n: "114", tel: "114", l: "Urgence par SMS, application ou visio", d: "Pour les personnes sourdes, sourdaveugles, malentendantes ou aphasiques. Gratuit, 24 h sur 24.", src: "gend114", main: true },
   { n: "0 800 47 33 33", tel: "0800473333", l: "Urgence sécurité gaz (GRDF)", d: "Odeur ou fuite de gaz naturel. Gratuit, 24 h sur 24. Appeler depuis l’extérieur.", src: "grdf", main: false },
+  { n: "3114", tel: "3114", l: "Prévention du suicide", d: "Numéro national : écoute par des professionnels. Gratuit, 24 h sur 24.", src: "sc_suicide", main: false },
   { n: "119", tel: "119", l: "Enfance en danger", d: "Écoute et signalement.", src: "gend114", main: false },
   { n: "3919", tel: "3919", l: "Violences conjugales", d: "Écoute, information et orientation.", src: "gend114", main: false },
   { n: "3977", tel: "3977", l: "Maltraitance des personnes âgées ou handicapées", d: "Écoute et signalement.", src: "gend114", main: false },
@@ -24015,6 +24091,276 @@ function icon(name, cls = "") {
 /* analyse.js */
 /* Analyse du français parlé, entièrement sur l'appareil (aucune donnée ne sort du téléphone) :
    heures, durées, dates, lieux, type d'incident, champs du rapport, créneaux du planning. */
+/* scene.js */
+/* « Décrire la situation » : moteur de compréhension, entièrement sur l'appareil.
+   JavaScript pur, sans dépendance, sans connexion, sans IA en ligne.
+   RÈGLE : aucune donnée automatique sur le bâtiment (BAT, Mon bâtiment, ssiReq) n'est lue ni utilisée ici.
+
+   Utilisation :
+     SCENE.charger(donnees)                  // contenu de situations.json
+     const r = SCENE.comprendre("un homme est tombé, il ne répond pas")
+     // r.mode = "direct" | "question" | "choix" | "non-prevue" | "inconnu"
+     // question : rappeler SCENE.comprendre(texte, { ...r.faitsDonnes, ...reponse.faits })
+*/
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.SCENE = factory();
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
+  let D = null, SIT = {}, ORDRE = [], COR = [], COMP = [], FAITS = {}, VOC = [], VOCSET = null;
+  const SEUIL = 3;            /* score à partir duquel une situation est « reconnue » */
+  const NE_PAS_CORRIGER = new Set("respirer saigner violet violette bruler tomber parler tousser appeler alerter evacue evacuee fumeur courir".split(" "));
+
+  /* Une situation plus précise retire les plus générales de la liste */
+  const ABSORBE = {
+    attaque: ["conflit", "bagarre", "intrusion", "vol", "refus-controle"],
+    feu: ["fumee", "odeur-brule", "alarme-incendie", "evacuation", "point-chaud", "extincteur"],
+    fumee: ["odeur-brule", "alarme-incendie"],
+    gaz: ["odeur-brule", "produit-chimique", "detecteur-gaz"],
+    "detecteur-gaz": ["alarme-incendie"],
+    "arret-cardiaque": ["inconscient", "inconscient-respire", "malaise", "defibrillateur", "deces", "douleur-poitrine", "avc", "chaleur", "ivre", "noyade"],
+    inconscient: ["malaise", "chaleur", "ivre", "desoriente"],
+    "inconscient-respire": ["inconscient", "malaise", "chaleur", "ivre", "desoriente"],
+    hemorragie: ["plaie"],
+    etouffement: ["malaise"],
+    electrisation: ["coupure", "brulure", "chute"],
+    "douleur-poitrine": ["malaise"],
+    avc: ["malaise", "desoriente", "chute"],
+    convulsions: ["malaise", "chute"],
+    chaleur: ["malaise"],
+    suicide: ["conflit", "desoriente", "malaise"],
+    "evacuation-handicap": ["evacuation"],
+    bagarre: ["conflit"],
+    "alerte-bombe": ["colis", "conflit"],
+    colis: ["refus-controle", "vol"],
+    intrusion: ["vol", "conflit"],
+    "chimique-personne": ["produit-chimique", "brulure"],
+    "accident-vehicule": ["chute"],
+    ascenseur: ["coupure"],
+    ivre: ["malaise"],
+    "enfant-perdu": ["desoriente"],
+    "derangement-ssi": ["alarme-incendie"],
+    "rayons-x": ["colis", "refus-controle"],
+    portique: ["refus-controle"],
+    palpation: ["refus-controle"],
+    noyade: ["chute", "eau"],
+    brulure: [],
+  };
+
+  const rx = (s, f) => new RegExp(s, f || "");
+
+  function charger(donnees) {
+    D = donnees; SIT = {}; ORDRE = [];
+    COR = D.corrections.map(([a, b]) => [rx(a, "g"), b]);
+    COMP = D.composes.map(([a, b]) => [rx(a, "g"), b]);
+    FAITS = {};
+    Object.keys(D.faits).forEach((k) => { FAITS[k] = {}; Object.keys(D.faits[k]).forEach((v) => (FAITS[k][v] = D.faits[k][v].map((s) => rx(s)))); });
+    VOC = D.vocabulaire.slice(); VOCSET = new Set(VOC);
+    D.situations.forEach((s) => {
+      const c = Object.assign({}, s);
+      c._motifs = s.motifs.map(([m, p]) => [rx(m), p]);
+      c._exclure = (s.exclure || []).map((m) => rx(m, "g"));
+      SIT[s.id] = c; ORDRE.push(s.id);
+    });
+    return api;
+  }
+
+  /* Distance d'édition bornée (fautes de frappe et de dictée) */
+  function lev(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev = []; for (let j = 0; j <= b.length; j++) prev.push(j);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i]; let mn = i;
+      for (let j = 1; j <= b.length; j++) {
+        const v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        cur[j] = v; if (v < mn) mn = v;
+      }
+      if (mn > max) return max + 1;
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  function corrigerMot(w) {
+    if (w.length < 6 || VOCSET.has(w) || NE_PAS_CORRIGER.has(w) || /\d|_/.test(w)) return w;
+    const max = w.length >= 10 ? 2 : 1;
+    let best = null, bd = max + 1;
+    for (let i = 0; i < VOC.length; i++) {
+      const v = VOC[i];
+      if (v[0] !== w[0]) continue;
+      const d = lev(w, v, max);
+      /* deux fautes : seulement si le début et la fin du mot sont les mêmes (« électricien » n'est pas « électricité ») */
+      if (d === 2 && (w.slice(0, 3) !== v.slice(0, 3) || w.slice(-2) !== v.slice(-2))) continue;
+      if (d < bd) { bd = d; best = v; }
+    }
+    return best || w;
+  }
+
+  /* Normalisation : minuscules, sans accents, ponctuation réduite à « . », fautes courantes corrigées */
+  function normaliser(texte) {
+    let s = String(texte == null ? "" : texte).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/œ/g, "oe").replace(/æ/g, "ae").replace(/[’'`´ʼ‘\-_]/g, " ").replace(/[.,;:!?()\n\r]/g, " . ")
+      .replace(/[^a-z0-9. ]/g, " ").replace(/\s+/g, " ").trim();
+    COR.forEach(([re, to]) => { s = s.replace(re, to); });
+    s = s.split(" ").map(corrigerMot).join(" ");
+    COR.forEach(([re, to]) => { s = s.replace(re, to); });
+    COMP.forEach(([re, to]) => { s = s.replace(re, to); });
+    return s.replace(/\s+/g, " ").trim();
+  }
+
+  /* Faits : état « oui », « non » ou absent. L'ordre des clés dans les données fixe la priorité. */
+  function lireFaits(n) {
+    const f = {};
+    Object.keys(FAITS).forEach((k) => {
+      const vals = Object.keys(FAITS[k]);
+      for (let i = 0; i < vals.length; i++) {
+        if (FAITS[k][vals[i]].some((re) => re.test(n))) { if (vals[i] !== "inconnu") f[k] = vals[i]; return; }
+      }
+    });
+    return f;
+  }
+
+  /* Négations : les mots niés reçoivent le préfixe « neg_ » et ne comptent plus dans les motifs.
+     « pas de fumée », « aucune flamme », « sans arme », « il n'est pas blessé », « ne saigne pas ». */
+  const DET = new Set("de d du des un une le la l les trop vraiment tres encore du tout aucun aucune signe signes trace traces".split(" "));
+  const AUX = new Set("est a ai as sont ont etait avait suis es c ya y vois voit voyons sens sent semble parait a l air".split(" "));
+  /* verbes d'état dont la négation compte (« ne saigne pas », « ça ne brûle plus ») */
+  const ETAT = new Set("saigne brule crame fume flambe sonne coule fuit tremble convulse tousse vomit titube bipe menace insulte".split(" "));
+  const SANS_FIGE = new Set("connaissance proprietaire autorisation payer badge billet vie permis permis_feu arret personne surveillance laisse reaction".split(" "));
+  const LIEN = new Set("et mais donc alors ou . apparemment visiblement surtout car puis non".split(" "));
+  function nier(n) {
+    const t = n.split(" "), neg = new Array(t.length).fill(false);
+    const suivant = (i) => { let j = i + 1, k = 0; while (j < t.length && DET.has(t[j]) && k < 3) { j++; k++; } return j < t.length && t[j] !== "." ? j : -1; };
+    for (let i = 0; i < t.length; i++) {
+      const w = t[i], prev = i > 0 ? t[i - 1] : ".", next = i + 1 < t.length ? t[i + 1] : ".";
+      if (w === "sans" || w === "aucun" || w === "aucune" || w === "ni") { const j = suivant(i); if (j > 0 && !(w === "sans" && SANS_FIGE.has(t[j]))) neg[j] = true; continue; }
+      if (w === "pas" || w === "plus" || w === "jamais") {
+        if (w === "plus" && (prev === "de" || prev === "en" || prev === "beaucoup" || prev === "peu" || prev === "bien" || prev === "le" || prev === "la" || next === "en" || next === "tard" || next === "que" || next === "grave" || next === "fort" || next === "vite" || next === "possible")) continue;
+        const verbeAvant = !(AUX.has(prev) || LIEN.has(prev) || DET.has(prev));
+        if (verbeAvant && i > 0 && ETAT.has(prev)) neg[i - 1] = true;                       /* « saigne pas », « ne brûle plus » */
+        if (next === "bien" || next === "mal") continue;
+        if (!verbeAvant || next === "de" || next === "d" || next === "du" || next === "des") { const j = suivant(i); if (j > 0) neg[j] = true; }
+      }
+    }
+    return t.map((w, i) => (neg[i] && !/^(?:ne_|sans_|neg_)/.test(w) ? "neg_" + w : w)).join(" ");
+  }
+
+  function noter(n, masque) {
+    const sc = {};
+    ORDRE.forEach((id) => {
+      const s = SIT[id]; let txt = masque;
+      s._exclure.forEach((re) => { re.lastIndex = 0; txt = txt.replace(re, " "); });
+      let v = 0;
+      s._motifs.forEach(([re, p]) => { if (re.test(txt)) v += p; });
+      sc[id] = v;
+    });
+    return sc;
+  }
+
+  const lienDe = (cible) => (cible ? "#" + cible : null);
+  function fiche(id, score, via) {
+    const s = SIT[id];
+    return { id: s.id, titre: s.titre, famille: s.famille, statut: s.statut, gravite: s.gravite, cible: s.cible, lien: lienDe(s.cible), numeros: s.numeros.slice(), note: s.note || "", score: score || 0, via: via || null, nouvelle: s.statut === "nouvelle" ? D.nouvelles[s.cible] || null : null };
+  }
+  const prop = (cible) => ({ cible, lien: lienDe(cible) });
+  const question = (k) => { const q = D.questions[k]; return q ? { id: k, texte: q.texte, aide: q.aide || "", reponses: q.reponses.map(([label, faits]) => ({ label, faits })) } : null; };
+
+  function comprendre(texte, reponses) {
+    if (!D) throw new Error("SCENE.charger(donnees) doit être appelé avant comprendre()");
+    const n = normaliser(texte), donnes = Object.assign({}, reponses || {});
+    const lus = lireFaits(n), f = Object.assign({}, lus, donnes);
+    if (!f.feuvisible) { if (f.flammes === "oui" || f.fumee === "oui") f.feuvisible = "oui"; else if (f.flammes === "non" && f.fumee === "non") f.feuvisible = "non"; }
+    const masque = nier(n), sc = noter(n, masque);
+    const res = { texte: String(texte || ""), normalise: n, faits: f, faitsDonnes: donnes, mode: "inconnu", vital: false, numeros: [], situation: null, question: null, propositions: [], aussi: [], situations: [], message: "" };
+
+    /* ----- Signes de gravité prioritaires (état de la victime) ----- */
+    if (f.respire === "non") { sc["arret-cardiaque"] += 6; sc.inconscient = 0; sc["inconscient-respire"] = 0; }
+    else if (f.repond === "non" && f.respire === "oui") { sc["inconscient-respire"] += 6; sc.inconscient = 0; sc["arret-cardiaque"] = Math.min(sc["arret-cardiaque"], 2); }
+    else if (f.repond === "non") sc.inconscient += 4;
+    else if (f.repond === "oui") { sc.inconscient = 0; if (f.respire !== "non") sc["inconscient-respire"] = Math.min(sc["inconscient-respire"], 2); }
+    if (f.respire === "oui" && f.repond !== "non") sc["arret-cardiaque"] = Math.min(sc["arret-cardiaque"], 2);
+    if (f.saigne === "oui") sc.hemorragie += 4; else if (f.saigne === "non") sc.hemorragie = 0;
+    if (f.arme === "non") sc.attaque = 0;
+    if (f.arme === "oui" && donnes.arme === "oui") sc.attaque += 6;
+    if (f.flammes === "non" && donnes.feuvisible !== "oui") sc.feu = 0;
+    if (f.fumee === "non" && donnes.feuvisible !== "oui") sc.fumee = 0;
+    if (donnes.feuvisible === "oui") sc.feu += 6;
+    if (donnes.agressif === "oui") sc.conflit += 4;
+
+    /* ----- Classement : la plus grave d'abord, puis la priorité, puis le score ----- */
+    const tri = (a, b) => SIT[b].gravite - SIT[a].gravite || SIT[b].priorite - SIT[a].priorite || sc[b] - sc[a];
+    let retenues = ORDRE.filter((id) => sc[id] >= SEUIL).sort(tri);
+    /* Étouffement : tant que la personne n'a pas perdu connaissance, c'est la conduite « étouffement » qui prime */
+    if (retenues.includes("etouffement")) {
+      if (f.repond !== "non") retenues = ["etouffement"].concat(retenues.filter((x) => x !== "etouffement" && x !== "arret-cardiaque"));
+      else if (retenues.includes("arret-cardiaque")) retenues = retenues.filter((x) => x !== "etouffement");
+    }
+    const absorbees = new Set();
+    retenues.forEach((id) => (ABSORBE[id] || []).forEach((x) => { if (SIT[x].gravite <= SIT[id].gravite) absorbees.add(x); }));
+    retenues = retenues.filter((id) => !absorbees.has(id));
+    res.situations = ORDRE.filter((id) => sc[id] > 0).sort((a, b) => (sc[b] >= SEUIL) - (sc[a] >= SEUIL) || tri(a, b)).map((id) => fiche(id, sc[id]));
+
+    if (!retenues.length) {
+      const faibles = ORDRE.filter((id) => sc[id] > 0).sort((a, b) => SIT[b].gravite - SIT[a].gravite || sc[b] - sc[a]).slice(0, 3);
+      if (!faibles.length) {
+        res.mode = "inconnu";
+        res.message = "Je n’ai pas reconnu cette situation. Je ne donne pas de conduite au hasard : utilisez la recherche, ou appelez les secours en cas de danger.";
+        res.numeros = ["18", "112", "15", "17", "114"];
+        return res;
+      }
+      res.mode = "choix";
+      res.propositions = faibles.map((id) => fiche(id, sc[id]));
+      res.message = "Je ne suis pas sûr d’avoir compris. Choisissez ce qui correspond, ou reformulez.";
+      if (SIT[faibles[0]].gravite === 3) { res.vital = true; res.numeros = SIT[faibles[0]].numeros.slice(); }
+      return res;
+    }
+
+    /* ----- Aiguillage par questions courtes (3 au maximum) ----- */
+    let top = retenues[0], via = null, tours = 0;
+    while (tours++ < 4) {
+      const s = SIT[top]; let saut = null, ask = null;
+      for (let i = 0; i < s.aiguillage.length && !saut && !ask; i++) {
+        const r = s.aiguillage[i]; let ok = true, inconnue = null;
+        Object.keys(r.si).forEach((k) => { if (f[k] === undefined) { if (!inconnue) inconnue = k; } else if (f[k] !== r.si[k]) ok = false; });
+        if (!ok) continue;
+        if (!inconnue) saut = r.vers;
+        else if (r.demander !== false) ask = inconnue;
+      }
+      if (saut) { via = via || top; top = saut; continue; }
+      if (ask) {
+        res.mode = "question"; res.question = question(ask);
+        res.situation = fiche(top, sc[top], via);
+        res.vital = s.gravite === 3; if (res.vital) res.numeros = s.numeros.slice();
+        res.aussi = retenues.filter((x) => x !== top && x !== via).slice(0, 2).map((id) => fiche(id, sc[id]));
+        return res;
+      }
+      break;
+    }
+    const s = SIT[top];
+    res.situation = fiche(top, sc[top], via);
+    res.vital = s.gravite === 3;
+    res.numeros = s.gravite === 3 ? s.numeros.slice() : [];
+    const autres = retenues.filter((x) => x !== top && x !== via && !(ABSORBE[top] || []).includes(x)).slice(0, 2);
+    res.aussi = autres.map((id) => fiche(id, sc[id]));
+    /* le numéro d'une autre situation vitale reconnue reste affiché en premier */
+    autres.forEach((id) => { if (SIT[id].gravite === 3) { res.vital = true; SIT[id].numeros.forEach((x) => { if (!res.numeros.includes(x)) res.numeros.push(x); }); } });
+    res.liens = (s.aussi || []).concat(f.enfant === "oui" && s.enfantAussi ? s.enfantAussi : []).map(prop);
+    if (!s.cible) {
+      /* Situation reconnue mais sans conduite vérifiée : on le dit, on ne fabrique rien */
+      res.mode = "non-prevue";
+      res.numeros = s.numeros.slice();
+      res.propositions = (s.propositions || []).map(prop);
+      res.message = "Cette situation n’a pas de conduite vérifiée dans l’appli. " + (s.note || "") + " En cas de danger, appelez les secours.";
+      return res;
+    }
+    res.mode = "direct";
+    res.message = s.note || "";
+    return res;
+  }
+
+  const api = { charger, comprendre, normaliser, lireFaits, nier, version: 1 };
+  return api;
+});
+
 const ANALYSE = (() => {
   const p2 = (n) => String(n).padStart(2, "0");
   const ymd = (d) => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
@@ -28441,7 +28787,7 @@ const APP = (() => {
     }
     return seg;
   }
-  function resultsHTML(q) { return batCard(q) + resultsHTML0(q); }
+  function resultsHTML(q) { return batCard(q) + scHint(q) + resultsHTML0(q); }
   function resultsHTML0(q) {
     const { toks, res, approx, intent } = search(q, { exact: state.exact === q });
     if (!toks.length) return "";
@@ -28493,7 +28839,7 @@ const APP = (() => {
   /* ---------- État ---------- */
   const state = { q: "", niv: store.get("niv", ""), qniv: store.get("qniv", ""), confirmDel: -1, confirmReset: false, qreset: false };
   let RP = null, VX = null, IAX = null, PL = null, RD = null, PO = null;
-  const PROC_RP = { "p-feu": "feu", "p-levee-doute": "alarme", "p-evacuer": "evacuation", "p-arret-cardiaque": "secours", "p-malaise": "secours", "p-etouffement": "secours", "p-hemorragie": "secours", "p-gaz": "gaz", "p-ascenseur": "ascenseur", "p-colis": "colis", "p-attaque": "autre", "p-coupure": "coupure", "p-conflit": "agression", "p-eau": "eau" };
+  const PROC_RP = { "p-feu": "feu", "p-levee-doute": "alarme", "p-evacuer": "evacuation", "p-arret-cardiaque": "secours", "p-malaise": "secours", "p-etouffement": "secours", "p-hemorragie": "secours", "p-gaz": "gaz", "p-ascenseur": "ascenseur", "p-colis": "colis", "p-attaque": "autre", "p-coupure": "coupure", "p-conflit": "agression", "p-eau": "eau", "p-convulsions": "secours", "p-intrusion": "intrusion" };
   let myNums = store.get("mesnum", []);
   let pendingMark = null, navForward = false, curTok = null, cur = null, deferredPrompt = null;
   const scrolls = {}, stack = [];
@@ -28521,6 +28867,7 @@ const APP = (() => {
       </section>
       <div id="res" class="sec"${state.q.trim() ? "" : " hidden"}>${state.q.trim() ? resultsHTML(state.q) : ""}</div>
       <div id="home" class="sec" style="gap:24px"${state.q.trim() ? " hidden" : ""}>
+        <div class="cards">${scEntree()}</div>
         <a class="jx-home" href="#jeu"><span class="e">🎯</span><span class="t"><b>Jeu : prépare ton diplôme</b><span>Parcours sur la carte, combats de 2 à 10 joueurs. Sans connexion.</span></span><span class="go">Jouer</span></a>
         ${veilleBanner()}
         ${(() => { const rep = store.get("reprise", null), js = store.get("quiz-jour", { d: "", n: 0 }), fait = js.d === new Date().toISOString().slice(0, 10); return `<section class="sec"><div class="sec-h"><h2 class="lbl">Aujourd’hui</h2></div><div class="cards">
@@ -28754,8 +29101,8 @@ const APP = (() => {
 
   const GROUPS = [
     ["Incendie et alarme", "", ["p-feu", "p-levee-doute", "p-evacuer", "p-appel", "p-accueil-secours"]],
-    ["Secours à personne", "g", ["p-arret-cardiaque", "p-malaise", "p-etouffement", "p-hemorragie"]],
-    ["Autres situations", "a", ["p-gaz", "p-ascenseur", "p-colis", "p-attaque", "p-coupure", "p-conflit", "p-eau"]],
+    ["Secours à personne", "g", ["p-arret-cardiaque", "p-malaise", "p-etouffement", "p-hemorragie", "p-convulsions", "p-suicide"]],
+    ["Autres situations", "a", ["p-gaz", "p-ascenseur", "p-colis", "p-attaque", "p-coupure", "p-conflit", "p-eau", "p-intrusion", "p-alerte-bombe"]],
   ];
   const telOf = (n) => String(n).replace(/[^\d+]/g, "");
   function myNumsHTML() {
@@ -28770,6 +29117,7 @@ const APP = (() => {
     const big = D.numeros.filter((n) => n.main), other = D.numeros.filter((n) => !n.main);
     const html = `
       <div class="page-h"><h1>Urgence</h1><p>Appuyez sur un numéro pour appeler, puis suivez la conduite à tenir.</p></div>
+      <div class="cards">${scEntree()}</div>
       <section class="sec"><h2 class="lbl">Numéros d’urgence</h2>
         <div class="bignums">${big.map((n, i) => `<a class="bignum${i === big.length - 1 && big.length % 2 ? " wide" : ""}" href="tel:${n.tel}"><b>${esc(n.n)}</b><strong>${tx(n.l)}</strong><span>${tx(n.d)}</span></a>`).join("")}</div>
         <div class="numlist">${other.map((n) => `<div class="numrow"><div class="t"><b>${tx(n.l)}</b><span class="n">${esc(n.n).replace(/ /g, NB)}</span><span>${tx(n.d)}</span></div><a class="round" href="tel:${n.tel}" aria-label="Appeler le ${esc(n.n)}">${icon("telephone")}</a></div>`).join("")}</div>
@@ -28780,6 +29128,118 @@ const APP = (() => {
       <section class="sec"><h2 class="lbl b">Après l’incident</h2><div class="cards">${toolCard(TL.rapports)}</div></section>`;
     return { html, title: "Urgence", tab: "urgence" };
   }
+
+  /* ---------- Décrire la situation ----------
+     L'agent décrit la scène (voix ou clavier) ; le moteur SCENE, sur l'appareil, choisit la conduite.
+     Aucune donnée de bâtiment n'est utilisée (ni BAT, ni Mon bâtiment, ni ssiReq). */
+  let SC_OK = false;
+  try { SCENE.charger(D.scene); SC_OK = true; } catch (e) { console.error(e); }
+  const sc = { t: "", donnes: {}, hist: [], r: null, bande: null, err: "" };
+  const scNums = (l) => { const h = (l || []).map(callBtn).join(""); return h ? `<div class="callgrid sc-nums">${h}</div>` : ""; };
+  const scCard = (cible) => linkCard(cible.startsWith("f-") ? cible.slice(2) : cible);
+  const scCourt = (s) => (s.length > 160 ? s.slice(0, 157) + "…" : s);
+  const scEntree = () => `<a class="card sc-big" href="#scene"><span class="ico red">${icon("micro")}</span><span class="t"><b>Décrire la situation</b><span>Dites ou écrivez ce qui se passe : l’appli ouvre la bonne conduite.</span></span>${icon("chevron")}</a>`;
+  const scDire = (txt) => { try { if (VX.ttsOk && VX.status().n > 0 && store.get("guide-voix", true)) VX.speak(txt); } catch (e) { /* voix indisponible */ } };
+  function scHint(q) {
+    if (!SC_OK || norm(q).split(" ").length < 4) return "";
+    let r; try { r = SCENE.comprendre(q); } catch (e) { return ""; }
+    if (r.mode !== "direct" && r.mode !== "question") return "";
+    return `<button type="button" class="card sc-big" data-act="sc-from-q" data-q="${esc(q)}"><span class="ico red">${icon("micro")}</span><span class="t"><b>Vous décrivez une situation ?</b><span>Toucher ici : l’appli ouvre la conduite à tenir pour cette phrase.</span></span>${icon("chevron")}</button>`;
+  }
+  /* Bandeau posé en haut de la conduite ouverte : rappel de la description, numéros en premier si danger vital */
+  function scBandeHTML(b, avecNums) {
+    return `${avecNums && b.vital ? `<section class="sec sc-b" data-tts="skip"><h2 class="lbl">Danger vital : appeler</h2>${scNums(b.nums)}</section>` : ""}
+      <div class="verif sc-b sc-rappel" data-tts="skip"><span class="ico">${icon("micro")}</span><span class="t"><b>Vous avez décrit : «${NB}${tx(scCourt(b.t))}${NB}»</b><span>Conduite proposée : ${tx(b.titre)}. Là où votre site a ses propres consignes, suivez-les.</span><span class="chips" style="margin-top:8px"><button type="button" class="btn ghost" data-act="sc-edit">${icon("retour")}Ce n’est pas ça</button></span></span></div>
+      ${b.aussi.length ? `<section class="sec sc-b" data-tts="skip"><h2 class="lbl a">Aussi reconnu dans votre description</h2><div class="cards">${b.aussi.map(scCard).join("")}</div></section>` : ""}`;
+  }
+  function scPoserBande(m, t) {
+    const b = sc.bande;
+    if (!b || b.tok !== t) return;
+    if (t.startsWith("p-")) { const a = $(".callgrid", m) || $(".proc-h", m); if (a) { a.insertAdjacentHTML("afterend", scBandeHTML(b, false)); return; } }
+    m.insertAdjacentHTML("afterbegin", scBandeHTML(b, true));
+  }
+  function scLancer() {
+    if (!SC_OK) { toast("Fonction indisponible."); return; }
+    const r = SCENE.comprendre(sc.t, sc.donnes);
+    sc.err = "";
+    if (r.mode === "direct" && r.situation.cible) {
+      const s = r.situation, vus = new Set([s.cible]);
+      const aussi = r.aussi.map((a) => a.cible).filter((c) => c && !vus.has(c) && vus.add(c));
+      sc.bande = { tok: s.cible, t: sc.t, titre: s.titre, vital: r.vital, nums: r.numeros, aussi };
+      sc.r = null; sc.donnes = {}; sc.hist = [];
+      go(s.cible);
+      scDire(s.titre + "." + (r.vital && r.numeros.length ? " Danger vital. Appelez le " + r.numeros[0] + "." : ""));
+      return;
+    }
+    sc.r = r;
+    if (current() === "scene") render(true); else go("scene");
+    const z = $("#sc-res");
+    window.scrollTo(0, z ? Math.max(0, z.getBoundingClientRect().top + window.scrollY - 84) : 0);
+    if (r.mode === "question") scDire(r.question.texte);
+  }
+  function scResultat(r) {
+    if (r.mode === "choix") {
+      return `<section class="sec" id="sc-res">${r.vital ? `<h2 class="lbl">En cas de danger : appeler</h2>${scNums(r.numeros)}` : ""}
+        <h2 class="lbl a">Je ne suis pas sûr d’avoir compris. Choisissez :</h2>
+        <div class="cards">${r.propositions.map((p) => (p.cible ? scCard(p.cible) : `<div class="verif"><span class="ico">${icon("attention")}</span><span class="t"><b>${tx(p.titre)}</b><span>Pas de conduite vérifiée pour cette situation. Suivez les consignes de votre site.</span></span></div>`)).join("")}</div>
+        <div class="chips"><button type="button" class="btn ghost" data-act="sc-search">${icon("recherche")}Chercher dans le mémo</button></div></section>`;
+    }
+    const inconnu = r.mode === "inconnu";
+    const nums = inconnu ? ["18", "112", "15", "17", "114"] : r.numeros;
+    return `<section class="sec" id="sc-res">
+      <div class="verif sc-non"><span class="ico">${icon("attention")}</span><span class="t"><b>${inconnu ? "Je n’ai pas reconnu cette situation" : "Pas de conduite vérifiée pour cette situation"}</b>
+        <span>${inconnu ? "Je ne donne pas de conduite au hasard. Reformulez, ou cherchez dans le mémo." : tx(r.situation.titre) + ". " + tx(r.situation.note || "")}</span>
+        <span><b>Suivez les consignes de votre site.</b> En cas de danger, appelez les secours.</span></span></div>
+      <h2 class="lbl">Numéros d’urgence utiles</h2>${scNums(nums)}
+      <div class="chips"><button type="button" class="btn ghost" data-act="sc-search">${icon("recherche")}Chercher dans le mémo</button><a class="btn ghost" href="#urgence">${icon("telephone")}Tous les numéros</a></div>
+      ${!inconnu && r.propositions.length ? `<h2 class="lbl b">Dans l’appli, peut aider</h2><div class="cards">${r.propositions.map((p) => scCard(p.cible)).join("")}</div>` : ""}</section>`;
+  }
+  function pageScene() {
+    const r = sc.r;
+    let corps;
+    if (r && r.mode === "question") {
+      const q = r.question;
+      corps = `${r.vital ? `<section class="sec"><h2 class="lbl">Danger possible : appeler</h2>${scNums(r.numeros)}</section>` : ""}
+        <div class="verif sc-rappel" data-tts="skip"><span class="ico">${icon("micro")}</span><span class="t"><b>Vous avez dit</b><span>«${NB}${tx(scCourt(sc.t))}${NB}»</span></span></div>
+        <section class="sec" id="sc-q"><h2 class="sc-qt">${tx(q.texte)}</h2>${q.aide ? `<p class="muted" style="margin:0">${tx(q.aide)}</p>` : ""}
+          <div class="choice sc-choice">${q.reponses.map((x, i) => `<button type="button" data-act="sc-rep" data-i="${i}">${tx(x.label)}</button>`).join("")}</div></section>
+        <div class="chips"><button type="button" class="btn ghost" data-act="sc-edit">${icon("retour")}Modifier la description</button></div>`;
+    } else {
+      corps = `<form class="form" data-act="sc-go" novalidate>
+          <label class="field"><span>Ce qui se passe, avec vos mots</span><textarea id="sc-t" rows="3" maxlength="600" placeholder="Exemple : un homme est tombé, il ne répond pas" autocomplete="off" autocapitalize="sentences" enterkeyhint="search">${esc(sc.t)}</textarea></label>
+          <div class="dict">${VX.micHTML("#sc-t", "#sc-st", "Parler", "big")}<p id="sc-st" class="small muted" aria-live="polite">${sc.err ? esc(sc.err) : VX.sttOk ? "Touchez « Parler », décrivez, puis touchez « Arrêter »." : esc(VX.sttMsg("unsupported"))}</p></div>
+          <button class="btn sc-ok" type="submit">${icon("recherche")}Trouver quoi faire</button>
+        </form>
+        ${r ? scResultat(r) : `<p class="small muted" style="margin:0">Fonctionne sans connexion. Si l’appli a un doute, elle pose une question. Si la situation n’est pas prévue, elle le dit.</p>`}`;
+    }
+    const html = `<nav class="crumb" aria-label="Fil d’Ariane"><a href="#urgence">Urgence</a></nav>
+      <div class="page-h"><h1>Décrire la situation</h1><p>Dites ou écrivez ce qui se passe. L’appli ouvre la bonne conduite à tenir.</p></div>${corps}`;
+    return {
+      html, title: "Décrire la situation", tab: "urgence", back: "urgence",
+      after: () => { const m = $(".mic", $("#app") || document); if (m) m.dataset.then = "1"; },
+      retour: () => {
+        if (sc.hist.length) { delete sc.donnes[sc.hist.pop()]; sc.r = SCENE.comprendre(sc.t, sc.donnes); render(true); window.scrollTo(0, 0); return true; }
+        if (sc.r) { sc.r = null; render(true); window.scrollTo(0, 0); return true; }
+        return false;
+      },
+    };
+  }
+  function scClick(b, act) {
+    switch (act) {
+      case "sc-rep": { const x = sc.r && sc.r.question && sc.r.question.reponses[+b.dataset.i]; if (!x) return true; Object.assign(sc.donnes, x.faits); sc.hist.push(Object.keys(x.faits)[0]); scLancer(); return true; }
+      case "sc-edit": VX.stop(); sc.r = null; sc.donnes = {}; sc.hist = []; if (current() === "scene") render(true); else go("scene"); window.scrollTo(0, 0); return true;
+      case "sc-search": state.q = sc.t; go("recherche"); return true;
+      case "sc-from-q": sc.t = b.dataset.q || ""; sc.donnes = {}; sc.hist = []; scLancer(); return true;
+    }
+    return false;
+  }
+  function scSubmit() {
+    const i = $("#sc-t"); VX.stopMic();
+    sc.t = i ? i.value.trim() : ""; sc.donnes = {}; sc.hist = [];
+    if (!sc.t) { sc.r = null; sc.err = "Écrivez ou dictez d’abord ce qui se passe."; render(true); return; }
+    scLancer();
+  }
+  document.addEventListener("dictee", (e) => { if (current() === "scene" && e.target && e.target.closest && e.target.closest(".dict") && e.detail && e.detail.text) scSubmit(); });
 
   function pageOutils() {
     const html = `
@@ -31518,7 +31978,7 @@ function jChar(o = {}) {
     agent: [168, 296, "L’agent SSIAP", "Il surveille le tableau, lève le doute, donne l’alarme, alerte et accueille les secours."],
     pomp: [250, 296, "Sapeurs-pompiers", "Ils doivent être alertés sans retard (MS 70 § 1) : 18 ou 112."],
   };
-  const SIM = { tw: +store.get("ssi-plan") || 1, mots: store.get("ssi-mots") === "metier" || (!store.get("ssi-mots") && store.get("ssi-plan")) ? "metier" : "simple", man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
+  const SIM = { tw: +store.get("ssi-plan") || 1, mots: ["simple", "termes", "metier"].includes(store.get("ssi-mots")) ? store.get("ssi-mots") : store.get("ssi-plan") ? "metier" : "simple", man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
   const SSI_LAB = { A: "SSI de catégorie A", B: "SSI de catégorie B", C: "SSI de catégorie C", D: "SSI de catégorie D", E: "SSI de catégorie E", CDE: "SSI de catégorie C, D ou E", "": "Pas de catégorie de SSI imposée" };
   const AL_LAB = (a) => (a === "libre" ? "alarme au choix de l’exploitant" : "alarme de type " + a);
   const RV = (cond, ssi, al, ref, o) => Object.assign({ cond, ssi, al, ref }, o || {});
@@ -31844,7 +32304,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     fire: [2000, 174, 150], det: [2000, 196, 200], dm: [2000, 216, 200], spk: [2000, 236, 160], pc: [2000, 256, 160], issue: [2000, 336, 170], door: [2000, 354, 170], clapet: [2000, 12, 170], vent: [2000, 30, 170], volet: [2000, 48, 170], asc: [2000, 66, 150], exu: [2000, 84, 160], pomp: [2000, 106, 185], report: [2000, 128, 150], secteur: [2000, 150, 165],
   };
   /* Taille du dessin selon la variante choisie (SIM.tw : 1 épurée, 2 toile, 3 blocs complets). */
-  function twDim() { const sp = SIM.mots === "simple", v2 = !sp && SIM.tw === 2, w = sp ? 720 : v2 ? 4800 : 2800, h = sp ? 1320 : v2 ? 4800 : 4180; TW.max = sp ? 2.6 : 1.25; TW.cap = sp ? 0.95 : 0.55; if (TW.W !== w || TW.H !== h) { TW.W = w; TW.H = h; TW.s = 0; TW.key = ""; } }
+  function twDim() { const sp = twSp(), v2 = !sp && SIM.tw === 2, w = sp ? 720 : v2 ? 4800 : 2800, h = sp ? 1320 : v2 ? 4800 : 4180; TW.max = sp ? 2.6 : 1.25; TW.cap = sp ? 0.95 : 0.55; if (TW.W !== w || TW.H !== h) { TW.W = w; TW.H = h; TW.s = 0; TW.key = ""; } }
   const twCat = (c) => (c.ssi ? c.ssi : "N");
   const twWrap = (t, n) => { const out = []; let l = ""; String(t).replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ").replace(/§ /g, "§ ").split(" ").forEach((w) => { if (l && (l + " " + w).length > n) { out.push(l); l = w; } else l = l ? l + " " + w : w; }); if (l) out.push(l); return out; };
   /* Ce que ce bâtiment a : « on » présent, « off » pas dans ce bâtiment, « opt » selon le site. Mêmes règles que simSteps. */
@@ -31865,6 +32325,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   }
   /* ---------- Plan « Mots simples » : dix gros modules, trois zones dans l'ordre de l'histoire, compréhensible par un enfant de 10 ans ---------- */
   /* place [x, y, largeur, hauteur], pictogramme, nom de tous les jours, phrase « à quoi ça sert », éléments du métier que le module regroupe */
+  /* Plan simple : deux habillages de la même disposition, « simple » (mots de tous les jours en gros) et « termes » (vrais termes du métier en gros). « metier » : les trois plans complets. */
+  const twSp = () => SIM.mots === "simple" || SIM.mots === "termes";
   const TWS = {
     "s-det": { b: [16, 50, 322, 174], p: "det", n: "Détecteur de fumée", r: "Il sent tout seul la fumée ou la chaleur et prévient le tableau.", ids: ["det"] },
     "s-dm": { b: [348, 50, 322, 174], p: "dm", n: "Bouton rouge d’alarme", r: "On appuie dessus quand on voit un feu.", ids: ["dm"] },
@@ -31895,6 +32357,25 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     }
     return "";
   }
+  /* Vrai terme écrit en gros (plan « Vrais termes »), et sigles développés écrits juste dessous quand le titre n'en donne que le sigle */
+  function twsTitre(id, c) {
+    const tab = simTab(c), A = c.ssi === "A", hasC = A || c.ssi === "B";
+    const CS = { C: "DCS", D: "DCMR", E: "DCM" }, CL = { C: "dispositif de commande avec signalisation", D: "dispositif de commandes manuelles regroupées", E: "dispositif de commande manuelle" };
+    switch (id) {
+      case "s-det": return ["Détecteur automatique d’incendie", ""];
+      case "s-dm": return ["Déclencheur manuel (DM)", ""];
+      case "s-tab": return A || !tab ? ["ECS et CMSI", "équipement de contrôle et de signalisation, centralisateur de mise en sécurité incendie"] : hasC ? ["CMSI", "centralisateur de mise en sécurité incendie"] : ["Tableau d’alarme" + (CS[c.ssi] ? " et " + CS[c.ssi] : ""), "équipement d’alarme de type " + c.al + (CL[c.ssi] ? ", " + CL[c.ssi] : "")];
+      case "s-agent": return ["Agent de sécurité incendie (SSIAP)", ""];
+      case "s-pomp": return ["Sapeurs- pompiers", ""];
+      case "s-aes": return ["Alimentation électrique de sécurité (AES)", ""];
+      case "s-sir": return [(c.al === "2b" || c.al === "3" ? "Bloc autonome d’alarme sonore (BAAS)" : c.al === "4" ? "Dispositif sonore autonome" : "Diffuseur sonore (DS)") + " et flash lumineux", ""];
+      case "s-door": return ["Porte coupe-feu (DAS)", "DAS : dispositif actionné de sécurité"];
+      case "s-trap": return ["Désenfumage : volet et exutoire (DAS)", ""];
+      case "s-issue": return ["Issue de secours verrouillée (DAS)", ""];
+    }
+    return ["", ""];
+  }
+  const twsMin = (t) => t.charAt(0).toLowerCase() + t.slice(1);
   /* Texte complet lu quand on touche un module en mots simples */
   const TWS_PLUS = { "s-dm": " Il est près des escaliers. Il n’ouvre pas les trappes à fumée.", "s-trap": " Le bouton rouge ne les ouvre pas. Celle de l’escalier s’ouvre seulement à la main (MS 60 § 1).", "s-tab": " Il est au poste de sécurité, là où le public ne va pas.", "s-pomp": " On fait le 18 ou le 112.", "s-sir": " Le flash aide les personnes qui entendent mal." };
   Object.keys(TWS).forEach((k) => { SIMEL[k] = [0, 0, TWS[k].n, TWS[k].r + (TWS_PLUS[k] || "")]; });
@@ -31945,33 +32426,45 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const st0 = { "s-det": has.det, "s-dm": "on", "s-tab": tab ? "on" : "off", "s-agent": "on", "s-pomp": "on", "s-aes": has.aes, "s-sir": "on", "s-door": has.door, "s-trap": has.volet, "s-issue": has.issue };
     const act = {}, ring = {};
     Object.keys(TWS).forEach((k) => { const ids = k === "s-tab" && !tab ? [] : TWS[k].ids; act[k] = ids.some((i) => H.has(i)); ring[k] = ids.some((i) => M.has(i)); });
-    /* ce que fait chaque module à cette étape, dit simplement (rien quand tout est calme) */
-    const PL = run ? {
+    const VT = SIM.mots === "termes";
+    /* ce que fait chaque module à cette étape (rien quand tout est calme) : en mots simples, ou avec les termes du métier */
+    const PL = !run ? {} : VT ? {
+      "s-det": s.det ? ["en alarme feu", RED] : null, "s-dm": s.dm ? ["actionné", RED] : null,
+      "s-tab": tab ? (s.ecs === "feu" ? [s.ag ? "ALARME GÉNÉRALE" : s.tempo ? "ALARME RESTREINTE · TEMPO ≤ 5 MIN" : "ALARME RESTREINTE", RED] : s.ecs === "derang" ? ["DÉRANGEMENT", YEL] : s.ecs === "secteur" ? ["DÉFAUT D’ALIMENTATION", YEL] : s.ag ? ["ALARME GÉNÉRALE", RED] : null) : null,
+      "s-agent": s.agent === "zone" ? ["sur place, zone 3", YEL] : null, "s-pomp": s.pomp ? ["alertés", RED] : null, "s-aes": s.power === "off" && tab ? ["sur batteries", YEL] : null,
+      "s-sir": s.ag ? ["alarme générale", RED] : null, "s-door": s.door === "closed" ? ["fermée", RED] : s.door === "stuck" ? ["bloquée par une cale", YEL] : null,
+      "s-trap": s.volet === "open" || s.exu === "open" ? ["ouvert", RED] : null, "s-issue": s.issue === "unlock" ? ["déverrouillée", RED] : null,
+    } : {
       "s-det": s.det ? ["il a senti la fumée", RED] : null, "s-dm": s.dm ? ["quelqu’un a appuyé", RED] : null,
       "s-tab": tab ? (s.ecs === "feu" ? [s.ag ? "ALARME : TOUT LE MONDE SORT" : s.tempo ? "FEU SIGNALÉ · 5 MIN POUR VÉRIFIER" : "FEU SIGNALÉ", RED] : s.ecs === "derang" ? ["PANNE : VOYANT JAUNE", YEL] : s.ecs === "secteur" ? ["PLUS DE COURANT : VOYANT JAUNE", YEL] : s.ag ? ["ALARME : TOUT LE MONDE SORT", RED] : null) : null,
       "s-agent": s.agent === "zone" ? ["parti voir sur place", YEL] : null, "s-pomp": s.pomp ? ["appelés", RED] : null, "s-aes": s.power === "off" && tab ? ["elle prend le relais", YEL] : null,
       "s-sir": s.ag ? ["ça sonne !", RED] : null, "s-door": s.door === "closed" ? ["fermées", RED] : s.door === "stuck" ? ["bloquée par une cale", YEL] : null,
       "s-trap": s.volet === "open" || s.exu === "open" ? ["ouvertes", RED] : null, "s-issue": s.issue === "unlock" ? ["déverrouillées", RED] : null,
-    } : {};
+    };
     const B = {}; let cards = "", rings = "", o = "";
     Object.keys(TWS).forEach((id) => {
-      const m = TWS[id], [bx, by, w, h] = m.b, st = st0[id], pad = 12, big = id === "s-tab", col = !!m.col, ic = big ? 76 : col ? 46 : 56, term = twsTerm(id, c);
+      const m = TWS[id], [bx, by, w, h] = m.b, st = st0[id], pad = 12, big = id === "s-tab", col = !!m.col, ic = big ? 76 : col ? 46 : VT ? 46 : 56;
       B[id] = m.b;
+      /* quatre niveaux de texte : A en gros, B en couleur, C en italique (le nom de tous les jours, plan « Vrais termes »), D la phrase */
+      const tt = VT ? twsTitre(id, c) : null, tA = VT ? tt[0] : m.n, tB = VT ? tt[1] : twsTerm(id, c), tC = VT ? "« " + twsMin(m.n) + " »" : "", tD = m.r;
       const note = st === "off" ? absent : st === "opt" ? "selon le site" : "", pill = st !== "off" && PL[id] ? PL[id] : null;
-      const full = w - pad * 2, side = col ? full : full - ic - 10;
+      const full = w - pad * 2, side = col ? full : full - ic - 10, wrapA = (n) => twWrap(tA, n).map((l) => l.replace(/- /g, "-")), okA = (ls, n) => ls.every((q) => q.length <= n + (/-$/.test(q) ? 1 : 0));
       let L = null;
-      for (let k = 0; k < 9 && !(L && L.ok); k++) {
-        const f = 1 - k * 0.05, fn = (big ? 38 : 29) * f, ft = 17 * f, lh = fn * 1.1, cs = Math.floor(side / (fn * 0.58));
-        const nl = twWrap(m.n, cs), tw0 = big ? side : full, tl = twWrap(term, Math.floor(tw0 / (ft * 0.54))), rl = twWrap(m.r, Math.floor(tw0 / (ft * 0.51))), nh = nl.length * lh, txt = (tl.length + rl.length) * ft * 1.22 + 6;
+      /* on réduit un peu si besoin, sans descendre sous 72 % ; en « Vrais termes », si la phrase oblige à trop réduire, on l'enlève du cadre : elle reste dite au toucher */
+      for (let pass = 0; pass < 2 && !(L && L.ok); pass++) for (let k = 0; k < (pass || !VT ? 7 : 6) && !(L && L.ok); k++) {
+        const f = 1 - k * 0.047, fn = (big ? 38 : 29) * f, ft = (VT ? 16 : 17) * f, lh = fn * 1.1, cs = Math.floor(side / (fn * 0.58));
+        const nl = wrapA(cs), tw0 = big ? side : full, cw = (q) => Math.floor(tw0 / (ft * q));
+        const tl = tB ? twWrap(tB, cw(0.54)) : [], el = tC ? twWrap(tC, cw(0.53)) : [], rl = pass ? [] : twWrap(tD, cw(0.51)), nh = nl.length * lh, txt = (tl.length + el.length + rl.length) * ft * 1.22 + 6;
         const need = (big ? Math.max(ic, nh + 6 + txt) : col ? ic + 4 + nh + 6 + txt : Math.max(ic, nh) + 8 + txt) + 8;
-        L = { fn, ft, lh, nl, tl, rl, nh, ok: need <= h - pad * 2 && nl.every((q) => q.length <= cs) };
+        L = { fn, ft, lh, nl, tl, el, rl, nh, ok: need <= h - pad * 2 && okA(nl, cs) };
       }
-      const { fn, ft, lh, nl, tl, rl, nh } = L, tx0 = big ? bx + pad + ic + 10 : bx + pad, nx = col ? bx + pad : bx + pad + ic + 10;
+      const { fn, ft, lh, nl, tl, el, rl, nh } = L, tx0 = big ? bx + pad + ic + 10 : bx + pad, nx = col ? bx + pad : bx + pad + ic + 10;
       let g = `<rect class="tw-bg" x="${bx}" y="${by}" width="${w}" height="${h}" rx="16"/>` + pic(m.p, bx + pad, by + pad, ic), ty;
       const y0 = big ? by + pad : col ? by + pad + ic + 4 : by + pad + Math.max(0, (ic - nh) / 2);
       nl.forEach((l, k) => { g += T(nx, y0 + fn * 0.86 + k * lh, l, "tw-n", "", fn.toFixed(1)); });
       ty = big || col ? y0 + nh + 6 : by + pad + Math.max(ic, nh) + 8;
       tl.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-t", "", ft.toFixed(1)); ty += ft * 1.22; });
+      el.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-e", "", ft.toFixed(1)); ty += ft * 1.22; });
       ty += 6;
       rl.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-r", "", ft.toFixed(1)); ty += ft * 1.22; });
       /* état ou mention : une étiquette à cheval sur le bas du cadre (à gauche dans la zone 1, pour laisser la place aux flèches) */
@@ -31982,8 +32475,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (ring[id]) rings += `<rect class="tw-ring" x="${bx - 5}" y="${by - 5}" width="${w + 10}" height="${h + 10}" rx="20"/>`;
     });
     /* trois grandes zones, dans l'ordre de l'histoire */
-    const zone = (y, h, t) => `<rect class="tw-zone" x="6" y="${y}" width="708" height="${h}" rx="22"/>` + T(20, y + 33, t, "tw-zt", "", 26);
-    o += zone(6, 226, "1. On repère le feu") + zone(268, 500, "2. Le tableau réfléchit et prévient") + zone(804, 508, "3. Le bâtiment se protège et les gens sortent");
+    const zone = (y, h, t, t2) => `<rect class="tw-zone" x="6" y="${y}" width="708" height="${h}" rx="22"/>` + (t2 ? T(20, y + 19, t, "tw-zt", "", 21.5) + T(20, y + 34, t2, "tw-zu", "", 14.5) : T(20, y + 29, t, "tw-zt", "", 25));
+    o += VT ? zone(6, 226, "1. Détection", x.A ? "SDI : système de détection incendie" : "déclencheurs manuels seulement, pas de SDI") + zone(268, 500, "2. Traitement et alerte", tab ? "tableau, au poste de sécurité" : "pas de tableau avec une alarme de type " + c.al) + zone(804, 508, "3. Mise en sécurité et évacuation", c.ssi ? "SMSI : système de mise en sécurité incendie" : "alarme seule : pas de SMSI imposé (système de mise en sécurité incendie)")
+      : zone(6, 226, "1. On repère le feu") + zone(268, 500, "2. Le tableau réfléchit et prévient") + zone(804, 508, "3. Le bâtiment se protège et les gens sortent");
     /* le feu, montré dans la première zone pendant les exercices */
     if (s.fire || s.smoke) { const f = s.fire, hot = src.has("fire") || src.has("spk") || src.has("pc"); o += `<g class="${f ? "tw-fire" : "tw-opt"}"><rect class="tw-bg" x="${f && s.spk === "open" ? 318 : 418}" y="10" width="${f && s.spk === "open" ? 386 : 286}" height="36" rx="18"/>${pic("fire", (f && s.spk === "open" ? 318 : 418) + 10, 13, 30)}${T((f && s.spk === "open" ? 318 : 418) + 48, 35, f ? (s.spk === "open" ? "FEU · arrosé par le sprinkleur" : "FEU dans un bureau") : "Poussière : pas de feu", "tw-n", "", 20)}</g>` + (hot ? `<rect class="tw-ring" x="${(f && s.spk === "open" ? 318 : 418) - 4}" y="6" width="${(f && s.spk === "open" ? 386 : 286) + 8}" height="44" rx="22"/>` : ""); }
     /* grosses flèches : état « on » (couleur du bâtiment), « off » (gris), signal en cours (rouge) */
@@ -32037,7 +32531,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       secteur: s.power === "on" ? ["présent", GRN] : ["COUPÉ", RED], aes: s.power === "on" ? ["en charge", GRN] : ["SUR BATTERIES", YEL],
       agent: s.agent === "zone" ? ["sur place, zone 3", YEL] : ["au poste", GRN], pomp: s.pomp ? ["ALERTÉS", RED] : null,
     };
-    if (SIM.mots === "simple") return twsSvg({ s, c, has, H, M, src, run, tab, T, pic });
+    if (twSp()) return twsSvg({ s, c, has, H, M, src, run, tab, A, T, pic });
     /* Textes qui changent selon le bâtiment */
     const NM = {}, RL = {}, TG = {};
     if (has.report === "opt") TG.report = "selon le site";
@@ -32226,7 +32720,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const svg = $("#tw-svg"); if (!svg || !TW.s || !TW.pw) return;
     const vw = TW.pw / TW.s, vh = TW.ph / TW.s;
     svg.setAttribute("viewBox", `${(TW.cx - vw / 2).toFixed(1)} ${(TW.cy - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
-    svg.classList.toggle("tw-far", TW.s < 0.3 && SIM.mots !== "simple");
+    svg.classList.toggle("tw-far", TW.s < 0.3 && !twSp());
   }
   function twStop() { if (TW.raf) cancelAnimationFrame(TW.raf); TW.raf = 0; }
   /* Va en douceur vers une vue { cx, cy, s } */
@@ -32247,7 +32741,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const ids = TW.act || []; if (!ids.length) return twAll();
     let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
     ids.forEach((id) => { const b = TW.B[id]; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[0] + b[2]); y1 = Math.max(y1, b[1] + b[3]); });
-    const m = SIM.mots === "simple" ? 30 : 110;
+    const m = twSp() ? 30 : 110;
     return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(TW.cap || 0.55, TW.pw / (x1 - x0 + m * 2), TW.ph / (y1 - y0 + m * 2)) };
   }
   function twZoom(k, px, py) {
@@ -32330,10 +32824,10 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       }
       if (SIM.i === SIM.steps.length - 1 && SIM.mode === "jeu" && SIM.nq) info += `<p><strong>${tx("Score")} : ${SIM.score} / ${SIM.nq}</strong></p>`;
     }
-    const el = SIM.el && SIMEL[SIM.el] ? `<div class="call call-info" role="note">${icon("info")}<div><p class="lbl">${tx(SIMEL[SIM.el][2])}</p>${TWS[SIM.el] ? `<p class="small"><strong>${tx("Mot du métier")} :</strong> ${tx(twsTerm(SIM.el, c))}</p>` : ""}<p>${tx(SIMEL[SIM.el][3])}</p></div></div>` : "";
+    const el = SIM.el && SIMEL[SIM.el] ? `<div class="call call-info" role="note">${icon("info")}<div><p class="lbl">${tx(TWS[SIM.el] && SIM.mots === "termes" ? twsTitre(SIM.el, c)[0].replace("- ", "-") : SIMEL[SIM.el][2])}</p>${TWS[SIM.el] ? (SIM.mots === "termes" ? (twsTitre(SIM.el, c)[1] ? `<p class="small">${tx(twsTitre(SIM.el, c)[1])}</p>` : "") + `<p><strong>${tx("En mots simples")} :</strong> ${tx(twsMin(SIMEL[SIM.el][2]))}. ${tx(SIMEL[SIM.el][3])}</p>` : `<p class="small"><strong>${tx("Mot du métier")} :</strong> ${tx(twsTerm(SIM.el, c))}</p><p>${tx(SIMEL[SIM.el][3])}</p>`) : `<p>${tx(SIMEL[SIM.el][3])}</p>`}</div></div>` : "";
     const waiting = step && step.q && SIM.mode === "jeu" && SIM.pick == null;
     const toile = SIM.view !== "plan";
-    const band = step ? `<div class="tw-band"><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(simQuoi(step))}</div>` : "";
+    const band = step ? `<div class="tw-band"><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(simQuoi(step)) + (SIM.mots === "termes" && toile && twsEtape(step.quoi) !== step.quoi ? `<span class="tw-b2"><strong>${tx("En mots simples")} :</strong> ${tx(twsEtape(step.quoi))}</span>` : "")}</div>` : "";
     return `<div class="form ssim-f">
         <p class="small"><strong>${tx("Simulé")} :</strong> ${tx(c.ssi ? "SSI de catégorie " + c.ssi : "pas de catégorie de SSI imposée")}, ${tx(c.libre ? "alarme au choix (exemple : type 4)" : "alarme de type " + c.al)}${c.ags ? tx(", alarme générale sélective") : ""}${c.ex ? tx(" (exemple)") : ""}</p>
         <label class="field"><span>${tx("Événement")}</span><select id="ssim-ev">${evs.map((e) => `<option value="${e[0]}"${SIM.ev === e[0] ? " selected" : ""}>${e[1]}</option>`).join("")}</select></label>
@@ -32341,9 +32835,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       </div>
       <div class="chips"><button type="button" class="btn${toile ? "" : " ghost"}" data-act="ssi-sim" data-v="v-syn">${tx("Schéma du SSI")}</button><button type="button" class="btn${toile ? " ghost" : ""}" data-act="ssi-sim" data-v="v-plan">${tx("Plan de l’étage")}</button>${toile ? `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="z+" aria-label="${tx("Zoomer")}">+</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z-" aria-label="${tx("Dézoomer")}">−</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z0">${tx("Tout voir")}</button>` : ""}</div>
       ${toile ? `<p class="small tw-leg tw-c${twCat(c)}"><strong>${tx(twLegend(c))}</strong><br><span class="tw-sw on"></span>${tx(c.v ? "dans ce bâtiment" : "dans cette catégorie")} <span class="tw-sw off"></span>${tx(c.v ? "pas dans ce bâtiment" : "pas dans cette catégorie")} <span class="tw-sw opt"></span>${tx("selon le site")} <span class="tw-sw act"></span>${tx("signal en cours")}</p>
-      <div class="chips tw-mots" role="group" aria-label="${tx("Choix des mots")}">${[["simple", "Mots simples"], ["metier", "Termes du métier"]].map(([k, l]) => `<button type="button" class="btn${SIM.mots === k ? "" : " ghost"}" data-act="ssi-sim" data-v="mots-${k}" aria-pressed="${SIM.mots === k}">${tx(l)}</button>`).join("")}</div>
-      ${SIM.mots === "simple" ? "" : `<div class="chips tw-var" role="group" aria-label="${tx("Choix du plan")}">${[[1, "Plan épuré"], [2, "Plan en toile"], [3, "Plan détaillé"]].map(([k, l]) => `<button type="button" class="btn${SIM.tw === k ? "" : " ghost"}" data-act="ssi-sim" data-v="tw${k}">${k}. ${tx(l)}</button>`).join("")}</div>`}
-      <div id="tw-wrap" class="tw-wrap tw-c${twCat(c)}" style="aspect-ratio:${SIM.mots === "simple" ? "720 / 1320;max-height:max(78dvh, 300px)" : SIM.tw === 2 ? "1 / 1" : "2800 / 4180"}">${synSvg(s, step ? step.hl : [], c)}</div>
+      <div class="chips tw-mots" role="group" aria-label="${tx("Choix des mots")}">${[["simple", "Mots simples"], ["termes", "Vrais termes"], ["metier", "Plans complets"]].map(([k, l]) => `<button type="button" class="btn${SIM.mots === k ? "" : " ghost"}" data-act="ssi-sim" data-v="mots-${k}" aria-pressed="${SIM.mots === k}">${tx(l)}</button>`).join("")}</div>
+      ${twSp() ? "" : `<div class="chips tw-var" role="group" aria-label="${tx("Choix du plan")}">${[[1, "Plan épuré"], [2, "Plan en toile"], [3, "Plan détaillé"]].map(([k, l]) => `<button type="button" class="btn${SIM.tw === k ? "" : " ghost"}" data-act="ssi-sim" data-v="tw${k}">${k}. ${tx(l)}</button>`).join("")}</div>`}
+      <div id="tw-wrap" class="tw-wrap tw-c${twCat(c)}" style="aspect-ratio:${twSp() ? "720 / 1320;max-height:max(78dvh, 300px)" : SIM.tw === 2 ? "1 / 1" : "2800 / 4180"}">${synSvg(s, step ? step.hl : [], c)}</div>
       ${band}<p class="small muted">${tx("Pincez avec deux doigts pour zoomer, glissez pour vous déplacer, touchez deux fois pour agrandir. Touchez un élément : il se présente.")}</p>` : `<div id="ssim-svg">${simSvg(s, step ? step.hl : [], c)}</div>`}
       ${el}
       <div class="chips ssim-bar"><button type="button" class="btn" data-act="ssi-sim" data-v="go">${icon("lecture")}${SIM.i < 0 ? tx("Démarrer") : tx("Recommencer")}</button>
@@ -32372,14 +32866,14 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     else if (v === "z+" || v === "z-") { twZoom(v === "z+" ? 1.6 : 1 / 1.6); return; }
     else if (v === "z0") { twGo(twAll(), 420); return; }
     else if (/^tw[123]$/.test(v)) { SIM.tw = +v.slice(2); store.set("ssi-plan", SIM.tw); TW.s = 0; TW.key = ""; simDraw(); return; }
-    else if (v === "mots-simple" || v === "mots-metier") { SIM.mots = v.slice(5); store.set("ssi-mots", SIM.mots); SIM.el = ""; TW.s = 0; TW.key = ""; simDraw(); return; }
+    else if (v === "mots-simple" || v === "mots-termes" || v === "mots-metier") { SIM.mots = v.slice(5); store.set("ssi-mots", SIM.mots); SIM.el = ""; TW.s = 0; TW.key = ""; simDraw(); return; }
     else if (v === "m-voir" || v === "m-jeu") { SIM.mode = v.slice(2); SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm); VX.stop(); }
     else if (v.startsWith("rep")) { SIM.pick = +v.slice(3); SIM.nq++; if (SIM.pick === 0) SIM.score++; }
     simDraw();
     if (v === "auto" && !SIM.play) return;
     if (SIM.i >= 0 && v !== "m-voir" && v !== "m-jeu") simSay();
   }
-  function simEl(id) { SIM.el = SIM.el === id ? "" : id; simDraw(); if (SIM.el && VX.ttsOk && store.get("ssim-voix", true) && !SIM.play) { try { VX.speak(SIMEL[id][2] + ". " + (TWS[id] ? "Mot du métier : " + twsTerm(id, simCfg()) + ". " : "") + SIMEL[id][3]); } catch (e) { /* voix */ } } }
+  function simEl(id) { SIM.el = SIM.el === id ? "" : id; simDraw(); if (SIM.el && VX.ttsOk && store.get("ssim-voix", true) && !SIM.play) { try { const tt = TWS[id] && SIM.mots === "termes" ? twsTitre(id, simCfg()) : null; VX.speak(tt ? tt[0].replace("- ", "-") + ". " + (tt[1] ? tt[1] + ". " : "") + "En mots simples : " + twsMin(SIMEL[id][2]) + ". " + SIMEL[id][3] : SIMEL[id][2] + ". " + (TWS[id] ? "Mot du métier : " + twsTerm(id, simCfg()) + ". " : "") + SIMEL[id][3]); } catch (e) { /* voix */ } } }
   function simSel() {
     let ch = false;
     const m = $("#ssim-man"), v = $("#ssim-v"), d = $("#ssim-cde"), e = $("#ssim-ev");
@@ -32484,6 +32978,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (t === "accueil") return pageHome();
     if (t === "rappel" || t === "regles" || t === "livres") return pageTab(t);
     if (t === "urgence" || t === "numeros") return pageUrgence();
+    if (t === "scene") return pageScene();
     if (t === "outils") return pageOutils();
     if (t === "recherche") return pageSearch();
     if (t === "glossaire") return pageGlossaire();
@@ -32525,6 +33020,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     cur = page;
     const m = main();
     m.innerHTML = page.html;
+    if (TOPS.has(t)) { sc.bande = null; sc.r = null; sc.donnes = {}; sc.hist = []; sc.t = ""; sc.err = ""; } else if (sc.bande) scPoserBande(m, t);
     document.title = (page.title ? page.title + " · " : "") + "Mémo SSIAP";
     $$(".tabs a").forEach((a) => (a.dataset.tab === page.tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
     $("#back").hidden = !!page.home;
@@ -32715,6 +33211,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const b = e.target.closest("[data-act]");
     if (!b || b.tagName === "FORM") return;
     const act = b.dataset.act;
+    if (act.startsWith("sc-") && scClick(b, act)) return;
     if ((act.startsWith("rp-") || act.startsWith("dc-")) && RP.click(b, act, rerender, render, go)) return;
     if (act.startsWith("pl-") && PL.click(b, act, rerender, render, go)) return;
     if (act.startsWith("rd-") && RD.click(b, act, rerender, render, go)) return;
@@ -32881,7 +33378,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     }
     const t = e.target;
     if (t.matches && t.matches("[data-vx-range]")) { VX.setRate(+t.value, e.type === "input"); return; }
-    if (t.id === "q") { onSearchInput(t.value); return; }
+    if (t.id === "q") { if (e.type === "change" && t.value === state.q) return; /* pas de redessin inutile en quittant le champ : il annulait le toucher sur un résultat */ onSearchInput(t.value); return; }
     if (t.id === "gq") { $("#gl").innerHTML = glossList(t.value); return; }
     if (t.closest && t.closest("[data-check]")) { updateCheck(t.closest("[data-check]")); return; }
     if (t.closest && t.closest("[data-dc]")) { RP.input(t); return; }
@@ -32905,6 +33402,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (!f.dataset || !f.dataset.act) return;
     e.preventDefault();
     if (f.dataset.act === "dev-login") { devLogin(f); return; }
+    if (f.dataset.act === "sc-go") { scSubmit(); return; }
     if (f.dataset.act === "search") { const i = $("#q", f); if (i) i.blur(); return; }
     if (f.dataset.act === "pl-save") { PL.submit(f, go); return; }
     if (f.dataset.act === "add-num") {
