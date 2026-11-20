@@ -1478,7 +1478,7 @@ details summary { cursor: pointer; }
 .suj-d { border: 1px solid var(--line, rgba(127,127,127,.25)); border-radius: 12px; padding: 8px 10px; margin: 8px 0; }
 .suj-d > summary, .suj-more > summary { cursor: pointer; padding: 6px 0; }
 .suj-more { margin-top: 6px; }
-.tw-wrap { width: 100%; aspect-ratio: 2800 / 4180; max-height: 58vh; max-height: max(58dvh, 300px); border: 1px solid var(--sv-line); border-radius: 14px; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; background: var(--surface); cursor: grab; --tw: #1f62b3; }
+.tw-wrap { width: 100%; aspect-ratio: 2800 / 4180; max-height: 58vh; max-height: max(58dvh, 300px); border: 1px solid var(--sv-line); border-radius: 14px; overflow: hidden; overflow-anchor: none; touch-action: none; -webkit-user-select: none; user-select: none; background: var(--surface); cursor: grab; --tw: #1f62b3; }
 .tw-band { margin: 8px 0; padding: 8px 12px; border-left: 4px solid var(--sv-red); background: var(--surface-2, var(--surface)); border-radius: 8px; font-size: .92rem; }
 .tw-cA { --tw: #1f62b3; } .tw-cB { --tw: #6b3fa0; } .tw-cC { --tw: #0f7a80; } .tw-cD { --tw: #a35a00; } .tw-cE { --tw: #4d7c0f; } .tw-cN { --tw: #b03a82; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tw-cA { --tw: #6aa9f0; } :root:not([data-theme="light"]) .tw-cB { --tw: #b493e6; } :root:not([data-theme="light"]) .tw-cC { --tw: #4cc3c9; } :root:not([data-theme="light"]) .tw-cD { --tw: #e3a04a; } :root:not([data-theme="light"]) .tw-cE { --tw: #9ccc50; } :root:not([data-theme="light"]) .tw-cN { --tw: #e07fb5; } }
@@ -1525,7 +1525,7 @@ details summary { cursor: pointer; }
 .tw-w { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .tw-wl { stroke: var(--tw); stroke-width: 2.2; }
 .tw-wd { stroke: var(--tw); stroke-width: 1.8; stroke-dasharray: 6 5; }
-.tw-wo { stroke: var(--sv-line); stroke-width: 1.2; stroke-dasharray: 2 5; }
+.tw-wo { stroke: var(--sv-line); stroke-width: 1.5; stroke-dasharray: 2 5; }
 .tw-wa { stroke: var(--sv-red); stroke-width: 4; }
 .tw-wx { stroke: var(--sv-red); stroke-width: 3; stroke-dasharray: 3 6; }
 .tw-svg .tw-zd { font-weight: 800; fill: var(--tw); }
@@ -1540,6 +1540,7 @@ details summary { cursor: pointer; }
 .tw-svg .tw-e { font-weight: 600; font-style: italic; fill: var(--sv-ink); }
 .tw-svg .tw-off .tw-e { opacity: .45; }
 .tw-band .tw-b2 { display: block; margin-top: 4px; font-size: .86em; color: var(--ink-2); }
+.tw-band .tw-b0 { margin: 0 0 2px; }
 .tw-svg .tw-zt { font-weight: 800; fill: var(--sv-ink-2); }
 .tw-svg .tw-zu { font-weight: 600; fill: var(--sv-ink-2); }
 .tw-ar { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
@@ -1553,7 +1554,7 @@ details summary { cursor: pointer; }
 .tw-v1 .tw-m .tw-bg { stroke-width: 1.5; }
 .tw-v1 .tw-wl { stroke-width: 3.2; }
 .tw-v1 .tw-wd { stroke-width: 2.4; }
-.tw-v1 .tw-wo { stroke-width: 1; opacity: .6; }
+.tw-v1 .tw-wo { stroke-width: 1.5; }
 .tw-v1.tw-far .tw-rz { display: none; }
 .tw-v2 .tw-wl { stroke-width: 2.6; }
 @media (prefers-reduced-motion: reduce) { .tw-ring { animation: none; } }
@@ -31916,7 +31917,7 @@ function jChar(o = {}) {
     return ch;
   }
 
-  let SSF = { type: "", cat: "", som: false, sub: false, ne: "", job: "1" };
+  let SSF = { type: "", cat: "", som: false, sub: false, ne: "", job: "1" }, SSK = null;
   /* ===== Section SSI, DAS et compartimentage ===== */
   const SSI_SEC = [
     ["SSI", "Le système de sécurité incendie exigé", "cloche", (r) => r.h === "SSI"],
@@ -31927,7 +31928,7 @@ function jChar(o = {}) {
     ["eclairage", "Éclairage de sécurité", "etincelle", (r) => r.h === "eclairage"],
   ];
   function ssiOut() {
-    const f = SSF;
+    const f = SSF; f.job = BAT.fi.job;
     if (!f.type) return `<p class="muted">${tx("Choisissez le type d’établissement pour afficher ce que les textes imposent.")}</p>`;
     if (f.type === "IGH") return `<div class="result"><p>${tx("Les règles détaillées de cette liste concernent les ERP (arrêté du 25 juin 1980). Un IGH suit l’arrêté du 30 décembre 2011 (articles GH) : pour le SSI, voyez l’article GH 49, résumé plus haut.")}</p><p><a class="btn-link" href="#f-igh">${tx("Voir la fiche IGH")}</a></p></div>`;
     const keep = FICHE_R.filter((r) => ficheKey(r, f));
@@ -31978,7 +31979,7 @@ function jChar(o = {}) {
     agent: [168, 296, "L’agent SSIAP", "Il surveille le tableau, lève le doute, donne l’alarme, alerte et accueille les secours."],
     pomp: [250, 296, "Sapeurs-pompiers", "Ils doivent être alertés sans retard (MS 70 § 1) : 18 ou 112."],
   };
-  const SIM = { tw: +store.get("ssi-plan") || 1, mots: ["simple", "termes", "metier"].includes(store.get("ssi-mots")) ? store.get("ssi-mots") : store.get("ssi-plan") ? "metier" : "simple", man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
+  const SIM = { tw: +store.get("ssi-plan") || 1, mots: ["simple", "termes", "metier"].includes(store.get("ssi-mots")) ? store.get("ssi-mots") : store.get("ssi-plan") ? "metier" : "simple", man: "A", v: 0, cde: "C", ev: "feu-auto", want: "", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
   const SSI_LAB = { A: "SSI de catégorie A", B: "SSI de catégorie B", C: "SSI de catégorie C", D: "SSI de catégorie D", E: "SSI de catégorie E", CDE: "SSI de catégorie C, D ou E", "": "Pas de catégorie de SSI imposée" };
   const AL_LAB = (a) => (a === "libre" ? "alarme au choix de l’exploitant" : "alarme de type " + a);
   const RV = (cond, ssi, al, ref, o) => Object.assign({ cond, ssi, al, ref }, o || {});
@@ -32062,7 +32063,10 @@ function jChar(o = {}) {
     return h;
   }
   function ssiReqDraw() { const el = $("#ssi-req"); if (el) el.innerHTML = ssiReqOut(); }
-  function simReset() { SIM.i = -1; SIM.play = false; SIM.steps = []; clearTimeout(SIM.tm); try { VX.stop(); } catch (e) { /* voix */ } const c = simCfg(), evs = SIMEV.filter((e) => simEvOk(e, c)).map((e) => e[0]); if (!evs.includes(SIM.ev)) SIM.ev = evs[0]; }
+  function simReset() { SIM.i = -1; SIM.play = false; SIM.steps = []; clearTimeout(SIM.tm); try { VX.stop(); } catch (e) { /* voix */ } simEvFix(); }
+  /* Scénario affiché : celui que la personne a choisi (SIM.want) dès que le bâtiment le permet, sinon le premier de la liste. */
+  function simEvFix() { const c = simCfg(), evs = SIMEV.filter((e) => simEvOk(e, c)).map((e) => e[0]); if (SIM.want && evs.includes(SIM.want)) SIM.ev = SIM.want; else if (!evs.includes(SIM.ev)) SIM.ev = evs[0]; return evs; }
+  const simEvNom = (ev) => (SIMEV.find((e) => e[0] === ev) || ["", ""])[1];
   const SIM0 = () => ({ fire: 0, smoke: 0, det: 0, dm: 0, ecs: "veille", bip: 0, tempo: 0, ag: 0, door: "open", clapet: "open", vent: "on", volet: "closed", exu: "closed", issue: "lock", power: "on", spk: "closed", cloche: 0, agent: "poste", pomp: 0, us: "attente", evac: 0, cale: 0 });
   function simSteps(c, ev) {
     const al = c.al, cat = c.ssi, temp = simTab(c) && c.noT !== "all", tempDet = temp && c.noT !== "det";
@@ -32074,7 +32078,7 @@ function jChar(o = {}) {
     const qFeu = { p: "Devant le bureau, l’agent voit de la fumée et des flammes. Que fait-il ?", c: ["Alarme générale tout de suite et alerte des pompiers", "Il attend que la temporisation se termine", "Il ouvre la porte coupe-feu pour faire sortir la fumée"], x: "Feu confirmé : alarme générale immédiatement (MS 61 c) et alerte des sapeurs-pompiers sans retard (MS 70 § 1)." };
     const qEsc = { p: "Le désenfumage de l’escalier s’ouvre-t-il tout seul avec la détection ?", c: ["Non : sa commande est uniquement manuelle", "Oui : en catégorie A tout est automatique", "Oui : dès l’alarme restreinte"], x: "MS 60 § 1 : le désenfumage des cages d’escaliers se commande uniquement à la main." };
     const tp = (src) => (src === "det" ? tempDet : temp);
-    const restreinte = (src) => st({ [src]: 1, ecs: "feu", bip: 1, tempo: tp(src) ? 1 : 0 }, [src, "ecs"], src === "det" ? "Le détecteur sent la fumée. Le tableau reçoit l’information tout de suite." : "Le déclencheur envoie l’information au poste tout de suite.", "Voyant FEU rouge, « zone 3 », bip : c’est l’alarme restreinte (MS 66 § 2)." + (tp(src) ? " La temporisation démarre : 5 minutes au plus avant l’alarme générale automatique (MS 66 § 3)." : " Pas de temporisation pour ce bâtiment (" + c.ref + ") : l’alarme générale part tout de suite."), "Il entend le bip et lit la zone.", "MS 61 b, MS 66 § 2 et § 3",
+    const restreinte = (src) => st({ [src]: 1, ecs: "feu", bip: 1, tempo: tp(src) ? 1 : 0 }, [src, "ecs"], src === "det" ? (ev === "fausse" ? "Le détecteur réagit à la poussière, comme si c’était de la fumée. Le tableau reçoit l’information tout de suite." : "Le détecteur sent la fumée. Le tableau reçoit l’information tout de suite.") : "Le déclencheur envoie l’information au poste tout de suite.", "Voyant FEU rouge, « zone 3 », bip : c’est l’alarme restreinte (MS 66 § 2)." + (tp(src) ? " La temporisation démarre : 5 minutes au plus avant l’alarme générale automatique (MS 66 § 3)." : " Pas de temporisation pour ce bâtiment (" + c.ref + ") : l’alarme générale part tout de suite."), "Il entend le bip et lit la zone.", "MS 61 b, MS 66 § 2 et § 3",
       cat === "A" && src === "det" && !tp(src) ? { p: "Pour ce bâtiment, la temporisation n’est pas permise. Que se passe-t-il dès la détection ?", c: ["La mise en sécurité démarre et l’alarme générale part tout de suite", "L’alarme générale attend 5 minutes", "Rien tant que l’agent n’a pas vérifié"], x: "En catégorie A, la détection commande les DAS sans temporisation (MS 60 § 1), et ici le règlement interdit aussi la temporisation de l’alarme (" + c.ref + ")." } : cat === "A" && src === "det" ? { p: "SSI de catégorie A. Que se passe-t-il tout de suite, sans attendre l’agent ?", c: ["La mise en sécurité de la zone démarre : portes, clapets, issues, sans temporisation", "Rien tant que l’agent n’a pas vérifié", "L’alarme générale sonne dans tout le bâtiment"], x: "En catégorie A, la détection déclenche les DAS sans temporisation (MS 60 § 1). Avec une alarme de type 1, les issues se déverrouillent dès la détection (MS 60 § 2). L’alarme générale attend la levée de doute ou la fin de la temporisation." } : null);
     const miseSecA = () => st({ door: "closed", clapet: "closed", vent: "off", issue: "unlock", us: "securite" }, ["door", "clapet", "vent", "issue", "cmsi"], "Le CMSI met la zone en sécurité : la porte coupe-feu se ferme, le clapet se ferme, la ventilation s’arrête, les issues de secours se déverrouillent.", "US : voyants rouges fixes, les DAS sont en position de sécurité. Le volet de désenfumage du couloir ne s’ouvre automatiquement que si le règlement du type d’établissement l’impose.", "Il voit les voyants changer.", "MS 60 § 1 et § 2");
     const leveeDoute = () => st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip (le voyant reste allumé) et monte vérifier la zone 3, en restant joignable comme le prévoient les consignes.", "Le voyant FEU reste allumé tant que le tableau n’est pas réarmé.", "Il part en levée de doute.", "MS 61 c", qDoute);
@@ -32092,14 +32096,14 @@ function jChar(o = {}) {
     if (c.v) st({}, [], "Votre bâtiment : " + reqLab(c.v) + (c.v.ssi === "CDE" ? " (ici : catégorie " + cat + ")" : "") + ".", "", "Il connaît le SSI de son site et son fonctionnement.", c.ref, { p: "Pour ce bâtiment, que demande le règlement ?", c: [reqLab(c.v)].concat(shuffle(["SSI de catégorie A · alarme de type 1", "SSI de catégorie B · alarme de type 2a", "SSI de catégorie C, D ou E · alarme de type 2b", "Pas de catégorie de SSI imposée · alarme de type 3", "Pas de catégorie de SSI imposée · alarme de type 4"].filter((x) => x !== reqLab(c.v) && x !== reqLab(c.v).replace(" avec alarme générale sélective", ""))).slice(0, 2)), x: "Règle du type d’établissement : " + c.ref + "." });
     if (ev === "feu-auto") {
       debutFeu(); restreinte("det");
-      if (!tempDet) { generale("cmsi", true, null); st({ bip: 0, agent: "zone" }, ["agent"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu et guide les secours.", "MS 61 c"); }
+      if (!tempDet) { generale("cmsi", true, null); st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu et guide les secours.", "MS 61 c"); }
       else { miseSecA(); leveeDoute(); generale("none"); }
       pompiers(); escalier();
     }
     else if (ev === "feu-dm") {
       debutFeu();
       st({ agent: "poste" }, ["dm"], "Une personne voit le feu et court vers le déclencheur manuel, près de l’escalier.", "Rien encore.", "Au poste.", "MS 65 § 1");
-      if (simTab(c) && !temp) { restreinte("dm"); generale(dasMode, true, null); st({ bip: 0, agent: "zone" }, ["agent"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu.", "MS 61 c"); }
+      if (simTab(c) && !temp) { restreinte("dm"); generale(dasMode, true, null); st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu.", "MS 61 c"); }
       else if (temp) {
         restreinte("dm");
         if (c.dmDas && cat === "A") { st({ door: "closed", clapet: "closed", vent: "off", issue: "unlock", us: "securite" }, ["door", "clapet", "vent", "issue", "cmsi"], "Le déclencheur manuel lance tout de suite la mise en sécurité, sauf le désenfumage.", "US : DAS en sécurité.", "Il voit les voyants changer.", "J 37 § 3"); leveeDoute(); generale("none"); }
@@ -32133,7 +32137,7 @@ function jChar(o = {}) {
       st({ volet: "open" }, ["volet"], "Quand le bâtiment a un désenfumage commandé par le SSI de catégorie A, il est commandé avant que l’extinction automatique à eau ne se déclenche.", "US : désenfumage en sécurité.", "Il surveille le tableau.", "DF 3 § 2");
       st({ spk: "open", cloche: 1 }, ["spk", "pc"], "La chaleur fait éclater l’ampoule de la tête de sprinkleur au-dessus du feu : seule cette tête s’ouvre et arrose. L’eau qui coule fait sonner la cloche du poste de contrôle.", "Alarme d’écoulement d’eau reportée au poste de sécurité.", "Il ne ferme aucune vanne sans autorisation.", "",
         { p: "Combien de têtes de sprinkleur s’ouvrent ?", c: ["Seulement celles chauffées par le feu", "Toutes les têtes du bâtiment", "Toutes les têtes de l’étage"], x: "Seules les têtes exposées à la chaleur s’ouvrent (fiche « Sprinkleurs »)." });
-      if (tempDet) { leveeDoute(); generale("none"); } else st({ bip: 0, agent: "zone" }, ["agent"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu et guide les secours.", "MS 61 c");
+      if (tempDet) { leveeDoute(); generale("none"); } else st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu et guide les secours.", "MS 61 c");
       pompiers();
     } else if (ev === "derang") {
       st({}, ["det"], "Des ouvriers coupent par erreur le fil d’un détecteur de la zone 3.", "Veille.", "Au poste.", "");
@@ -32384,8 +32388,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     [/^Votre bâtiment : (.*)$/, (m) => "Voici ce que la règle demande pour ce bâtiment : " + m[1] + " « SSI » veut dire système de sécurité incendie : tout ce qui repère le feu et protège les gens."],
     [/^Un feu démarre dans le bureau/, "Un feu commence dans un bureau. La fumée monte au plafond."],
     [/^Le détecteur sent la fumée/, "Le détecteur de fumée (détecteur automatique) sent la fumée. Il prévient tout de suite le tableau du poste de sécurité."],
+    [/^Le détecteur réagit à la poussière/, "Le détecteur de fumée (détecteur automatique) prend la poussière pour de la fumée. Il prévient tout de suite le tableau du poste de sécurité."],
     [/^Le déclencheur envoie/, "Le bouton rouge (déclencheur manuel) prévient tout de suite le tableau du poste de sécurité."],
-    [/^Le CMSI met la zone en sécurité/, "Le tableau (CMSI) protège l’endroit du feu : les portes coupe-feu se ferment, les tuyaux d’air se ferment (clapets), la ventilation s’arrête et les issues de secours se déverrouillent."],
+    [/^Le CMSI met la zone en sécurité/, "Le tableau (CMSI) protège l’endroit signalé : les portes coupe-feu se ferment, les tuyaux d’air se ferment (clapets), la ventilation s’arrête et les issues de secours se déverrouillent."],
     [/^L’agent arrête le bip \(le voyant reste allumé\)/, "L’agent de sécurité arrête le bip et va voir sur place s’il y a vraiment un feu (levée de doute)."],
     [/^Alarme générale : les diffuseurs/, (m, q) => "La sirène sonne et les flashs clignotent (alarme générale) : tout le monde sort. Les issues de secours se déverrouillent." + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "") + (/Le CMSI met les DAS/.test(q) ? " Le tableau ferme aussi les portes coupe-feu et les clapets, et arrête la ventilation (mise en sécurité des DAS)." : /En catégorie C/.test(q) ? " Le boîtier de commande (DCS) met aussi le bâtiment en sécurité ; selon le site, c’est automatique ou fait à la main." : /En catégories D et E/.test(q) ? " Ici, l’alarme peut seulement fermer les portes et déverrouiller les issues ; le reste se commande à la main." : "")],
     [/^Pas de temporisation pour ce bâtiment : l’alarme générale part/, (m, q) => "Dans ce bâtiment, on n’attend pas : la sirène sonne tout de suite (pas de temporisation). Les flashs clignotent, les issues de secours se déverrouillent et tout le monde sort." + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "")],
@@ -32435,7 +32440,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       "s-sir": s.ag ? ["alarme générale", RED] : null, "s-door": s.door === "closed" ? ["fermée", RED] : s.door === "stuck" ? ["bloquée par une cale", YEL] : null,
       "s-trap": s.volet === "open" || s.exu === "open" ? ["ouvert", RED] : null, "s-issue": s.issue === "unlock" ? ["déverrouillée", RED] : null,
     } : {
-      "s-det": s.det ? ["il a senti la fumée", RED] : null, "s-dm": s.dm ? ["quelqu’un a appuyé", RED] : null,
+      "s-det": s.det ? [s.fire || !s.smoke ? "il a senti la fumée" : "il a réagi à la poussière", RED] : null, "s-dm": s.dm ? ["quelqu’un a appuyé", RED] : null,
       "s-tab": tab ? (s.ecs === "feu" ? [s.ag ? "ALARME : TOUT LE MONDE SORT" : s.tempo ? "FEU SIGNALÉ · 5 MIN POUR VÉRIFIER" : "FEU SIGNALÉ", RED] : s.ecs === "derang" ? ["PANNE : VOYANT JAUNE", YEL] : s.ecs === "secteur" ? ["PLUS DE COURANT : VOYANT JAUNE", YEL] : s.ag ? ["ALARME : TOUT LE MONDE SORT", RED] : null) : null,
       "s-agent": s.agent === "zone" ? ["parti voir sur place", YEL] : null, "s-pomp": s.pomp ? ["appelés", RED] : null, "s-aes": s.power === "off" && tab ? ["elle prend le relais", YEL] : null,
       "s-sir": s.ag ? ["ça sonne !", RED] : null, "s-door": s.door === "closed" ? ["fermées", RED] : s.door === "stuck" ? ["bloquée par une cale", YEL] : null,
@@ -32482,13 +32487,14 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (s.fire || s.smoke) { const f = s.fire, hot = src.has("fire") || src.has("spk") || src.has("pc"); o += `<g class="${f ? "tw-fire" : "tw-opt"}"><rect class="tw-bg" x="${f && s.spk === "open" ? 318 : 418}" y="10" width="${f && s.spk === "open" ? 386 : 286}" height="36" rx="18"/>${pic("fire", (f && s.spk === "open" ? 318 : 418) + 10, 13, 30)}${T((f && s.spk === "open" ? 318 : 418) + 48, 35, f ? (s.spk === "open" ? "FEU · arrosé par le sprinkleur" : "FEU dans un bureau") : "Poussière : pas de feu", "tw-n", "", 20)}</g>` + (hot ? `<rect class="tw-ring" x="${(f && s.spk === "open" ? 318 : 418) - 4}" y="6" width="${(f && s.spk === "open" ? 386 : 286) + 8}" height="44" rx="22"/>` : ""); }
     /* grosses flèches : état « on » (couleur du bâtiment), « off » (gris), signal en cours (rouge) */
     const tabOn = act["s-tab"], out = act["s-sir"] || act["s-door"] || act["s-trap"] || act["s-issue"];
-    const arrow = (pts, lit, on2) => { const n = pts.length, a = pts[n - 2], b = pts[n - 1], an = Math.atan2(b[1] - a[1], b[0] - a[0]), hx = b[0] - Math.cos(an) * 20, hy = b[1] - Math.sin(an) * 20, px = Math.sin(an) * 15, py = -Math.cos(an) * 15, cl = lit ? (on2 ? " tw-ara" : " tw-arl") : " tw-aro";
-      return `<path class="tw-ar${cl}${lit && on2 ? " syn-flow" : ""}" d="M${pts.slice(0, n - 1).map((q) => q.join(" ")).join(" L")} L${Math.round(hx)} ${Math.round(hy)}"/><path class="tw-arh${cl}" d="M${b[0]} ${b[1]} L${Math.round(hx + px)} ${Math.round(hy + py)} L${Math.round(hx - px)} ${Math.round(hy - py)} Z"/>`; };
-    let ar = arrow([[288, 228], [288, 264]], has.det !== "off" && tab, act["s-det"] && tabOn) + arrow([[620, 228], [620, 264]], tab, act["s-dm"] && tabOn);
-    ar += arrow([[114, 458], [114, 482]], tab, act["s-agent"] && tab && (src.has("ecs") || M.has("ea"))) + arrow([[214, 618], [243, 618]], true, act["s-pomp"]) + arrow([[572, 482], [572, 458]], has.aes !== "off", act["s-aes"]);
-    ar += arrow([[343, 772], [343, 800]], tab, tabOn && out);
+    const arrow = (pts, lit, on2, nom) => { const n = pts.length, a = pts[n - 2], b = pts[n - 1], an = Math.atan2(b[1] - a[1], b[0] - a[0]), hx = b[0] - Math.cos(an) * 20, hy = b[1] - Math.sin(an) * 20, px = Math.sin(an) * 15, py = -Math.cos(an) * 15, cl = lit ? (on2 ? " tw-ara" : " tw-arl") : " tw-aro";
+      return `<path class="tw-ar${cl}${lit && on2 ? " syn-flow" : ""}" data-ar="${nom}" d="M${pts.slice(0, n - 1).map((q) => q.join(" ")).join(" L")} L${Math.round(hx)} ${Math.round(hy)}"/><path class="tw-arh${cl}" d="M${b[0]} ${b[1]} L${Math.round(hx + px)} ${Math.round(hy + py)} L${Math.round(hx - px)} ${Math.round(hy - py)} Z"/>`; };
+    /* chaque flèche part du bord de son cadre (ou de sa zone) et sa pointe touche le bord d'arrivée */
+    let ar = arrow([[288, 224], [288, 268]], has.det !== "off" && tab, act["s-det"] && tabOn, "s-det>z2") + arrow([[620, 224], [620, 268]], tab, act["s-dm"] && tabOn, "s-dm>z2");
+    ar += arrow([[114, 454], [114, 486]], tab, act["s-agent"] && tab && (src.has("ecs") || M.has("ea")), "s-tab>s-agent") + arrow([[212, 618], [245, 618]], true, act["s-pomp"], "s-agent>s-pomp") + arrow([[572, 486], [572, 454]], has.aes !== "off", act["s-aes"], "s-aes>s-tab");
+    ar += arrow([[343, 768], [343, 804]], tab, tabOn && out, "z2>z3");
     /* sans tableau (alarme de type 3 ou 4) : le bouton rouge fait sonner directement la sirène */
-    if (!tab) ar += arrow([[672, 137], [698, 137], [698, 955], [674, 955]], true, act["s-dm"] && act["s-sir"]);
+    if (!tab) ar += arrow([[670, 137], [698, 137], [698, 955], [670, 955]], true, act["s-dm"] && act["s-sir"], "s-dm>s-sir");
     TW.B = B; TW.act = Object.keys(TWS).filter((k) => act[k]);
     twDim();
     const vb = TW.s ? `${TW.cx - TW.pw / TW.s / 2} ${TW.cy - TW.ph / TW.s / 2} ${TW.pw / TW.s} ${TW.ph / TW.s}` : `0 0 ${TW.W} ${TW.H}`;
@@ -32514,7 +32520,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (H.has("uga")) H.add("cmsi");
     const on = (id) => H.has(id), both = (a, b) => H.has(a) && H.has(b);
     const T = (x, y, t, cl, a, fs) => `<text x="${x}" y="${Math.round(y)}" class="${cl}"${a ? ` text-anchor="${a}"` : ""}${fs ? ` font-size="${fs}"` : ""}>${esc(t)}</text>`;
-    const pic = (id, x, y, k) => `<g class="tw-p" transform="translate(${x} ${y}) scale(${k / 100})">${TWP[id]}</g>`;
+    /* trait du pictogramme : 6 unités de près, et jamais moins d’environ 0,65 px à l'écran de loin (--twz = 1 / zoom, posé par twApply) */
+    const pic = (id, x, y, k) => `<g class="tw-p" style="stroke-width:max(6px, calc(var(--twz, 0) * ${(65 / k).toFixed(1)}px))" transform="translate(${x} ${y}) scale(${k / 100})">${TWP[id]}</g>`;
     /* États affichés pendant un scénario */
     const ecsSt = s.ecs === "feu" ? ["FEU ZONE 3", RED] : s.ecs === "derang" ? ["DÉRANGEMENT", YEL] : s.ecs === "secteur" ? ["DÉFAUT ALIM.", YEL] : ["veille", GRN];
     const ST = {
@@ -32553,24 +32560,33 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const absent = c.v ? "pas dans ce bâtiment" : "pas dans cette catégorie";
     const stOf = (id) => (id === "fire" ? (s.fire ? "fire" : "opt") : has[id]);
     const cls = (id, st) => `tw-m tw-${st}${on(id) ? " tw-act" : ""}${SIM.el === id ? " tw-sel" : ""}`;
-    const W = []; let wire, cut;
+    /* Fils : chacun garde son départ, son arrivée, son tracé et son rang (0 gris, 1 tirets, 2 plein, 3 signal rouge, 4 coupé). */
+    const W = []; let wpath = null;
+    const wire = (a, b, d, lit, act, dash, base) => { if (!lit && !base) return; W.push({ a, b, d: wpath ? wpath(a, b) : d, k: !lit ? 0 : act ? 3 : dash ? 1 : 2, cl: wcls(lit, act, dash) }); };
+    const cut = () => W.push({ a: "secteur", b: "aes", d: wpath ? wpath("secteur", "aes") : "M480 3440 H510", k: 4, cl: "tw-w tw-wx" });
     const ok = (id) => has[id] !== "off", op = (id) => has[id] === "opt";
     const wcls = (lit, act, dash) => `tw-w${lit ? (dash ? " tw-wd" : " tw-wl") : " tw-wo"}${lit && act ? " tw-wa syn-flow" : ""}`;
     const sdiOn = A, smsiOn = !!c.ssi;
     if (V === 2) {
       /* ===== Variante 2 : la toile d'araignée. Le SSI au centre, les éléments en bulles sur trois anneaux, les fils en rayons et en arcs. ===== */
       const C0 = 2400, rd = Math.PI / 180, pol = (r, a) => [Math.round(C0 + r * Math.cos(a * rd)), Math.round(C0 + r * Math.sin(a * rd))];
-      const arc = (r, a0, a1) => { let d = ((a1 - a0) % 360 + 360) % 360; const sw = d <= 180 ? 1 : 0; if (!sw) d = 360 - d; const q = pol(r, a1); return `A${r} ${r} 0 ${d > 180 ? 1 : 0} ${sw} ${q[0]} ${q[1]}`; };
-      const RM = { "ecs>uga": 555, "ea>dcs": 555, "spk>pc": 1715, "aes>ecs": 555, "aes>ucmc": 555, "aes>dcs": 555, "aes>dcmr": 555, "aes>dcm": 555, "aes>ea": 555, "pc>agent": 2250 };
+      /* Chaque famille de fils a son couloir (rayon de l'arc) : deux fils sans rapport ne se superposent jamais. Le CMSI se raccorde au bord de son secteur. */
+      const RM = { "ea>dcs": 650, "ecs>uga": 600, "spk>pc": 1715, "pc>agent": 2250, "zd>uga": 1180, "zd>ea": 1180, "ea>door": 1670, "ea>issue": 1670 };
+      /* Deux fils sans rapport n'entrent pas dans une bulle par le même point : l'arrivée de ceux-ci est décalée de quelques degrés. */
+      const OF = { "aes>ecs": -7, "aes>ea": -7, "zd>uga": -7, "zd>ea": -7, "dm>ea": -7, "aes>dcs": 7, "dcs>dac": 7, "dcmr>dac": 7, "dcm>dac": 7 };
+      const TR = (id) => (id === "cmsi" ? [882.5, 358, 192.5] : TWR[id]);
+      /* rayon où le rayon d'angle (angle de la bulle + off) coupe le bord de la bulle, du côté du couloir rm */
+      const bord = (m, off, rm) => { const c0 = m[0] * Math.cos(off * rd), h0 = Math.sqrt(Math.max(0, m[2] * m[2] - Math.pow(m[0] * Math.sin(off * rd), 2))); return rm > m[0] ? c0 + h0 : c0 - h0; };
+      /* tracé d'un fil : une suite de morceaux, « r » un bout de rayon (angle fixe, du rayon u0 au rayon u1) ou « a » un arc (rayon fixe, de l'angle u0 à l'angle u1) */
       const path = (a, b) => {
-        if (a === "hub") { const q = TWR[b], p0 = pol(400, q[1]), p1 = pol(q[0] - q[2], q[1]); return `M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}`; }
-        const p = TWR[a], q = TWR[b];
-        if (Math.abs(p[1] - q[1]) < 0.5) { const sg = q[0] > p[0] ? 1 : -1, p0 = pol(p[0] + sg * p[2], p[1]), p1 = pol(q[0] - sg * q[2], q[1]); return `M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}`; }
-        const rm = RM[a + ">" + b] || (Math.min(p[0], q[0]) === 880 ? 1132 : 1715), p0 = pol(p[0] + (rm > p[0] ? p[2] : -p[2]), p[1]), p1 = pol(rm, p[1]), p3 = pol(q[0] + (rm > q[0] ? q[2] : -q[2]), q[1]);
-        return `M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]} ${arc(rm, p[1], q[1])} L${p3[0]} ${p3[1]}`;
+        if (a === "hub") { const q = TWR[b]; return [{ t: "r", k: q[1], u0: 400, u1: q[0] - q[2] }]; }
+        const p = TR(a), q = TR(b), ob = OF[a + ">" + b] || 0, qa = q[1] + ob;
+        if (!ob && Math.abs(p[1] - q[1]) < 0.5) { const sg = q[0] > p[0] ? 1 : -1; return [{ t: "r", k: p[1], u0: p[0] + sg * p[2], u1: q[0] - sg * q[2] }]; }
+        const rm = RM[a + ">" + b] || (a === "aes" ? 540 : Math.min(p[0], q[0]) < 1000 ? 1140 : 1715);
+        let d = ((qa - p[1]) % 360 + 360) % 360; if (d > 180) d -= 360;
+        return [{ t: "r", k: p[1], u0: p[0] + (rm > p[0] ? p[2] : -p[2]), u1: rm }, { t: "a", k: rm, u0: p[1], u1: p[1] + d }, { t: "r", k: ((qa % 360) + 360) % 360, u0: rm, u1: bord(q, ob, rm) }];
       };
-      wire = (a, b, d, lit, act, dash, base) => { if (!lit && !base) return; W.push(`<path class="${wcls(lit, act, dash)}" d="${path(a === "cmsi" ? "ucmc" : a, b === "cmsi" ? "ucmc" : b)}"/>`); };
-      cut = () => W.push(`<path class="tw-w tw-wx" d="${path("secteur", "aes")}"/>`);
+      wpath = path;
       /* trame de la toile : anneaux et rayons, très discrets */
       o += [880, 1420, 2000].map((r) => `<circle class="tw-web" cx="${C0}" cy="${C0}" r="${r}"/>`).join("") + [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((a) => { const p0 = pol(400, a), p1 = pol(2200, a); return `<path class="tw-web" d="M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}"/>`; }).join("");
       /* familles, écrites dans les coins */
@@ -32615,8 +32631,6 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       wire("hub", "agent", "", true, on("agent") && (src.has("ecs") || M.has("ea")), 0, 1);
     } else {
       /* ===== Variantes 1 et 3 : disposition en blocs. La 1 est épurée (sigle en gros, phrase de rôle seulement de près), la 3 garde tout le texte. ===== */
-      wire = (a, b, d, lit, act, dash, base) => { if (!lit && !base) return; W.push(`<path class="${wcls(lit, act, dash)}" d="${d}"/>`); };
-      cut = () => W.push(`<path class="tw-w tw-wx" d="M480 3440 H510"/>`);
       const card = (id) => {
         const m = TWM[id], [x, y, w, h] = m.b, st = stOf(id), pad = 24, ic = TWZ[m.z][0] * (V === 1 && !m.row ? 0.8 : 1);
         B[id] = [x, y + OY, w, h];
@@ -32641,7 +32655,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         tl.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-t", an, ft.toFixed(1)); ty += ft * 1.2; });
         if (mid) ty += 10;
         rl.forEach((l, k) => { g += T(tx0, ty + fr * 0.9 + k * fr * (V === 1 ? 1.3 : 1.22), l, "tw-r tw-rz", an, fr.toFixed(1)); });
-        if (pill) g += `<rect x="${x + pad}" y="${y + h - pad - 50}" width="${fullw}" height="50" rx="25" fill="${pill[1]}"/>` + T(cx, y + h - pad - 16, pill[0], "tw-s", "middle", Math.min(27, Math.floor(fullw / (pill[0].length * 0.66))));
+        if (pill) g += `<rect x="${x + pad}" y="${y + h - pad - 50}" width="${fullw}" height="50" rx="25" fill="${pill[1]}"/>` + T(cx, y + h - pad - 16, pill[0], "tw-s", "middle", Math.min(27, Math.floor(fullw / (pill[0].length * 0.74))));
         else if (note) g += T(cx, y + h - pad - 6, note, "tw-x", "middle", Math.min(26, Math.floor(fullw / (note.length * 0.5))));
         cards += `<g class="${cls(id, st)}" data-tw="${id}">${g}</g>`;
         if (M.has(id)) rings += `<rect class="tw-ring" x="${x - 16}" y="${y - 16}" width="${w + 32}" height="${h + 32}" rx="38"/>`;
@@ -32674,37 +32688,68 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     wire("dm", "zd", bz(P("dm", "r"), P("zd", "l", 0.65)), tab, on("dm") && on(tabId), 0, 1);
     wire("dm", "ea", bz(P("dm", "r"), P("ea", "l", 0.62)), !tab, both("dm", "ea"));
     wire("zd", "ecs", `M1240 1130 V1150`, A, on("zd") && on("ecs"), 0, 1);
-    wire("zd", "uga", pl([[1420, 1130], [1420, 1480], [1500, 1480]]), hasC && !A, on("zd") && on("uga"));
-    wire("zd", "ea", pl([[1100, 1130], [1100, 1140], [1040, 1140], [1040, 2000], [1080, 2000]]), tab && !hasC, on("zd") && on("ea"));
-    wire("ecs", "uga", `M1400 1480 H1500`, A, both("ecs", "uga"), 0, 1);
-    /* alarme : de l'UGA (ou de l'équipement d'alarme) vers les diffuseurs, les flashs et les blocs */
+    wire("zd", "uga", [[1420, 1130], [1420, 1480], [1500, 1480]], hasC && !A, on("zd") && on("uga"));
+    wire("zd", "ea", [[1100, 1130], [1100, 1140], [1040, 1140], [1040, 2000], [1080, 2000]], tab && !hasC, on("zd") && on("ea"));
+    wire("ecs", "uga", [[1400, 1480], [1500, 1480]], A, both("ecs", "uga"), 0, 1);
+    /* alarme : de l'UGA (ou de l'équipement d'alarme) vers les diffuseurs, les flashs et les blocs. Sans CMSI, le fil gris de l'UGA passe par son propre couloir. */
     [["diff", 940], ["flash", 1400], ["baas", 1860]].forEach(([id, x]) => {
-      wire("uga", id, pl([[1840, 1480], [1930, 1480], [1930, 720], [x, 720], [x, 650]]), hasC && ok(id), on(id) && on("uga"), op(id), id !== "baas");
-      wire("ea", id, pl([[1080, 1900], [955, 1900], [955, 720], [x, 720], [x, 650]]), !hasC && ok(id), on(id) && (on("ea") || !tab), op(id));
+      wire("uga", id, hasC ? [[1840, 1480], [1930, 1480], [1930, 720], [x, 720], [x, 650]] : [[1840, 1480], [1900, 1480], [1900, 740], [x + 24, 740], [x + 24, 650]], hasC && ok(id), on(id) && on("uga"), op(id), id !== "baas");
+      wire("ea", id, [[1080, 1900], [955, 1900], [955, 720], [x, 720], [x, 650]], !hasC && ok(id), on(id) && (on("ea") || !tab), op(id));
     });
-    /* mise en sécurité : CMSI ou commande → DAC → DAS */
+    /* mise en sécurité : CMSI ou commande → DAC → DAS (une colonne commune, une branche par DAS) */
     wire("cmsi", "dac", bz([1860, 2050], P("dac", "l", 0.3)), hasC, both("cmsi", "dac"), 0, 1);
-    [["dcs", 1200], ["dcmr", 1470], ["dcm", 1740]].forEach(([id, x]) => wire(id, "dac", pl([[x + 50, 2860], [x + 50, 2950], [2110, 2950], [2110, 2480]]), cmd === id, both(id, "dac"), DE, 1));
+    [["dcs", 1200], ["dcmr", 1470], ["dcm", 1740]].forEach(([id, x]) => wire(id, "dac", [[x + 50, 2860], [x + 50, 2950], [2110, 2950], [2110, 2480]], cmd === id, both(id, "dac"), DE, 1));
     wire("ea", "dcs", `M1200 2420 V2460`, c.ssi === "C" && tab, both("ea", "dcs"), 1, 1);
-    ["issue", "door", "clapet", "vent", "volet", "asc"].forEach((d) => { const q = P(d, "l"); wire("dac", d, `M2230 2240 C2300 2240 2262 ${q[1]} ${q[0]} ${q[1]}`, linked, both("dac", d), op(d) || DE, 1); });
-    if (DE) [["issue", 0.3], ["door", 0.3]].forEach(([d, f]) => { const q = P(d, "l", f); wire("ea", d, pl([[1300, 2420], [1300, 2440], [1930, 2440], [1930, 1022], [2282, 1022], [2282, q[1]], [q[0], q[1]]]), true, on(d) && (on("ea") || on(snd)), 1); });
+    ["issue", "door", "clapet", "vent", "volet", "asc"].forEach((d) => { const q = P(d, "l"); wire("dac", d, [[2230, 2240], [2276, 2240], [2276, q[1]], [q[0], q[1]]], linked, both("dac", d), op(d) || DE, 1); });
+    if (DE) [["issue", 0.3], ["door", 0.3]].forEach(([d, f]) => { const q = P(d, "l", f); wire("ea", d, [[1300, 2420], [1300, 2447], [1930, 2447], [1930, 1022], [2300, 1022], [2300, q[1]], [q[0], q[1]]], true, on(d) && (on("ea") || on(snd)), 1); });
     /* alimentation */
     if (tab && s.power === "off") cut(); else wire("secteur", "aes", `M480 3440 H510`, tab, on("aes"), 0, 1);
-    wire("aes", "ecs", pl([[900, 3440], [985, 3440], [985, 1650], [1080, 1650]]), A, on("aes"), 0, 1);
-    wire("aes", "cmsi", pl([[900, 3440], [985, 3440], [985, 2440], [1650, 2440], [1650, 2420]]), hasC, on("aes"), 0, 1);
-    if (tab && !hasC) wire("aes", cmd || "ea", cmd === "dcs" ? pl([[900, 3440], [985, 3440], [985, 2660], [1080, 2660]]) : cmd ? pl([[900, 3440], [985, 3440], [985, 2925], [cmd === "dcmr" ? 1420 : 1690, 2925], [cmd === "dcmr" ? 1420 : 1690, 2860]]) : pl([[900, 3440], [985, 3440], [985, 2330], [1080, 2330]]), true, on("aes"));
+    wire("aes", "ecs", [[900, 3440], [985, 3440], [985, 1650], [1080, 1650]], A, on("aes"), 0, 1);
+    wire("aes", "cmsi", [[900, 3440], [985, 3440], [985, 2433], [1650, 2433], [1650, 2420]], hasC, on("aes"), 0, 1);
+    if (tab && !hasC) wire("aes", cmd || "ea", cmd === "dcs" ? [[900, 3440], [985, 3440], [985, 2660], [1080, 2660]] : cmd ? [[900, 3440], [985, 3440], [985, 2925], [cmd === "dcmr" ? 1420 : 1690, 2925], [cmd === "dcmr" ? 1420 : 1690, 2860]] : [[900, 3440], [985, 3440], [985, 2330], [1080, 2330]], true, on("aes"));
     /* les personnes */
     wire("agent", "pomp", `M1470 3360 H1440`, true, on("pomp"), 0, 1);
     wire("agent", "report", `M1665 3560 V3590`, ok("report"), false, op("report"), 1);
     wire("spk", "pc", `M360 2475 V2500`, true, both("spk", "pc"), op("spk"), 1);
-    wire("pc", "agent", pl([[640, 2710], [925, 2710], [925, 2975], [1600, 2975], [1600, 3160]]), true, on("pc"), op("pc"), 1);
+    wire("pc", "agent", [[640, 2710], [925, 2710], [925, 2975], [1600, 2975], [1600, 3160]], true, on("pc"), op("pc"), 1);
+    /* Un fil ne repasse jamais sur un fil déjà tracé : il se branche dessus et on ne dessine que son bout à lui. Le plus important d'abord (signal rouge, puis plein, tirets, gris). */
+    { const segs = [];
+      const trim = (p) => { let cs = null, dir = null, n = 0;
+        while (p.length > 1 && n++ < 30) { const a0 = p[0], q = p[1], hz = a0[1] === q[1], vt = a0[0] === q[0]; if (hz === vt) break;
+          const i = hz ? 0 : 1, j = 1 - i, sg = q[i] > a0[i] ? 1 : -1, sx = segs.find((z) => z[j] === a0[j] && z[j + 2] === a0[j] && z[i] <= a0[i] && a0[i] <= z[i + 2] && (sg > 0 ? z[i + 2] > a0[i] : z[i] < a0[i]));
+          if (!sx) break;
+          const end = sg > 0 ? Math.min(sx[i + 2], q[i]) : Math.max(sx[i], q[i]); cs = sx; dir = [i, sg];
+          if (end === q[i]) p.shift(); else { p[0] = a0.slice(); p[0][i] = end; } }
+        /* branchement sur un coude du fil porteur : on repart un peu avant, pour suivre son arrondi sans laisser de vide */
+        if (cs && p.length > 1) { const [i, sg] = dir, a0 = p[0]; if (a0[i] === cs[i] || a0[i] === cs[i + 2]) { const b0 = a0.slice(); b0[i] = sg > 0 ? Math.max(cs[i], a0[i] - 36) : Math.min(cs[i + 2], a0[i] + 36); if (b0[i] !== a0[i]) p.unshift(b0); } }
+        return !!cs; };
+      /* même règle sur la toile, avec des rayons et des arcs */
+      const psegs = [], eq = (x, y) => Math.abs(x - y) < 1e-6, C0 = 2400, rd = Math.PI / 180, pt = (r, an) => `${Math.round(C0 + r * Math.cos(an * rd))} ${Math.round(C0 + r * Math.sin(an * rd))}`;
+      const ptrim = (p) => { let hit = false, n = 0;
+        while (p.length && n++ < 30) { const m = p[0], sg = m.u1 > m.u0 ? 1 : -1; let fin = null;
+          for (const z of psegs) { if (z.t !== m.t || !eq(z.k, m.k)) continue; for (const sh of m.t === "a" ? [0, 360, -360] : [0]) { const u0 = m.u0 + sh, u1 = m.u1 + sh; if (z.lo - 1e-6 <= u0 && u0 <= z.hi + 1e-6 && (sg > 0 ? z.hi > u0 + 1e-6 : z.lo < u0 - 1e-6)) { fin = (sg > 0 ? Math.min(z.hi, u1) : Math.max(z.lo, u1)) - sh; break; } } if (fin != null) break; }
+          if (fin == null) break; hit = true;
+          if (eq(fin, m.u1)) p.shift(); else p[0] = Object.assign({}, m, { u0: fin }); }
+        return hit; };
+      const prev = (p) => p.reverse().map((m) => Object.assign({}, m, { u0: m.u1, u1: m.u0 }));
+      W.map((w, n) => [w, n]).sort((x, y) => y[0].k - x[0].k || x[1] - y[1]).forEach(([w]) => {
+        if (Array.isArray(w.d) && w.d[0] && w.d[0].t) {
+          let p = w.d.map((m) => Object.assign({}, m)); const j0 = ptrim(p); p = prev(p); const j1 = ptrim(p); p = prev(p);
+          w.d.forEach((m) => { psegs.push({ t: m.t, k: m.t === "r" ? ((m.k % 360) + 360) % 360 : m.k, lo: Math.min(m.u0, m.u1), hi: Math.max(m.u0, m.u1) }); });
+          w.j = (j0 ? "d" : "") + (j1 ? "f" : "");
+          w.d = p.length ? `M${p[0].t === "r" ? pt(p[0].u0, p[0].k) : pt(p[0].k, p[0].u0)}` + p.map((m) => (m.t === "r" ? ` L${pt(m.u1, m.k)}` : ` A${m.k} ${m.k} 0 0 ${m.u1 > m.u0 ? 1 : 0} ${pt(m.k, m.u1)}`)).join("") : "";
+          return; }
+        if (!Array.isArray(w.d)) return;
+        const p = w.d.map((q) => q.slice()), j0 = trim(p); p.reverse(); const j1 = trim(p); p.reverse();
+        for (let n = 1; n < w.d.length; n++) { const a0 = w.d[n - 1], b0 = w.d[n]; segs.push([Math.min(a0[0], b0[0]), Math.min(a0[1], b0[1]), Math.max(a0[0], b0[0]), Math.max(a0[1], b0[1])]); }
+        w.j = (j0 ? "d" : "") + (j1 ? "f" : ""); w.d = p.length > 1 ? pl(p) : ""; }); }
     TW.B = B; TW.act = [...H].filter((x) => B[x]);
     twDim();
     const vb = TW.s ? `${TW.cx - TW.pw / TW.s / 2} ${TW.cy - TW.ph / TW.s / 2} ${TW.pw / TW.s} ${TW.ph / TW.s}` : `0 0 ${TW.W} ${TW.H}`;
     /* Bandeau du haut (variantes en blocs) : le SSI et ses deux moitiés */
     const half = (x, w, okk, t) => `<g class="${okk ? "tw-hon" : "tw-hoff"}"><rect class="tw-hb" x="${x}" y="176" width="${w}" height="104" rx="30"/>${T(x + w / 2, 247, t + (okk ? "" : " · " + absent), "tw-ct", "middle", okk ? 54 : 40)}</g>`;
     const band = V === 2 ? "" : `<g class="tw-cart">${T(1400, 128, "SSI : système de sécurité incendie", "tw-cl", "middle", 118)}${half(40, 1370, sdiOn, "SDI : système de détection incendie")}${half(1430, 1330, smsiOn, "SMSI : système de mise en sécurité incendie")}</g>`;
-    return `<svg id="tw-svg" class="tw-svg tw-v${V}" viewBox="${vb}" role="img" aria-label="Schéma du SSI, système de sécurité incendie : le tableau au centre, les autres éléments autour" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-6000" y="-6000" width="${TW.W + 12000}" height="${TW.H + 12000}"/>${band}<g${OY ? ` transform="translate(0 ${OY})"` : ""}>${o}${W.join("")}${cards}${rings}</g></svg>`;
+    return `<svg id="tw-svg" class="tw-svg tw-v${V}" viewBox="${vb}" role="img" aria-label="Schéma du SSI, système de sécurité incendie : le tableau au centre, les autres éléments autour" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-6000" y="-6000" width="${TW.W + 12000}" height="${TW.H + 12000}"/>${band}<g${OY ? ` transform="translate(0 ${OY})"` : ""}>${o}${W.filter((w) => w.d).map((w, n) => [w, n]).sort((x, y) => x[0].k - y[0].k || x[1] - y[1]).map(([w]) => `<path class="${w.cl}" data-w="${w.a}>${w.b}"${w.j ? ` data-j="${w.j}"` : ""} d="${w.d}"/>`).join("")}${cards}${rings}</g></svg>`;
   }
   /* ----- Vue de la toile : zoom et déplacement (on change la fenêtre du dessin, il reste net) ----- */
   const twFit = () => Math.min(TW.pw / TW.W, TW.ph / TW.H) || 0.1;
@@ -32719,7 +32764,10 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   function twApply() {
     const svg = $("#tw-svg"); if (!svg || !TW.s || !TW.pw) return;
     const vw = TW.pw / TW.s, vh = TW.ph / TW.s;
-    svg.setAttribute("viewBox", `${(TW.cx - vw / 2).toFixed(1)} ${(TW.cy - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
+    /* au repos (ni glissement ni animation), le coin du dessin tombe sur un point entier de l'écran : les traits droits restent nets */
+    const calme = !TW.raf && !TW.ptr.size, x0 = TW.cx - vw / 2, y0 = TW.cy - vh / 2;
+    svg.setAttribute("viewBox", `${calme ? (Math.round(x0 * TW.s) / TW.s).toFixed(3) : x0.toFixed(1)} ${calme ? (Math.round(y0 * TW.s) / TW.s).toFixed(3) : y0.toFixed(1)} ${vw.toFixed(calme ? 3 : 1)} ${vh.toFixed(calme ? 3 : 1)}`);
+    svg.style.setProperty("--twz", (1 / TW.s).toFixed(3));
     svg.classList.toggle("tw-far", TW.s < 0.3 && !twSp());
   }
   function twStop() { if (TW.raf) cancelAnimationFrame(TW.raf); TW.raf = 0; }
@@ -32733,6 +32781,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       const p = Math.min(1, (now - t0) / ms), e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       TW.s = a.s * Math.pow(t.s / a.s, e); TW.cx = a.cx + (t.cx - a.cx) * e; TW.cy = a.cy + (t.cy - a.cy) * e; twApply();
       TW.raf = p < 1 ? requestAnimationFrame(step) : 0;
+      if (!TW.raf) twApply();
     };
     TW.raf = requestAnimationFrame(step);
   }
@@ -32784,6 +32833,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const up = (e) => {
       if (!TW.ptr.has(e.pointerId)) return;
       const p = pt(e), g = TW.g; TW.ptr.delete(e.pointerId);
+      if (!TW.ptr.size) twApply();
       if (TW.ptr.size || !g) return;
       TW.g = null;
       if (e.type !== "pointerup" || g.moved || Date.now() - g.t > 450) return;
@@ -32807,7 +32857,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   }
   function simOut() {
     const c = simCfg(), evs = SIMEV.filter((e) => simEvOk(e, c));
-    if (Array.isArray(c.r) || c.r === null || c.r === "non" || c.r === "igh") { if (!evs.some((e) => e[0] === SIM.ev)) SIM.ev = evs[0][0]; }
+    if (SIM.i < 0) simEvFix(); else if (!evs.some((e) => e[0] === SIM.ev)) { SIM.ev = evs[0][0]; SIM.i = -1; SIM.play = false; SIM.steps = []; clearTimeout(SIM.tm); }
     if (c.r === "cat") return `<p class="small">${tx("Choisissez d’abord la catégorie du bâtiment, en haut.")}</p>`;
     const step = SIM.steps[SIM.i];
     const s = simState();
@@ -32815,7 +32865,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (SIM.i < 0) info = `<p>${tx("Choisissez un événement, puis touchez « Démarrer ». Touchez n’importe quel élément du schéma pour savoir à quoi il sert.")}</p>`;
     else if (step) {
       const q = step.q, ask = SIM.mode === "jeu" && q && SIM.pick == null;
-      info = `<p class="small muted">${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</p>`;
+      info = `<p class="small muted">${tx("Scénario")} : ${tx(simEvNom(SIM.ev))} · ${tx("étape")} ${SIM.i + 1} / ${SIM.steps.length}</p>`;
       if (ask) info += `<div class="ssim-q"><p><strong>${tx("À vous : que se passe-t-il ?")}</strong></p><p>${tx(q.p)}</p><div class="ssim-ch">${(step.ord || (step.ord = shuffle([0, 1, 2]))).map((k) => `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="rep${k}">${tx(q.c[k])}</button>`).join("")}</div></div>`;
       else {
         if (q && SIM.mode === "jeu") info += `<div class="call call-${SIM.pick === 0 ? "ok" : "warn"}" role="note">${icon(SIM.pick === 0 ? "ok" : "attention")}<div><p class="lbl">${SIM.pick === 0 ? tx("Bonne réponse") : tx("Pas tout à fait : la bonne réponse est")} ${SIM.pick === 0 ? "" : "« " + tx(q.c[0]) + " »"}</p><p>${tx(q.x)}</p></div></div>`;
@@ -32827,7 +32877,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const el = SIM.el && SIMEL[SIM.el] ? `<div class="call call-info" role="note">${icon("info")}<div><p class="lbl">${tx(TWS[SIM.el] && SIM.mots === "termes" ? twsTitre(SIM.el, c)[0].replace("- ", "-") : SIMEL[SIM.el][2])}</p>${TWS[SIM.el] ? (SIM.mots === "termes" ? (twsTitre(SIM.el, c)[1] ? `<p class="small">${tx(twsTitre(SIM.el, c)[1])}</p>` : "") + `<p><strong>${tx("En mots simples")} :</strong> ${tx(twsMin(SIMEL[SIM.el][2]))}. ${tx(SIMEL[SIM.el][3])}</p>` : `<p class="small"><strong>${tx("Mot du métier")} :</strong> ${tx(twsTerm(SIM.el, c))}</p><p>${tx(SIMEL[SIM.el][3])}</p>`) : `<p>${tx(SIMEL[SIM.el][3])}</p>`}</div></div>` : "";
     const waiting = step && step.q && SIM.mode === "jeu" && SIM.pick == null;
     const toile = SIM.view !== "plan";
-    const band = step ? `<div class="tw-band"><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(simQuoi(step)) + (SIM.mots === "termes" && toile && twsEtape(step.quoi) !== step.quoi ? `<span class="tw-b2"><strong>${tx("En mots simples")} :</strong> ${tx(twsEtape(step.quoi))}</span>` : "")}</div>` : "";
+    const band = step ? `<div class="tw-band"><span class="tw-b2 tw-b0">${tx("Scénario")} : ${tx(simEvNom(SIM.ev))}</span><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(simQuoi(step)) + (SIM.mots === "termes" && toile && twsEtape(step.quoi) !== step.quoi ? `<span class="tw-b2"><strong>${tx("En mots simples")} :</strong> ${tx(twsEtape(step.quoi))}</span>` : "")}</div>` : "";
     return `<div class="form ssim-f">
         <p class="small"><strong>${tx("Simulé")} :</strong> ${tx(c.ssi ? "SSI de catégorie " + c.ssi : "pas de catégorie de SSI imposée")}, ${tx(c.libre ? "alarme au choix (exemple : type 4)" : "alarme de type " + c.al)}${c.ags ? tx(", alarme générale sélective") : ""}${c.ex ? tx(" (exemple)") : ""}</p>
         <label class="field"><span>${tx("Événement")}</span><select id="ssim-ev">${evs.map((e) => `<option value="${e[0]}"${SIM.ev === e[0] ? " selected" : ""}>${e[1]}</option>`).join("")}</select></label>
@@ -32846,19 +32896,26 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       <button type="button" class="btn ghost" data-act="ssi-sim" data-v="auto"${SIM.i < 0 ? " disabled" : ""}>${icon(SIM.play ? "pause" : "lecture")}${SIM.play ? tx("Pause") : tx("Lecture auto")}</button></div>
       <div class="result" aria-live="polite">${info}</div>`;
   }
-  function simDraw() { const el = $("#ssim"); if (el) el.innerHTML = simOut(); twBind(); synScroll(); }
+  function simDraw() { const el = $("#ssim"); if (el) { el.innerHTML = simOut(); simGarde(el); } twBind(); synScroll(); }
+  /* Dès qu'on touche une liste de choix du simulateur, la lecture automatique s'arrête : sinon l'étape suivante redessinait la liste pendant le choix, et le choix était perdu. */
+  function simGarde(el) {
+    if (el.dataset.garde) return; el.dataset.garde = "1";
+    const stop = (e) => { if (!e.target.closest || !e.target.closest("select")) return; if (SIM.play) { SIM.play = false; clearTimeout(SIM.tm); try { VX.stop(); } catch (x) { /* voix */ } const b = el.querySelector('[data-v="auto"]'); if (b) b.innerHTML = icon("lecture") + tx("Lecture auto"); } };
+    el.addEventListener("pointerdown", stop); el.addEventListener("focusin", stop);
+  }
   function simSay() {
     const st = SIM.steps[SIM.i];
     if (!st) return;
     const ask = SIM.mode === "jeu" && st.q && SIM.pick == null;
     const txt = ask ? "Question. " + st.q.p + " " + st.q.c.map((c, k) => "Réponse " + (k + 1) + " : " + c).join(". ") : [simQuoi(st), st.tab && "Au tableau : " + st.tab, st.agent && "L’agent : " + st.agent].filter(Boolean).join(" ");
     clearTimeout(SIM.tm);
-    const go = () => { if (SIM.play && !ask && SIM.i < SIM.steps.length - 1) SIM.tm = setTimeout(() => simAct("next", true), 900); else if (SIM.i >= SIM.steps.length - 1) { SIM.play = false; simDraw(); } };
+    const go = () => { if (!$("#ssim")) { SIM.play = false; return; } if (SIM.play && !ask && SIM.i < SIM.steps.length - 1) SIM.tm = setTimeout(() => simAct("next", true), 900); else if (SIM.play && SIM.i >= SIM.steps.length - 1) { SIM.play = false; simDraw(); } };
     if (VX.ttsOk && store.get("ssim-voix", true)) { try { VX.speak(txt.replace(/§/g, "paragraphe"), { onEnd: go }); return; } catch (e) { /* voix indisponible */ } }
     if (SIM.play && !ask) SIM.tm = setTimeout(go, 6500);
   }
   function simAct(v, auto) {
-    if (v === "go") { SIM.steps = simSteps(simCfg(), SIM.ev); SIM.i = 0; SIM.pick = null; SIM.score = 0; SIM.nq = 0; SIM.el = ""; SIM.play = true; }
+    if (auto && (!$("#ssim") || !SIM.play)) { SIM.play = false; return; }
+    if (v === "go") { const e = $("#ssim-ev"); if (e && e.value && e.value !== SIM.ev && SIMEV.some((x) => x[0] === e.value && simEvOk(x, simCfg()))) SIM.ev = SIM.want = e.value; SIM.steps = simSteps(simCfg(), SIM.ev); SIM.run = SIM.ev; SIM.i = 0; SIM.pick = null; SIM.score = 0; SIM.nq = 0; SIM.el = ""; SIM.play = true; }
     else if (v === "next") { if (!auto && SIM.mode === "voir") SIM.play = false; if (SIM.i < SIM.steps.length - 1) { SIM.i++; SIM.pick = null; } }
     else if (v === "prev") { SIM.play = false; if (SIM.i > 0) { SIM.i--; SIM.pick = -1; } }
     else if (v === "auto") { SIM.play = !SIM.play; if (!SIM.play) { clearTimeout(SIM.tm); VX.stop(); } }
@@ -32881,7 +32938,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (v && +v.value !== SIM.v) { SIM.v = +v.value; ch = true; }
     if (d && d.value !== SIM.cde) { SIM.cde = d.value; ch = true; }
     if (ch) { simReset(); ssiReqDraw(); simDraw(); return; }
-    if (e && e.value !== SIM.ev) { SIM.ev = e.value; SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm); try { VX.stop(); } catch (x) { /* voix */ } simDraw(); }
+    if (e && e.value !== SIM.ev) { SIM.ev = SIM.want = e.value; SIM.steps = []; SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm); try { VX.stop(); } catch (x) { /* voix */ } simDraw(); }
   }
   const SSI_COURS = [
     ["Comprendre (pour tous)", ["ssi-simple", "ssi-parcours", "ssi-pieces"]],
@@ -32894,7 +32951,11 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   const SSI_QF = new Set(SSI_COURS.flatMap((x) => x[1]));
   function toolSSI() {
     /* La section SSI garde ses propres choix : elle ne modifie jamais la fiche de « Mon bâtiment ». Elle reprend le bâtiment trouvé, s’il y en a un. */
-    SSF = Object.assign({}, BAT.fi, { catMan: false });
+    /* Le bâtiment choisi ici est gardé quand on revient dans la section ; il n'est repris de « Mon bâtiment » que si celui-ci a changé depuis. */
+    const bk = [BAT.fi.type, BAT.fi.cat, !!BAT.fi.som, !!BAT.fi.sub, BAT.fi.ne].join("|");
+    if (SSK !== bk) { SSK = bk; SSF = Object.assign({}, BAT.fi, { catMan: false }); SIM.v = 0; simReset(); }
+    else if (curTok !== "o-ssi") simReset(); /* on rouvre la section : aucun exercice d'avant ne reste affiché à moitié */
+    SSF.job = BAT.fi.job;
     const f = SSF;
     const cours = SSI_COURS.map(([t, ids]) => { const ok = ids.filter((id) => FI[id]); return ok.length ? `<div class="sec"><h3 class="lbl b">${tx(t)}</h3><div class="links">${ok.map(linkCard).join("")}</div></div>` : ""; }).join("");
     const html = `${toolHead("o-ssi")}
@@ -32904,7 +32965,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       <label class="field"><span>${tx("Catégorie")}</span><select id="ssi-c"><option value="">${tx("Choisir…")}</option>${["1", "2", "3", "4", "5"].map((k) => `<option value="${k}"${f.cat === k ? " selected" : ""}>${k}${k === "1" ? "re" : "e"}</option>`).join("")}</select></label>
       <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="ssi-m"${f.som ? " checked" : ""}> ${tx("Locaux réservés au sommeil")}</span></label></div>
       <div id="ssi-req">${ssiReqOut()}</div>
-        <div class="chips"><a class="btn ghost" href="#ssim-h">${icon("lecture")}${tx("Simulateur")}</a><a class="btn ghost" href="#ssi-bat">${icon("immeuble")}${tx("Règles détaillées")}</a><a class="btn ghost" href="#ssi-cours">${icon("registre")}${tx("Cours")}</a><button type="button" class="btn ghost" data-act="ssi-quiz">${icon("quiz")}${tx("Quiz SSI")}</button></div></div>
+        <div class="chips"><a class="btn ghost" data-ancre href="#ssim-h">${icon("lecture")}${tx("Simulateur")}</a><a class="btn ghost" data-ancre href="#ssi-bat">${icon("immeuble")}${tx("Règles détaillées")}</a><a class="btn ghost" data-ancre href="#ssi-cours">${icon("registre")}${tx("Cours")}</a><button type="button" class="btn ghost" data-act="ssi-quiz">${icon("quiz")}${tx("Quiz SSI")}</button></div></div>
       <div class="sec"><h3 class="lbl b" id="ssim-h">${tx("2. Simulateur de ce bâtiment, étape par étape")}</h3>
         <p class="small muted">${tx("Un grand schéma du SSI, avec le tableau au centre et tous les équipements autour ; le plan d’un étage reste disponible. Chaque étape dit où ça se passe, ce que montre le tableau, ce que fait l’agent et l’article du règlement. En mode « Jouer », l’animation s’arrête et vous demande la suite.")}</p>
         <div id="ssim">${simOut()}</div>
@@ -33198,6 +33259,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       const href = a.getAttribute("href");
       if (href.startsWith("#")) {
         e.preventDefault();
+        /* lien vers un endroit de la page en cours (section SSI) : on y descend, sans changer de page */
+        if (a.dataset.ancre != null) { const cible = document.getElementById(href.slice(1)); if (cible) window.scrollTo(0, Math.max(0, cible.getBoundingClientRect().top + window.scrollY - 76)); return; }
         if (a.dataset.mark) pendingMark = effQ(state.q);
         if (a.dataset.act === "bat-go") prefill.bat = a.dataset.q;
         let t = href.slice(1);

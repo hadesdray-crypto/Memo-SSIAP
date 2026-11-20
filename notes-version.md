@@ -1,3 +1,10 @@
+- Section SSI : le scénario choisi est bien celui qui se lance, même après un changement de bâtiment ou un retour dans la section ; son nom est écrit à chaque étape
+- Section SSI : le bâtiment choisi reste en place quand on revient dans la section
+- Section SSI : les boutons « Simulateur », « Règles détaillées » et « Cours » descendent au bon endroit de la page
+- Section SSI : la lecture automatique s’arrête quand on ouvre une liste ou qu’on quitte la page
+- Plans du SSI : traits de liaison redessinés : chaque fil a son trajet, les branches partent proprement, les flèches touchent les cadres
+- Plans du SSI : le zoom avec deux doigts ne saute plus, et les dessins sont plus nets vus de loin
+- Fausse alarme : le texte dit bien que le détecteur réagit à la poussière
 - Section SSI : troisième version du plan, « Vrais termes » : aussi simple que « Mots simples », mais chaque élément porte son nom du métier en gros (détecteur automatique d’incendie, déclencheur manuel, ECS et CMSI, diffuseur sonore, DAS…), sigles écrits en toutes lettres, nom de tous les jours rappelé dessous ; choix sur une ligne : « Mots simples / Vrais termes / Plans complets »
 - Urgence : nouveau « Décrire la situation » : vous écrivez ou dictez ce qui se passe, l’application propose la bonne marche à suivre, sans connexion ; en cas de doute elle pose une question ou propose plusieurs choix ; elle n’utilise aucune information de « Mon bâtiment »
 - Marches à suivre ajoutées : convulsions, personne en détresse (numéro 3114), intrusion, alerte à la bombe
