@@ -1,3 +1,9 @@
+- Nouveau : le Compagnon, un petit robot extincteur rangé dans l’écusson en haut à droite ; désactivé au départ, on l’active dans Réglages, rubrique Affichage
+- Compagnon : touchez l’écusson, le robot sort et propose les pages utiles de la rubrique où vous êtes ; touchez-le ou « Ranger » pour qu’il rentre ; s’il n’a pas de place, il reste dans l’écusson et un point vert clignote ; sur les pages d’urgence il ne sort jamais tout seul
+- Section SSI : alarme générale sélective (types J et U avec sommeil) : le texte dit que le personnel désigné organise l’évacuation (U 45, J 37)
+- Section SSI : issues de secours : plus de double déverrouillage en catégorie A ; dans les bâtiments sans catégorie de SSI, elles s’ouvrent à la main (CO 46, MS 60)
+- Section SSI : fausse alarme sans temporisation : ajout de l’étape où l’agent arrête l’alarme générale, le plan repasse en veille (MS 61)
+- Section SSI : précisions ajoutées sur l’alarme de type 2b (blocs autonomes) et sur le désenfumage avec sprinkleur (DF 3)
 - Section SSI : le scénario choisi est bien celui qui se lance, même après un changement de bâtiment ou un retour dans la section ; son nom est écrit à chaque étape
 - Section SSI : le bâtiment choisi reste en place quand on revient dans la section
 - Section SSI : les boutons « Simulateur », « Règles détaillées » et « Cours » descendent au bon endroit de la page

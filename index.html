@@ -28251,6 +28251,531 @@ Réponds uniquement en JSON : {"creneaux":[{"date":"AAAA-MM-JJ ou null","debut":
   return { page, click, input, submit, busy, weekItems, monthText };
 }
 
+/* compagnon.js */
+/* Compagnon (robot extincteur) : tout le module est ici. Désactivé d’office : rien n’est créé tant que le réglage n’est pas activé. */
+const CPN = (function () {
+  "use strict";
+// Dessins validés par le propriétaire (style 2 « en volume »). Coordonnées robot : viewBox 0 0 120 160.
+// Écusson fixe : viewBox 0 0 28 40, robot imbriqué en <svg x="4.25" y="6.5" width="19.5" height="26" viewBox="0 0 120 160">.
+  const CP_SYMBOLES = `
+<symbol id="cp-hd" viewBox="0 0 120 160"><rect x="42" y="14" width="38" height="7" rx="3.5" fill="#2C2C2A"/><rect x="44" y="15" width="34" height="2" rx="1" fill="#888780"/><rect x="50" y="23" width="22" height="4" rx="2" fill="#444441"/><rect x="52" y="26" width="16" height="11" fill="#888780"/><rect x="54" y="26" width="3" height="11" fill="#D3D1C7"/><circle cx="44" cy="30" r="6" fill="#F1EFE8" stroke="#444441" stroke-width="2"/></symbol>
+<symbol id="cp-hs" viewBox="0 0 120 160"><path d="M68 30 C96 30 100 60 96 96" stroke="#444441" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="91" y="94" width="10" height="20" rx="3" fill="#2C2C2A"/></symbol>
+<symbol id="cp-bd" viewBox="0 0 120 160"><path d="M30 56 Q30 36 60 36 Q90 36 90 56 V140 Q90 146 84 146 H36 Q30 146 30 140 Z" fill="#C62F2B"/><path d="M76 40 Q90 42 90 56 V140 Q90 146 84 146 H76 Z" fill="#8E1F1F"/><path d="M38 52 Q38 44 46 41 V134 H38 Z" fill="#F0837F"/><rect x="30" y="139" width="60" height="8" rx="3" fill="#3A1010"/></symbol>
+<symbol id="cp-tp" viewBox="0 0 120 160"><rect x="36" y="96" width="48" height="40" rx="5" fill="#888780"/><rect x="38" y="98" width="44" height="36" rx="4" fill="#141413"/></symbol>`;
+
+// Visière + bouche : cadres fixes, contenu variable selon l'émotion.
+  const CP_VISAGE_CADRE = '<rect x="39" y="57" width="42" height="18" rx="9" fill="#888780"/><rect class="cp-vz" x="41" y="59" width="38" height="14" rx="7" fill="#021B36"/><rect x="45" y="79" width="30" height="12" rx="4" fill="#888780"/><rect x="47" y="81" width="26" height="8" rx="2.5" fill="#0E0E0D"/>';
+
+  const C='#B5D4F4', W='stroke="#85B7EB" stroke-width="2" stroke-linecap="round" fill="none"';
+  const YRO='<circle cx="51" cy="66" r="3.4" fill="'+C+'"/><circle cx="69" cy="66" r="3.4" fill="'+C+'"/>';
+  const YAR='<path d="M47 68 Q51 61 55 68 M65 68 Q69 61 73 68" stroke="'+C+'" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  const BSM='<path d="M52 83.5 Q60 89 68 83.5" '+W+'/>';
+  const COURONNE='<path d="M34 50 Q36 38 60 38 Q84 38 86 50 Z" fill="#F0792B"/><path d="M22 34 L14 28 M98 34 L106 28 M60 8 V2" stroke="#F0792B" stroke-width="3" stroke-linecap="round"/>';
+// Bouche qui parle : 5 barres animées (classe cp-mb, à animer en scaleY pendant la voix).
+  const BOUCHE_PARLE=[0,.1,.2,.05,.15].map((d,i)=>'<rect class="cp-mb" x="'+(51+i*4)+'" y="84.3" width="2.2" height="1.4" rx=".7" fill="#85B7EB" style="animation-delay:'+d+'s"/>').join('');
+
+// 16 émotions : [nom, quand, couleur visière, yeux, bouche, extra derrière la visière]
+  const CP_EMOTIONS = {
+ calme:['Calme','Au repos, lecture','#021B36',YRO,'<path d="M52 85 h16" '+W+'/>'],
+ bonjour:['Bonjour','À l\'ouverture','#021B36','<circle cx="51" cy="66" r="3.8" fill="'+C+'"/><circle cx="69" cy="66" r="3.8" fill="'+C+'"/>',BSM,'<path d="M104 62 L112 58 M105 72 H114 M104 82 L112 86" stroke="#B4B2A9" stroke-width="2.5" stroke-linecap="round"/>'],
+ ecoute:['À l\'écoute','Dictée, question','#021B36','<circle cx="51" cy="66" r="4.2" fill="'+C+'"/><circle cx="69" cy="66" r="4.2" fill="'+C+'"/>','<circle cx="60" cy="85" r="2" fill="#85B7EB"/>','<path d="M20 70 Q14 80 20 90 M12 64 Q3 80 12 96" stroke="#378ADD" stroke-width="2.5" fill="none" stroke-linecap="round"/>'],
+ parle:['Parle','Lecture à voix haute','#021B36',YRO,BOUCHE_PARLE],
+ curieux:['Curieux','Question posée','#021B36','<circle cx="51" cy="66" r="2.8" fill="'+C+'"/><circle cx="69" cy="65.5" r="4.6" fill="'+C+'"/>','<path d="M54 86 L66 83.5" '+W+'/>'],
+ reflechit:['Réfléchit','Recherche en cours','#021B36','<circle cx="53" cy="64.5" r="3.2" fill="'+C+'"/><circle cx="71" cy="64.5" r="3.2" fill="'+C+'"/>','<circle cx="54" cy="85" r="1.3" fill="#85B7EB"/><circle cx="60" cy="85" r="1.7" fill="#85B7EB"/><circle cx="66" cy="85" r="2.1" fill="#85B7EB"/>'],
+ concentre:['Concentré','Pendant un test','#021B36','<rect x="46.5" y="64.7" width="9" height="2.8" rx="1.4" fill="'+C+'"/><rect x="64.5" y="64.7" width="9" height="2.8" rx="1.4" fill="'+C+'"/>','<path d="M55 85 h10" '+W+'/>'],
+ surpris:['Surpris','Réponse inattendue','#021B36','<circle cx="51" cy="66" r="4.8" fill="'+C+'"/><circle cx="69" cy="66" r="4.8" fill="'+C+'"/><circle cx="51" cy="66" r="1.8" fill="#021B36"/><circle cx="69" cy="66" r="1.8" fill="#021B36"/>','<circle cx="60" cy="85" r="2.6" fill="none" stroke="#85B7EB" stroke-width="1.8"/>'],
+ content:['Content','Bonne réponse','#021B36',YAR,BSM],
+ fier:['Fier','Test réussi','#021B36',YAR,'<path d="M51 83 Q60 90.5 69 83" '+W+'/>','<path d="M103 44 l2.5 6.5 l6.5 2.5 l-6.5 2.5 l-2.5 6.5 l-2.5 -6.5 l-6.5 -2.5 l6.5 -2.5 z" fill="#F1EFE8"/><path d="M16 50 l1.6 4 l4 1.6 l-4 1.6 l-1.6 4 l-1.6 -4 l-4 -1.6 l4 -1.6 z" fill="#D3D1C7"/>'],
+ encourage:['Encourage','Après une erreur','#021B36','<path d="M47.6 65 h6.8 a3.4 3.4 0 0 1 -6.8 0 z M65.6 65 h6.8 a3.4 3.4 0 0 1 -6.8 0 z" fill="'+C+'"/>','<path d="M54 84.5 Q60 87 66 84.5" '+W+'/>'],
+ rassure:['Rassure','Situation stressante','#04342C','<path d="M47 66.5 Q51 63.5 55 66.5 M65 66.5 Q69 63.5 73 66.5" stroke="#9FE1CB" stroke-width="2.6" fill="none" stroke-linecap="round"/>','<path d="M53 84.5 Q60 87.5 67 84.5" stroke="#9FE1CB" stroke-width="2" fill="none" stroke-linecap="round"/>'],
+ attention:['Attention','Point de sécurité','#3A2A05','<path d="M46.5 63.5 L55 67.5 M73.5 63.5 L65 67.5" stroke="#FAC775" stroke-width="3.2" stroke-linecap="round"/>','<path d="M53 85 h14" stroke="#FAC775" stroke-width="2" stroke-linecap="round"/>'],
+ alerte:['Alerte','Urgence, danger','#7A1212','<circle cx="51" cy="66" r="3.4" fill="#fff"/><circle cx="69" cy="66" r="3.4" fill="#fff"/>','<path d="M51 85 l3 -2.5 l3 5 l3 -5 l3 5 l3 -5 l3 2.5" stroke="#F09595" stroke-width="1.8" fill="none" stroke-linejoin="round"/>',COURONNE],
+ desole:['Désolé','Rien trouvé','#021B36','<circle cx="51" cy="67.5" r="2.8" fill="'+C+'"/><circle cx="69" cy="67.5" r="2.8" fill="'+C+'"/><path d="M46.5 63.5 L54 62 M73.5 63.5 L66 62" stroke="#378ADD" stroke-width="1.8" stroke-linecap="round"/>','<path d="M54 86 Q60 83 66 86" '+W+'/>'],
+ sommeil:['Sommeil','Rangé, désactivé','#0E0E0D','<path d="M47.5 66.5 h7 M65.5 66.5 h7" stroke="#5F5E5A" stroke-width="2.4" stroke-linecap="round"/>','']
+};
+
+// Torse (écran de poitrine) par section. B = corps standard. Les sections Rayons X et Ronde remplacent le corps entier.
+  const CPT='<use href="#cp-tp"/>';
+  const CP_SECTIONS = {
+ accueil:   ['Accueil', CPT+'<path d="M60 102 L77 116 H72 V131 H48 V116 H43 Z" fill="#F1EFE8"/><rect x="56" y="120" width="8" height="11" rx="1" fill="#141413"/>'],
+ rappel:    ['Rappel', CPT+'<rect x="38" y="98" width="44" height="36" rx="4" fill="#1F4A2C"/><path d="M45 108 H75 M45 116 H68 M45 124 H72" stroke="#EAF3DE" stroke-width="2.5" stroke-linecap="round"/>'],
+ urgence:   ['Urgence', COURONNE+'<rect x="42" y="102" width="36" height="24" rx="3" fill="#FAC775"/>', 'alerte'],
+ regles:    ['Règles', CPT+'<path d="M60 104 V129 M51 129 H69 M47 108 H73" stroke="#FAC775" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M47 108 l-5 9 h10 z M73 108 l-5 9 h10 z" fill="#FAC775"/>'],
+ jeu:       ['Jeu', CPT+'<path d="M48 116 V125.5 Q60 131 72 125.5 V116 L60 120.5 Z" fill="#B4B2A9"/><path d="M60 103 L80 110.5 L60 118 L40 110.5 Z" fill="#F1EFE8"/><path d="M60 110.5 L76 112.5 V124" fill="none" stroke="#D3D1C7" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><path d="M74.5 124 h3 l.8 6 h-4.6 z" fill="#D3D1C7"/><circle cx="60" cy="110.5" r="1.8" fill="#888780"/>'],
+ outils:    ['Outils', CPT+'<g transform="translate(72 132) rotate(-40)"><rect x="-2" y="-25" width="4" height="25" rx="1.5" fill="#B4B2A9"/><path d="M-9 -32 H7 L9.5 -30 V-27 L7 -25 H-9 Z" fill="#F1EFE8"/></g><g transform="translate(48 132) rotate(40)"><rect x="-2" y="-23" width="4" height="23" rx="1.5" fill="#D3D1C7"/><path d="M-6.5 -22 V-30 L-3.5 -33.5 V-27.5 H3.5 V-33.5 L6.5 -30 V-22 Q0 -18.5 -6.5 -22 Z" fill="#F1EFE8"/></g>'],
+ parametres:['Paramètres', CPT+'<circle cx="60" cy="116" r="10" fill="none" stroke="#D3D1C7" stroke-width="5" stroke-dasharray="4 3.85"/><circle cx="60" cy="116" r="6.5" fill="none" stroke="#D3D1C7" stroke-width="3"/>'],
+ ssi:       ['SSI', '<rect x="34" y="95" width="52" height="42" rx="4" fill="#888780"/><rect x="36" y="97" width="48" height="38" rx="3" fill="#22262B"/><path class="cp-piste" d="M40 102 H46 V110 H50 M40 130 H46 V122 H50 M80 102 H74 V110 H70 M80 130 H74 V122 H70 M60 101 V107 M60 125 V131" fill="none" stroke="#EFB04A" stroke-width="1.6" stroke-linejoin="round"/><circle cx="40" cy="102" r="1.8" fill="#EFB04A"/><circle cx="40" cy="130" r="1.8" fill="#EFB04A"/><circle cx="80" cy="102" r="1.8" fill="#EFB04A"/><circle cx="80" cy="130" r="1.8" fill="#EFB04A"/><circle cx="60" cy="100" r="2" fill="#3B9E5A"/><circle cx="60" cy="132" r="2" fill="#E24B4A"/><rect x="48" y="107" width="24" height="18" rx="2" fill="#0A0A0A" stroke="#B4B2A9" stroke-width="1"/><text x="60.5" y="120" style="font:500 11px sans-serif;fill:#F1EFE8;letter-spacing:1px;text-anchor:middle">SSI</text>'],
+ batiment:  ['Mon bâtiment', CPT+'<path d="M49 131 V104 H71 V131 Z" fill="none" stroke="#85B7EB" stroke-width="2.2"/><path d="M54 109 h4 M62 109 h4 M54 115 h4 M62 115 h4 M54 121 h4 M62 121 h4" stroke="#B5D4F4" stroke-width="3"/>'],
+ rayonsx:   ['Rayons X', 'CORPS_RX'],
+ ronde:     ['Ronde', 'CORPS_RONDE'],
+ videos:    ['Vidéos', CPT+'<path d="M53 105 L71 116 L53 127 Z" fill="#5DCAA5"/>'],
+ recherche: ['Recherche', '<rect x="42" y="102" width="36" height="24" rx="3" fill="#F1EFE8"/><path class="cp-anneau" d="M24 106 Q60 124 96 106" stroke="#85B7EB" stroke-width="4" fill="none" stroke-linecap="round"/>', 'reflechit']
+};
+// Corps spéciaux (remplacent cp-bd) :
+  const CORPS_RX='<path d="M30 56 Q30 36 60 36 Q90 36 90 56 V140 Q90 146 84 146 H36 Q30 146 30 140 Z" fill="#0B1E3A" stroke="#85B7EB" stroke-width="2.5"/><rect x="40" y="100" width="20" height="14" rx="3" fill="#EF9F27"/><circle cx="72" cy="110" r="8" fill="#5DCAA5"/><rect x="42" y="122" width="36" height="8" rx="2" fill="#378ADD"/>';
+  const CORPS_RONDE='<path d="M26 92 A34 34 0 0 1 94 92 Z" fill="#141413" stroke="#888780" stroke-width="2"/><circle cx="60" cy="76" r="12" fill="#2C2C2A" stroke="#888780" stroke-width="2"/><circle cx="60" cy="76" r="6" fill="#021B36"/><circle cx="57" cy="73" r="2.2" fill="#85B7EB"/><rect x="22" y="90" width="76" height="7" rx="3" fill="#888780"/><rect x="32" y="97" width="56" height="44" rx="6" fill="#C62F2B"/><path d="M78 97 H82 Q88 97 88 103 V135 Q88 141 82 141 H78 Z" fill="#8E1F1F"/><rect x="30" y="139" width="60" height="8" rx="3" fill="#3A1010"/>'; // visage décalé de +44 en y (translate(0 44)), sans tête ni tuyau
+
+// Écran de torse « vivant » au repos (accueil) : tracé de pouls qui défile.
+  const CP_ECRAN_POULS='<rect x="40" y="100" width="40" height="28" rx="4" fill="#888780"/><rect x="42" y="102" width="36" height="24" rx="3" fill="#0D1F17"/><path d="M44 114 H50 L53 108 L57 120 L60 111 L62 114 H76" fill="none" stroke="#2F2F2D" stroke-width="1.4"/><path class="cp-pouls" d="M44 114 H50 L53 108 L57 120 L60 111 L62 114 H76" fill="none" stroke="#5DCAA5" stroke-width="1.6" stroke-linejoin="round"/>';
+// Jauge (5 barres) pendant un déploiement, une recherche ou un contrôle :
+  const CP_ECRAN_JAUGE='<rect x="40" y="100" width="40" height="28" rx="4" fill="#888780"/><rect x="42" y="102" width="36" height="24" rx="3" fill="#0D1F17"/>'+[0,1,2,3,4].map(i=>'<rect class="cp-g" data-i="'+i+'" x="'+(45+i*6.5)+'" y="107" width="5" height="12" rx="1" fill="#2F2F2D"/>').join('');
+
+// Bras (dessinés AVANT le corps pour être cachés dedans). Gauche : <g transform="translate(31 74)"><g class="cp-a" style="transform:translateX(26px)">BRAS</g></g>
+// Droit : <g transform="translate(89 74) scale(-1 1)"> … même contenu.
+  const CP_BRAS='<rect x="-26" y="-5" width="27" height="10" rx="4" fill="#888780"/><rect x="-26" y="-5" width="27" height="3" rx="1.5" fill="#B4B2A9"/><ellipse class="cp-bi" cx="-14" cy="-4" rx="9" ry="5.5" fill="#888780" style="transform-origin:-14px -2px;transform:scale(0)"/><circle cx="-26" cy="0" r="5" fill="#5F5E5A"/><g transform="translate(-26 0)"><g class="cp-fr" style="transform:rotate(90deg)"><rect x="-5" y="-24" width="10" height="24" rx="4" fill="#B4B2A9"/><rect x="-6.5" y="-33" width="13" height="11" rx="4" fill="#5F5E5A"/><path d="M-3 -33 v4 M1 -33 v4" stroke="#2C2C2A" stroke-width="1.2"/></g></g>';
+// Séquence validée des à-coups (240 ms entre chaque, transition 90 ms cubic-bezier(.2,1.7,.4,1), petite secousse du corps de 2 px à chaque coup) :
+// trappes d'épaule +3 px → bras translateX 26→17→8→0 → avant-bras rotate 90→45→0 → biceps scale 1 + yeux « content ». Rangement : ordre inverse, 200 ms.
+// Trappes : <rect x="29" y="66" width="5" height="16" rx="2" fill="#7A1717"/> (gauche) et <rect x="86" y="66" width="5" height="16" rx="2" fill="#5A1212"/> (droite), dessinées après le corps.
+
+// Écusson fixe (ne change jamais ni de taille, ni de couleur, ni de place) :
+  const CP_ECUSSON_PATH='M14 1.5 L26 5.5 V21 Q26 33 14 38.5 Q2 33 2 21 V5.5 Z'; // fill #7A1717, stroke #fff, stroke-width 1.5
+
+  /* ---------- État ---------- */
+  let on = false, X = null, sec = "accueil", emo = "calme", emoT = 0, dehors = false, attente = false, enMouv = false, force = false, tok = "", bullT = 0, scrT = 0, plT = 0, mo = null, parleT = 0, brasEnCours = false, ecranTemp = "", ecranT = 0;
+  const NS = "http://www.w3.org/2000/svg";
+  const $ = (s, el) => (el || document).querySelector(s);
+  const RW = 58, RH = Math.round(58 * 160 / 120);
+
+  /* ---------- Dessin du robot ---------- */
+  function torse(s) {
+    if (ecranTemp === "jauge") return CP_ECRAN_JAUGE;
+    if (s === "accueil") return CP_ECRAN_POULS;
+    const d = CP_SECTIONS[s] || CP_SECTIONS.accueil;
+    return d[1] === "CORPS_RX" || d[1] === "CORPS_RONDE" ? "" : d[1];
+  }
+  function visage(e) {
+    const E = CP_EMOTIONS[e] || CP_EMOTIONS.calme;
+    return (E[5] || "") + CP_VISAGE_CADRE.replace('fill="#021B36"', 'fill="' + E[2] + '"') + '<g class="cp-yx">' + E[3] + "</g>" + E[4];
+  }
+  const brasG = (d) => '<g transform="translate(' + (d ? "89 74) scale(-1 1)" : "31 74)") + '"><g class="cp-a" style="transform:translateX(26px)">' + CP_BRAS + "</g></g>";
+  function robot(s, e) {
+    const d = CP_SECTIONS[s] || CP_SECTIONS.accueil, sp = d[1];
+    let h = '<g class="cp-rb">';
+    if (sp === "CORPS_RONDE") {
+      h += CORPS_RONDE + '<g class="cp-fc" transform="translate(0 44)">' + visage(e) + "</g>";
+    } else {
+      h += brasG(0) + brasG(1) + '<use href="#cp-hs"/><use href="#cp-hd"/>' + (sp === "CORPS_RX" ? CORPS_RX : '<use href="#cp-bd"/>');
+      h += '<rect class="cp-tl" x="29" y="66" width="5" height="16" rx="2" fill="#7A1717"/><rect class="cp-tr" x="86" y="66" width="5" height="16" rx="2" fill="#5A1212"/>';
+      h += '<g class="cp-fc">' + visage(e) + '</g><g class="cp-to">' + torse(s) + "</g>";
+    }
+    return h + "</g>";
+  }
+  function dessiner(svg, anime) {
+    if (!svg) return;
+    const sp = (CP_SECTIONS[sec] || [])[1], spec = sp === "CORPS_RX" || sp === "CORPS_RONDE";
+    const old = svg.querySelector(".cp-to"), wasSpec = svg.getAttribute("data-spec") === "1";
+    if (anime && old && !spec && !wasSpec) {
+      /* Le torse change : l'ancien se réduit, le nouveau grandit, le corps se tasse. */
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "cp-to cp-in"); g.innerHTML = torse(sec);
+      old.classList.remove("cp-to"); old.classList.add("cp-out");
+      old.parentNode.appendChild(g);
+      setTimeout(() => { try { old.remove(); g.classList.remove("cp-in"); } catch (er) { /* rien */ } }, 520);
+    } else {
+      svg.innerHTML = robot(sec, emo);
+      svg.setAttribute("data-spec", spec ? "1" : "0");
+    }
+    if (anime) { const rb = svg.querySelector(".cp-rb"); if (rb) { rb.classList.remove("cp-tass"); void rb.getBBox; requestAnimationFrame(() => rb.classList.add("cp-tass")); setTimeout(() => rb.classList.remove("cp-tass"), 560); } }
+  }
+  const robots = () => [$("#cp-mini"), $("#cp-gr")].filter(Boolean);
+  function setEmo(e, ms) {
+    clearTimeout(emoT);
+    if (!CP_EMOTIONS[e]) e = "calme";
+    emo = e;
+    robots().forEach((s) => { const f = s.querySelector(".cp-fc"); if (f) f.innerHTML = visage(e); });
+    if (ms) emoT = setTimeout(() => setEmo(emoRepos()), ms);
+  }
+  const emoRepos = () => (sec === "urgence" ? "attention" : "calme");
+  function setEcran(k, ms) {
+    clearTimeout(ecranT); ecranTemp = k || "";
+    robots().forEach((s) => { const t = s.querySelector(".cp-to"); if (t) t.innerHTML = torse(sec); });
+    if (k === "jauge") jauge();
+    if (ms) ecranT = setTimeout(() => setEcran(""), ms);
+  }
+  function jauge() {
+    let i = 0;
+    const tick = () => {
+      if (ecranTemp !== "jauge") return;
+      robots().forEach((s) => s.querySelectorAll(".cp-g").forEach((g) => g.setAttribute("fill", +g.dataset.i <= i % 6 - 1 ? "#5DCAA5" : "#2F2F2D")));
+      i++; setTimeout(tick, 180);
+    };
+    tick();
+  }
+
+  /* ---------- Bras par à-coups (séquence validée) ---------- */
+  function bras(apres) {
+    const svg = $("#cp-gr");
+    if (!svg || brasEnCours || svg.getAttribute("data-spec") === "1" && (CP_SECTIONS[sec] || [])[1] === "CORPS_RONDE") { if (apres) apres(); return; }
+    brasEnCours = true;
+    const A = [...svg.querySelectorAll(".cp-a")], F = [...svg.querySelectorAll(".cp-fr")], Bi = [...svg.querySelectorAll(".cp-bi")], tl = svg.querySelector(".cp-tl"), tr = svg.querySelector(".cp-tr"), rb = svg.querySelector(".cp-rb");
+    const setA = (x) => A.forEach((a) => (a.style.transform = "translateX(" + x + "px)"));
+    const setF = (r) => F.forEach((a) => (a.style.transform = "rotate(" + r + "deg)"));
+    const setB = (k) => Bi.forEach((a) => (a.style.transform = "scale(" + k + ")"));
+    const setT = (k) => { if (tl) tl.style.transform = "translateX(" + -k + "px)"; if (tr) tr.style.transform = "translateX(" + k + "px)"; };
+    const coup = () => { if (!rb) return; rb.classList.remove("cp-coup"); requestAnimationFrame(() => rb.classList.add("cp-coup")); };
+    const sortie = [() => setT(3), () => setA(17), () => setA(8), () => setA(0), () => setF(45), () => setF(0), () => { setB(1); setEmo("content"); }];
+    const rentre = [() => setB(0), () => setF(45), () => setF(90), () => setA(8), () => setA(17), () => setA(26), () => setT(0)];
+    const run = (L, dt, fin) => { let i = 0; const st = () => { if (!$("#cp-gr")) { brasEnCours = false; return; } if (i >= L.length) { fin(); return; } L[i++](); coup(); setTimeout(st, dt); }; st(); };
+    run(sortie, 240, () => setTimeout(() => run(rentre, 200, () => { brasEnCours = false; setEmo(emoRepos()); if (apres) apres(); }), 900));
+  }
+
+  /* ---------- Phrases et actions (fixes, uniquement des pages qui existent) ---------- */
+  const CHERCHER = ["Chercher", () => X.go("recherche")];
+  const BULLES = {
+    accueil: () => { const r = X.store.get("reprise", null); return ["Je suis là. Dis-moi ce que tu cherches.", [CHERCHER].concat(r && r.t ? [["Reprendre", () => X.go(r.t)]] : [])]; },
+    rappel: () => ["Un cours à revoir ? Tout le cours est rangé ici.", [["Ouvrir le cours", () => X.go("livres")], CHERCHER]],
+    urgence: () => ["Décris la situation, l’appli te montre quoi faire.", [["Décrire la situation", () => X.go("scene")]]],
+    regles: () => ["Une règle à vérifier ? Cherche un mot ou un sigle.", [CHERCHER, ["Sigles et matériel", () => X.go("glossaire")]]],
+    jeu: () => ["Prêt pour un test ?", [["Lancer un test", () => { X.go("o-quiz"); setTimeout(() => { const b = $('#app [data-act="qz-start"][data-m="quick"]'); if (b) b.click(); }, 60); }]]],
+    outils: () => ["Quel outil veux-tu ouvrir ?", [["Mon bâtiment", () => X.go("o-batiment")], ["Section SSI", () => X.go("o-ssi")]]],
+    parametres: () => ["Ici, tu règles la voix et l’affichage.", $('#app [data-act="voix-ouvrir"]') ? [["Changer la voix", () => { const b = $('#app [data-act="voix-ouvrir"]'); if (b) b.click(); }]] : []],
+    ssi: () => ["Le fonctionnement du SSI, ou une marche à suivre ?", [["Fonctionnement", () => X.go("f-ssi-simple")], ["Marches à suivre", () => X.go("f-pb-ssi-alarme-feu-pas-a-pas")]]],
+    batiment: () => ["Cherche ton bâtiment par son adresse ou ta position.", [["Calcul de l’effectif", () => X.go("o-effectif")], ["Dégagements", () => X.go("o-degagements")]]],
+    rayonsx: () => ["Les couleurs de l’image, ou comment la lire ?", [["Les couleurs", () => X.go("f-rx-couleurs")], ["Lire une image", () => X.go("f-rx-lire-image")]]],
+    ronde: () => ["Une ronde à préparer ? La fiche te dit quoi emporter.", [["Fiche des rondes", () => X.go("f-rondes")]]],
+    recherche: () => ["Tape un mot ou un sigle. Les accents ne comptent pas.", [["Écrire", () => { const i = $("#q"); if (i) i.focus(); }], ["Sigles et matériel", () => X.go("glossaire")]]],
+  };
+  BULLES.videos = BULLES.accueil;
+
+  /* ---------- Section de la page ---------- */
+  function sectionDe(t, pg) {
+    if (t === "accueil") return "accueil";
+    if (t === "urgence" || t === "scene" || /^p-/.test(t) || (pg && pg.tab === "urgence")) return "urgence";
+    if (t === "recherche") return "recherche";
+    if (t === "reglages") return "parametres";
+    if (t === "o-ssi" || t === "r-ssi" || /^f-(?:pb-)?ssi(?:-|$)/.test(t)) return "ssi";
+    if (t === "o-batiment") return "batiment";
+    if (/^f-(?:pc-|pro-)?rx-/.test(t)) return "rayonsx";
+    if (t === "ronde" || /^rd-/.test(t) || t === "f-rondes") return "ronde";
+    if (t === "jeu" || t === "jeu-import" || t === "o-quiz" || /^appr-/.test(t)) return "jeu";
+    const tab = pg && pg.tab;
+    if (tab === "rappel" || t === "livres") return "rappel";
+    if (tab === "regles") return "regles";
+    if (tab === "jeu") return "jeu";
+    if (tab === "outils") return "outils";
+    return "accueil";
+  }
+  const urgente = () => sec === "urgence";
+
+  /* ---------- Écusson ---------- */
+  function creer() {
+    const css = document.createElement("style");
+    css.id = "cp-css";
+    css.textContent = `
+.top-in.cp-avec .top-btn{width:36px}
+.top-in.cp-avec .brand{gap:6px}
+.cp-ec{flex:0 0 28px;width:28px;height:40px;margin:0 0 0 3px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;display:block}
+.cp-ec>svg{display:block;width:28px;height:40px;overflow:visible}
+.cp-ec.cp-pulse>svg{animation:cp-pul .45s ease}
+@keyframes cp-pul{50%{transform:scale(1.08)}}
+.cp-ec #cp-mini{transition:opacity .3s}
+.cp-ec.cp-vide #cp-mini{filter:brightness(0) invert(1);opacity:.35}
+.cp-pt{animation:cp-clig 2.4s ease-in-out infinite}
+@keyframes cp-clig{50%{opacity:.25}}
+#cp-mini .cp-rb{transform-origin:60px 146px;animation:cp-resp 4.5s ease-in-out infinite}
+@keyframes cp-resp{50%{transform:scale(1.012,1.022)}}
+.cp-yx{transform-origin:60px 66px;animation:cp-cli 6.3s infinite}
+@keyframes cp-cli{0%,95%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.cp-rb.cp-tass{animation:cp-tas .5s ease!important}
+@keyframes cp-tas{40%{transform:scale(1.1,.93)}100%{transform:none}}
+.cp-out{transform-origin:60px 116px;animation:cp-rd .5s ease forwards}
+.cp-in{transform-origin:60px 116px;animation:cp-gd .5s ease}
+@keyframes cp-rd{to{transform:scale(0);opacity:0}}
+@keyframes cp-gd{from{transform:scale(0)}}
+.cp-mb{transform-origin:center;transform-box:fill-box;transform:scaleY(1)}
+.cp-parle .cp-mb{animation:cp-bo .32s ease-in-out infinite alternate}
+@keyframes cp-bo{to{transform:scaleY(4.6)}}
+.cp-pouls{stroke-dasharray:14 60;animation:cp-pls 2.2s linear infinite}
+@keyframes cp-pls{from{stroke-dashoffset:74}to{stroke-dashoffset:0}}
+.cp-a,.cp-fr,.cp-bi,.cp-tl,.cp-tr{transition:transform 90ms cubic-bezier(.2,1.7,.4,1)}
+.cp-rb.cp-coup{animation:cp-sec .12s}
+@keyframes cp-sec{50%{transform:translateY(-2px)}}
+#cp-gr-w{position:fixed;left:0;top:0;width:${RW}px;height:${RH}px;z-index:45;transition:opacity .25s,left .45s ease,top .45s ease;touch-action:manipulation;cursor:pointer}
+#cp-gr-w.cp-cache{opacity:0;pointer-events:none}
+#cp-gr-w .cp-fl{width:100%;height:100%;animation:cp-flo 9s ease-in-out infinite}
+@keyframes cp-flo{50%{transform:translateY(-3px)}}
+#cp-gr{display:block;width:100%;height:100%;overflow:visible}
+.cp-bul{position:fixed;z-index:46;max-width:230px;background:var(--surface,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:12px;padding:9px 10px;box-shadow:0 4px 14px rgba(0,0,0,.22);font-size:.92rem;line-height:1.3;transition:opacity .25s}
+.cp-bul.cp-cache{opacity:0;pointer-events:none}
+.cp-bul p{margin:0 0 7px}
+.cp-bul .cp-bt{display:flex;flex-wrap:wrap;gap:6px}
+.cp-bul button{font:inherit;font-size:.86rem;font-weight:600;padding:6px 10px;border-radius:9px;border:1px solid var(--line-2,#bbb);background:var(--surface-2,#f3f3f3);color:inherit;cursor:pointer;min-height:34px}
+.cp-bul button.cp-ra{background:none;border-color:transparent;text-decoration:underline;font-weight:500}
+`;
+    document.head.appendChild(css);
+    const defs = document.createElementNS(NS, "svg");
+    defs.id = "cp-defs"; defs.setAttribute("aria-hidden", "true");
+    defs.setAttribute("style", "position:absolute;width:0;height:0;overflow:hidden");
+    defs.innerHTML = CP_SYMBOLES;
+    document.body.appendChild(defs);
+    const top = $(".top-in");
+    if (!top) return false;
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "cp-ec"; b.id = "cp-ec"; b.setAttribute("aria-label", "Compagnon : toucher pour le faire sortir");
+    b.innerHTML = '<svg viewBox="0 0 28 40" aria-hidden="true"><path d="' + CP_ECUSSON_PATH + '" fill="#7A1717" stroke="#fff" stroke-width="1.5"/><svg id="cp-mini" x="4.25" y="6.5" width="19.5" height="26" viewBox="0 0 120 160"></svg><circle class="cp-pt" cx="24" cy="5" r="4" fill="#3B9E5A" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>';
+    top.appendChild(b);
+    top.classList.add("cp-avec");
+    b.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); sur(() => { b.classList.remove("cp-pulse"); void b.offsetWidth; b.classList.add("cp-pulse"); if (dehors) rentrer(); else sortir(true); }); });
+    dessiner($("#cp-mini"));
+    return true;
+  }
+
+  /* ---------- Place libre (le robot ne couvre jamais le contenu) ---------- */
+  function zone() {
+    const hd = $(".top"), tb = $(".tabs"), tt = $("#tts");
+    let y0 = hd ? hd.getBoundingClientRect().bottom : 0, y1 = innerHeight;
+    if (tb) { const r = tb.getBoundingClientRect(); if (r.height && r.top < y1) y1 = r.top; }
+    if (tt && !tt.hidden) { const r = tt.getBoundingClientRect(); if (r.height && r.top < y1) y1 = r.top; }
+    const ap = $("#app"), ar = ap ? ap.getBoundingClientRect() : { left: 0, right: innerWidth };
+    return { x0: Math.max(2, Math.min(ar.left, 8)), x1: document.documentElement.clientWidth - 2, y0: y0 + 4, y1: y1 - 4, px: Math.max(4, ar.left + 4) };
+  }
+  const BLOCS = "img,svg,video,canvas,iframe,table,button,a,input,select,textarea,summary,figure,pre,hr,.card,.chip,.btn";
+  function obstacles(Z) {
+    const L = [], ap = $("#app");
+    if (!ap) return L;
+    const vis = (r) => r.width > 0 && r.height > 0 && r.bottom > Z.y0 && r.top < Z.y1;
+    ap.querySelectorAll(BLOCS).forEach((el) => { if (el.closest("svg") !== el && el.closest("svg")) return; const r = el.getBoundingClientRect(); if (vis(r)) L.push(r); });
+    const w = document.createTreeWalker(ap, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.nodeValue.trim() ? 1 : 2) });
+    const rg = document.createRange();
+    let n, k = 0;
+    while ((n = w.nextNode()) && k < 4000) {
+      const p = n.parentElement; if (!p || p.closest("svg")) continue;
+      const pr = p.getBoundingClientRect(); if (!vis(pr)) continue;
+      rg.selectNodeContents(n);
+      for (const r of rg.getClientRects()) { if (vis(r)) { L.push(r); k++; } }
+    }
+    /* Les autres éléments posés par-dessus (fenêtres, bandeau de lecture, message) */
+    document.querySelectorAll('.overlay:not([hidden]),#toast:not([hidden]),#tts:not([hidden]),.guide:not([hidden]),[role="dialog"]:not([hidden])').forEach((el) => { const r = el.getBoundingClientRect(); if (r.width) L.push(r); });
+    return L;
+  }
+  function libre(w, h, cible, plus) {
+    const Z = zone();
+    if (Z.y1 - Z.y0 < h || Z.x1 - Z.x0 < w) return null;
+    const L = obstacles(Z).concat(plus || []), m = 3;
+    const ok = (x, y) => { for (const r of L) if (x < r.right + m && x + w > r.left - m && y < r.bottom + m && y + h > r.top - m) return false; return true; };
+    const px = cible ? Math.max(Z.x0, Math.min(cible.x, Z.x1 - w)) : Z.px, py = cible ? Math.max(Z.y0, Math.min(cible.y, Z.y1 - h)) : Z.y0;
+    if (ok(px, py)) return { x: px, y: py };
+    let best = null, bd = Infinity;
+    for (let y = Z.y0; y + h <= Z.y1; y += 6) for (let x = Z.x0; x + w <= Z.x1; x += 6) {
+      const d = (x - px) * (x - px) + (y - py) * (y - py) * 1.3;
+      if (d < bd && ok(x, y)) { bd = d; best = { x, y }; }
+    }
+    return best;
+  }
+  function point(v) { const p = $("#cp-ec .cp-pt"); if (p) p.style.display = v ? "" : "none"; }
+
+  /* ---------- Sortie et retour ---------- */
+  function sortir(demande) {
+    if (dehors || enMouv) return;
+    if (!demande && urgente()) return;
+    let pos = libre(RW, RH);
+    force = false;
+    /* Pas de place libre : seul un toucher de l'écusson le fait sortir, le temps de la bulle ; ensuite il rentre (point vert). */
+    if (!pos && demande) { const Z = zone(); pos = { x: Z.px, y: Z.y0 }; force = true; }
+    if (!pos) { attente = true; point(true); return; }
+    attente = false; point(false);
+    const ec = $("#cp-ec"), mini = $("#cp-mini");
+    const w = document.createElement("div");
+    w.id = "cp-gr-w"; w.setAttribute("role", "button"); w.setAttribute("aria-label", "Compagnon : toucher pour le ranger"); w.tabIndex = 0;
+    w.innerHTML = '<div class="cp-fl"><svg id="cp-gr" viewBox="0 0 120 160" aria-hidden="true"></svg></div>';
+    w.style.left = pos.x + "px"; w.style.top = pos.y + "px";
+    document.body.appendChild(w);
+    dessiner($("#cp-gr"));
+    w.addEventListener("click", (e) => { e.stopPropagation(); sur(rentrer); });
+    if (ec) ec.classList.add("cp-vide");
+    dehors = true; enMouv = true;
+    const mr = (mini || ec).getBoundingClientRect(), s0 = mr.width / RW;
+    const dx = mr.left - pos.x, dy = mr.top - pos.y;
+    const fin = () => { enMouv = false; if (demande) bulle(); };
+    try {
+      const a = w.animate([
+        { transform: `translate(${dx}px,${dy}px) scale(${s0})`, transformOrigin: "0 0" },
+        { transform: `translate(${dx * 0.55}px,${dy * 0.2 + 26}px) scale(${(s0 + 1) / 2})`, transformOrigin: "0 0", offset: 0.5 },
+        { transform: "translate(0,4px) scale(1.03)", transformOrigin: "0 0", offset: 0.82 },
+        { transform: "translate(0,-2px) scale(.99)", transformOrigin: "0 0", offset: 0.92 },
+        { transform: "none", transformOrigin: "0 0" }], { duration: 700, easing: "ease-out" });
+      a.onfinish = fin;
+    } catch (e) { fin(); }
+  }
+  function rentrer(cb) {
+    bulleFerme();
+    const w = $("#cp-gr-w"), ec = $("#cp-ec"), mini = $("#cp-mini");
+    if (!w || enMouv) { if (typeof cb === "function") cb(); return; }
+    enMouv = true;
+    const fin = () => { try { w.remove(); } catch (e) { /* rien */ } if (ec) ec.classList.remove("cp-vide"); dehors = false; enMouv = false; if (typeof cb === "function") cb(); };
+    const wr = w.getBoundingClientRect(), mr = (mini || ec).getBoundingClientRect(), s0 = mr.width / RW;
+    const dx = mr.left - wr.left, dy = mr.top - wr.top;
+    w.style.transition = "none"; w.style.opacity = "1";
+    try {
+      const a = w.animate([
+        { transform: "none", transformOrigin: "0 0" },
+        { transform: `translate(${dx * 0.55}px,${dy * 0.2 + 26}px) scale(${(s0 + 1) / 2})`, transformOrigin: "0 0", offset: 0.5 },
+        { transform: `translate(${dx}px,${dy}px) scale(${s0})`, transformOrigin: "0 0" }], { duration: 600, easing: "ease-in", fill: "forwards" });
+      a.onfinish = fin;
+    } catch (e) { fin(); }
+  }
+  /* Replacement : glisse vers la place libre la plus proche, ou rentre (point vert) s'il n'y en a pas ; ressort dès qu'il y a de la place. */
+  function replacer(pref) {
+    if (enMouv) return;
+    if (dehors) {
+      const w = $("#cp-gr-w"); if (!w) return;
+      if (!force && pref !== true) {
+        /* Déjà à une place libre : il ne bouge pas (pas de calcul inutile à chaque changement de la page). */
+        const x = parseFloat(w.style.left) || 0, y = parseFloat(w.style.top) || 0, Z = zone();
+        if (y >= Z.y0 && y + RH <= Z.y1 && !obstacles(Z).some((r) => x < r.right + 3 && x + RW > r.left - 3 && y < r.bottom + 3 && y + RH > r.top - 3)) { w.classList.remove("cp-cache"); return; }
+      }
+      const bv = !!$(".cp-bul:not(.cp-cache)");
+      if (force) return;
+      w.classList.add("cp-cache");
+      const pos = libre(RW, RH);
+      if (!pos) { w.classList.remove("cp-cache"); rentrer(() => { attente = true; point(true); }); return; }
+      w.style.left = pos.x + "px"; w.style.top = pos.y + "px";
+      w.classList.remove("cp-cache");
+      if (bv) placerBulle();
+    } else if (attente) {
+      if (urgente()) return;
+      const pos = libre(RW, RH);
+      if (pos) { attente = false; point(false); sortir(false); }
+    }
+  }
+
+  /* ---------- Bulle ---------- */
+  function bulle() {
+    clearTimeout(bullT); { const o = $("#cp-bul"); if (o) o.remove(); }
+    const f = BULLES[sec] || BULLES.accueil, r = f(), txt = r[0], acts = r[1] || [];
+    const d = document.createElement("div");
+    d.className = "cp-bul"; d.id = "cp-bul"; d.setAttribute("role", "status");
+    const p = document.createElement("p"); p.textContent = txt; d.appendChild(p);
+    const bt = document.createElement("div"); bt.className = "cp-bt";
+    acts.forEach(([l, fn]) => { const b = document.createElement("button"); b.type = "button"; b.textContent = l; b.addEventListener("click", (e) => { e.stopPropagation(); sur(() => { bulleFerme(); bras(); fn(); }); }); bt.appendChild(b); });
+    const ra = document.createElement("button"); ra.type = "button"; ra.className = "cp-ra"; ra.textContent = "Ranger";
+    ra.addEventListener("click", (e) => { e.stopPropagation(); sur(rentrer); });
+    bt.appendChild(ra); d.appendChild(bt);
+    document.body.appendChild(d);
+    placerBulle();
+    dire(txt);
+    clearTimeout(bullT); bullT = setTimeout(bulleFerme, 15000);
+  }
+  function placerBulle() {
+    const d = $("#cp-bul"), w = $("#cp-gr-w"); if (!d || !w) return;
+    const wr = { left: parseFloat(w.style.left) || 0, top: parseFloat(w.style.top) || 0 };
+    const vw = document.documentElement.clientWidth;
+    let x = wr.left + RW + 6, mw = vw - x - 6;
+    if (mw < 150) { x = Math.max(6, wr.left - 236); mw = Math.min(230, wr.left - 12); }
+    d.style.maxWidth = Math.max(140, Math.min(230, mw)) + "px";
+    d.style.left = x + "px"; d.style.top = wr.top + 4 + "px";
+    /* Une place libre près du robot, si la page en a une : la bulle ne cache alors rien. */
+    const bw = d.offsetWidth, bh = d.offsetHeight, rr = { left: wr.left, top: wr.top, right: wr.left + RW, bottom: wr.top + RH };
+    d.style.display = "none";
+    const lp = libre(bw, bh, { x: x, y: wr.top + 4 }, [rr]);
+    d.style.display = "";
+    if (lp && Math.abs(lp.x - x) + Math.abs(lp.y - wr.top) < 320) { d.style.left = lp.x + "px"; d.style.top = lp.y + "px"; }
+  }
+  function bulleFerme() { clearTimeout(bullT); const d = $("#cp-bul"); if (d) d.remove(); if (force) { force = false; if (dehors && !enMouv) setTimeout(() => sur(replacer), 60); } }
+
+  /* ---------- Voix (moteur de l'appli) ---------- */
+  function dire(t) {
+    const VX = X.VX;
+    if (!VX || !VX.ttsOk || VX.active) return;
+    let ok = false;
+    try { ok = VX.speak(t, { label: "Compagnon" }) !== false; } catch (e) { ok = false; }
+    if (!ok) return;
+    const prev = emo; setEmo("parle");
+    robots().forEach((s) => s.classList.add("cp-parle"));
+    const t0 = Date.now(), max = 1500 + t.length * 90;
+    const fin = () => { robots().forEach((s) => s.classList.remove("cp-parle")); if (emo === "parle") setEmo(prev === "parle" ? emoRepos() : prev); };
+    clearInterval(parleT);
+    /* Fin réelle de la lecture (VX.active), sinon durée estimée. */
+    parleT = setInterval(() => { if (!VX.active || Date.now() - t0 > max) { clearInterval(parleT); fin(); } }, 250);
+  }
+
+  /* ---------- Événements de l'appli (lecture seule du DOM : rien n'est modifié) ---------- */
+  function apresClic(e) {
+    const b = e.target && e.target.closest ? e.target.closest("[data-act]") : null; if (!b) return;
+    const a = b.dataset.act;
+    setTimeout(() => sur(() => {
+      if (a === "vx-mic") {
+        if (b.getAttribute("aria-pressed") === "true") { setEmo("ecoute"); const iv = setInterval(() => { if (b.getAttribute("aria-pressed") !== "true" || !b.isConnected) { clearInterval(iv); if (emo === "ecoute") setEmo(emoRepos()); } }, 400); }
+      } else if (a === "qz-pick") {
+        if ($("#app .qfb b.g")) setEmo("content", 2500); else if ($("#app .qfb b.r")) setEmo("encourage", 3000);
+      } else if (a === "qz-next") {
+        const r = $("#app .result.score");
+        if (r) { const ok = r.classList.contains("ok") || /Parfait|Très bien/.test(r.textContent); if (ok) { setEmo("fier"); if (dehors) bras(() => setEmo(emoRepos())); else setTimeout(() => setEmo(emoRepos()), 3500); } else setEmo("encourage", 3000); }
+      } else if (a === "sugg") cherche();
+    }), 80);
+  }
+  let chT = 0;
+  function cherche() {
+    const i = $("#q"); if (!i) return;
+    clearTimeout(chT);
+    if (!i.value.trim()) { setEcran(""); setEmo(emoRepos()); return; }
+    if (emo !== "reflechit") setEmo("reflechit");
+    if (ecranTemp !== "jauge") setEcran("jauge");
+    chT = setTimeout(() => sur(() => { setEcran(""); if ($("#res .empty")) setEmo("desole", 3000); else setEmo(emoRepos()); }), 900);
+  }
+  function surSaisie(e) { if (e.target && e.target.id === "q") sur(cherche); }
+  function surDefil() {
+    const w = $("#cp-gr-w"), d = $("#cp-bul");
+    if (force) bulleFerme();
+    if (w) w.classList.add("cp-cache");
+    if (d && d.isConnected) d.classList.add("cp-cache");
+    clearTimeout(scrT);
+    scrT = setTimeout(() => sur(() => { const d2 = $("#cp-bul"); if (d2) d2.classList.remove("cp-cache"); replacer(); }), 220);
+  }
+  const plus = () => { clearTimeout(plT); plT = setTimeout(() => sur(replacer), 400); };
+  function surVideo(e) { if (e.target && e.target.tagName === "VIDEO") sur(() => { const av = sec; sec = "videos"; robots().forEach((s) => dessiner(s, true)); const v = e.target; const back = () => sur(() => { if (sec === "videos") { sec = av; robots().forEach((s) => dessiner(s, true)); } }); v.addEventListener("pause", back, { once: true }); v.addEventListener("ended", back, { once: true }); }); }
+
+  /* Toute erreur reste dans le module : l'appli continue. */
+  function sur(fn) { try { fn(); } catch (e) { try { console.warn("Compagnon :", e); } catch (er) { /* rien */ } } }
+
+  /* ---------- Points d'entrée ---------- */
+  function init(ctx) {
+    if (on) return;
+    if (!ctx || !ctx.store || !ctx.store.get("compagnon", 0)) return;
+    X = ctx;
+    if (!creer()) return;
+    on = true;
+    document.addEventListener("click", apresClic);
+    document.addEventListener("input", surSaisie);
+    window.addEventListener("scroll", surDefil, { passive: true });
+    window.addEventListener("resize", plus);
+    document.addEventListener("play", surVideo, true);
+    mo = new MutationObserver(plus);
+    const ap = $("#app"); if (ap) mo.observe(ap, { childList: true, subtree: true });
+    if (ctx.tok) page(ctx.tok, ctx.page, true);
+    setEmo("bonjour", 2000);
+  }
+  function page(t, pg, premier) {
+    if (!on) return;
+    const s = sectionDe(t || "accueil", pg);
+    const chg = s !== sec;
+    tok = t; sec = s; ecranTemp = "";
+    bulleFerme();
+    robots().forEach((svg) => dessiner(svg, chg && !premier));
+    if (!/^(?:bonjour|parle|ecoute)$/.test(emo)) setEmo(emoRepos());
+    setTimeout(() => sur(() => replacer(true)), 120);
+  }
+  function detruire() {
+    if (!on) return;
+    on = false; dehors = false; attente = false; enMouv = false;
+    document.removeEventListener("click", apresClic);
+    document.removeEventListener("input", surSaisie);
+    window.removeEventListener("scroll", surDefil);
+    window.removeEventListener("resize", plus);
+    document.removeEventListener("play", surVideo, true);
+    if (mo) mo.disconnect();
+    clearTimeout(emoT); clearTimeout(bullT); clearTimeout(scrT); clearTimeout(plT); clearInterval(parleT);
+    { const tp = $(".top-in"); if (tp) tp.classList.remove("cp-avec"); }
+    ["#cp-ec", "#cp-gr-w", "#cp-bul", "#cp-defs", "#cp-css"].forEach((s) => { const e = $(s); if (e) e.remove(); });
+  }
+  return {
+    init: (c) => sur(() => init(c)),
+    page: (t, pg) => { if (on) sur(() => page(t, pg)); },
+    detruire: () => sur(detruire),
+    get on() { return on; },
+  };
+})();
+
 /* app.js */
 /* Mémo SSIAP : application (routeur, pages, recherche, outils, quiz). Aucune dépendance externe. */
 const APP = (() => {
@@ -29415,6 +29940,8 @@ const APP = (() => {
       <section class="sec about"><h2 class="lbl g">Affichage</h2>
         <div class="chips"><button class="btn ghost" data-act="theme">${icon("auto")}Thème : ${THEME_L[theme]}</button><button class="btn ghost" data-act="size">${icon("texte")}Texte ${SIZE_L[size]}</button></div>
         <div class="chips" style="margin-top:8px"><button class="btn ghost" data-act="nuit-tg">${icon("lune")}Ronde de nuit : ${nuit ? "activée" : "désactivée"}</button><button class="btn ghost" data-act="xl-tg">${icon("texte")}Boutons de réponse : ${xl ? "très grands" : "normaux"}</button></div>
+        <div class="chips" style="margin-top:8px"><button class="btn ghost" data-act="cp-tg">${icon("extincteur")}Compagnon : ${store.get("compagnon", 0) ? "activé" : "désactivé"}</button></div>
+        <p class="small muted" style="margin:6px 0 0">Le compagnon est un petit robot extincteur rangé dans l’écusson, en haut à droite. Touchez l’écusson : il sort et propose les pages utiles. Désactivé, il n’apparaît pas.</p>
       </section>
       <section class="sec about"><h2 class="lbl">Mes données</h2>
         <p>Favoris, numéros, rapports, planning, résultats du quiz et réglages sont enregistrés seulement sur cet appareil.</p>
@@ -32083,14 +32610,18 @@ function jChar(o = {}) {
     const miseSecA = () => st({ door: "closed", clapet: "closed", vent: "off", issue: "unlock", us: "securite" }, ["door", "clapet", "vent", "issue", "cmsi"], "Le CMSI met la zone en sécurité : la porte coupe-feu se ferme, le clapet se ferme, la ventilation s’arrête, les issues de secours se déverrouillent.", "US : voyants rouges fixes, les DAS sont en position de sécurité. Le volet de désenfumage du couloir ne s’ouvre automatiquement que si le règlement du type d’établissement l’impose.", "Il voit les voyants changer.", "MS 60 § 1 et § 2");
     const leveeDoute = () => st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip (le voyant reste allumé) et monte vérifier la zone 3, en restant joignable comme le prévoient les consignes.", "Le voyant FEU reste allumé tant que le tableau n’est pas réarmé.", "Il part en levée de doute.", "MS 61 c", qDoute);
     const AGS = c.ags ? " C’est une alarme générale sélective : le personnel désigné est prévenu et organise l’évacuation (MS 61, MS 63)." : "";
+    const EVAC = c.ags ? " Le personnel désigné, seul à reconnaître ce signal, organise l’évacuation des occupants (U 45 § 2, J 37 § 2)." : " Le public évacue.";
+    const ISSUES = () => S.some((x) => x.s.issue === "unlock") ? " Les issues de secours sont déjà déverrouillées depuis la détection (MS 60 § 2)." : cat === "" ? " Les issues de secours s’ouvrent à la main, de l’intérieur. Si le site a des issues verrouillées par ventouse (accord de la commission de sécurité), elles doivent se déverrouiller dès l’alarme générale (CO 46 § 2, MS 60 § 2)." : " Les issues de secours se déverrouillent.";
+    const ISU0 = cat === "" ? " Les issues de secours s’ouvrent à la main, de l’intérieur. Si le site a des issues verrouillées par ventouse (accord de la commission de sécurité), elles doivent se déverrouiller dès l’alarme générale (CO 46 § 2, MS 60 § 2)." : "";
     const generale = (mode, auto, q) => {
       const das = mode === "cmsi" ? { door: "closed", clapet: "closed", vent: "off", us: "securite" } : mode === "dcs" ? { door: "closed", clapet: "closed", vent: "off" } : mode === "de" ? { door: "closed" } : {};
       const hl = ["diff", "issue"].concat(mode === "cmsi" ? ["door", "clapet", "cmsi"] : mode === "dcs" ? ["door", "clapet", "cmsi"] : mode === "de" ? ["door"] : []);
       const t1 = mode === "cmsi" ? " Le CMSI met les DAS en sécurité : portes fermées, clapets fermés, ventilation arrêtée." : mode === "dcs" ? " En catégorie C, le DCS reçoit l’ordre de l’équipement d’alarme et met les DAS en sécurité (non vérifié : la norme NF S 61-931, payante, dit si cette commande est automatique ou faite à la main au DCS ; voyez le dossier du SSI de votre site)." : mode === "de" ? " En catégories D et E, l’alarme ne peut commander que les portes à fermeture automatique et le déverrouillage des issues (MS 60 § 3) : les autres DAS se commandent à la main." : "";
-      st(Object.assign({ ag: 1, tempo: 0, evac: 1, issue: "unlock" }, das), hl, "Alarme générale : les diffuseurs sonnent et les flashs clignotent. Les issues de secours se déverrouillent. Le public évacue." + AGS + t1,
+      const isu = ISSUES();
+      st(Object.assign({ ag: 1, tempo: 0, evac: 1 }, cat === "" ? {} : { issue: "unlock" }, das), cat === "" ? hl.filter((k) => k !== "issue") : hl, "Alarme générale : les diffuseurs sonnent" + (al === "2b" ? " (ici des blocs autonomes d’alarme sonore : un bloc principal Pr et des blocs satellites Sa)" : "") + " et les flashs clignotent." + isu + EVAC + AGS + t1,
         (auto ? "Alarme générale lancée automatiquement, sans temporisation." : "Alarme générale en cours, lancée à la main au tableau (MS 66 § 4).") + (mode === "cmsi" || mode === "dcs" ? " Sur votre site, le moment exact où chaque DAS bascule est écrit dans le dossier du SSI." : ""), auto ? "Il part vérifier et alerte les pompiers." : "Il déclenche l’alarme générale et alerte les pompiers.", "MS 60 § 2, MS 61 c, MS 64 § 3" + (auto ? ", " + c.ref : ", MS 66 § 4"), q === undefined ? qFeu : q);
     };
-    const agImm = () => st({ ag: 1, tempo: 0, evac: 1, issue: "unlock" }, ["diff", "issue"], "Pas de temporisation pour ce bâtiment : l’alarme générale part tout de suite. Les diffuseurs sonnent, les flashs clignotent, les issues de secours se déverrouillent et le public évacue." + AGS, "Alarme générale lancée automatiquement, sans temporisation.", "Il part vérifier sur place et prévient sa hiérarchie.", c.ref);
+    const agImm = () => st({ ag: 1, tempo: 0, evac: 1, issue: "unlock" }, ["diff", "issue"], "Pas de temporisation pour ce bâtiment : l’alarme générale part tout de suite. Les diffuseurs sonnent, les flashs clignotent, les issues de secours " + (S.some((x) => x.s.issue === "unlock") ? "sont déjà déverrouillées depuis la détection (MS 60 § 2)." : "se déverrouillent.") + EVAC + AGS, "Alarme générale lancée automatiquement, sans temporisation.", "Il part vérifier sur place et prévient sa hiérarchie.", c.ref);
     const pompiers = () => st({ pomp: 1 }, ["pomp", "agent"], "Les sapeurs-pompiers sont appelés (18 ou 112).", "Pas de changement au tableau.", "Selon les consignes du site : attaque du feu avec un extincteur si c’est sans danger, aide à l’évacuation, accueil et guidage des secours.", "MS 70 § 1");
     const escalier = () => st({ exu: "open" }, ["exu"], "Si c’est nécessaire, le désenfumage de l’escalier est commandé à la main.", "Commande manuelle de désenfumage.", "Il agit selon les consignes du site.", "MS 60 § 1", qEsc);
     if (c.v) st({}, [], "Votre bâtiment : " + reqLab(c.v) + (c.v.ssi === "CDE" ? " (ici : catégorie " + cat + ")" : "") + ".", "", "Il connaît le SSI de son site et son fonctionnement.", c.ref, { p: "Pour ce bâtiment, que demande le règlement ?", c: [reqLab(c.v)].concat(shuffle(["SSI de catégorie A · alarme de type 1", "SSI de catégorie B · alarme de type 2a", "SSI de catégorie C, D ou E · alarme de type 2b", "Pas de catégorie de SSI imposée · alarme de type 3", "Pas de catégorie de SSI imposée · alarme de type 4"].filter((x) => x !== reqLab(c.v) && x !== reqLab(c.v).replace(" avec alarme générale sélective", ""))).slice(0, 2)), x: "Règle du type d’établissement : " + c.ref + "." });
@@ -32109,7 +32640,7 @@ function jChar(o = {}) {
         if (c.dmDas && cat === "A") { st({ door: "closed", clapet: "closed", vent: "off", issue: "unlock", us: "securite" }, ["door", "clapet", "vent", "issue", "cmsi"], "Le déclencheur manuel lance tout de suite la mise en sécurité, sauf le désenfumage.", "US : DAS en sécurité.", "Il voit les voyants changer.", "J 37 § 3"); leveeDoute(); generale("none"); }
         else { leveeDoute(); generale(dasMode); }
       } else {
-        st(Object.assign({ dm: 1, ag: 1, evac: 1, issue: "unlock" }, dasMode === "de" ? { door: "closed" } : {}), ["dm", "diff", "issue"].concat(dasMode === "de" ? ["door"] : []), al === "3" ? "Elle appuie : les blocs autonomes d’alarme sonnent tout de suite dans le bâtiment. C’est l’alarme générale : tout le monde sort." : "Elle appuie : le dispositif sonore autonome sonne tout de suite. C’est l’alarme générale : tout le monde sort.",
+        st(Object.assign({ dm: 1, ag: 1, evac: 1 }, cat === "" ? {} : { issue: "unlock" }, dasMode === "de" ? { door: "closed" } : {}), ["dm", "diff"].concat(cat === "" ? [] : ["issue"], dasMode === "de" ? ["door"] : []), al === "3" ? "Elle appuie : les blocs autonomes d’alarme sonnent tout de suite dans le bâtiment. C’est l’alarme générale : tout le monde sort." + ISU0 : "Elle appuie : le dispositif sonore autonome sonne tout de suite. C’est l’alarme générale : tout le monde sort." + ISU0,
           "Pas de tableau ni de temporisation avec ce type d’alarme (MS 62 § 2)." + (dasMode === "de" ? " En catégories D et E, l’alarme peut seulement fermer les portes à fermeture automatique et déverrouiller les issues (MS 60 § 3)." : " Le règlement n’impose ici qu’un équipement d’alarme : ce qu’il commande en plus dépend de l’installation du site.") + (c.libre ? " Ici l’exploitant choisit son alarme (PE 27 § 2) : exemple d’un type 4." : ""), "L’agent entend l’alarme et part voir d’où elle vient.", "MS 60 § 3, MS 62 § 2",
           { p: "Alarme de type " + al + " : que se passe-t-il quand on appuie sur le déclencheur ?", c: ["L’alarme générale sonne tout de suite, sans temporisation", "L’alarme restreinte sonne au poste pendant 5 minutes", "Rien, il faut appeler le poste"], x: "Seuls les équipements d’alarme de types 1, 2a et 2b ont une temporisation (MS 62 § 2)." });
         if (dasMode === "de") st({ agent: "zone", clapet: "closed" }, ["agent", "clapet"], "L’agent arrive sur place et confirme le feu. Les autres DAS (clapets, désenfumage) se commandent à la main avec le " + (cat === "D" ? "DCMR" : "DCM") + ".", "Commandes à la main.", "Il alerte les pompiers et suit les consignes.", "MS 60 § 3");
@@ -32123,6 +32654,7 @@ function jChar(o = {}) {
       else { miseSecA(); leveeDoute(); }
       st({ agent: "zone" }, ["agent"], "Sur place, l’agent ne voit que de la poussière de travaux, aucune fumée de feu.", tempDet ? "Le voyant FEU est toujours allumé, la temporisation continue." : "Le voyant FEU est toujours allumé. Ici, l’alarme générale est déjà partie : la fin de l’alarme et le retour des occupants se décident selon les consignes du site.", tempDet ? "Il doit agir avant la fin de la temporisation." : "Il prévient tout de suite le chef d’équipe et suit les consignes du site.", "MS 61 c",
         { p: "Aucun feu, seulement de la poussière. Que fait l’agent ?", c: ["Il prévient le chef d’équipe, fait réarmer et remettre les DAS en attente, puis écrit en main courante", "Il laisse l’alarme générale partir", "Il met la zone hors service sans rien dire"], x: "Déclenchement intempestif (MS 61 c). Il faut aussi éviter les fausses alarmes (MS 57 § 2). Les gestes exacts sont dans la fiche « Réarmement du SSI » et les consignes du site." });
+      if (!tempDet) st({ ag: 0, evac: 0 }, ["diff"], "Avec l’accord du chef d’équipe, l’agent arrête l’alarme générale au tableau ; les occupants reviennent selon les consignes du site.", "Alarme générale arrêtée, le voyant FEU reste allumé.", "Il arrête l’alarme selon son niveau d’accès.", "MS 61 c");
       st({ smoke: 0, det: 0, ecs: "veille", tempo: 0, agent: "poste" }, ["ecs"], tempDet ? "Avec l’accord du chef d’équipe, le tableau est réarmé : le voyant FEU s’éteint et la temporisation s’arrête." : "Avec l’accord du chef d’équipe, le tableau est réarmé : le voyant FEU s’éteint.", "Retour en veille du tableau.", "Il réarme selon son niveau d’accès.", "MS 61 c");
       st({ door: "open", clapet: "open", vent: "on", issue: "lock", us: "attente" }, ["cmsi", "door", "clapet", "issue"], "Les DAS sont remis en position d’attente au CMSI. Certains se remettent à la main sur place, par exemple la porte coupe-feu reposée sur sa ventouse.", "US : voyants verts, DAS en attente.", "Il note l’heure, la zone, la cause et les personnes prévenues en main courante.", "");
     } else if (ev === "porte") {
@@ -32134,7 +32666,7 @@ function jChar(o = {}) {
       if (tempDet) generale("none"); pompiers();
     } else if (ev === "sprink") {
       debutFeu(); restreinte("det"); if (tempDet) miseSecA(); else generale("cmsi", true, null);
-      st({ volet: "open" }, ["volet"], "Quand le bâtiment a un désenfumage commandé par le SSI de catégorie A, il est commandé avant que l’extinction automatique à eau ne se déclenche.", "US : désenfumage en sécurité.", "Il surveille le tableau.", "DF 3 § 2");
+      st({ volet: "open" }, ["volet"], "Quand le bâtiment a un désenfumage commandé par le SSI de catégorie A, il est commandé avant que l’extinction automatique à eau ne se déclenche. Le simulateur montre ce cas. Sur votre site, le dossier du SSI dit si le volet est commandé par la détection (MS 60 § 1). Ce n’est pas le sprinkleur qui ouvre le désenfumage : celui-ci doit être commandé avant lui (DF 3 § 2).", "US : désenfumage en sécurité.", "Il surveille le tableau.", "DF 3 § 2");
       st({ spk: "open", cloche: 1 }, ["spk", "pc"], "La chaleur fait éclater l’ampoule de la tête de sprinkleur au-dessus du feu : seule cette tête s’ouvre et arrose. L’eau qui coule fait sonner la cloche du poste de contrôle.", "Alarme d’écoulement d’eau reportée au poste de sécurité.", "Il ne ferme aucune vanne sans autorisation.", "",
         { p: "Combien de têtes de sprinkleur s’ouvrent ?", c: ["Seulement celles chauffées par le feu", "Toutes les têtes du bâtiment", "Toutes les têtes de l’étage"], x: "Seules les têtes exposées à la chaleur s’ouvrent (fiche « Sprinkleurs »)." });
       if (tempDet) { leveeDoute(); generale("none"); } else st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu et guide les secours.", "MS 61 c");
@@ -32392,8 +32924,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     [/^Le déclencheur envoie/, "Le bouton rouge (déclencheur manuel) prévient tout de suite le tableau du poste de sécurité."],
     [/^Le CMSI met la zone en sécurité/, "Le tableau (CMSI) protège l’endroit signalé : les portes coupe-feu se ferment, les tuyaux d’air se ferment (clapets), la ventilation s’arrête et les issues de secours se déverrouillent."],
     [/^L’agent arrête le bip \(le voyant reste allumé\)/, "L’agent de sécurité arrête le bip et va voir sur place s’il y a vraiment un feu (levée de doute)."],
-    [/^Alarme générale : les diffuseurs/, (m, q) => "La sirène sonne et les flashs clignotent (alarme générale) : tout le monde sort. Les issues de secours se déverrouillent." + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "") + (/Le CMSI met les DAS/.test(q) ? " Le tableau ferme aussi les portes coupe-feu et les clapets, et arrête la ventilation (mise en sécurité des DAS)." : /En catégorie C/.test(q) ? " Le boîtier de commande (DCS) met aussi le bâtiment en sécurité ; selon le site, c’est automatique ou fait à la main." : /En catégories D et E/.test(q) ? " Ici, l’alarme peut seulement fermer les portes et déverrouiller les issues ; le reste se commande à la main." : "")],
-    [/^Pas de temporisation pour ce bâtiment : l’alarme générale part/, (m, q) => "Dans ce bâtiment, on n’attend pas : la sirène sonne tout de suite (pas de temporisation). Les flashs clignotent, les issues de secours se déverrouillent et tout le monde sort." + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "")],
+    [/^Alarme générale : les diffuseurs/, (m, q) => "La sirène sonne et les flashs clignotent (alarme générale) : " + (/sélective/.test(q) ? "une alarme spéciale prévient le personnel, seul à la reconnaître, et c’est lui qui fait sortir les gens." : "tout le monde sort.") + (/déjà déverrouillées/.test(q) ? " Les issues de secours sont déjà ouvertes depuis que le détecteur a senti la fumée." : /s’ouvrent à la main/.test(q) ? " Les issues de secours s’ouvrent à la main, de l’intérieur." : " Les issues de secours se déverrouillent.") + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "") + (/Le CMSI met les DAS/.test(q) ? " Le tableau ferme aussi les portes coupe-feu et les clapets, et arrête la ventilation (mise en sécurité des DAS)." : /En catégorie C/.test(q) ? " Le boîtier de commande (DCS) met aussi le bâtiment en sécurité ; selon le site, c’est automatique ou fait à la main." : /En catégories D et E/.test(q) ? " Ici, l’alarme peut seulement fermer les portes et déverrouiller les issues ; le reste se commande à la main." : "")],
+    [/^Pas de temporisation pour ce bâtiment : l’alarme générale part/, (m, q) => "Dans ce bâtiment, on n’attend pas : la sirène sonne tout de suite (pas de temporisation). Les flashs clignotent, les issues de secours " + (/déjà déverrouillées/.test(q) ? "sont déjà ouvertes" : "se déverrouillent") + (/sélective/.test(q) ? " et le personnel fait sortir les gens." : " et tout le monde sort.") + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "")],
+    [/^Avec l’accord du chef d’équipe, l’agent arrête l’alarme générale/, "Avec l’accord du chef, l’agent arrête la sirène. Les gens reviennent quand les consignes le permettent."],
     [/^Les sapeurs-pompiers sont appelés/, "On appelle les pompiers : le 18 ou le 112."],
     [/^Si c’est nécessaire, le désenfumage de l’escalier/, "S’il le faut, on ouvre à la main la trappe à fumée de l’escalier (exutoire de désenfumage). Elle ne s’ouvre jamais toute seule."],
     [/^L’agent arrête le bip et monte voir la zone 3/, "L’agent de sécurité arrête le bip et va voir sur place."],
@@ -32411,7 +32944,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     [/^Quelqu’un a glissé une cale/, "Quelqu’un a coincé une porte coupe-feu avec une cale. Un feu commence dans le bureau."],
     [/^L’ordre est donné, mais la cale bloque/, "Le tableau demande de fermer la porte, mais la cale la bloque : elle reste ouverte et la fumée peut passer dans le couloir."],
     [/^En levée de doute, l’agent enlève la cale/, "En allant voir sur place (levée de doute), l’agent enlève la cale : la porte se ferme."],
-    [/^Quand le bâtiment a un désenfumage commandé/, "Quand les trappes à fumée sont commandées par le tableau (SSI de catégorie A), elles s’ouvrent avant que l’arrosage automatique démarre (sprinkleurs)."],
+    [/^Quand le bâtiment a un désenfumage commandé/, "Quand les trappes à fumée sont commandées par le tableau (SSI de catégorie A), elles s’ouvrent avant que l’arrosage automatique démarre (sprinkleurs). Sur votre site, le dossier du SSI dit si c’est le cas."],
     [/^La chaleur fait éclater l’ampoule/, "La chaleur casse la petite ampoule de l’arroseur du plafond (tête de sprinkleur), juste au-dessus du feu : lui seul arrose. L’eau qui coule fait sonner une cloche (poste de contrôle)."],
     [/^Des ouvriers coupent par erreur le fil/, "Des ouvriers coupent par erreur le fil d’un détecteur de fumée."],
     [/^Le tableau voit qu’il ne peut plus surveiller/, "Le tableau remarque qu’il ne peut plus surveiller cet endroit : il allume un voyant jaune de panne (dérangement) et fait bip."],
@@ -32441,7 +32974,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       "s-trap": s.volet === "open" || s.exu === "open" ? ["ouvert", RED] : null, "s-issue": s.issue === "unlock" ? ["déverrouillée", RED] : null,
     } : {
       "s-det": s.det ? [s.fire || !s.smoke ? "il a senti la fumée" : "il a réagi à la poussière", RED] : null, "s-dm": s.dm ? ["quelqu’un a appuyé", RED] : null,
-      "s-tab": tab ? (s.ecs === "feu" ? [s.ag ? "ALARME : TOUT LE MONDE SORT" : s.tempo ? "FEU SIGNALÉ · 5 MIN POUR VÉRIFIER" : "FEU SIGNALÉ", RED] : s.ecs === "derang" ? ["PANNE : VOYANT JAUNE", YEL] : s.ecs === "secteur" ? ["PLUS DE COURANT : VOYANT JAUNE", YEL] : s.ag ? ["ALARME : TOUT LE MONDE SORT", RED] : null) : null,
+      "s-tab": tab ? (s.ecs === "feu" ? [s.ag ? (c.ags ? "ALARME : LE PERSONNEL FAIT SORTIR LES GENS" : "ALARME : TOUT LE MONDE SORT") : s.tempo ? "FEU SIGNALÉ · 5 MIN POUR VÉRIFIER" : "FEU SIGNALÉ", RED] : s.ecs === "derang" ? ["PANNE : VOYANT JAUNE", YEL] : s.ecs === "secteur" ? ["PLUS DE COURANT : VOYANT JAUNE", YEL] : s.ag ? ["ALARME : TOUT LE MONDE SORT", RED] : null) : null,
       "s-agent": s.agent === "zone" ? ["parti voir sur place", YEL] : null, "s-pomp": s.pomp ? ["appelés", RED] : null, "s-aes": s.power === "off" && tab ? ["elle prend le relais", YEL] : null,
       "s-sir": s.ag ? ["ça sonne !", RED] : null, "s-door": s.door === "closed" ? ["fermées", RED] : s.door === "stuck" ? ["bloquée par une cale", YEL] : null,
       "s-trap": s.volet === "open" || s.exu === "open" ? ["ouvertes", RED] : null, "s-issue": s.issue === "unlock" ? ["déverrouillées", RED] : null,
@@ -33088,6 +33621,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     $(".brand-t small").hidden = !page.home;
     if (page.after) page.after();
     if (page.update) page.update();
+    try { CPN.page(t, page); } catch (e) { /* le compagnon ne bloque jamais l’appli */ }
     const y = keepScroll ? window.scrollY : navForward || !(t in scrolls) ? 0 : scrolls[t];
     window.scrollTo(0, y);
     if (pendingMark && (t.startsWith("f-") || t.startsWith("p-"))) applyMarks(pendingMark);
@@ -33321,6 +33855,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       }
       case "theme": theme = theme === "sombre" ? "clair" : theme === "clair" ? "auto" : "sombre"; store.set("theme", theme); applyTheme(); toast(`Thème ${THEME_L[theme]}.`); break;
       case "nuit-tg": nuitToggle(); break;
+      case "cp-tg": { const v = !store.get("compagnon", 0); store.set("compagnon", v ? 1 : 0); try { if (v) CPN.init({ store, VX, go, toast, tok: current(), page: cur }); else CPN.detruire(); } catch (e) { /* rien */ } rerender(); toast(v ? "Compagnon activé : touchez l’écusson en haut à droite." : "Compagnon désactivé."); break; }
       case "xl-tg": xlToggle(); break;
       case "ssi-quiz": startQuiz("ssi"); navTo("o-quiz"); window.scrollTo(0, 0); break;
       case "ssi-sim": simAct(b.dataset.v); break;
@@ -34054,6 +34589,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     { const t0 = current(); stack.length = 0; if (TOPS.has(t0)) { stack.push("accueil"); if (t0 !== "accueil") stack.push(t0); } else stack.push(t0); }
     render();
     navArm();
+    try { CPN.init({ store, VX, go, toast, tok: current(), page: cur }); } catch (e) { /* rien */ }
     if (store.get("avis-accepte", 0) !== D.meta.avisVersion) avisOuvrir(); else if (PRIV.get().reseau === null) privQuestion("reseau");
     privDemarrer();
     setTimeout(() => veilleFetch(6 * 3600e3), 1500);
