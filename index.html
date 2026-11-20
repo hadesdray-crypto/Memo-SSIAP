@@ -1284,6 +1284,21 @@ fieldset.field legend { font-weight: 600; font-size: .92rem; padding: 0; margin-
 
 /* ---------- Lecture à voix haute ---------- */
 .say-row { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Choix de la voix : petit bouton carré rouge à côté de « Écouter l'accueil », et fenêtre des quatre voix. */
+.btn.vx-choix { flex: none; width: 52px; min-width: 52px; min-height: 48px; padding: 4px 2px; flex-direction: column; gap: 1px; }
+.btn.vx-choix span, .verif .btn.vx-choix span { font-size: .7rem; line-height: 1; font-weight: 700; color: inherit; }
+.vx-acc { align-items: center; }
+.vx-liste { display: grid; gap: 8px; margin: 10px 0; }
+.vx-opt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 10px 12px; text-align: left; border-radius: 12px; border: 2px solid var(--line-2); background: var(--surface); color: var(--ink); }
+.vx-opt .ico { flex: none; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--red-bg); color: var(--on-red); }
+.vx-opt .ico .ic { width: 1.3rem; height: 1.3rem; }
+.vx-opt .t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.vx-opt .t b { font-weight: 700; }
+.vx-opt .t span { font-size: .85rem; color: var(--ink-2); overflow-wrap: anywhere; }
+.vx-opt.on { border-color: var(--red-bg); box-shadow: inset 0 0 0 1px var(--red-bg); }
+.vx-reg { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.vx-reg .t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.vx-reg .t span { font-size: .85rem; color: var(--ink-2); overflow-wrap: anywhere; }
 .say-btn { align-self: flex-start; }
 .say { width: 46px; height: 46px; flex: none; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--red); display: grid; place-items: center; }
 .say .ic { width: 1.3rem; height: 1.3rem; }
@@ -1513,6 +1528,14 @@ details summary { cursor: pointer; }
 .tw-hsep { stroke: var(--tw); stroke-width: 1.5; vector-effect: non-scaling-stroke; fill: none; opacity: .5; }
 .tw-web { fill: none; stroke: var(--sv-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .tw-var .btn { min-height: 36px; padding: 4px 10px; font-size: .85rem; }
+.tw-mots .btn { flex: 1; justify-content: center; }
+.tw-svg .tw-zt { font-weight: 800; fill: var(--sv-ink-2); }
+.tw-ar { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.tw-ar.tw-arl { stroke: var(--tw); } .tw-arh.tw-arl { fill: var(--tw); }
+.tw-ar.tw-aro { stroke: var(--sv-line); } .tw-arh.tw-aro { fill: var(--sv-line); }
+.tw-ar.tw-ara { stroke: var(--sv-red); } .tw-arh.tw-ara { fill: var(--sv-red); }
+.tw-vs .tw-m .tw-bg { stroke-width: 2.5; }
+.tw-nb { fill: var(--surface); stroke: var(--sv-line); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 /* variante 1, épurée : pas de cadres de zones, fils plus épais, phrase de rôle seulement de près */
 .tw-v1 .tw-zone { fill: none; stroke: none; }
 .tw-v1 .tw-m .tw-bg { stroke-width: 1.5; }
@@ -24886,7 +24909,7 @@ function VOIX(h) {
 
   /* ---------- Voix disponibles ---------- */
   let voices = [];
-  const load = () => { try { voices = (SS.getVoices() || []).slice(); } catch (e) { voices = []; } };
+  const load = (ev) => { try { voices = (SS.getVoices() || []).slice(); } catch (e) { voices = []; } if (ev) { try { document.dispatchEvent(new Event("vx-voix")); } catch (e) { /* rien */ } } };
   if (webOk) {
     load();
     try { SS.addEventListener("voiceschanged", load); } catch (e) { SS.onvoiceschanged = load; }
@@ -24909,8 +24932,68 @@ function VOIX(h) {
   let natV = [];
   const natLoad = () => (NAT ? natCall("getSupportedVoices").then((r) => { natV = ((r && r.voices) || []).map((v, i) => Object.assign({}, v, { i, nat: true })).filter((v) => /^fr(?:$|[-_])/i.test(v.lang || "")); try { document.dispatchEvent(new Event("vx-voix")); } catch (e) { /* rien */ } }).catch(() => { natV = []; }) : Promise.resolve());
   /* On n'impose une voix au moteur que si elle a été choisie dans les Réglages ou si c'est une voix d'homme reconnue ; sinon le téléphone garde sa voix habituelle. */
-  const natOpt = () => { const v = natV.length ? pick(natV) : null; return v && (v.voiceURI === prefs.uri || genre(v) === "m") ? { voice: v.i } : {}; };
+  const natOpt = () => { const v = reglage().v; return v && v.nat ? { voice: v.i } : {}; };
   if (NAT) natLoad();
+
+  /* ---------- Les quatre voix proposées (fenêtre « Choisir la voix ») ----------
+     Les voix sont celles du téléphone. On propose jusqu'à 2 voix d'homme et 2 voix de femme reconnues par leur nom, puis les autres
+     voix françaises. S'il en manque pour arriver à 4, on ajoute des réglages (hauteur, vitesse) d'une même voix, nommés par leur
+     réglage : on n'écrit jamais « homme » ou « femme » pour une voix dont le genre n'est pas connu. */
+  const N_CHOIX = 4;
+  const VAR = { grave: { p: 0.85, k: 0.94 }, medium: { p: 1, k: 1 }, claire: { p: 1.15, k: 1 }, vive: { p: 1.15, k: 1.1 }, graveSeul: { p: 0.85, k: 1 }, pose: { p: 1, k: 0.9 } };
+  const okNum = (x, a, b, d) => (typeof x === "number" && isFinite(x) && x >= a && x <= b ? x : d);
+  const idChoix = (uri, p, k) => (uri || "defaut") + "|" + p + "|" + k;
+  const cleVoix = (v) => String(v.voiceURI || v.name || "").replace(/-(?:local|network)$/i, "").toLowerCase();
+  const nomBrut = (v) => (v.nat || /^fr-[a-z]{2}-x-/i.test(v.name || "") ? "voix du téléphone, code " + String(v.voiceURI || v.name || "").replace(/^fr-[a-z]{2}-x-/i, "").replace(/-(?:local|network|language)$/i, "") : String(v.name || "")).trim();
+  const detVoix = (v, plus) => [nomBrut(v), plus || "", v.localService === false ? "a besoin d’internet" : ""].filter(Boolean).join(" · ");
+  const listeFr = () => (NAT ? natV : frVoices());
+  /* Le choix enregistré (y compris une voix choisie avec l'ancien réglage, qui ne gardait que la voix). */
+  const gardee = () => (prefs.choix && prefs.choix.id ? prefs.choix : prefs.uri ? { id: idChoix(prefs.uri, 1, 1), uri: prefs.uri, pitch: 1, k: 1, nom: "" } : null);
+  function choix() {
+    const c = gardee(), garde = c ? c.uri : "";
+    const off = navigator.onLine === false;
+    const sc = (v) => (garde && v.voiceURI === garde ? 100 : 0) + (/^fr[-_]fr/i.test(v.lang) ? 4 : /^fr[-_](?:be|ch|lu)/i.test(v.lang) ? 2 : 1) + (v.localService ? 3 : 0) + (v.default ? 1 : 0) - (off && !v.localService ? 20 : 0);
+    const vus = new Set(), L = [];
+    listeFr().slice().sort((a, b) => sc(b) - sc(a)).forEach((v) => { const c = cleVoix(v); if (!v.voiceURI || vus.has(c)) return; vus.add(c); L.push(v); });
+    const M = L.filter((v) => genre(v) === "m").slice(0, 2), F = L.filter((v) => genre(v) === "f").slice(0, 2), N = L.filter((v) => !genre(v));
+    const out = [];
+    const mk = (v, vr, nom, plus, g) => ({ id: idChoix(v ? v.voiceURI : "", vr.p, vr.k), uri: v ? v.voiceURI : "", pitch: vr.p, k: vr.k, nom, det: v ? detVoix(v, plus) : plus || "Voix du téléphone", g: g || "" });
+    const a = (o) => { if (out.length < N_CHOIX && !out.some((x) => x.id === o.id)) out.push(o); };
+    M.forEach((v, i) => a(mk(v, VAR.medium, M.length > 1 ? "Voix d’homme " + (i + 1) : "Voix d’homme", "", "m")));
+    F.forEach((v, i) => a(mk(v, VAR.medium, F.length > 1 ? "Voix de femme " + (i + 1) : "Voix de femme", "", "f")));
+    const nN = Math.min(N.length, N_CHOIX - out.length);
+    N.slice(0, nN).forEach((v, i) => a(mk(v, VAR.medium, nN > 1 ? "Voix du téléphone " + (i + 1) : "Voix du téléphone")));
+    /* Il en manque : une seule voix d'homme (ou de femme) donne un deuxième choix, la même voix réglée autrement. */
+    if (out.length < N_CHOIX && M.length === 1) a(mk(M[0], VAR.grave, "Voix d’homme grave et posée", "même voix, réglée plus grave", "m"));
+    if (out.length < N_CHOIX && F.length === 1) a(mk(F[0], VAR.claire, "Voix de femme claire", "même voix, réglée plus claire", "f"));
+    /* Toujours pas quatre : réglages de la première voix (ou de la voix habituelle du téléphone), nommés par leur réglage. */
+    const base = out.length ? L.find((v) => v.voiceURI === out[0].uri) || null : null;
+    [["grave", "Voix grave posée", "plus grave, un peu plus lente"], ["medium", "Voix médium", "réglage normal"], ["claire", "Voix claire", "plus aiguë"], ["vive", "Voix claire rapide", "plus aiguë, un peu plus rapide"], ["graveSeul", "Voix grave", "plus grave"], ["pose", "Voix médium posée", "un peu plus lente"]]
+      .forEach(([c, nom, plus]) => a(mk(base, VAR[c], nom, base ? "même voix, " + plus : plus)));
+    /* Un choix déjà enregistré reste toujours dans la liste. */
+    if (c && !out.some((x) => x.id === c.id) && (!c.uri || L.some((v) => v.voiceURI === c.uri))) out[out.length - 1] = { id: c.id, uri: c.uri, pitch: c.pitch, k: c.k, nom: c.nom || "Voix enregistrée", det: c.uri ? detVoix(L.find((v) => v.voiceURI === c.uri), "votre choix enregistré") : "votre choix enregistré", g: "" };
+    return out;
+  }
+  /* Voix en service : celle qui a été gardée ; sinon une voix d'homme reconnue ; sinon, quand le téléphone ne dit pas le genre, le réglage grave et posé. */
+  function choixCourant() {
+    const l = choix(), c = gardee();
+    if (c) { const o = l.find((x) => x.id === c.id); if (o) return o; if (prefs.choix) return { id: c.id, uri: c.uri, pitch: c.pitch, k: c.k, nom: c.nom || "Voix enregistrée", det: "", g: "" }; }
+    return l.find((x) => x.g === "m" && x.pitch === 1) || l.find((x) => x.pitch === VAR.grave.p && x.k === VAR.grave.k && !x.g) || l[0];
+  }
+  /* Ce qu'on donne au moteur : la voix, la hauteur et la vitesse (vitesse choisie par l'utilisateur × réglage de la voix). */
+  function reglage(o) {
+    const c = o || choixCourant(), l = listeFr();
+    const v = (c.uri && l.find((x) => x.voiceURI === c.uri)) || (NAT ? null : pick(l.filter((x) => !c.uri || x.voiceURI === c.uri)) || pick(l));
+    return { v: v || null, pitch: okNum(c.pitch, 0.5, 2, 1), k: okNum(c.k, 0.5, 2, 1) };
+  }
+  const debit = (r, k) => Math.round(Math.min(RATE_MAX, Math.max(RATE_MIN, r * k)) * 100) / 100;
+  function setChoix(o) {
+    if (!o) return;
+    prefs.choix = { id: o.id, uri: o.uri || "", pitch: o.pitch, k: o.k, nom: o.nom };
+    prefs.uri = o.uri || "";
+    savePrefs();
+    try { document.dispatchEvent(new Event("vx-voix")); } catch (e) { /* rien */ }
+  }
 
   /* ---------- Texte prononçable ---------- */
   const KEEP = new Set(["SAMU", "SMUR", "AFNOR", "APSAD", "CNAPS", "SDIS", "CODIS", "CERFA", "OTAN", "ONU", "MAC", "NON", "OUI", "FEU", "STOP", "GAZ", "EAU", "TOUT", "PAS", "LES", "DES", "UNE"]);
@@ -25052,7 +25135,8 @@ function VOIX(h) {
     if (NAT) {
       /* Voix du téléphone. Une phrase « lue » en un clin d'œil, sans erreur, veut dire que le moteur n'a rien dit : après 3 fois, on prévient. */
       const t0 = Date.now();
-      natCall("speak", Object.assign({ text: c.t, lang: "fr-FR", rate: prefs.rate, pitch: 1, volume: 1, queueStrategy: 0 }, natOpt()))
+      const rg = reglage();
+      natCall("speak", Object.assign({ text: c.t, lang: "fr-FR", rate: debit(prefs.rate, rg.k), pitch: rg.pitch, volume: 1, queueStrategy: 0 }, rg.v && rg.v.nat ? { voice: rg.v.i } : {}))
         .then(() => {
           if (my !== gen) return;
           if (c.t.length > 25 && Date.now() - t0 < 150) { errs++; if (errs >= 3) { stop(); helpToast("silence"); return; } } else errs = 0;
@@ -25068,9 +25152,10 @@ function VOIX(h) {
     }
     let u;
     try { u = new SpeechSynthesisUtterance(c.t); } catch (e) { stop(); helpToast(); return; }
-    const v = voice();
+    const rg = reglage(), v = rg.v;
     if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "fr-FR";
-    u.rate = prefs.rate;
+    u.rate = debit(prefs.rate, rg.k);
+    u.pitch = rg.pitch;
     let started = false;
     u.onstart = () => { started = true; };
     u.onend = () => { if (my !== gen) return; errs = 0; qi++; speakCur(); };
@@ -25192,17 +25277,18 @@ function VOIX(h) {
     return { moteur: webOk, fr: webOk && frVoices().length > 0, err: webOk ? "" : "absent" };
   }
   /* Essai court avec un résultat : { ok } ou { ok: false, code } */
-  function essai(texte) {
+  function essai(texte, o) {
     cancelNow(); active = false; paused = false; Q = []; highlight(null); bar();
-    const t0 = Date.now();
-    if (NAT) return natCall("speak", Object.assign({ text: texte, lang: "fr-FR", rate: 1, pitch: 1, volume: 1, queueStrategy: 0 }, natOpt())).then(() => ({ ok: true, ms: Date.now() - t0 }), (e) => ({ ok: false, code: codeOf(e) }));
+    const t0 = Date.now(), rg = reglage(o);
+    if (NAT) return natCall("speak", Object.assign({ text: texte, lang: "fr-FR", rate: debit(1, rg.k), pitch: rg.pitch, volume: 1, queueStrategy: 0 }, rg.v && rg.v.nat ? { voice: rg.v.i } : {})).then(() => ({ ok: true, ms: Date.now() - t0 }), (e) => ({ ok: false, code: codeOf(e) }));
     if (!webOk) return Promise.resolve({ ok: false, code: "absent" });
     return new Promise((res) => {
       let u, fini = false, tm = null;
       const fin = (r) => { if (fini) return; fini = true; clearTimeout(tm); res(r); };
       try { u = new SpeechSynthesisUtterance(texte); } catch (e) { fin({ ok: false, code: "absent" }); return; }
-      const v = voice();
+      const v = rg.v;
       if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "fr-FR";
+      u.rate = debit(1, rg.k); u.pitch = rg.pitch;
       u.onend = () => fin({ ok: true, ms: Date.now() - t0 });
       u.onerror = (e) => fin({ ok: false, code: (e && e.error) || "erreur" });
       keep.push(u); if (keep.length > 6) keep.shift();
@@ -25215,14 +25301,14 @@ function VOIX(h) {
   function status() {
     if (NAT) {
       const ok = !nat.sonde || (nat.moteur && nat.fr);
-      const nv = ok && natV.length && natOpt().voice != null ? pick(natV) : null;
+      const nv = ok && natV.length ? reglage().v : null;
       return { ok: true, n: ok ? Math.max(1, natV.length) : 0, v: ok ? nv || { name: "Voix du téléphone", lang: "fr-FR", localService: true } : null, local: nv ? !!nv.localService : true, list: ok ? natV : [], native: true };
     }
-    const list = frVoices(), v = voice();
+    const list = frVoices(), v = reglage().v;
     return { ok: ttsOk, n: list.length, v, local: v ? !!v.localService : false, list };
   }
   const voiceLabel = (v) => { const g = genre(v), code = v.nat ? String(v.voiceURI || "").replace(/^fr-[a-z]{2}-x-/i, "").replace(/-(?:local|network|language)$/i, "") : ""; return `${v.nat ? (g === "m" ? "Voix d’homme" : g === "f" ? "Voix de femme" : "Voix") + (code ? " " + code : "") : v.name}${v.lang ? ` (${v.lang.replace("_", "-")})` : ""}${!v.nat && g ? (g === "m" ? " · voix d’homme" : " · voix de femme") : ""}${v.localService ? "" : " · en ligne"}`; };
-  function setVoice(uri) { prefs.uri = uri || ""; savePrefs(); }
+  function setVoice(uri) { prefs.uri = uri || ""; delete prefs.choix; savePrefs(); }
   function setQuiz(on) { prefs.quiz = !!on; savePrefs(); }
 
   /* ---------- Dictée ---------- */
@@ -25342,7 +25428,7 @@ function VOIX(h) {
   const micHTML = (target, status, labelTxt = "Dicter", cls = "") => `<button type="button" class="mic${cls ? " " + cls : ""}" data-act="vx-mic" data-target="${esc(target)}" data-status="${esc(status)}" data-label="${esc(labelTxt)}" aria-pressed="false">${icon("micro")}<span class="mic-l">${esc(labelTxt)}</span></button>`;
 
   return {
-    ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, status, voiceLabel, genre, setVoice, setRate, stepRate, setQuiz,
+    ttsOk, sttOk, ABSENT, say, chunks, itemsFrom, play, readEl, speak, stop, toggle, next, prev, status, voiceLabel, genre, setVoice, choix, choixCourant, setChoix, setRate, stepRate, setQuiz,
     speedHTML, updSpeed, ratePop, popOpen, rateTxt, rateWord, probe, essai, installer, natif: NAT, isApp,
     get prefs() { return prefs; }, get active() { return active; }, get paused() { return paused; },
     listen, stopMic, toggleMic, micHTML, sttMsg,
@@ -27912,6 +27998,7 @@ const APP = (() => {
     return card(tok(id), "chevron", "", titleOf(id), "");
   };
   const toolCard = (t) => card(t.id, t.ic, t.co, t.t, t.d);
+  const voixBtn = () => `<button type="button" class="btn vx-choix" data-act="voix-ouvrir" aria-label="Changer la voix" title="Changer la voix">${icon("personnes")}<span>Voix</span></button>`;
   const listenBtn = (sel, label, cls = "") => `<button type="button" class="btn say-btn ${cls}" data-act="tts-read" data-sel="${esc(sel)}">${icon("hautparleur")}${label}</button>`;
   const ficheCard = (f) => `<a class="card" href="#f-${f.id}"><span class="t"><b>${tx(f.titre)}</b><span>${tx(trunc(plain(f.clair), 120))}</span></span>${icon("chevron")}</a>`;
   const procCard = (id) => card(id, PR[id].ic, PR[id].co, PR[id].titre, plain(PR[id].clair));
@@ -28441,7 +28528,7 @@ const APP = (() => {
           ${rep && rep.t && rep.titre ? `<a class="card" href="#${esc(rep.t)}"><span class="ico blue">${icon("rappel")}</span><span class="t"><b>Reprendre où j’en étais</b><span>${tx(rep.titre)}</span></span>${icon("chevron")}</a>` : ""}
           <button type="button" class="card" data-act="nuit-tg"><span class="ico amber">${icon("lune")}</span><span class="t"><b>Ronde de nuit${nuit ? " : activée" : ""}</b><span>${nuit ? "Toucher pour revenir à l’affichage normal." : "Écran assombri et texte agrandi, d’un geste."}</span></span></button>
         </div></section>`; })()}
-        ${VX.ttsOk && !store.get("tip-voix", false) ? `<div class="verif tip"><span class="ico">${icon("hautparleur")}</span><span class="t"><b>L’appli peut lire à voix haute</b><span>Touchez le haut-parleur en haut de l’écran pour écouter une page. Les conduites à tenir se lisent aussi étape par étape.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="tts-page">${icon("hautparleur")}Écouter l’accueil</button><button class="btn ghost" data-act="tip-no">J’ai compris</button></span></span></div>` : ""}
+        ${VX.ttsOk && !store.get("tip-voix", false) ? `<div class="verif tip"><span class="ico">${icon("hautparleur")}</span><span class="t"><b>L’appli peut lire à voix haute</b><span>Touchez le haut-parleur en haut de l’écran pour écouter une page. Les conduites à tenir se lisent aussi étape par étape.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="tts-page">${icon("hautparleur")}Écouter l’accueil</button>${voixBtn()}<button class="btn ghost" data-act="tip-no">J’ai compris</button></span></span></div>` : VX.ttsOk ? `<div class="chips vx-acc"><button class="btn" data-act="tts-page">${icon("hautparleur")}Écouter l’accueil</button>${voixBtn()}</div>` : ""}
         ${showInstall ? `<div class="verif">${icon("installer")}<span class="t"><b>Installer l’appli sur cet appareil</b><span>Elle s’ouvre comme une application et reste disponible sans connexion.</span><span class="chips" style="margin-top:8px"><button class="btn" data-act="install">Installer</button><button class="btn ghost" data-act="install-no">Plus tard</button></span></span></div>` : ""}
         <section class="sec">
           <div class="sec-h"><h2 class="lbl">Urgence : appeler</h2><a class="more" href="#urgence">Tous les numéros</a></div>
@@ -28827,12 +28914,11 @@ const APP = (() => {
   }
   function pageReglages() {
     const vs = VX.status(), ia = IAX.cfg;
-    const voiceSel = vs.n && vs.list.length
-     ?`<label class="field"><span>Voix</span><select data-set="voice"><option value="">Automatique (une voix d’homme si l’appareil en indique une)</option>${vs.list.map((v) => `<option value="${esc(v.voiceURI)}"${VX.prefs.uri === v.voiceURI ? " selected" : ""}>${esc(VX.voiceLabel(v))}</option>`).join("")}</select></label>`
-      : "";
+    const vc = vs.ok ? VX.choixCourant() : null;
+    const voiceSel = vc ? `<div class="vx-reg"><span class="t"><b>${tx(vc.nom)}</b><span>${tx(vc.det || "Voix du téléphone")}</span></span><button type="button" class="btn" data-act="voix-ouvrir">${icon("personnes")}Changer la voix</button></div>` : "";
     const voiceSt = !vs.ok ? VX.ABSENT
       : !vs.n ? "Aucune voix française n’est installée sur cet appareil pour le moment : voir ci-dessous comment l’ajouter."
-        : `${vs.n} voix française${vs.n > 1 ? "s" : ""} trouvée${vs.n > 1 ? "s" : ""}. Voix utilisée : ${vs.v ? VX.voiceLabel(vs.v) : "voix par défaut"}${vs.v && vs.v.localService ? ", intégrée au téléphone : elle marche sans internet." : "."}`;
+        : `${vs.n} voix française${vs.n > 1 ? "s" : ""} trouvée${vs.n > 1 ? "s" : ""}. Voix utilisée : ${vc ? vc.nom : "voix par défaut"}${vs.v && vs.v.localService ? ", intégrée au téléphone : elle marche sans internet." : "."}`;
     const sttSt = !VX.sttOk ? "Ce navigateur n’a pas de dictée intégrée : touchez une zone de texte, puis le micro du clavier."
       : "La dictée de l’appli utilise le service vocal du téléphone (Google ou Apple) : elle a souvent besoin d’internet.";
     const html = `<nav class="crumb"><a href="#outils">Outils</a></nav>
@@ -31432,7 +31518,7 @@ function jChar(o = {}) {
     agent: [168, 296, "L’agent SSIAP", "Il surveille le tableau, lève le doute, donne l’alarme, alerte et accueille les secours."],
     pomp: [250, 296, "Sapeurs-pompiers", "Ils doivent être alertés sans retard (MS 70 § 1) : 18 ou 112."],
   };
-  const SIM = { tw: +store.get("ssi-plan") || 1, man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
+  const SIM = { tw: +store.get("ssi-plan") || 1, mots: store.get("ssi-mots") === "metier" || (!store.get("ssi-mots") && store.get("ssi-plan")) ? "metier" : "simple", man: "A", v: 0, cde: "C", ev: "feu-auto", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
   const SSI_LAB = { A: "SSI de catégorie A", B: "SSI de catégorie B", C: "SSI de catégorie C", D: "SSI de catégorie D", E: "SSI de catégorie E", CDE: "SSI de catégorie C, D ou E", "": "Pas de catégorie de SSI imposée" };
   const AL_LAB = (a) => (a === "libre" ? "alarme au choix de l’exploitant" : "alarme de type " + a);
   const RV = (cond, ssi, al, ref, o) => Object.assign({ cond, ssi, al, ref }, o || {});
@@ -31758,7 +31844,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     fire: [2000, 174, 150], det: [2000, 196, 200], dm: [2000, 216, 200], spk: [2000, 236, 160], pc: [2000, 256, 160], issue: [2000, 336, 170], door: [2000, 354, 170], clapet: [2000, 12, 170], vent: [2000, 30, 170], volet: [2000, 48, 170], asc: [2000, 66, 150], exu: [2000, 84, 160], pomp: [2000, 106, 185], report: [2000, 128, 150], secteur: [2000, 150, 165],
   };
   /* Taille du dessin selon la variante choisie (SIM.tw : 1 épurée, 2 toile, 3 blocs complets). */
-  function twDim() { const v2 = SIM.tw === 2, w = v2 ? 4800 : 2800, h = v2 ? 4800 : 4180; if (TW.W !== w || TW.H !== h) { TW.W = w; TW.H = h; TW.s = 0; TW.key = ""; } }
+  function twDim() { const sp = SIM.mots === "simple", v2 = !sp && SIM.tw === 2, w = sp ? 720 : v2 ? 4800 : 2800, h = sp ? 1320 : v2 ? 4800 : 4180; TW.max = sp ? 2.6 : 1.25; TW.cap = sp ? 0.95 : 0.55; if (TW.W !== w || TW.H !== h) { TW.W = w; TW.H = h; TW.s = 0; TW.key = ""; } }
   const twCat = (c) => (c.ssi ? c.ssi : "N");
   const twWrap = (t, n) => { const out = []; let l = ""; String(t).replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ").replace(/§ /g, "§ ").split(" ").forEach((w) => { if (l && (l + " " + w).length > n) { out.push(l); l = w; } else l = l ? l + " " + w : w; }); if (l) out.push(l); return out; };
   /* Ce que ce bâtiment a : « on » présent, « off » pas dans ce bâtiment, « opt » selon le site. Mêmes règles que simSteps. */
@@ -31776,6 +31862,143 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (!c.v) return (f.type === "IGH" ? "IGH : le simulateur montre un exemple de bâtiment de type ERP" : f.type ? "Type " + f.type + " : pas encore dans le simulateur, exemple montré" : "Exemple, sans bâtiment choisi") + " : " + res + ".";
     const lettre = /^[J-Y]$/.test(f.type);
     return "Ce bâtiment : type " + f.type + (lettre && f.cat ? ", " + f.cat + (f.cat === "1" ? "re" : "e") + " catégorie" : "") + (f.som && lettre ? ", locaux à sommeil" : "") + " → " + res + (c.v.ssi === "CDE" ? " (le règlement laisse le choix entre C, D et E)" : "") + " (" + c.ref + ").";
+  }
+  /* ---------- Plan « Mots simples » : dix gros modules, trois zones dans l'ordre de l'histoire, compréhensible par un enfant de 10 ans ---------- */
+  /* place [x, y, largeur, hauteur], pictogramme, nom de tous les jours, phrase « à quoi ça sert », éléments du métier que le module regroupe */
+  const TWS = {
+    "s-det": { b: [16, 50, 322, 174], p: "det", n: "Détecteur de fumée", r: "Il sent tout seul la fumée ou la chaleur et prévient le tableau.", ids: ["det"] },
+    "s-dm": { b: [348, 50, 322, 174], p: "dm", n: "Bouton rouge d’alarme", r: "On appuie dessus quand on voit un feu.", ids: ["dm"] },
+    "s-tab": { b: [16, 312, 654, 142], p: "ecs", n: "Tableau du poste de sécurité", r: "Il reçoit l’alerte, montre où est le feu et lance l’alarme.", ids: ["ecs", "zd", "cmsi", "uga", "us", "ucmc", "ea", "dcs", "dcmr", "dcm", "dac"] },
+    "s-agent": { b: [16, 486, 196, 264], col: 1, p: "agent", n: "L’agent de sécurité", r: "Il surveille le tableau et va voir sur place.", ids: ["agent"] },
+    "s-pomp": { b: [245, 486, 196, 264], col: 1, p: "pomp", n: "Les pompiers", r: "On les appelle tout de suite s’il y a un feu.", ids: ["pomp"] },
+    "s-aes": { b: [474, 486, 196, 264], col: 1, p: "aes", n: "Batterie de secours", r: "Sans courant, elle fait marcher le système.", ids: ["aes", "secteur"] },
+    "s-door": { b: [16, 848, 322, 214], p: "door", n: "Portes qui se ferment toutes seules", r: "Elles bloquent le feu et la fumée.", ids: ["door"] },
+    "s-sir": { b: [348, 848, 322, 214], p: "diff", n: "Sirène et flash", r: "Ça sonne et ça clignote : tout le monde sort.", ids: ["diff", "flash", "baas"] },
+    "s-trap": { b: [16, 1080, 322, 214], p: "exu", n: "Trappes à fumée", r: "Elles s’ouvrent pour laisser sortir la fumée.", ids: ["volet", "exu"] },
+    "s-issue": { b: [348, 1080, 322, 214], p: "issue", n: "Issues de secours qui se déverrouillent", r: "Les portes de sortie se débloquent pour sortir vite.", ids: ["issue"] },
+  };
+  /* Terme du métier, avec le sigle développé, selon le bâtiment */
+  function twsTerm(id, c) {
+    const tab = simTab(c), A = c.ssi === "A", hasC = A || c.ssi === "B";
+    const CMD = { C: "dispositif de commande avec signalisation (DCS)", D: "dispositif de commandes manuelles regroupées (DCMR)", E: "dispositif de commande manuelle (DCM)" };
+    switch (id) {
+      case "s-det": return "détecteur automatique d’incendie";
+      case "s-dm": return "déclencheur manuel (DM)";
+      case "s-tab": return A || !tab ? "équipement de contrôle et de signalisation (ECS) et centralisateur de mise en sécurité incendie (CMSI)" : hasC ? "centralisateur de mise en sécurité incendie (CMSI)" : "tableau d’alarme (équipement d’alarme de type " + c.al + ")" + (CMD[c.ssi] ? " et " + CMD[c.ssi] : "");
+      case "s-agent": return "agent de sécurité incendie (SSIAP)";
+      case "s-pomp": return "sapeurs-pompiers : 18 ou 112";
+      case "s-aes": return "alimentation électrique de sécurité (AES)";
+      case "s-sir": return (c.al === "2b" || c.al === "3" ? "bloc autonome d’alarme sonore (BAAS)" : c.al === "4" ? "dispositif sonore autonome" : "diffuseur sonore (DS)") + " et flash lumineux";
+      case "s-door": return "dispositif actionné de sécurité (DAS) : porte coupe-feu";
+      case "s-trap": return "désenfumage : volet et exutoire (DAS)";
+      case "s-issue": return "issue de secours verrouillée (DAS)";
+    }
+    return "";
+  }
+  /* Texte complet lu quand on touche un module en mots simples */
+  const TWS_PLUS = { "s-dm": " Il est près des escaliers. Il n’ouvre pas les trappes à fumée.", "s-trap": " Le bouton rouge ne les ouvre pas. Celle de l’escalier s’ouvre seulement à la main (MS 60 § 1).", "s-tab": " Il est au poste de sécurité, là où le public ne va pas.", "s-pomp": " On fait le 18 ou le 112.", "s-sir": " Le flash aide les personnes qui entendent mal." };
+  Object.keys(TWS).forEach((k) => { SIMEL[k] = [0, 0, TWS[k].n, TWS[k].r + (TWS_PLUS[k] || "")]; });
+  /* Les étapes des exercices redites en mots simples (le terme du métier reste entre parenthèses). On reconnaît l'étape au début de sa phrase : le sens et les règles de simSteps ne changent pas. */
+  const TWS_ETAPES = [
+    [/^Votre bâtiment : (.*)$/, (m) => "Voici ce que la règle demande pour ce bâtiment : " + m[1] + " « SSI » veut dire système de sécurité incendie : tout ce qui repère le feu et protège les gens."],
+    [/^Un feu démarre dans le bureau/, "Un feu commence dans un bureau. La fumée monte au plafond."],
+    [/^Le détecteur sent la fumée/, "Le détecteur de fumée (détecteur automatique) sent la fumée. Il prévient tout de suite le tableau du poste de sécurité."],
+    [/^Le déclencheur envoie/, "Le bouton rouge (déclencheur manuel) prévient tout de suite le tableau du poste de sécurité."],
+    [/^Le CMSI met la zone en sécurité/, "Le tableau (CMSI) protège l’endroit du feu : les portes coupe-feu se ferment, les tuyaux d’air se ferment (clapets), la ventilation s’arrête et les issues de secours se déverrouillent."],
+    [/^L’agent arrête le bip \(le voyant reste allumé\)/, "L’agent de sécurité arrête le bip et va voir sur place s’il y a vraiment un feu (levée de doute)."],
+    [/^Alarme générale : les diffuseurs/, (m, q) => "La sirène sonne et les flashs clignotent (alarme générale) : tout le monde sort. Les issues de secours se déverrouillent." + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "") + (/Le CMSI met les DAS/.test(q) ? " Le tableau ferme aussi les portes coupe-feu et les clapets, et arrête la ventilation (mise en sécurité des DAS)." : /En catégorie C/.test(q) ? " Le boîtier de commande (DCS) met aussi le bâtiment en sécurité ; selon le site, c’est automatique ou fait à la main." : /En catégories D et E/.test(q) ? " Ici, l’alarme peut seulement fermer les portes et déverrouiller les issues ; le reste se commande à la main." : "")],
+    [/^Pas de temporisation pour ce bâtiment : l’alarme générale part/, (m, q) => "Dans ce bâtiment, on n’attend pas : la sirène sonne tout de suite (pas de temporisation). Les flashs clignotent, les issues de secours se déverrouillent et tout le monde sort." + (/sélective/.test(q) ? " Ici, l’alarme prévient d’abord le personnel, qui fait sortir les gens (alarme générale sélective)." : "")],
+    [/^Les sapeurs-pompiers sont appelés/, "On appelle les pompiers : le 18 ou le 112."],
+    [/^Si c’est nécessaire, le désenfumage de l’escalier/, "S’il le faut, on ouvre à la main la trappe à fumée de l’escalier (exutoire de désenfumage). Elle ne s’ouvre jamais toute seule."],
+    [/^L’agent arrête le bip et monte voir la zone 3/, "L’agent de sécurité arrête le bip et va voir sur place."],
+    [/^L’agent arrête le bip et monte vérifier la zone 3/, "L’agent de sécurité arrête le bip et va voir sur place s’il y a vraiment un feu (levée de doute)."],
+    [/^Une personne voit le feu et court/, "Quelqu’un voit le feu et court vers le bouton rouge d’alarme (déclencheur manuel), près de l’escalier."],
+    [/^Le déclencheur manuel lance tout de suite la mise en sécurité, sauf/, "Le bouton rouge fait tout de suite fermer les portes et déverrouiller les issues (mise en sécurité), mais il n’ouvre pas les trappes à fumée (désenfumage)."],
+    [/^Elle appuie : les blocs autonomes/, "Elle appuie : les sirènes sonnent tout de suite dans le bâtiment (blocs autonomes d’alarme sonore). Tout le monde sort."],
+    [/^Elle appuie : le dispositif sonore/, "Elle appuie : la sirène sonne tout de suite (dispositif sonore autonome). Tout le monde sort."],
+    [/^L’agent arrive sur place et confirme le feu\. Les autres DAS .* avec le (DCMR|DCM)/, (m) => "L’agent arrive et voit qu’il y a bien un feu. Le reste (clapets, trappes à fumée) se commande à la main, avec le boîtier de commande (" + m[1] + ")."],
+    [/^L’agent arrive sur place et confirme le feu/, "L’agent arrive et voit qu’il y a bien un feu."],
+    [/^Des ouvriers poncent un mur/, "Des ouvriers poncent un mur : la poussière monte au plafond. Il n’y a pas de feu."],
+    [/^Sur place, l’agent ne voit que de la poussière/, "Sur place, l’agent voit seulement de la poussière : pas de feu. C’est une fausse alarme (déclenchement intempestif)."],
+    [/^Avec l’accord du chef d’équipe, le tableau est réarmé/, (m, q) => "Avec l’accord du chef d’équipe, on remet le tableau à zéro (réarmement) : le voyant rouge s’éteint" + (/temporisation s’arrête/.test(q) ? " et le compte à rebours s’arrête (temporisation)." : ".")],
+    [/^Les DAS sont remis en position d’attente/, "On remet tout comme avant (DAS en position d’attente). Certaines portes se rouvrent à la main."],
+    [/^Quelqu’un a glissé une cale/, "Quelqu’un a coincé une porte coupe-feu avec une cale. Un feu commence dans le bureau."],
+    [/^L’ordre est donné, mais la cale bloque/, "Le tableau demande de fermer la porte, mais la cale la bloque : elle reste ouverte et la fumée peut passer dans le couloir."],
+    [/^En levée de doute, l’agent enlève la cale/, "En allant voir sur place (levée de doute), l’agent enlève la cale : la porte se ferme."],
+    [/^Quand le bâtiment a un désenfumage commandé/, "Quand les trappes à fumée sont commandées par le tableau (SSI de catégorie A), elles s’ouvrent avant que l’arrosage automatique démarre (sprinkleurs)."],
+    [/^La chaleur fait éclater l’ampoule/, "La chaleur casse la petite ampoule de l’arroseur du plafond (tête de sprinkleur), juste au-dessus du feu : lui seul arrose. L’eau qui coule fait sonner une cloche (poste de contrôle)."],
+    [/^Des ouvriers coupent par erreur le fil/, "Des ouvriers coupent par erreur le fil d’un détecteur de fumée."],
+    [/^Le tableau voit qu’il ne peut plus surveiller/, "Le tableau remarque qu’il ne peut plus surveiller cet endroit : il allume un voyant jaune de panne (dérangement) et fait bip."],
+    [/^L’agent arrête le bip, va voir la zone et prévient/, "L’agent arrête le bip, va voir sur place et prévient son chef et le réparateur (mainteneur)."],
+    [/^Le mainteneur répare la ligne/, "Le réparateur (mainteneur) répare le fil. La panne disparaît."],
+    [/^Le courant normal est coupé/, "Il n’y a plus de courant dans le bâtiment."],
+    [/^Le SSI continue de surveiller sur ses batteries/, "Le système continue de marcher grâce à sa batterie de secours (alimentation électrique de sécurité, AES)."],
+    [/^Le courant revient/, "Le courant revient. La batterie de secours se recharge."],
+    [/^Fin du scénario/, "C’est fini."],
+  ];
+  function twsEtape(q) { for (const [re, t] of TWS_ETAPES) { const m = re.exec(q); if (m) return typeof t === "function" ? t(m, q) : t; } return q; }
+  const simQuoi = (st) => (SIM.mots === "simple" && SIM.view !== "plan" ? twsEtape(st.quoi) : st.quoi);
+  /* Dessin du plan en mots simples. x : ce que synSvg a déjà calculé (éléments présents, actifs, état). */
+  function twsSvg(x) {
+    const { s, c, has, H, M, src, run, tab, T, pic } = x, RED = "var(--sv-red)", YEL = "#b7791f";
+    const absent = c.v ? "pas dans ce bâtiment" : "pas dans cette catégorie";
+    const st0 = { "s-det": has.det, "s-dm": "on", "s-tab": tab ? "on" : "off", "s-agent": "on", "s-pomp": "on", "s-aes": has.aes, "s-sir": "on", "s-door": has.door, "s-trap": has.volet, "s-issue": has.issue };
+    const act = {}, ring = {};
+    Object.keys(TWS).forEach((k) => { const ids = k === "s-tab" && !tab ? [] : TWS[k].ids; act[k] = ids.some((i) => H.has(i)); ring[k] = ids.some((i) => M.has(i)); });
+    /* ce que fait chaque module à cette étape, dit simplement (rien quand tout est calme) */
+    const PL = run ? {
+      "s-det": s.det ? ["il a senti la fumée", RED] : null, "s-dm": s.dm ? ["quelqu’un a appuyé", RED] : null,
+      "s-tab": tab ? (s.ecs === "feu" ? [s.ag ? "ALARME : TOUT LE MONDE SORT" : s.tempo ? "FEU SIGNALÉ · 5 MIN POUR VÉRIFIER" : "FEU SIGNALÉ", RED] : s.ecs === "derang" ? ["PANNE : VOYANT JAUNE", YEL] : s.ecs === "secteur" ? ["PLUS DE COURANT : VOYANT JAUNE", YEL] : s.ag ? ["ALARME : TOUT LE MONDE SORT", RED] : null) : null,
+      "s-agent": s.agent === "zone" ? ["parti voir sur place", YEL] : null, "s-pomp": s.pomp ? ["appelés", RED] : null, "s-aes": s.power === "off" && tab ? ["elle prend le relais", YEL] : null,
+      "s-sir": s.ag ? ["ça sonne !", RED] : null, "s-door": s.door === "closed" ? ["fermées", RED] : s.door === "stuck" ? ["bloquée par une cale", YEL] : null,
+      "s-trap": s.volet === "open" || s.exu === "open" ? ["ouvertes", RED] : null, "s-issue": s.issue === "unlock" ? ["déverrouillées", RED] : null,
+    } : {};
+    const B = {}; let cards = "", rings = "", o = "";
+    Object.keys(TWS).forEach((id) => {
+      const m = TWS[id], [bx, by, w, h] = m.b, st = st0[id], pad = 12, big = id === "s-tab", col = !!m.col, ic = big ? 76 : col ? 46 : 56, term = twsTerm(id, c);
+      B[id] = m.b;
+      const note = st === "off" ? absent : st === "opt" ? "selon le site" : "", pill = st !== "off" && PL[id] ? PL[id] : null;
+      const full = w - pad * 2, side = col ? full : full - ic - 10;
+      let L = null;
+      for (let k = 0; k < 9 && !(L && L.ok); k++) {
+        const f = 1 - k * 0.05, fn = (big ? 38 : 29) * f, ft = 17 * f, lh = fn * 1.1, cs = Math.floor(side / (fn * 0.58));
+        const nl = twWrap(m.n, cs), tw0 = big ? side : full, tl = twWrap(term, Math.floor(tw0 / (ft * 0.54))), rl = twWrap(m.r, Math.floor(tw0 / (ft * 0.51))), nh = nl.length * lh, txt = (tl.length + rl.length) * ft * 1.22 + 6;
+        const need = (big ? Math.max(ic, nh + 6 + txt) : col ? ic + 4 + nh + 6 + txt : Math.max(ic, nh) + 8 + txt) + 8;
+        L = { fn, ft, lh, nl, tl, rl, nh, ok: need <= h - pad * 2 && nl.every((q) => q.length <= cs) };
+      }
+      const { fn, ft, lh, nl, tl, rl, nh } = L, tx0 = big ? bx + pad + ic + 10 : bx + pad, nx = col ? bx + pad : bx + pad + ic + 10;
+      let g = `<rect class="tw-bg" x="${bx}" y="${by}" width="${w}" height="${h}" rx="16"/>` + pic(m.p, bx + pad, by + pad, ic), ty;
+      const y0 = big ? by + pad : col ? by + pad + ic + 4 : by + pad + Math.max(0, (ic - nh) / 2);
+      nl.forEach((l, k) => { g += T(nx, y0 + fn * 0.86 + k * lh, l, "tw-n", "", fn.toFixed(1)); });
+      ty = big || col ? y0 + nh + 6 : by + pad + Math.max(ic, nh) + 8;
+      tl.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-t", "", ft.toFixed(1)); ty += ft * 1.22; });
+      ty += 6;
+      rl.forEach((l) => { g += T(tx0, ty + ft * 0.9, l, "tw-r", "", ft.toFixed(1)); ty += ft * 1.22; });
+      /* état ou mention : une étiquette à cheval sur le bas du cadre (à gauche dans la zone 1, pour laisser la place aux flèches) */
+      const lbl = pill ? pill[0] : note;
+      if (lbl) { const maxw = by < 100 ? 240 : Math.min(full, 400), fs = Math.min(17, (maxw - 26) / (lbl.length * 0.7)), lw = Math.min(maxw, lbl.length * fs * 0.7 + 26), lx = by < 100 ? bx + pad : bx + w / 2 - lw / 2;
+        g += `<rect class="${pill ? "" : "tw-nb"}" x="${lx.toFixed(1)}" y="${by + h - 15}" width="${lw.toFixed(1)}" height="30" rx="15"${pill ? ` fill="${pill[1]}"` : ""}/>` + T(lx + lw / 2, by + h + 6, lbl, pill ? "tw-s" : "tw-x", "middle", fs.toFixed(1)); }
+      cards += `<g class="tw-m tw-${st}${act[id] ? " tw-act" : ""}${SIM.el === id ? " tw-sel" : ""}" data-tw="${id}">${g}</g>`;
+      if (ring[id]) rings += `<rect class="tw-ring" x="${bx - 5}" y="${by - 5}" width="${w + 10}" height="${h + 10}" rx="20"/>`;
+    });
+    /* trois grandes zones, dans l'ordre de l'histoire */
+    const zone = (y, h, t) => `<rect class="tw-zone" x="6" y="${y}" width="708" height="${h}" rx="22"/>` + T(20, y + 33, t, "tw-zt", "", 26);
+    o += zone(6, 226, "1. On repère le feu") + zone(268, 500, "2. Le tableau réfléchit et prévient") + zone(804, 508, "3. Le bâtiment se protège et les gens sortent");
+    /* le feu, montré dans la première zone pendant les exercices */
+    if (s.fire || s.smoke) { const f = s.fire, hot = src.has("fire") || src.has("spk") || src.has("pc"); o += `<g class="${f ? "tw-fire" : "tw-opt"}"><rect class="tw-bg" x="${f && s.spk === "open" ? 318 : 418}" y="10" width="${f && s.spk === "open" ? 386 : 286}" height="36" rx="18"/>${pic("fire", (f && s.spk === "open" ? 318 : 418) + 10, 13, 30)}${T((f && s.spk === "open" ? 318 : 418) + 48, 35, f ? (s.spk === "open" ? "FEU · arrosé par le sprinkleur" : "FEU dans un bureau") : "Poussière : pas de feu", "tw-n", "", 20)}</g>` + (hot ? `<rect class="tw-ring" x="${(f && s.spk === "open" ? 318 : 418) - 4}" y="6" width="${(f && s.spk === "open" ? 386 : 286) + 8}" height="44" rx="22"/>` : ""); }
+    /* grosses flèches : état « on » (couleur du bâtiment), « off » (gris), signal en cours (rouge) */
+    const tabOn = act["s-tab"], out = act["s-sir"] || act["s-door"] || act["s-trap"] || act["s-issue"];
+    const arrow = (pts, lit, on2) => { const n = pts.length, a = pts[n - 2], b = pts[n - 1], an = Math.atan2(b[1] - a[1], b[0] - a[0]), hx = b[0] - Math.cos(an) * 20, hy = b[1] - Math.sin(an) * 20, px = Math.sin(an) * 15, py = -Math.cos(an) * 15, cl = lit ? (on2 ? " tw-ara" : " tw-arl") : " tw-aro";
+      return `<path class="tw-ar${cl}${lit && on2 ? " syn-flow" : ""}" d="M${pts.slice(0, n - 1).map((q) => q.join(" ")).join(" L")} L${Math.round(hx)} ${Math.round(hy)}"/><path class="tw-arh${cl}" d="M${b[0]} ${b[1]} L${Math.round(hx + px)} ${Math.round(hy + py)} L${Math.round(hx - px)} ${Math.round(hy - py)} Z"/>`; };
+    let ar = arrow([[288, 228], [288, 264]], has.det !== "off" && tab, act["s-det"] && tabOn) + arrow([[620, 228], [620, 264]], tab, act["s-dm"] && tabOn);
+    ar += arrow([[114, 458], [114, 482]], tab, act["s-agent"] && tab && (src.has("ecs") || M.has("ea"))) + arrow([[214, 618], [243, 618]], true, act["s-pomp"]) + arrow([[572, 482], [572, 458]], has.aes !== "off", act["s-aes"]);
+    ar += arrow([[343, 772], [343, 800]], tab, tabOn && out);
+    /* sans tableau (alarme de type 3 ou 4) : le bouton rouge fait sonner directement la sirène */
+    if (!tab) ar += arrow([[672, 137], [698, 137], [698, 955], [674, 955]], true, act["s-dm"] && act["s-sir"]);
+    TW.B = B; TW.act = Object.keys(TWS).filter((k) => act[k]);
+    twDim();
+    const vb = TW.s ? `${TW.cx - TW.pw / TW.s / 2} ${TW.cy - TW.ph / TW.s / 2} ${TW.pw / TW.s} ${TW.ph / TW.s}` : `0 0 ${TW.W} ${TW.H}`;
+    return `<svg id="tw-svg" class="tw-svg tw-vs" viewBox="${vb}" role="img" aria-label="Plan du système de sécurité incendie en mots simples : on repère le feu, le tableau prévient, le bâtiment se protège" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-3000" y="-3000" width="${TW.W + 6000}" height="${TW.H + 6000}"/>${o}${ar}${rings}${cards}</svg>`;
   }
   function synSvg(s, hl, c) {
     const tab = simTab(c), A = c.ssi === "A", hasC = A || c.ssi === "B", cmd = c.ssi === "C" ? "dcs" : c.ssi === "D" ? "dcmr" : c.ssi === "E" ? "dcm" : "", linked = hasC || !!cmd, DE = c.ssi === "D" || c.ssi === "E";
@@ -31814,6 +32037,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       secteur: s.power === "on" ? ["présent", GRN] : ["COUPÉ", RED], aes: s.power === "on" ? ["en charge", GRN] : ["SUR BATTERIES", YEL],
       agent: s.agent === "zone" ? ["sur place, zone 3", YEL] : ["au poste", GRN], pomp: s.pomp ? ["ALERTÉS", RED] : null,
     };
+    if (SIM.mots === "simple") return twsSvg({ s, c, has, H, M, src, run, tab, T, pic });
     /* Textes qui changent selon le bâtiment */
     const NM = {}, RL = {}, TG = {};
     if (has.report === "opt") TG.report = "selon le site";
@@ -32002,7 +32226,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const svg = $("#tw-svg"); if (!svg || !TW.s || !TW.pw) return;
     const vw = TW.pw / TW.s, vh = TW.ph / TW.s;
     svg.setAttribute("viewBox", `${(TW.cx - vw / 2).toFixed(1)} ${(TW.cy - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
-    svg.classList.toggle("tw-far", TW.s < 0.3);
+    svg.classList.toggle("tw-far", TW.s < 0.3 && SIM.mots !== "simple");
   }
   function twStop() { if (TW.raf) cancelAnimationFrame(TW.raf); TW.raf = 0; }
   /* Va en douceur vers une vue { cx, cy, s } */
@@ -32023,8 +32247,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const ids = TW.act || []; if (!ids.length) return twAll();
     let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
     ids.forEach((id) => { const b = TW.B[id]; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[0] + b[2]); y1 = Math.max(y1, b[1] + b[3]); });
-    const m = 110;
-    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(0.55, TW.pw / (x1 - x0 + m * 2), TW.ph / (y1 - y0 + m * 2)) };
+    const m = SIM.mots === "simple" ? 30 : 110;
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(TW.cap || 0.55, TW.pw / (x1 - x0 + m * 2), TW.ph / (y1 - y0 + m * 2)) };
   }
   function twZoom(k, px, py) {
     const x = px == null ? TW.pw / 2 : px, y = py == null ? TW.ph / 2 : py, wx = TW.cx + (x - TW.pw / 2) / TW.s, wy = TW.cy + (y - TW.ph / 2) / TW.s;
@@ -32101,15 +32325,15 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (ask) info += `<div class="ssim-q"><p><strong>${tx("À vous : que se passe-t-il ?")}</strong></p><p>${tx(q.p)}</p><div class="ssim-ch">${(step.ord || (step.ord = shuffle([0, 1, 2]))).map((k) => `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="rep${k}">${tx(q.c[k])}</button>`).join("")}</div></div>`;
       else {
         if (q && SIM.mode === "jeu") info += `<div class="call call-${SIM.pick === 0 ? "ok" : "warn"}" role="note">${icon(SIM.pick === 0 ? "ok" : "attention")}<div><p class="lbl">${SIM.pick === 0 ? tx("Bonne réponse") : tx("Pas tout à fait : la bonne réponse est")} ${SIM.pick === 0 ? "" : "« " + tx(q.c[0]) + " »"}</p><p>${tx(q.x)}</p></div></div>`;
-        info += `<dl class="kv ssim-kv">${SIM.view !== "plan" ? "" : `<div><dt>${tx("Ce qui se passe")}</dt><dd>${tx(step.quoi)}</dd></div>`}${step.tab ? `<div><dt>${tx("Au tableau")}</dt><dd>${tx(step.tab)}</dd></div>` : ""}${step.agent ? `<div><dt>${tx("L’agent")}</dt><dd>${tx(step.agent)}</dd></div>` : ""}${step.ref ? `<div><dt>${tx("Règle")}</dt><dd>${tx(step.ref)}</dd></div>` : ""}</dl>`;
+        info += `<dl class="kv ssim-kv">${SIM.view !== "plan" ? (simQuoi(step) !== step.quoi ? `<div><dt>${tx("Avec les mots du métier")}</dt><dd>${tx(step.quoi)}</dd></div>` : "") : `<div><dt>${tx("Ce qui se passe")}</dt><dd>${tx(step.quoi)}</dd></div>`}${step.tab ? `<div><dt>${tx("Au tableau")}</dt><dd>${tx(step.tab)}</dd></div>` : ""}${step.agent ? `<div><dt>${tx("L’agent")}</dt><dd>${tx(step.agent)}</dd></div>` : ""}${step.ref ? `<div><dt>${tx("Règle")}</dt><dd>${tx(step.ref)}</dd></div>` : ""}</dl>`;
         if (q && SIM.mode === "voir") info += `<p class="small"><strong>${tx("Question :")}</strong> ${tx(q.p)} <strong>${tx(q.c[0])}</strong>. ${tx(q.x)}</p>`;
       }
       if (SIM.i === SIM.steps.length - 1 && SIM.mode === "jeu" && SIM.nq) info += `<p><strong>${tx("Score")} : ${SIM.score} / ${SIM.nq}</strong></p>`;
     }
-    const el = SIM.el && SIMEL[SIM.el] ? `<div class="call call-info" role="note">${icon("info")}<div><p class="lbl">${tx(SIMEL[SIM.el][2])}</p><p>${tx(SIMEL[SIM.el][3])}</p></div></div>` : "";
+    const el = SIM.el && SIMEL[SIM.el] ? `<div class="call call-info" role="note">${icon("info")}<div><p class="lbl">${tx(SIMEL[SIM.el][2])}</p>${TWS[SIM.el] ? `<p class="small"><strong>${tx("Mot du métier")} :</strong> ${tx(twsTerm(SIM.el, c))}</p>` : ""}<p>${tx(SIMEL[SIM.el][3])}</p></div></div>` : "";
     const waiting = step && step.q && SIM.mode === "jeu" && SIM.pick == null;
     const toile = SIM.view !== "plan";
-    const band = step ? `<div class="tw-band"><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(step.quoi)}</div>` : "";
+    const band = step ? `<div class="tw-band"><strong>${tx("Étape")} ${SIM.i + 1} / ${SIM.steps.length}</strong> · ${waiting ? tx("À vous : répondez à la question plus bas.") : tx(simQuoi(step))}</div>` : "";
     return `<div class="form ssim-f">
         <p class="small"><strong>${tx("Simulé")} :</strong> ${tx(c.ssi ? "SSI de catégorie " + c.ssi : "pas de catégorie de SSI imposée")}, ${tx(c.libre ? "alarme au choix (exemple : type 4)" : "alarme de type " + c.al)}${c.ags ? tx(", alarme générale sélective") : ""}${c.ex ? tx(" (exemple)") : ""}</p>
         <label class="field"><span>${tx("Événement")}</span><select id="ssim-ev">${evs.map((e) => `<option value="${e[0]}"${SIM.ev === e[0] ? " selected" : ""}>${e[1]}</option>`).join("")}</select></label>
@@ -32117,8 +32341,9 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       </div>
       <div class="chips"><button type="button" class="btn${toile ? "" : " ghost"}" data-act="ssi-sim" data-v="v-syn">${tx("Schéma du SSI")}</button><button type="button" class="btn${toile ? " ghost" : ""}" data-act="ssi-sim" data-v="v-plan">${tx("Plan de l’étage")}</button>${toile ? `<button type="button" class="btn ghost" data-act="ssi-sim" data-v="z+" aria-label="${tx("Zoomer")}">+</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z-" aria-label="${tx("Dézoomer")}">−</button><button type="button" class="btn ghost" data-act="ssi-sim" data-v="z0">${tx("Tout voir")}</button>` : ""}</div>
       ${toile ? `<p class="small tw-leg tw-c${twCat(c)}"><strong>${tx(twLegend(c))}</strong><br><span class="tw-sw on"></span>${tx(c.v ? "dans ce bâtiment" : "dans cette catégorie")} <span class="tw-sw off"></span>${tx(c.v ? "pas dans ce bâtiment" : "pas dans cette catégorie")} <span class="tw-sw opt"></span>${tx("selon le site")} <span class="tw-sw act"></span>${tx("signal en cours")}</p>
-      <div class="chips tw-var" role="group" aria-label="${tx("Choix du plan")}">${[[1, "Plan simple"], [2, "Plan en toile"], [3, "Plan détaillé"]].map(([k, l]) => `<button type="button" class="btn${SIM.tw === k ? "" : " ghost"}" data-act="ssi-sim" data-v="tw${k}">${k}. ${tx(l)}</button>`).join("")}</div>
-      <div id="tw-wrap" class="tw-wrap tw-c${twCat(c)}" style="aspect-ratio:${SIM.tw === 2 ? "1 / 1" : "2800 / 4180"}">${synSvg(s, step ? step.hl : [], c)}</div>
+      <div class="chips tw-mots" role="group" aria-label="${tx("Choix des mots")}">${[["simple", "Mots simples"], ["metier", "Termes du métier"]].map(([k, l]) => `<button type="button" class="btn${SIM.mots === k ? "" : " ghost"}" data-act="ssi-sim" data-v="mots-${k}" aria-pressed="${SIM.mots === k}">${tx(l)}</button>`).join("")}</div>
+      ${SIM.mots === "simple" ? "" : `<div class="chips tw-var" role="group" aria-label="${tx("Choix du plan")}">${[[1, "Plan épuré"], [2, "Plan en toile"], [3, "Plan détaillé"]].map(([k, l]) => `<button type="button" class="btn${SIM.tw === k ? "" : " ghost"}" data-act="ssi-sim" data-v="tw${k}">${k}. ${tx(l)}</button>`).join("")}</div>`}
+      <div id="tw-wrap" class="tw-wrap tw-c${twCat(c)}" style="aspect-ratio:${SIM.mots === "simple" ? "720 / 1320;max-height:max(78dvh, 300px)" : SIM.tw === 2 ? "1 / 1" : "2800 / 4180"}">${synSvg(s, step ? step.hl : [], c)}</div>
       ${band}<p class="small muted">${tx("Pincez avec deux doigts pour zoomer, glissez pour vous déplacer, touchez deux fois pour agrandir. Touchez un élément : il se présente.")}</p>` : `<div id="ssim-svg">${simSvg(s, step ? step.hl : [], c)}</div>`}
       ${el}
       <div class="chips ssim-bar"><button type="button" class="btn" data-act="ssi-sim" data-v="go">${icon("lecture")}${SIM.i < 0 ? tx("Démarrer") : tx("Recommencer")}</button>
@@ -32132,7 +32357,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const st = SIM.steps[SIM.i];
     if (!st) return;
     const ask = SIM.mode === "jeu" && st.q && SIM.pick == null;
-    const txt = ask ? "Question. " + st.q.p + " " + st.q.c.map((c, k) => "Réponse " + (k + 1) + " : " + c).join(". ") : [st.quoi, st.tab && "Au tableau : " + st.tab, st.agent && "L’agent : " + st.agent].filter(Boolean).join(" ");
+    const txt = ask ? "Question. " + st.q.p + " " + st.q.c.map((c, k) => "Réponse " + (k + 1) + " : " + c).join(". ") : [simQuoi(st), st.tab && "Au tableau : " + st.tab, st.agent && "L’agent : " + st.agent].filter(Boolean).join(" ");
     clearTimeout(SIM.tm);
     const go = () => { if (SIM.play && !ask && SIM.i < SIM.steps.length - 1) SIM.tm = setTimeout(() => simAct("next", true), 900); else if (SIM.i >= SIM.steps.length - 1) { SIM.play = false; simDraw(); } };
     if (VX.ttsOk && store.get("ssim-voix", true)) { try { VX.speak(txt.replace(/§/g, "paragraphe"), { onEnd: go }); return; } catch (e) { /* voix indisponible */ } }
@@ -32147,13 +32372,14 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     else if (v === "z+" || v === "z-") { twZoom(v === "z+" ? 1.6 : 1 / 1.6); return; }
     else if (v === "z0") { twGo(twAll(), 420); return; }
     else if (/^tw[123]$/.test(v)) { SIM.tw = +v.slice(2); store.set("ssi-plan", SIM.tw); TW.s = 0; TW.key = ""; simDraw(); return; }
+    else if (v === "mots-simple" || v === "mots-metier") { SIM.mots = v.slice(5); store.set("ssi-mots", SIM.mots); SIM.el = ""; TW.s = 0; TW.key = ""; simDraw(); return; }
     else if (v === "m-voir" || v === "m-jeu") { SIM.mode = v.slice(2); SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm); VX.stop(); }
     else if (v.startsWith("rep")) { SIM.pick = +v.slice(3); SIM.nq++; if (SIM.pick === 0) SIM.score++; }
     simDraw();
     if (v === "auto" && !SIM.play) return;
     if (SIM.i >= 0 && v !== "m-voir" && v !== "m-jeu") simSay();
   }
-  function simEl(id) { SIM.el = SIM.el === id ? "" : id; simDraw(); if (SIM.el && VX.ttsOk && store.get("ssim-voix", true) && !SIM.play) { try { VX.speak(SIMEL[id][2] + ". " + SIMEL[id][3]); } catch (e) { /* voix */ } } }
+  function simEl(id) { SIM.el = SIM.el === id ? "" : id; simDraw(); if (SIM.el && VX.ttsOk && store.get("ssim-voix", true) && !SIM.play) { try { VX.speak(SIMEL[id][2] + ". " + (TWS[id] ? "Mot du métier : " + twsTerm(id, simCfg()) + ". " : "") + SIMEL[id][3]); } catch (e) { /* voix */ } } }
   function simSel() {
     let ch = false;
     const m = $("#ssim-man"), v = $("#ssim-v"), d = $("#ssim-cde"), e = $("#ssim-ev");
@@ -32332,6 +32558,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   /* Une étape en arrière (bouton Retour du téléphone ou flèche en haut à gauche). false : déjà à l'accueil, rien à fermer. */
   function appBack() {
     if (guide) { guideClose(); return true; }
+    if (voixFermer()) return true;
     if (!$("#zoom").hidden) { closeZoom(); return true; }
     const pv = $("#pl-view"); if (pv && !pv.hidden) { pv.hidden = true; const c = $("#pl-view-c"); if (c) c.innerHTML = ""; return true; }
     if (RD && RD.retour()) return true;
@@ -32569,6 +32796,10 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       case "maj-plus-tard": $("#maj").hidden = true; break;
       case "maj-verif": majVerifier(true); break;
       case "son-ouvrir": sonOuvrir(); break;
+      case "voix-ouvrir": voixOuvrir(); break;
+      case "voix-fermer": voixFermer(); break;
+      case "voix-essai": voixEssai(+b.dataset.i); break;
+      case "voix-garder": voixGarder(); break;
       case "son-test": sonTester(); break;
       case "son-ok": sonOk(); break;
       case "son-non": sonNon(); break;
@@ -33055,6 +33286,50 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     }, 6000);
   }
 
+  /* ---------- Choix de la voix : une seule fenêtre, ouverte depuis l'accueil et depuis les Réglages ---------- */
+  const VCH = { sel: "" };
+  const VCH_PHRASE = "Bonjour, je suis la voix du Mémo SSIAP. Je lis les fiches, les conduites à tenir et les questions.";
+  function voixDessiner() {
+    const c = $("#voix-c");
+    if (!c) return;
+    const l = VX.choix(), cur = VX.choixCourant();
+    if (!l.some((o) => o.id === VCH.sel)) VCH.sel = cur.id;
+    const vraies = new Set(l.filter((o) => o.uri).map((o) => o.uri)).size;
+    const note = vraies >= l.length ? "Ce sont les voix françaises de votre téléphone."
+      : vraies ? "Votre téléphone n’a pas quatre voix françaises différentes : certains choix sont la même voix, réglée plus grave ou plus claire."
+        : "Votre téléphone ne donne qu’une voix française : les quatre choix sont cette voix, réglée de quatre façons.";
+    c.innerHTML = `<button class="close" data-act="voix-fermer" aria-label="Fermer">${icon("fermer")}</button><h2 id="voix-t">Choisir la voix</h2>
+      <div class="son-scroll"><p>Touchez une voix pour l’entendre, puis touchez « Garder cette voix ».</p>
+        <div class="vx-liste" role="radiogroup" aria-label="Voix proposées">${l.map((o, i) => `<button type="button" class="vx-opt${o.id === VCH.sel ? " on" : ""}" role="radio" aria-checked="${o.id === VCH.sel ? "true" : "false"}" data-act="voix-essai" data-i="${i}"><span class="ico">${icon(o.id === VCH.sel ? "check" : "hautparleur")}</span><span class="t"><b>${tx(o.nom)}</b><span>${tx(o.det)}${o.id === cur.id ? " · voix actuelle" : ""}</span></span></button>`).join("")}</div>
+        <p class="signal-mini">${note} La voix gardée sert partout dans l’appli.</p></div>
+      <div class="signal-b"><button type="button" class="btn" data-act="voix-garder">${icon("check")}Garder cette voix</button><button type="button" class="btn ghost" data-act="voix-fermer">Annuler</button></div>`;
+  }
+  function voixOuvrir() {
+    const o = $("#voix");
+    if (!o) return;
+    if (!VX.ttsOk) { toast(VX.ABSENT); return; }
+    VCH.sel = VX.choixCourant().id;
+    o.hidden = false;
+    voixDessiner();
+    const b = $("#voix-c .vx-opt.on"); if (b) { try { b.focus({ preventScroll: true }); } catch (e) { /* rien */ } }
+  }
+  function voixFermer() { const o = $("#voix"); if (!o || o.hidden) return false; o.hidden = true; try { VX.stop(); } catch (e) { /* rien */ } return true; }
+  function voixEssai(i) {
+    const o = VX.choix()[i];
+    if (!o) return;
+    VCH.sel = o.id;
+    voixDessiner();
+    try { Promise.resolve(VX.essai(VCH_PHRASE, o)).then((r) => { if (r && !r.ok && r.code !== "interrupted" && r.code !== "canceled" && !$("#voix").hidden && VCH.sel === o.id) toast("Cette voix n’a pas pu parler : vérifiez le volume, ou essayez une autre voix."); }).catch(() => {}); } catch (e) { /* rien */ }
+  }
+  function voixGarder() {
+    const o = VX.choix().find((x) => x.id === VCH.sel);
+    if (!o) return;
+    VX.setChoix(o);
+    voixFermer();
+    toast("Voix enregistrée : « " + o.nom + " ». Elle sert partout dans l’appli.");
+    if (curTok === "reglages") rerender();
+  }
+
   /* ---------- Confidentialité : icône, panneau et questions ---------- */
   const IC_WIFI = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/>';
   function privBouton() {
@@ -33151,6 +33426,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       <div class="overlay" id="signal" role="dialog" aria-modal="true" aria-labelledby="signal-t" hidden><div class="box signal-box"><button class="close" data-act="signal-close" aria-label="Fermer">${icon("fermer")}</button><div id="signal-c"></div></div></div>
       <div class="overlay" id="priv" role="dialog" aria-modal="true" aria-labelledby="priv-t" hidden><div class="box signal-box" id="priv-c"></div></div>
       <div class="overlay" id="maj" role="dialog" aria-modal="true" aria-labelledby="maj-t" hidden><div class="box signal-box" id="maj-c"></div></div>
+      <div class="overlay" id="voix" role="dialog" aria-modal="true" aria-labelledby="voix-t" hidden><div class="box signal-box son-box" id="voix-c"></div></div>
       <div class="overlay" id="son" role="dialog" aria-modal="true" aria-labelledby="son-t" hidden><div class="box signal-box son-box" id="son-c"></div></div>
       <div class="overlay" id="avis" role="dialog" aria-modal="true" aria-labelledby="avis-t" hidden><div class="box signal-box" id="avis-c"></div></div>
       <div class="toast" id="toast" role="status" hidden></div>
@@ -33211,7 +33487,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     window.addEventListener("popstate", onPopState);
     document.addEventListener("pointerdown", () => { if (NAV.exiting) navArm(); }, true);
     document.addEventListener("click", (e) => { if (VX.popOpen() && !e.target.closest("#tts-pop, #tts-rate")) VX.ratePop(false); }, true);
-    document.addEventListener("vx-voix", () => { if (curTok === "reglages" && !/^(?:INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || "")) rerender(); });
+    document.addEventListener("vx-voix", () => { const vo = $("#voix"); if (vo && !vo.hidden) voixDessiner(); if (curTok === "reglages" && !/^(?:INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || "")) rerender(); });
     window.addEventListener("offline", () => toast("Hors connexion : tout le mémo reste disponible."));
     window.addEventListener("online", () => veilleFetch(3600e3));
     { const t0 = current(); stack.length = 0; if (TOPS.has(t0)) { stack.push("accueil"); if (t0 !== "accueil") stack.push(t0); } else stack.push(t0); }

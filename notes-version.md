@@ -1,3 +1,6 @@
+- Section SSI : nouvelle version « Mots simples » du plan, qui s’ouvre d’office : dix gros éléments avec leur nom de tous les jours (détecteur de fumée, bouton rouge d’alarme, tableau du poste de sécurité, sirène et flash…), le terme du métier écrit en dessous, trois zones dans l’ordre de l’histoire ; les exercices y sont expliqués en mots simples
+- Section SSI : bouton « Mots simples / Termes du métier » au-dessus du dessin ; les trois plans du métier restent disponibles (Plan épuré, Plan en toile, Plan détaillé)
+- Accueil : bouton rouge « Voix » à côté de « Écouter l’accueil » : quatre voix au choix, on touche pour entendre, « Garder cette voix » ; la voix gardée sert dans toute l’application (même fenêtre depuis les Réglages)
 - Rayons X : nouvelle fiche placée en tête, « Comprendre les couleurs et les densités » : aide-mémoire visuel (orange, vert, bleu, noir), teinte claire ou foncée selon l’épaisseur, mode noir et blanc, mode couleur, aides à l’image du pupitre
 - Rayons X : nouvelle fiche technique « Comment le rayon X est fabriqué » (cathode, haute tension, anode, rayonnement de freinage), avec un schéma du tube
 - Recherche : une fois la fiche ouverte, les mots cherchés ne sont plus surlignés ; la page s’ouvre toujours au bon endroit
