@@ -214,6 +214,7 @@ strong { font-weight: 700; }
 .ic { width: 1.5rem; height: 1.5rem; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padding: 0 .08em; }
+mark.vu { background: none; color: inherit; font: inherit; padding: 0; }
 
 /* ---------- Bandeau supérieur ---------- */
 .top {
@@ -18561,7 +18562,7 @@ D.apprendre.aps.modules.push({
 /* data/100-materiel-atex-elec.js : sections « Matériel de sûreté », « ATEX » et « Habilitation électrique » (vérifiées le 5 novembre 2026) */
 /* --- xray : sources --- */
 Object.assign(D.sources, {
- "rx_inrs4443": {
+ "rx_springer_poudres": {"t": "Détection automatique de poudres inorganiques sur les images de bagages (Journal of Transportation Security, 2023) : les explosifs organiques apparaissent en orange, les matières inorganiques en vert", "o": "Springer", "u": "https://link.springer.com/article/10.1007/s12198-023-00261-5", "k": "reference"}, "rx_brevet_9733385": {"t": "Brevet US 9733385 (Rapiscan) : image du numéro atomique effectif ; matières à Z faible en orange, Z moyen (aluminium) en vert, Z élevé (acier) en bleu", "o": "Office américain des brevets (USPTO)", "u": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9733385", "k": "reference"}, "rx_brevet_8045805": {"t": "Brevet US 8045805 : physique des appareils à rayons X de bagages et images en couleur (bleu : métaux ; orange : composés organiques ; vert : matières mixtes ou inorganiques)", "o": "Office américain des brevets (USPTO)", "u": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/8045805", "k": "reference"}, "rx_brevet_5699400": {"t": "Brevet US 5699400 : pupitre d’opérateur d’un appareil d’inspection (modes d’affichage, renforcement des contours, image inversée, contraste)", "o": "Office américain des brevets (USPTO)", "u": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/5699400", "k": "reference"}, "rx_tube_technoscience": {"t": "Tube à rayons X : principe de fonctionnement", "o": "Techno-Science", "u": "https://www.techno-science.net/fr/definitions/tube-a-rayons-x", "k": "secondaire"}, "rx_tube_radiopaedia": {"t": "X-ray tube (éléments et fonctionnement)", "o": "Radiopaedia", "u": "https://radiopaedia.org/articles/x-ray-tube-1?lang=gb", "k": "reference"}, "rx_tube_imt": {"t": "Imagerie par rayons X : le tube (support de cours)", "o": "IMT Atlantique", "u": "https://moodle.imt-atlantique.fr/pluginfile.php/52858/course/section/10730/2.VOYEAU_Imagerie%20RX.pdf", "k": "reference"}, "rx_inrs4443": {
   "t": "Installations de contrôle des bagages / colis par rayonnements x (fiche pratique de radioprotection ED 4443, juin 2024)",
   "o": "INRS",
   "u": "https://www.inrs.fr/media.html?refINRS=ED+4443",
@@ -19100,6 +19101,7 @@ Object.assign(D.sources, {
 
 /* --- xray : fiches --- */
 D.fiches.push(
+{"id": "rx-couleurs", "r": "surete", "titre": "Rayons X : comprendre les couleurs et les densités", "niv": ["APS", "1", "2", "3"], "mc": "rayons x couleurs densite orange vert bleu noir organique inorganique metal melange noir et blanc niveaux de gris mode couleur teinte claire foncee epaisseur numero atomique double energie image inversee negatif contours contraste aide memoire", "clair": "Sur l’écran, la couleur dit de quelle famille est la matière et la teinte, claire ou foncée, dit si c’est mince ou épais. Orange : organique. Vert : intermédiaire ou mélange. Bleu : métal. Noir : les rayons ne passent pas.", "b": [{"t": "h", "x": "Aide-mémoire des couleurs"}, {"t": "svg", "id": "rx-couleurs", "cap": "Les couleurs et les densités, en mode couleur et en mode noir et blanc"}, {"t": "tab", "h": ["Couleur", "Famille de matière", "Exemples"], "r": [["Orange", "Matières organiques : atomes légers (numéro atomique moyen faible)", "Papier, vêtements, nourriture, bois, plastiques, liquides. Les explosifs organiques apparaissent aussi en orange."], ["Vert", "Matières intermédiaires, ou mélange d’organique et d’inorganique superposés", "Aluminium, poudres minérales, objets composés de plusieurs matières (appareils électroniques)."], ["Bleu", "Métaux et matières qui arrêtent beaucoup les rayons (numéro atomique moyen élevé)", "Acier, fer, cuivre : armes, couteaux, outils, câbles, piles."], ["Noir ou très sombre", "Les rayons ne traversent pas", "Objet trop dense ou trop épais : on ne voit rien derrière, il faut un autre contrôle."]]}, {"t": "warn", "x": "Les teintes exactes dépendent du fabricant et des réglages : sur certains appareils, les matières inorganiques sont en vert, sur d’autres en bleu. Fiez-vous à la formation reçue sur VOTRE appareil. La logique reste la même : orange = organique, vert ou bleu = inorganique, noir = pas traversé."}, {"t": "h", "x": "La densité : clair ou foncé"}, {"t": "ul", "x": ["La **couleur** indique la famille de matière.", "La **teinte** indique la quantité de rayons arrêtés : plus l’objet est **épais ou dense**, plus la teinte est **foncée**.", "Un objet mince et peu dense reste **clair**, presque transparent.", "Exemple : une feuille de papier donne un orange très pâle ; une pile de livres, un orange foncé.", "Deux objets superposés s’additionnent : leurs teintes se mélangent et l’ensemble paraît plus foncé."]}, {"t": "h", "x": "Mode noir et blanc"}, {"t": "p", "x": "En **noir et blanc** (niveaux de gris), l’image montre seulement la quantité de rayons arrêtés : **blanc** quand rien ne les arrête, **gris** quand une partie est arrêtée, **noir** quand tout est arrêté. On voit bien les formes, les contours et les fils fins, mais on ne sait pas de quelle matière il s’agit. Un appareil à un seul niveau d’énergie ne donne que cette image."}, {"t": "h", "x": "Mode couleur"}, {"t": "p", "x": "Avec la **double énergie**, l’appareil mesure le bagage à deux niveaux d’énergie. En comparant les deux mesures, l’ordinateur estime le **numéro atomique moyen** de la matière (léger, moyen ou lourd) et lui donne une couleur. L’opérateur lit donc deux informations à la fois : la matière (couleur) et la densité (teinte)."}, {"t": "h", "x": "Les aides à l’image du pupitre"}, {"t": "p", "x": "Selon l’appareil, le pupitre propose des touches pour changer l’affichage. Leur nom varie d’un fabricant à l’autre :"}, {"t": "ul", "x": ["passage du mode **couleur** au mode **noir et blanc** ;", "**image inversée** (négatif) : le clair devient foncé, ce qui fait ressortir les fils et les détails fins ;", "**renforcement des contours** : les bords des objets sont accentués ;", "réglage du **contraste** (fort, moyen, faible) ;", "affichage limité à une famille de matière, pour faire ressortir ce qui était caché."]}, {"t": "info", "x": "Ces aides ne remplacent pas le contrôle : en cas de doute, ou de zone noire, le bagage est repassé sous un autre angle ou ouvert selon les consignes du site."}, {"t": "links", "x": ["rx-lire-image", "rx-principe", "rx-generation"]}], "retenir": ["Orange = organique (léger) ; vert = intermédiaire ou mélange ; bleu = métal (lourd).", "Noir = les rayons ne passent pas : rien n’est visible derrière.", "Teinte claire = mince ou peu dense ; teinte foncée = épais ou dense.", "Noir et blanc : seulement la densité. Couleur : la matière en plus.", "Les teintes varient selon le fabricant : se fier à la formation sur son appareil."], "src": ["rx_brevet_8045805", "rx_brevet_9733385", "rx_springer_poudres", "rx_brevet_5699400", "rx_aviationsouk_how"]},
 {
  "id": "rx-principe",
  "r": "surete",
@@ -19169,7 +19171,7 @@ D.fiches.push(
   },
   {
    "t": "p",
-   "x": "Beaucoup d’appareils utilisent la **double énergie** : deux niveaux d’énergie de rayons X. En comparant les deux mesures, l’ordinateur estime le type de matière (organique ou non) et colore l’image. Voir [[rx-lire-image|Lire l’image]]."
+   "x": "Beaucoup d’appareils utilisent la **double énergie** : deux niveaux d’énergie de rayons X. En comparant les deux mesures, l’ordinateur estime le type de matière (organique ou non) et colore l’image. Voir [[rx-couleurs|Comprendre les couleurs et les densités]] et [[rx-lire-image|Lire l’image]]."
   },
   {
    "t": "h",
@@ -22386,6 +22388,7 @@ D.quiz.push(
   { q: "Un bon message d’alerte contient…", c: ["Le lieu précis, la nature du problème, le nombre et l’état des victimes", "Seulement le prénom de la victime", "Seulement la date"], a: 0, f: "sst-revision-simple" }
 );
 
+D.fiches.push({"id": "rx-generation", "r": "surete", "titre": "Termes techniques : comment le rayon X est fabriqué", "niv": ["APS", "1", "2", "3"], "mc": "rayons x generation production tube cathode anode filament electrons haute tension tungstene rayonnement de freinage vide chaleur refroidissement fenetre collimateur fente eventail kilovolt technique", "clair": "Dans le tube, un filament chauffé libère des électrons. Une haute tension les lance très vite sur une cible en métal. En freinant dans le métal, ils produisent les rayons X. Sans haute tension, il n’y a plus de rayons.", "b": [{"t": "svg", "id": "rx-tube", "cap": "L’intérieur du tube à rayons X"}, {"t": "h", "x": "Les pièces du tube"}, {"t": "kv", "x": [["Ampoule sous vide", "Enveloppe fermée, vidée de son air, pour que les électrons ne heurtent pas de gaz en chemin."], ["Cathode (pôle négatif)", "Elle porte un filament, le plus souvent en tungstène. Chauffé par un courant électrique, il libère des électrons."], ["Haute tension", "Plusieurs dizaines de milliers de volts (des dizaines à des centaines de kilovolts) entre la cathode et l’anode : elle accélère les électrons."], ["Anode (pôle positif), ou cible", "Pièce en métal lourd, souvent du tungstène, que les électrons viennent frapper."], ["Fenêtre et fente (collimateur)", "Les rayons sortent par une fenêtre du tube ; une fente ne laisse passer qu’un faisceau mince, en éventail, qui traverse le tunnel."], ["Refroidissement", "Le tube chauffe beaucoup : il est refroidi."]]}, {"t": "h", "x": "Ce qui se passe, étape par étape"}, {"t": "ol", "x": ["Le filament de la cathode est chauffé : des électrons s’en échappent.", "La haute tension attire ces électrons vers l’anode et les accélère très fortement.", "Les électrons frappent la cible en métal et sont freinés brutalement par ses atomes.", "Ce freinage produit un rayonnement : le **rayonnement de freinage**, dont une partie est constituée de rayons X.", "Certains atomes de la cible, excités par le choc, émettent aussi des rayons X qui leur sont propres (rayonnement caractéristique).", "Environ **1 %** de l’énergie devient des rayons X ; environ **99 %** devient de la chaleur.", "Les rayons sortent par la fenêtre, passent par la fente, traversent le bagage et arrivent sur les détecteurs."]}, {"t": "info", "x": "Les rayons X n’existent que pendant que la haute tension est appliquée. Dès qu’elle est coupée, les électrons ne sont plus accélérés et l’émission s’arrête : l’appareil ne contient aucune matière radioactive et le bagage contrôlé ne devient pas radioactif."}, {"t": "p", "x": "Plus la tension (en kilovolts) est élevée, plus les rayons sont pénétrants. La valeur exacte dépend du modèle : elle figure sur la notice et la plaque de l’appareil."}, {"t": "links", "x": ["rx-principe", "rx-couleurs", "rx-radioprotection"]}], "retenir": ["Filament chauffé (cathode) → électrons.", "Haute tension → électrons accélérés vers l’anode.", "Freinage dans le métal de la cible → rayons X.", "Environ 1 % de rayons X, 99 % de chaleur.", "Haute tension coupée = plus de rayons X."], "src": ["rx_tube_technoscience", "rx_tube_radiopaedia", "rx_tube_imt", "rx_inrs4443"]});
 /* --- xray : glossaire et quiz --- */
 D.glossaire.push(
 {
@@ -23873,6 +23876,45 @@ const SCHEMAS = (() => {
   Object.assign(S, LIVRE_SCHEMAS);
   return S;
 })();
+SCHEMAS["rx-couleurs"] = () => {
+  const K = "#2a2023", band = (y, id, c1, c2, t, d) => `<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect x="14" y="${y}" width="492" height="46" rx="6" fill="url(#${id})" stroke="var(--sv-ink)"/><text x="24" y="${y + 20}" style="font:800 15px var(--font);fill:${K}">${t}</text><text x="24" y="${y + 37}" style="font:600 11px var(--font);fill:${K}">${d}</text>`;
+  const T = (x, y, t, c = "st", a = "start") => `<text x="${x}" y="${y}" class="${c}" text-anchor="${a}">${t}</text>`;
+  return `<svg class="schema" viewBox="0 0 520 470" role="img" aria-label="Couleurs et densités sur l’image d’un appareil à rayons X" xmlns="http://www.w3.org/2000/svg">
+  ${T(14, 20, "MODE COULEUR (double énergie)", "stb")}
+  ${band(30, "rxo", "#ffe1b0", "#e06a00", "ORANGE : matières organiques", "papier, tissu, nourriture, plastiques, liquides, explosifs")}
+  ${band(84, "rxv", "#d3f3c8", "#1f8a2e", "VERT : matières intermédiaires ou mélange", "aluminium, poudres minérales, organique + inorganique superposés")}
+  ${band(138, "rxb", "#cfe0ff", "#0b3ea8", "BLEU : métaux et matières très absorbantes", "acier, fer, cuivre : armes, outils, câbles")}
+  <rect x="14" y="192" width="492" height="46" rx="6" fill="#0a0a0a" stroke="var(--sv-ink)"/><text x="24" y="212" style="font:800 15px var(--font);fill:#fff">NOIR : les rayons ne passent pas</text><text x="24" y="229" style="font:600 11px var(--font);fill:#fff">trop dense ou trop épais : on ne voit rien derrière</text>
+  <path d="M30 258 H482" stroke="var(--sv-ink)" stroke-width="2"/><path d="M482 258 l-10 -6 v12 z" fill="var(--sv-ink)"/>
+  ${T(14, 278, "teinte claire : mince ou peu dense", "sts")}${T(506, 278, "teinte foncée : épais ou dense", "sts", "end")}
+  ${T(14, 312, "MODE NOIR ET BLANC (niveaux de gris)", "stb")}
+  <defs><linearGradient id="rxg" x1="0" x2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#000000"/></linearGradient></defs>
+  <rect x="14" y="322" width="492" height="46" rx="6" fill="url(#rxg)" stroke="var(--sv-ink)"/>
+  ${T(14, 386, "blanc : rien n’arrête les rayons", "sts")}${T(260, 386, "gris : une partie est arrêtée", "sts", "middle")}${T(506, 386, "noir : tout est arrêté", "sts", "end")}
+  ${T(14, 414, "Le gris montre seulement la quantité de rayons arrêtés (densité et épaisseur),", "sts")}
+  ${T(14, 428, "pas la nature de la matière. La couleur ajoute la famille de matière.", "sts")}
+  ${T(14, 456, "Les teintes exactes changent selon le fabricant et les réglages.", "sts")}
+  </svg>`;
+};
+SCHEMAS["rx-tube"] = () => {
+  const T = (x, y, t, c = "sts", a = "start") => `<text x="${x}" y="${y}" class="${c}" text-anchor="${a}">${t}</text>`;
+  return `<svg class="schema" viewBox="0 0 520 330" role="img" aria-label="Intérieur d’un tube à rayons X" xmlns="http://www.w3.org/2000/svg">
+  <rect x="60" y="70" width="400" height="120" rx="60" fill="var(--surface)" stroke="var(--sv-ink)" stroke-width="2"/>
+  ${T(260, 62, "Ampoule sous vide", "st", "middle")}
+  <rect x="84" y="104" width="46" height="52" rx="4" fill="var(--sv-fill-2, #ddd)" stroke="var(--sv-ink)" stroke-width="1.5"/><path d="M130 118 q8 6 0 12 q8 6 0 12" fill="none" stroke="var(--sv-red)" stroke-width="2.5"/>
+  ${T(107, 208, "CATHODE (−)", "stb", "middle")}${T(107, 222, "filament chauffé :", "sts", "middle")}${T(107, 235, "il libère des électrons", "sts", "middle")}
+  <path d="M380 96 L420 96 L420 164 L380 164 L356 130 Z" fill="var(--sv-fill-2, #ddd)" stroke="var(--sv-ink)" stroke-width="1.5"/>
+  ${T(506, 208, "ANODE (+)", "stb", "end")}${T(506, 222, "cible en métal lourd", "sts", "end")}${T(506, 235, "(souvent du tungstène)", "sts", "end")}
+  <g stroke="var(--sv-ink)" stroke-width="1.6" stroke-dasharray="5 5" fill="none"><path d="M140 122 H350"/><path d="M140 130 H352"/><path d="M140 138 H350"/></g><path d="M352 130 l-10 -5 v10 z" fill="var(--sv-ink)"/>
+  ${T(245, 114, "électrons accélérés par la haute tension", "sts", "middle")}
+  <g stroke="var(--sv-red)" stroke-width="2.5" fill="none"><path d="M360 140 L322 262"/><path d="M364 142 L346 262"/><path d="M368 140 L370 262"/></g>
+  ${T(300, 282, "RAYONS X (environ 1 % de l’énergie)", "stb", "middle")}
+  ${T(300, 298, "sortent par une fenêtre, puis une fente les met en éventail", "sts", "middle")}
+  ${T(260, 30, "Environ 99 % de l’énergie devient de la chaleur : le tube est refroidi", "sts", "middle")}
+  ${T(14, 320, "Haute tension coupée = plus d’électrons accélérés = plus de rayons X.", "sts")}
+  </svg>`;
+};
+
 
 /* icons.js */
 /* Icônes de l'interface : grille 24 × 24, trait de 2 px, couleur héritée (currentColor). */
@@ -28350,6 +28392,7 @@ const APP = (() => {
         frag.appendChild(document.createTextNode(s.slice(last, st)));
         const mk = document.createElement("mark");
         mk.textContent = m[2];
+        mk.className = "vu";
         frag.appendChild(mk);
         if (!first) first = mk;
         last = st + m[2].length;
