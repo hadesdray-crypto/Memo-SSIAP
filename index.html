@@ -28792,6 +28792,17 @@ const CPN = (function () {
   function attacherDoigt(w) {
     w.style.touchAction = "none";
     let t0 = null, lp = null, drag = false, sx = 0, sy = 0, ox = 0, oy = 0, bouge = false;
+    /* Tant que le doigt est posé sur le robot, la page ne défile pas (WebView Android). */
+    const bloque = (e) => { if (e.cancelable) e.preventDefault(); };
+    const gele = (v) => {
+      const r = document.documentElement, b = document.body;
+      if (v) { document.addEventListener("touchmove", bloque, { passive: false }); r.style.overflow = "hidden"; b.style.overflow = "hidden"; r.style.overscrollBehavior = "none"; }
+      else { document.removeEventListener("touchmove", bloque, { passive: false }); r.style.overflow = ""; b.style.overflow = ""; r.style.overscrollBehavior = ""; }
+    };
+    w.addEventListener("touchstart", (e) => { gele(true); }, { passive: true });
+    w.addEventListener("touchmove", bloque, { passive: false });
+    w.addEventListener("touchend", () => gele(false));
+    w.addEventListener("touchcancel", () => gele(false));
     const fin = () => { clearTimeout(lp); lp = null; t0 = null; };
     w.addEventListener("pointerdown", (e) => {
       if (e.button > 0) return;
@@ -28819,7 +28830,7 @@ const CPN = (function () {
     });
     const lacher = (e) => {
       if (t0 !== e.pointerId) return;
-      const etaitDrag = drag; fin();
+      const etaitDrag = drag; fin(); gele(false);
       if (etaitDrag) {
         drag = false; w.classList.remove("cp-tenu"); w.style.transition = "";
         try { X.store.set("cp-pos", { x: parseFloat(w.style.left) || 0, y: parseFloat(w.style.top) || 0 }); } catch (er) { /* rien */ }

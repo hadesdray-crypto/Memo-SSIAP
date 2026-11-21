@@ -1,3 +1,4 @@
+- Compagnon : pendant qu’on le déplace, la page ne bouge plus derrière lui
 - Compagnon : touchez-le pour ouvrir sa bulle, touchez-le encore pour qu’il rentre
 - Compagnon : restez appuyé dessus, il grossit un instant et le téléphone vibre ; déplacez-le où vous voulez, il garde cette place
 - Compagnon : quand vous ne l’avez pas encore placé, il cherche une place sans texte
