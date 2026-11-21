@@ -28599,6 +28599,7 @@ const CPN = (function () {
 .cp-rb.cp-coup{animation:cp-sec .12s}
 @keyframes cp-sec{50%{transform:translateY(-2px)}}
 #cp-gr-w{position:fixed;left:0;top:0;width:${RW}px;height:${RH}px;z-index:45;transition:opacity .25s,left .45s ease,top .45s ease;touch-action:manipulation;cursor:pointer}
+#cp-gr-w.cp-tenu{filter:drop-shadow(0 6px 8px rgba(0,0,0,.45));z-index:47}
 #cp-gr-w.cp-cache{opacity:0;pointer-events:none}
 #cp-gr-w .cp-fl{width:100%;height:100%;animation:cp-flo 9s ease-in-out infinite}
 @keyframes cp-flo{50%{transform:translateY(-3px)}}
@@ -28677,7 +28678,7 @@ const CPN = (function () {
   function sortir(demande) {
     if (dehors || enMouv) return;
     if (!demande && urgente()) return;
-    const Zf = zone(); let pos = { x: Zf.px, y: Zf.y0 };
+    const Zf = zone(); let pos = posPerso() || libre(RW, RH) || { x: Zf.px, y: Zf.y0 };
     force = false;
     /* Pas de place libre : seul un toucher de l'écusson le fait sortir, le temps de la bulle ; ensuite il rentre (point vert). */
     if (!pos && demande) { const Z = zone(); pos = { x: Z.px, y: Z.y0 }; force = true; }
@@ -28690,7 +28691,7 @@ const CPN = (function () {
     w.style.left = pos.x + "px"; w.style.top = pos.y + "px";
     document.body.appendChild(w);
     dessiner($("#cp-gr"));
-    w.addEventListener("click", (e) => { e.stopPropagation(); sur(rentrer); });
+    attacherDoigt(w);
     if (ec) ec.classList.add("cp-vide");
     dehors = true; enMouv = true;
     const mr = (mini || ec).getBoundingClientRect(), s0 = mr.width / RW;
@@ -28778,6 +28779,59 @@ const CPN = (function () {
     const lp = libre(bw, bh, { x: x, y: wr.top + 4 }, [rr]);
     d.style.display = "";
     if (lp && Math.abs(lp.x - x) + Math.abs(lp.y - wr.top) < 320) { d.style.left = lp.x + "px"; d.style.top = lp.y + "px"; }
+  }
+  /* Position choisie par l'utilisateur (gardée d'une page à l'autre et d'un lancement à l'autre). */
+  function posPerso() {
+    try {
+      const v = X && X.store && X.store.get("cp-pos", null); if (!v || typeof v.x !== "number") return null;
+      const vw = document.documentElement.clientWidth, vh = innerHeight;
+      return { x: Math.max(2, Math.min(vw - RW - 2, v.x)), y: Math.max(2, Math.min(vh - RH - 2, v.y)) };
+    } catch (e) { return null; }
+  }
+  /* Toucher court : bulle (ou rentre si la bulle est ouverte). Appui long : petit zoom, vibration, puis on le déplace où on veut. */
+  function attacherDoigt(w) {
+    w.style.touchAction = "none";
+    let t0 = null, lp = null, drag = false, sx = 0, sy = 0, ox = 0, oy = 0, bouge = false;
+    const fin = () => { clearTimeout(lp); lp = null; t0 = null; };
+    w.addEventListener("pointerdown", (e) => {
+      if (e.button > 0) return;
+      e.stopPropagation();
+      try { w.setPointerCapture(e.pointerId); } catch (er) { /* rien */ }
+      t0 = e.pointerId; drag = false; bouge = false; sx = e.clientX; sy = e.clientY;
+      ox = parseFloat(w.style.left) || 0; oy = parseFloat(w.style.top) || 0;
+      clearTimeout(lp);
+      lp = setTimeout(() => sur(() => {
+        drag = true; enMouv = false;
+        try { navigator.vibrate && navigator.vibrate(25); } catch (er) { /* rien */ }
+        try { w.animate([{ transform: "scale(1)" }, { transform: "scale(1.15)" }, { transform: "scale(1)" }], { duration: 260, easing: "ease-out" }); } catch (er) { /* rien */ }
+        w.classList.add("cp-tenu"); bulleFerme();
+      }), 450);
+    });
+    w.addEventListener("pointermove", (e) => {
+      if (t0 !== e.pointerId) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (!drag) { if (Math.abs(dx) > 10 || Math.abs(dy) > 10) { clearTimeout(lp); bouge = true; } return; }
+      e.preventDefault();
+      const vw = document.documentElement.clientWidth, vh = innerHeight;
+      w.style.transition = "none";
+      w.style.left = Math.max(2, Math.min(vw - RW - 2, ox + dx)) + "px";
+      w.style.top = Math.max(2, Math.min(vh - RH - 2, oy + dy)) + "px";
+    });
+    const lacher = (e) => {
+      if (t0 !== e.pointerId) return;
+      const etaitDrag = drag; fin();
+      if (etaitDrag) {
+        drag = false; w.classList.remove("cp-tenu"); w.style.transition = "";
+        try { X.store.set("cp-pos", { x: parseFloat(w.style.left) || 0, y: parseFloat(w.style.top) || 0 }); } catch (er) { /* rien */ }
+        return;
+      }
+      if (bouge || e.type === "pointercancel") return;
+      sur(() => { enMouv = false; if ($("#cp-bul")) rentrer(); else bulle(); });
+    };
+    w.addEventListener("pointerup", lacher);
+    w.addEventListener("pointercancel", lacher);
+    w.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); });
+    w.addEventListener("contextmenu", (e) => e.preventDefault());
   }
   function bulleFerme() { clearTimeout(bullT); const d = $("#cp-bul"); if (d) d.remove(); if (force) { force = false; if (dehors && !enMouv) setTimeout(() => sur(replacer), 60); } }
 

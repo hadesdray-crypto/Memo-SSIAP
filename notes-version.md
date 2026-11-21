@@ -1,3 +1,6 @@
+- Compagnon : touchez-le pour ouvrir sa bulle, touchez-le encore pour qu’il rentre
+- Compagnon : restez appuyé dessus, il grossit un instant et le téléphone vibre ; déplacez-le où vous voulez, il garde cette place
+- Compagnon : quand vous ne l’avez pas encore placé, il cherche une place sans texte
 - Voix plus naturelle : l’appli choisit toute seule la meilleure voix française du téléphone, une voix d’homme par défaut
 - Lecture plus fluide : moins de coupures entre les phrases, plus de phrases tronquées
 - Sigles, articles du règlement, heures et unités lus correctement ; plus d’icônes ni de symboles lus
