@@ -28462,9 +28462,9 @@ const CPN = (function () {
     const css = document.createElement("style");
     css.id = "cp-css";
     css.textContent = `
-.top-in.cp-avec .top-btn{width:36px}
+.top-in.cp-avec .brand .logo{display:none}
 .top-in.cp-avec .brand{gap:6px}
-.cp-ec{flex:0 0 28px;width:28px;height:40px;margin:0 0 0 3px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;display:block}
+.cp-ec{flex:0 0 28px;width:28px;height:40px;margin:0 6px 0 4px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;display:block}
 .cp-ec>svg{display:block;width:28px;height:40px;overflow:visible}
 .cp-ec.cp-pulse>svg{animation:cp-pul .45s ease}
 @keyframes cp-pul{50%{transform:scale(1.08)}}
@@ -28513,7 +28513,8 @@ const CPN = (function () {
     const b = document.createElement("button");
     b.type = "button"; b.className = "cp-ec"; b.id = "cp-ec"; b.setAttribute("aria-label", "Compagnon : toucher pour le faire sortir");
     b.innerHTML = '<svg viewBox="0 0 28 40" aria-hidden="true"><path d="' + CP_ECUSSON_PATH + '" fill="#7A1717" stroke="#fff" stroke-width="1.5"/><svg id="cp-mini" x="4.25" y="6.5" width="19.5" height="26" viewBox="0 0 120 160"></svg><circle class="cp-pt" cx="24" cy="5" r="4" fill="#3B9E5A" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>';
-    top.appendChild(b);
+    const br = top.querySelector(".brand");
+    if (br) br.parentNode.insertBefore(b, br); else top.appendChild(b);
     top.classList.add("cp-avec");
     b.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); sur(() => { b.classList.remove("cp-pulse"); void b.offsetWidth; b.classList.add("cp-pulse"); if (dehors) rentrer(); else sortir(true); }); });
     dessiner($("#cp-mini"));
@@ -28731,7 +28732,7 @@ const CPN = (function () {
   /* ---------- Points d'entrée ---------- */
   function init(ctx) {
     if (on) return;
-    if (!ctx || !ctx.store || !ctx.store.get("compagnon", 0)) return;
+    if (!ctx || !ctx.store || !ctx.store.get("compagnon", 1)) return;
     X = ctx;
     if (!creer()) return;
     on = true;
@@ -29940,7 +29941,7 @@ const APP = (() => {
       <section class="sec about"><h2 class="lbl g">Affichage</h2>
         <div class="chips"><button class="btn ghost" data-act="theme">${icon("auto")}Thème : ${THEME_L[theme]}</button><button class="btn ghost" data-act="size">${icon("texte")}Texte ${SIZE_L[size]}</button></div>
         <div class="chips" style="margin-top:8px"><button class="btn ghost" data-act="nuit-tg">${icon("lune")}Ronde de nuit : ${nuit ? "activée" : "désactivée"}</button><button class="btn ghost" data-act="xl-tg">${icon("texte")}Boutons de réponse : ${xl ? "très grands" : "normaux"}</button></div>
-        <div class="chips" style="margin-top:8px"><button class="btn ghost" data-act="cp-tg">${icon("extincteur")}Compagnon : ${store.get("compagnon", 0) ? "activé" : "désactivé"}</button></div>
+        <div class="chips" style="margin-top:8px"><button class="btn ghost" data-act="cp-tg">${icon("extincteur")}Compagnon : ${store.get("compagnon", 1) ? "activé" : "désactivé"}</button></div>
         <p class="small muted" style="margin:6px 0 0">Le compagnon est un petit robot extincteur rangé dans l’écusson, en haut à droite. Touchez l’écusson : il sort et propose les pages utiles. Désactivé, il n’apparaît pas.</p>
       </section>
       <section class="sec about"><h2 class="lbl">Mes données</h2>
@@ -33855,7 +33856,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       }
       case "theme": theme = theme === "sombre" ? "clair" : theme === "clair" ? "auto" : "sombre"; store.set("theme", theme); applyTheme(); toast(`Thème ${THEME_L[theme]}.`); break;
       case "nuit-tg": nuitToggle(); break;
-      case "cp-tg": { const v = !store.get("compagnon", 0); store.set("compagnon", v ? 1 : 0); try { if (v) CPN.init({ store, VX, go, toast, tok: current(), page: cur }); else CPN.detruire(); } catch (e) { /* rien */ } rerender(); toast(v ? "Compagnon activé : touchez l’écusson en haut à droite." : "Compagnon désactivé."); break; }
+      case "cp-tg": { const v = !store.get("compagnon", 1); store.set("compagnon", v ? 1 : 0); try { if (v) CPN.init({ store, VX, go, toast, tok: current(), page: cur }); else CPN.detruire(); } catch (e) { /* rien */ } rerender(); toast(v ? "Compagnon activé : touchez l’écusson en haut à droite." : "Compagnon désactivé."); break; }
       case "xl-tg": xlToggle(); break;
       case "ssi-quiz": startQuiz("ssi"); navTo("o-quiz"); window.scrollTo(0, 0); break;
       case "ssi-sim": simAct(b.dataset.v); break;
