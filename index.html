@@ -1527,6 +1527,9 @@ details summary { cursor: pointer; }
 .tw-wd { stroke: var(--tw); stroke-width: 1.8; stroke-dasharray: 6 5; }
 .tw-wo { stroke: var(--sv-line); stroke-width: 1.5; stroke-dasharray: 2 5; }
 .tw-wa { stroke: var(--sv-red); stroke-width: 4; }
+/* élément choisi (touché ou ouvert depuis une fiche) et ses fils de liaison */
+.tw-svg .tw-m.tw-sel .tw-bg { stroke: var(--sv-yellow); stroke-width: 5; }
+.tw-svg .tw-w.tw-wsel { stroke: var(--sv-yellow); stroke-width: 4.5; }
 .tw-wx { stroke: var(--sv-red); stroke-width: 3; stroke-dasharray: 3 6; }
 .tw-svg .tw-zd { font-weight: 800; fill: var(--tw); }
 .tw-hb { fill: color-mix(in srgb, var(--tw) 14%, var(--surface)); stroke: var(--tw); stroke-width: 2; vector-effect: non-scaling-stroke; }
@@ -29773,6 +29776,7 @@ const APP = (() => {
         <div class="clair"><p class="lbl">En clair</p><p>${md(f.clair)}</p></div>
         ${f.retenir ? `<aside class="retenir"><p class="lbl">À retenir</p><ul>${f.retenir.map((x) => `<li>${icon("check")}<span>${md(x)}</span></li>`).join("")}</ul></aside>` : ""}
         <div class="body">${f.b.map(block).join("")}</div>
+        ${ficheSsiBox(f.id)}
         <section class="sec" data-tts="skip"><h2 class="lbl g">Sources de cette fiche</h2><div class="srcs">${f.src.map(srcItem).join("")}</div>${verifNote()}${signalBtn(tx0(f.titre))}</section>
         ${sujetsHTML(f.titre + " " + (f.mc || "") + " " + plain(f.clair), f.id, f.r)}
         ${prev || next ? `<nav class="pager" aria-label="Fiches de la rubrique">${prev ? `<a href="#f-${prev.id}"><span>Précédente</span><b>${tx(prev.titre)}</b></a>` : ""}${next ? `<a class="next" href="#f-${next.id}"><span>Suivante</span><b>${tx(next.titre)}</b></a>` : ""}</nav>` : ""}
@@ -32618,6 +32622,93 @@ function jChar(o = {}) {
   }
 
   let SSF = { type: "", cat: "", som: false, sub: false, ne: "", job: "1" }, SSK = null;
+  /* ===== Fiches et schéma du SSI : en bas de chaque fiche de matériel, avant les sources, un encadré dit s'il est dans le SSI.
+     S'il y est, un bouton ouvre la section SSI sur une vue où il existe, le met en évidence et montre ses fils de liaison.
+     Textes vérifiés sur le règlement de sécurité ERP (arrêté du 25 juin 1980, copie Légifrance) et sur une seconde source (Legrand). ===== */
+  let SSI_GO = null, SSI_BAK = null;
+  /* Bâtiment mis de côté quand un exemple a été montré : il revient à l'ouverture suivante de la section. */
+  function ssiBak() { const k = SSI_BAK; if (!k) return; SSI_BAK = null; Object.assign(SSF, { type: k.type, cat: k.cat, som: k.som }); SIM.v = k.v; SIM.cde = k.cde; }
+  const FSV = "Voir dans le schéma";
+  const FS_TAB = [1, "Le tableau est au centre du schéma : il reçoit les signaux des détecteurs et des déclencheurs manuels et donne aussitôt l’alarme restreinte (MS 66 § 2) ; l’alarme générale suit après la temporisation, 5 minutes au plus (MS 66 § 3). Selon le bâtiment, c’est l’ECS (catégorie A), le CMSI (catégorie B) ou un tableau d’alarme sans CMSI (par exemple avec une alarme de type 2b). Avec une alarme de type 3 ou 4, il n’y a pas de tableau.", [["ecs,cmsi,ea", FSV, 1]]];
+  const FS_DAS = "Ils reçoivent leur ordre du CMSI (catégories A et B) ou d’un dispositif de commande, DCS, DCMR ou DCM (catégories C, D et E), par l’adaptateur de commande (DAC) : c’est le système de mise en sécurité (MS 59 § 1). En catégories D et E, l’alarme ne peut commander que les portes coupe-feu à fermeture automatique et le déverrouillage des issues de secours (MS 60 § 3).";
+  const FS_PORTE = [1, "Dans le schéma, les portes coupe-feu à fermeture automatique et les clapets coupe-feu sont des DAS : ils se ferment sur ordre du CMSI ou d’un dispositif de commande, transmis par le DAC (MS 59 § 1, MS 60). Seules les portes coupe-feu maintenues ouvertes pour l’exploitation sont à fermeture automatique (CO 47 § 1) : les portes coupe-feu qui restent fermées, les murs et les planchers protègent sans recevoir d’ordre du SSI.", [["door", "Voir les portes coupe-feu dans le schéma"], ["clapet", "Voir les clapets dans le schéma"]]];
+  const FS_DESENF = [1, "Dans le schéma, les volets de désenfumage des couloirs sont des DAS, commandés par le CMSI ou par une commande manuelle, par l’intermédiaire du DAC (MS 59 § 1). La détection automatique ne les commande que si le règlement du type de bâtiment l’impose, et le désenfumage des escaliers se commande uniquement à la main (MS 60 § 1) : c’est pourquoi, dans le schéma, l’exutoire d’escalier n’est relié à aucun tableau.", [["volet", "Voir les volets dans le schéma"], ["exu", "Voir l’exutoire d’escalier dans le schéma"]]];
+  const FS_AES = [1, "Dans le schéma, l’AES est rechargée par le courant normal et alimente le tableau (ECS, CMSI ou tableau d’alarme). Si le courant normal disparaît, ses batteries prennent le relais : comme toute source de sécurité, elle maintient le fonctionnement des matériels de sécurité quand la source normale fait défaut (EL 3). L’exploitant vérifie au moins une fois par semaine que les alimentations de sécurité sont en état (MS 69). Le schéma la montre quand il y a un tableau (alarmes de types 1, 2a et 2b).", [["aes", FSV, 1]]];
+  const FS_SPK = [1, "Dans le schéma, les sprinkleurs sont reliés à leur poste de contrôle. Ils s’ouvrent seuls à la chaleur, sans aucun ordre du SSI ; quand l’eau coule, le poste de contrôle fait sonner sa cloche et l’alarme est reportée au poste de sécurité. Le règlement compte l’extinction automatique parmi les fonctions possibles de la mise en sécurité (MS 53 § 1). Le schéma les montre avec un SSI de catégorie A, dans le scénario « sprinkleur ».", [["spk", "Voir les sprinkleurs dans le schéma"], ["pc", "Voir le poste de contrôle dans le schéma"]]];
+  const FS_TOUT = [1, "Tous les éléments de cette fiche sont dans le schéma du SSI de la section SSI, adapté à votre bâtiment. Touchez un élément du schéma : il se présente et ses fils de liaison s’affichent en jaune.", [["", "Voir le schéma du SSI"]]];
+  const FS_BAES = [0, "Les blocs autonomes d’éclairage de sécurité (BAES) ne font pas partie du SSI. Ils relèvent de l’éclairage de sécurité (EC 7 à EC 15), alors que le SSI ne regroupe que les matériels qui reçoivent, traitent et exécutent les informations et ordres de sécurité incendie (MS 53 § 1) : aucune des fonctions de mise en sécurité citées par le règlement ne les concerne. Ils n’ont donc aucun chemin de communication avec le tableau. Pourquoi ? Chaque bloc est alimenté par une dérivation du circuit d’éclairage normal de son local (EC 12 § 3) : si le courant de ce circuit disparaît, il s’allume seul avec sa propre batterie, pendant au moins 1 heure (EC 7). Leur seule liaison est la télécommande de mise au repos, posée près des commandes de l’éclairage normal (EC 12 § 5) : elle sert quand on coupe volontairement l’éclairage à la fermeture (EC 14 § 2). Les blocs à test automatique (SATI) font aussi leurs essais tout seuls (EC 12 § 4). À ne pas confondre avec les BAAS, blocs autonomes d’alarme sonore : eux font partie de l’alarme et sont dans le schéma.", [["baas", "Voir les BAAS dans le schéma"]]];
+  const FS_NON = (t) => [0, t + " Le SSI ne regroupe que les matériels qui reçoivent, traitent et exécutent les informations et ordres de sécurité incendie (MS 53 § 1) : ce matériel n’envoie aucun signal au tableau et n’en reçoit aucun ordre. C’est pourquoi il n’a pas de chemin de communication et n’apparaît pas dans le schéma.", []];
+  const FS_EXT = FS_NON("Les extincteurs ne font pas partie du SSI : ce sont des moyens d’extinction que le personnel, et parfois le public, utilise à la main sur un début d’incendie (MS 38 § 1).");
+  const FS_RIA = FS_NON("Le robinet d’incendie armé (RIA) ne fait pas partie du SSI : c’est un moyen d’extinction que l’on met en œuvre à la main (MS 4, MS 14).");
+  const FS_COL = FS_NON("Les colonnes sèches et les colonnes en charge ne font pas partie du SSI : ce sont des moyens d’extinction utilisés par les sapeurs-pompiers (MS 4).");
+  const FS_PEI = FS_NON("Les poteaux et bouches d’incendie ne font pas partie du SSI : ce sont des points d’eau où les sapeurs-pompiers branchent leurs engins (MS 4).");
+  const FS_DIV = FS_NON("La couverture anti-feu et les moyens divers ne font pas partie du SSI : ce sont des moyens d’extinction utilisés à la main (MS 40).");
+  const FICHE_SSI = {
+    "tableau-ssi": FS_TAB,
+    "pb-ssi-composants-niveaux": [1, "Dans le schéma, l’ECS et le CMSI sont côte à côte au centre. L’ECS reçoit les signaux des détecteurs et des déclencheurs manuels et donne l’alarme restreinte (MS 66 § 2) ; le CMSI gère l’alarme générale (son unité de gestion d’alarme, l’UGA) et commande les DAS (MS 59). L’ECS n’existe qu’en catégorie A ; en catégorie B, il n’y a que le CMSI.", [["ecs", "Voir l’ECS dans le schéma"], ["cmsi", "Voir le CMSI dans le schéma"]]],
+    detecteurs: [1, "Dans le schéma, les détecteurs sont reliés à leur zone de détection, puis à l’ECS. Ils signalent tout début d’incendie au tableau et mettent en œuvre les équipements qui leur sont asservis (MS 56 § 2) ; le tableau donne aussitôt l’alarme restreinte (MS 66 § 2). Quand le règlement prévoit que la détection déclenche les DAS, c’est sans temporisation (MS 60 § 1). Le schéma les montre en catégorie A : c’est la seule catégorie de SSI qui comprend un système de détection automatique.", [["det", FSV]]],
+    "declencheur-manuel": [1, "Dans le schéma, les déclencheurs manuels envoient leur signal au tableau (ECS, CMSI ou tableau d’alarme), qui donne aussitôt l’alarme restreinte (MS 66 § 2). Avec une alarme de type 3, il n’y a pas de tableau : un seul déclencheur fait sonner tous les blocs d’alarme du bâtiment (MS 65 § 4). Le schéma les montre dans toutes les catégories ; en IGH, il n’y en a pas, car le SSI n’y comporte que de la détection automatique (GH 49 § 1).", [["dm", FSV]]],
+    alarme: [1, "Dans le schéma, l’alarme générale part de l’UGA du CMSI (catégories A et B) ou de l’équipement d’alarme sans CMSI, vers les diffuseurs sonores, les flashs et les blocs autonomes d’alarme sonore (BAAS). Le flash complète le son pour les personnes qui entendent mal (MS 64 § 3). Les BAAS ont leur propre batterie : un bloc principal (Pr) et des blocs satellites (Sa) pour l’alarme de type 2b, des blocs de type Ma pour le type 3, qui sonnent tous dès qu’on appuie sur un seul déclencheur (MS 65 § 4).", [["diff", "Voir les diffuseurs sonores dans le schéma"], ["baas", "Voir les BAAS dans le schéma"], ["flash", "Voir les flashs dans le schéma"]]],
+    das: [1, "Dans le schéma, les DAS sont regroupés : issues de secours verrouillées, portes coupe-feu, clapets, ventilation, volets de désenfumage. " + FS_DAS, [["dac", FSV]]],
+    "ssi-das-etats": [1, "Dans le schéma, les DAS sont regroupés : issues de secours verrouillées, portes coupe-feu, clapets, ventilation, volets de désenfumage. " + FS_DAS + " En catégories A et B, les voyants de l’unité de signalisation (US) du CMSI montrent si chaque DAS est en attente ou en sécurité.", [["dac", FSV], ["us", "Voir l’US dans le schéma"]]],
+    compartimentage: FS_PORTE, "l1-051-compartimentage": FS_PORTE,
+    desenfumage: FS_DESENF, "pb-desenfumage-commandes": FS_DESENF,
+    "l1-065-desenfumage-objectifs-methodes": FS_DESENF, "l1-066-solutions-desenfumage": FS_DESENF, "l1-067-desenfumage-escaliers-circulations": FS_DESENF, "l1-068-desenfumage-locaux-declenchement": FS_DESENF, "l1-072-desenfumage-secours-essais": FS_DESENF, "l1-073-infos-reglementation-desenfumage": FS_DESENF,
+    degagements: [1, "Dans les dégagements, seules les issues de secours verrouillées sont reliées au SSI : ce sont des DAS, déverrouillés dès le lancement de l’alarme générale, et dès la détection avec une alarme de type 1 (MS 60 § 2). Les couloirs, les escaliers et les portes ordinaires ne reçoivent aucun ordre du SSI.", [["issue", FSV]]],
+    "ssi-alimentation": FS_AES,
+    sprinkleurs: FS_SPK, "pb-sprinkleurs-poste-controle": FS_SPK, "l1-103-sprinkleurs-role": FS_SPK, "l1-104-sprinkleurs-poste": FS_SPK, "l1-105-sprinkleurs-sources-tete": FS_SPK, "l1-106-sprinkleurs-controles": FS_SPK,
+    ssi: FS_TOUT, "ssi-simple": FS_TOUT, "ssi-parcours": FS_TOUT, "ssi-pieces": FS_TOUT, "l1-088-sdi-smsi-alarme": FS_TOUT, "l1-110-ssi-terminologie": FS_TOUT, "l1-111-ssi-definition-niveaux": FS_TOUT, "l1-112-ssi-detection-cmsi-das": FS_TOUT, "l1-113-ssi-commande-alarme": FS_TOUT,
+    "eclairage-securite": FS_BAES, "l1-074-sequence-7-eclairage-definitions": FS_BAES, "l1-075-eclairage-evacuation-ambiance": FS_BAES, "l1-076-eclairage-entretien-elementaire": FS_BAES, "l1-077-maintenance-blocs-autonomes-igh": FS_BAES,
+    extincteurs: FS_EXT, "extincteur-utiliser": FS_EXT, "extincteur-etiquette": FS_EXT, "extincteurs-regles": FS_EXT, "pro-extincteur-gestes": FS_EXT, "pb-extincteurs-types-marquage": FS_EXT, "pb-extincteur-gestes-distances": FS_EXT, "pb-extincteur-controle-maintenance": FS_EXT, "pb-extincteur-implantation-textes": FS_EXT,
+    "l1-080-extincteurs": FS_EXT, "l1-081-utilisation-extincteurs": FS_EXT, "l1-082-types-extincteurs": FS_EXT, "l1-137-extinction-co2": FS_EXT, "l1-138-extinction-eau-poudres": FS_EXT,
+    ria: FS_RIA, "pro-ria-gestes": FS_RIA, "pb-ria-mise-en-oeuvre-verif": FS_RIA, "l1-079-ria": FS_RIA,
+    colonnes: FS_COL, "pb-colonnes-pompiers-agent": FS_COL, "l1-107-colonnes-seches": FS_COL, "l1-108-colonnes-montantes-humides": FS_COL, "l1-109-colonnes-entretien": FS_COL,
+    pei: FS_PEI, "pb-pei-deci": FS_PEI,
+    "moyens-divers": FS_DIV, "pb-couverture-antifeu": FS_DIV,
+  };
+  function ficheSsiBox(id) {
+    const e = FICHE_SSI[id]; if (!e) return "";
+    const bt = e[2].map(([v, l, t]) => `<button type="button" class="btn ghost" data-act="ssi-voir" data-v="${v}"${t ? ' data-tab="1"' : ""}>${icon("oeil")}${tx(l)}</button>`).join("");
+    return `<div class="call call-info fssi" role="note" data-fssi="${e[0] ? "oui" : "non"}">${icon(e[0] ? "oeil" : "info")}<div><p class="lbl">${tx(e[0] ? "Dans le schéma du SSI" : "Pas dans le SSI")}</p><p>${md(e[1])}</p>${bt ? `<div class="chips">${bt}</div>` : ""}</div></div>`;
+  }
+  /* Un fil est mis en évidence quand il touche l'élément choisi (le CMSI compte avec ses unités UGA, US et UCMC). */
+  const ssiSelSet = (e) => (e === "cmsi" ? ["cmsi", "uga", "us", "ucmc"] : [e]);
+  const ssiSelW = (w) => { const e = SIM.el; if (!e) return 0; const S = ssiSelSet(e); return S.includes(w.a) || S.includes(w.b) ? 1 : 0; };
+  /* Avant d'afficher la section SSI depuis une fiche : plans complets, et un bâtiment où l'élément existe (celui choisi, sinon un exemple). */
+  function ssiGoPrep() {
+    ssiBak();
+    const g = SSI_GO; SSI_GO = null; if (!g) return null;
+    SIM.mots = "metier"; TW.s = 0; TW.key = ""; SIM.i = -1; SIM.play = false; clearTimeout(SIM.tm);
+    const els = g.els.filter(Boolean);
+    if (els.includes("spk") || els.includes("pc")) SIM.ev = SIM.want = "sprink";
+    const fit = () => { const c = simCfg(); if (g.tab && !simTab(c)) return ""; const h = twHas(c); return els.find((x) => h[x] === "on") || ""; };
+    let el = els.length ? fit() : "", ex = "";
+    if (els.length && !el && SSF.type) {
+      const r = ssiReq(SSF.type, SSF.cat, SSF.som), v0 = SIM.v, d0 = SIM.cde;
+      if (Array.isArray(r)) for (let i = 0; i < r.length && !el; i++) for (const k of r[i].ssi === "CDE" ? ["C", "D", "E"] : [d0]) { SIM.v = i; SIM.cde = k; el = fit(); if (el) break; }
+      if (!el) { SIM.v = v0; SIM.cde = d0; }
+    }
+    if (els.length && !el) {
+      if (SSF.type) SSI_BAK = { type: SSF.type, cat: SSF.cat, som: SSF.som, v: SIM.v, cde: SIM.cde };
+      SSF.type = ""; SSF.cat = ""; SSF.som = false; SIM.v = 0;
+      for (const k of ["A", "B", "C", "D", "E"]) { SIM.man = k; el = fit(); if (el) { ex = k; break; } }
+    }
+    SIM.el = el; simEvFix();
+    return { el, ex, bak: !!SSI_BAK };
+  }
+  /* Après l'affichage : on descend jusqu'au schéma et on cadre l'élément avec tout ce qui lui est relié. */
+  function ssiGoShow(g) {
+    const w = $("#tw-wrap"); if (!w) return;
+    window.scrollTo(0, Math.max(0, w.getBoundingClientRect().top + window.scrollY - 70));
+    if (g.ex) toast("Exemple montré : SSI de catégorie " + g.ex + ", où cet élément existe." + (g.bak ? " Votre bâtiment n’en a pas ; il revient à la prochaine ouverture de la section SSI." : ""));
+    if (!g.el || !TW.B[g.el] || !TW.pw) return;
+    const S = ssiSelSet(g.el), ids = new Set([g.el]);
+    (TW.lk || []).forEach(([a, b]) => { if (S.includes(a)) ids.add(b); if (S.includes(b)) ids.add(a); });
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    ids.forEach((id) => { const b = TW.B[id]; if (!b) return; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[0] + b[2]); y1 = Math.max(y1, b[1] + b[3]); });
+    const m = 110;
+    twGo({ cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(TW.cap || 0.55, TW.pw / (x1 - x0 + m * 2), TW.ph / (y1 - y0 + m * 2)) }, 500);
+  }
   /* ===== Section SSI, DAS et compartimentage ===== */
   const SSI_SEC = [
     ["SSI", "Le système de sécurité incendie exigé", "cloche", (r) => r.h === "SSI"],
@@ -33201,7 +33292,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     ar += arrow([[343, 768], [343, 804]], tab, tabOn && out, "z2>z3");
     /* sans tableau (alarme de type 3 ou 4) : le bouton rouge fait sonner directement la sirène */
     if (!tab) ar += arrow([[670, 137], [698, 137], [698, 955], [670, 955]], true, act["s-dm"] && act["s-sir"], "s-dm>s-sir");
-    TW.B = B; TW.act = Object.keys(TWS).filter((k) => act[k]);
+    TW.B = B; TW.act = Object.keys(TWS).filter((k) => act[k]); TW.lk = [];
     twDim();
     const vb = TW.s ? `${TW.cx - TW.pw / TW.s / 2} ${TW.cy - TW.ph / TW.s / 2} ${TW.pw / TW.s} ${TW.ph / TW.s}` : `0 0 ${TW.W} ${TW.H}`;
     return `<svg id="tw-svg" class="tw-svg tw-vs" viewBox="${vb}" role="img" aria-label="Plan du système de sécurité incendie en mots simples : on repère le feu, le tableau prévient, le bâtiment se protège" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-3000" y="-3000" width="${TW.W + 6000}" height="${TW.H + 6000}"/>${o}${ar}${rings}${cards}</svg>`;
@@ -33449,13 +33540,13 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         const p = w.d.map((q) => q.slice()), j0 = trim(p); p.reverse(); const j1 = trim(p); p.reverse();
         for (let n = 1; n < w.d.length; n++) { const a0 = w.d[n - 1], b0 = w.d[n]; segs.push([Math.min(a0[0], b0[0]), Math.min(a0[1], b0[1]), Math.max(a0[0], b0[0]), Math.max(a0[1], b0[1])]); }
         w.j = (j0 ? "d" : "") + (j1 ? "f" : ""); w.d = p.length > 1 ? pl(p) : ""; }); }
-    TW.B = B; TW.act = [...H].filter((x) => B[x]);
+    TW.B = B; TW.act = [...H].filter((x) => B[x]); TW.lk = W.map((w) => [w.a, w.b]);
     twDim();
     const vb = TW.s ? `${TW.cx - TW.pw / TW.s / 2} ${TW.cy - TW.ph / TW.s / 2} ${TW.pw / TW.s} ${TW.ph / TW.s}` : `0 0 ${TW.W} ${TW.H}`;
     /* Bandeau du haut (variantes en blocs) : le SSI et ses deux moitiés */
     const half = (x, w, okk, t) => `<g class="${okk ? "tw-hon" : "tw-hoff"}"><rect class="tw-hb" x="${x}" y="176" width="${w}" height="104" rx="30"/>${T(x + w / 2, 247, t + (okk ? "" : " · " + absent), "tw-ct", "middle", okk ? 54 : 40)}</g>`;
     const band = V === 2 ? "" : `<g class="tw-cart">${T(1400, 128, "SSI : système de sécurité incendie", "tw-cl", "middle", 118)}${half(40, 1370, sdiOn, "SDI : système de détection incendie")}${half(1430, 1330, smsiOn, "SMSI : système de mise en sécurité incendie")}</g>`;
-    return `<svg id="tw-svg" class="tw-svg tw-v${V}" viewBox="${vb}" role="img" aria-label="Schéma du SSI, système de sécurité incendie : le tableau au centre, les autres éléments autour" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-6000" y="-6000" width="${TW.W + 12000}" height="${TW.H + 12000}"/>${band}<g${OY ? ` transform="translate(0 ${OY})"` : ""}>${o}${W.filter((w) => w.d).map((w, n) => [w, n]).sort((x, y) => x[0].k - y[0].k || x[1] - y[1]).map(([w]) => `<path class="${w.cl}" data-w="${w.a}>${w.b}"${w.j ? ` data-j="${w.j}"` : ""} d="${w.d}"/>`).join("")}${cards}${rings}</g></svg>`;
+    return `<svg id="tw-svg" class="tw-svg tw-v${V}" viewBox="${vb}" role="img" aria-label="Schéma du SSI, système de sécurité incendie : le tableau au centre, les autres éléments autour" xmlns="http://www.w3.org/2000/svg"><rect class="tw-back" x="-6000" y="-6000" width="${TW.W + 12000}" height="${TW.H + 12000}"/>${band}<g${OY ? ` transform="translate(0 ${OY})"` : ""}>${o}${W.filter((w) => w.d).map((w, n) => [w, n]).sort((x, y) => ssiSelW(x[0]) - ssiSelW(y[0]) || x[0].k - y[0].k || x[1] - y[1]).map(([w]) => `<path class="${w.cl}${ssiSelW(w) ? " tw-wsel" : ""}" data-w="${w.a}>${w.b}"${w.j ? ` data-j="${w.j}"` : ""} d="${w.d}"/>`).join("")}${cards}${rings}</g></svg>`;
   }
   /* ----- Vue de la toile : zoom et déplacement (on change la fenêtre du dessin, il reste net) ----- */
   const twFit = () => Math.min(TW.pw / TW.W, TW.ph / TW.H) || 0.1;
@@ -33659,9 +33750,10 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     /* La section SSI garde ses propres choix : elle ne modifie jamais la fiche de « Mon bâtiment ». Elle reprend le bâtiment trouvé, s’il y en a un. */
     /* Le bâtiment choisi ici est gardé quand on revient dans la section ; il n'est repris de « Mon bâtiment » que si celui-ci a changé depuis. */
     const bk = [BAT.fi.type, BAT.fi.cat, !!BAT.fi.som, !!BAT.fi.sub, BAT.fi.ne].join("|");
-    if (SSK !== bk) { SSK = bk; SSF = Object.assign({}, BAT.fi, { catMan: false }); SIM.v = 0; simReset(); }
+    if (SSK !== bk) { SSK = bk; SSF = Object.assign({}, BAT.fi, { catMan: false }); SIM.v = 0; SSI_BAK = null; simReset(); }
     else if (curTok !== "o-ssi") simReset(); /* on rouvre la section : aucun exercice d'avant ne reste affiché à moitié */
     SSF.job = BAT.fi.job;
+    const goSsi = ssiGoPrep();
     const f = SSF;
     const cours = SSI_COURS.map(([t, ids]) => { const ok = ids.filter((id) => FI[id]); return ok.length ? `<div class="sec"><h3 class="lbl b">${tx(t)}</h3><div class="links">${ok.map(linkCard).join("")}</div></div>` : ""; }).join("");
     const html = `${toolHead("o-ssi")}
@@ -33687,10 +33779,10 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (SSF.type !== t.value) { SSF.type = t.value; ch = true; }
       if (SSF.cat !== c.value) { SSF.cat = c.value; ch = true; }
       if (SSF.som !== m.checked) { SSF.som = m.checked; ch = true; }
-      if (ch) { SIM.v = 0; simReset(); ssiReqDraw(); simDraw(); ssiDraw(); return; }
+      if (ch) { SSI_BAK = null; SIM.v = 0; simReset(); ssiReqDraw(); simDraw(); ssiDraw(); return; }
       simSel();
     };
-    return { html, title: TL["o-ssi"].t, tab: "outils", back: "outils", update, after: () => { TW.key = ""; twBind(); synScroll(); } };
+    return { html, title: TL["o-ssi"].t, tab: "outils", back: "outils", update, after: () => { TW.key = ""; twBind(); synScroll(); if (goSsi) setTimeout(() => ssiGoShow(goSsi), 60); } };
   }
   function toolBatiment() {
     const html = `${toolHead("o-batiment")}
@@ -34033,6 +34125,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       case "ssi-quiz": startQuiz("ssi"); navTo("o-quiz"); window.scrollTo(0, 0); break;
       case "ssi-sim": simAct(b.dataset.v); break;
       case "ssi-el": simEl(b.dataset.v); break;
+      case "ssi-voir": SSI_GO = { els: b.dataset.v ? b.dataset.v.split(",") : [], tab: b.dataset.tab === "1" }; navTo("o-ssi"); break;
       case "jour-go": startQuiz("jour"); navTo("o-quiz"); window.scrollTo(0, 0); break;
       case "size": size = SIZES[(SIZES.indexOf(size) + 1) % SIZES.length]; store.set("size", size); applySize(); toast("Texte " + SIZE_L[size] + "."); break;
       case "go-search": go("recherche"); break;

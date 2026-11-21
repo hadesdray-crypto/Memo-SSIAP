@@ -1,3 +1,6 @@
+- Fiches de matériel : nouvel encadré avant les sources, « Dans le schéma du SSI » (sa place dans la chaîne, avec le bouton « Voir dans le schéma ») ou « Pas dans le SSI » (pourquoi, avec l’article du règlement)
+- Le bouton ouvre la section SSI, choisit un bâtiment où l’élément existe, le cadre et montre ses fils de liaison en jaune
+- Blocs autonomes : les BAES (éclairage) sont expliqués hors du SSI, avec un lien vers les BAAS (alarme sonore), qui sont dans le schéma
 - Compagnon : pendant qu’on le déplace, la page ne bouge plus derrière lui
 - Compagnon : touchez-le pour ouvrir sa bulle, touchez-le encore pour qu’il rentre
 - Compagnon : restez appuyé dessus, il grossit un instant et le téléphone vibre ; déplacez-le où vous voulez, il garde cette place
