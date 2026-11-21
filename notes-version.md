@@ -1,3 +1,4 @@
+- Compagnon : quand il sort, il se pose toujours au même endroit, en haut à gauche, et y reste ; il ne se déplace plus, ne disparaît plus en faisant défiler la page, et sort plus doucement
 - Compagnon : il est maintenant présent d’office, en haut à gauche, à la place du logo ; on peut le retirer dans Réglages, rubrique Affichage
 - Nouveau : le Compagnon, un petit robot extincteur rangé dans l’écusson en haut à droite ; désactivé au départ, on l’active dans Réglages, rubrique Affichage
 - Compagnon : touchez l’écusson, le robot sort et propose les pages utiles de la rubrique où vous êtes ; touchez-le ou « Ranger » pour qu’il rentre ; s’il n’a pas de place, il reste dans l’écusson et un point vert clignote ; sur les pages d’urgence il ne sort jamais tout seul

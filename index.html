@@ -28569,7 +28569,7 @@ const CPN = (function () {
   function sortir(demande) {
     if (dehors || enMouv) return;
     if (!demande && urgente()) return;
-    let pos = libre(RW, RH);
+    const Zf = zone(); let pos = { x: Zf.px, y: Zf.y0 };
     force = false;
     /* Pas de place libre : seul un toucher de l'écusson le fait sortir, le temps de la bulle ; ensuite il rentre (point vert). */
     if (!pos && demande) { const Z = zone(); pos = { x: Z.px, y: Z.y0 }; force = true; }
@@ -28590,11 +28590,8 @@ const CPN = (function () {
     const fin = () => { enMouv = false; if (demande) bulle(); };
     try {
       const a = w.animate([
-        { transform: `translate(${dx}px,${dy}px) scale(${s0})`, transformOrigin: "0 0" },
-        { transform: `translate(${dx * 0.55}px,${dy * 0.2 + 26}px) scale(${(s0 + 1) / 2})`, transformOrigin: "0 0", offset: 0.5 },
-        { transform: "translate(0,4px) scale(1.03)", transformOrigin: "0 0", offset: 0.82 },
-        { transform: "translate(0,-2px) scale(.99)", transformOrigin: "0 0", offset: 0.92 },
-        { transform: "none", transformOrigin: "0 0" }], { duration: 700, easing: "ease-out" });
+        { transform: `translate(${dx}px,${dy}px) scale(${s0})`, transformOrigin: "0 0", opacity: 0.6 },
+        { transform: "none", transformOrigin: "0 0", opacity: 1 }], { duration: 650, easing: "cubic-bezier(.4,0,.2,1)" });
       a.onfinish = fin;
     } catch (e) { fin(); }
   }
@@ -28618,6 +28615,8 @@ const CPN = (function () {
   /* Replacement : glisse vers la place libre la plus proche, ou rentre (point vert) s'il n'y en a pas ; ressort dès qu'il y a de la place. */
   function replacer(pref) {
     if (enMouv) return;
+    if (dehors) { const w0 = $("#cp-gr-w"); if (w0) w0.classList.remove("cp-cache"); return; }
+    if (attente) { attente = false; point(false); return; }
     if (dehors) {
       const w = $("#cp-gr-w"); if (!w) return;
       if (!force && pref !== true) {
@@ -28715,7 +28714,7 @@ const CPN = (function () {
     chT = setTimeout(() => sur(() => { setEcran(""); if ($("#res .empty")) setEmo("desole", 3000); else setEmo(emoRepos()); }), 900);
   }
   function surSaisie(e) { if (e.target && e.target.id === "q") sur(cherche); }
-  function surDefil() {
+  function surDefil() { return;
     const w = $("#cp-gr-w"), d = $("#cp-bul");
     if (force) bulleFerme();
     if (w) w.classList.add("cp-cache");
