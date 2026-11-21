@@ -1,3 +1,7 @@
+- Voix plus naturelle : l’appli choisit toute seule la meilleure voix française du téléphone, une voix d’homme par défaut
+- Lecture plus fluide : moins de coupures entre les phrases, plus de phrases tronquées
+- Sigles, articles du règlement, heures et unités lus correctement ; plus d’icônes ni de symboles lus
+- Fenêtre « Voix » : voix « avec connexion » et « sans connexion » indiquées ; sans internet, l’appli passe toute seule sur la voix du téléphone
 - Compagnon : quand il sort, il se pose toujours au même endroit, en haut à gauche, et y reste ; il ne se déplace plus, ne disparaît plus en faisant défiler la page, et sort plus doucement
 - Compagnon : il est maintenant présent d’office, en haut à gauche, à la place du logo ; on peut le retirer dans Réglages, rubrique Affichage
 - Nouveau : le Compagnon, un petit robot extincteur rangé dans l’écusson en haut à droite ; désactivé au départ, on l’active dans Réglages, rubrique Affichage

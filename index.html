@@ -25267,13 +25267,39 @@ function VOIX(h) {
   const prenom = (l) => new RegExp("(?:^|[^a-zà-ÿ])(?:" + l + ")(?![a-zà-ÿ])", "i");
   const G_F = prenom("am[ée]lie|audrey|aur[ée]lie|marie|julie|hortense|denise|[ée]lo[iï]se|sylvie|caroline|chantal|virginie|brigitte|vivienne|charline|ariane|coralie|jacqueline|jos[ée]phine|yvette|c[ée]leste"), G_M = prenom("thomas|henri|paul|claude|daniel|nicolas|jacques|guillaume|antoine|jean|g[ée]rard|fabrice|r[ée]my|alain|j[ée]r[ôo]me|maurice|yves|thierry");
   const genre = (v) => { const n = ((v && v.name) || "") + " " + ((v && v.voiceURI) || ""); return /female|femme|f[ée]minin|fr-fr-x-(?:fra|frc|vlf)|fr-ca-x-ca[ac]/i.test(n) || G_F.test(n) ? "f" : /male|homme|masculin|fr-fr-x-fr[bd]|fr-ca-x-ca[bd]/i.test(n) || G_M.test(n) ? "m" : ""; };
-  /* Choix automatique : français de France, voix du téléphone, et une voix d'homme quand l'appareil en annonce une. Le choix fait dans les Réglages passe toujours avant. */
+  /* Qualité d'une voix : les voix « réseau » ou « naturelles » (Google network, Natural, Neural, Online…) sont bien plus agréables
+     que les voix de base du téléphone ; elles ont besoin d'internet. Sans connexion, seules les voix du téléphone sont gardées. */
+  const OFF = () => navigator.onLine === false;
+  const nomV = (v) => String((v && v.name) || "") + " " + String((v && v.voiceURI) || "");
+  const reseau = (v) => !!v && (v.localService === false || /network|online|natural|neural|wavenet|cloud/i.test(nomV(v)));
+  const qualite = (v) => { const n = nomV(v); let s = 0; if (/natural|neural|wavenet|premium|enhanced|studio/i.test(n)) s += 6; if (reseau(v)) s += 5; if (/google/i.test(n)) s += 2; if (/compact|espeak|pico|svox|robot/i.test(n)) s -= 8; if (/-language\b/i.test(n)) s -= 1; return s; };
+  const utilisable = (v) => !!v && !(OFF() && reseau(v));
+  const langSc = (v) => (/^fr[-_]fr/i.test(v.lang || "") ? 30 : /^fr[-_](?:be|ch|lu)/i.test(v.lang || "") ? 4 : /^fr[-_]ca/i.test(v.lang || "") ? 3 : 1);
+  const scoreV = (v) => langSc(v) + (utilisable(v) ? qualite(v) : -60) + (v.default ? 0.5 : 0);
+  const parScore = (a, b) => scoreV(b) - scoreV(a);
+  /* Choix automatique : la meilleure voix française utilisable, une voix d'homme d'abord. Le choix enregistré passe toujours avant. */
   const pick = (list) => {
-    if (prefs.uri) { const v = list.find((x) => x.voiceURI === prefs.uri); if (v) return v; }
-    const off = navigator.onLine === false;
-    const sc = (v) => (/^fr[-_]fr/i.test(v.lang) ? 4 : /^fr[-_](?:be|ch|lu)/i.test(v.lang) ? 2 : 1) + (v.localService ? 3 : 0) + (v.default ? 1 : 0) + (genre(v) === "m" ? (/^fr[-_]fr/i.test(v.lang) ? 5 : 2) : 0) - (off && !v.localService ? 20 : 0);
-    return list.slice().sort((a, b) => sc(b) - sc(a))[0] || null;
+    if (prefs.uri) { const v = trouve(prefs.uri, "", list); if (v) return v; }
+    const s = list.filter(utilisable).sort(parScore);
+    return s.find((x) => genre(x) === "m") || s[0] || list.slice().sort(parScore)[0] || null;
   };
+  const cleUri = (u) => String(u || "").replace(/-(?:local|network)$/i, "").toLowerCase();
+  /* Retrouve la voix voulue ; si elle n'est pas utilisable (voix réseau sans connexion, voix disparue) : sa version du téléphone,
+     puis la meilleure voix du même genre, puis la meilleure voix. Jamais d'erreur. */
+  function trouve(uri, g, liste) {
+    const l = liste || listeFr();
+    if (!l.length) return null;
+    const ok = l.filter(utilisable).sort(parScore);
+    if (uri) {
+      const v = l.find((x) => x.voiceURI === uri);
+      if (v && utilisable(v)) return v;
+      const k = cleUri(uri), j = ok.find((x) => cleUri(x.voiceURI) === k);
+      if (j) return j;
+      if (!g) g = v ? genre(v) : genre({ name: uri });
+    }
+    const pool = ok.length ? ok : l.slice().sort(parScore);
+    return (g && pool.find((x) => genre(x) === g)) || pool.find((x) => genre(x) === "m") || pool[0] || null;
+  }
   function voice() { return pick(frVoices()); }
   /* Voix du moteur du téléphone (appli Android) : le module les donne dans un ordre fixe, on parle avec le rang de la voix choisie. */
   let natV = [];
@@ -25291,17 +25317,28 @@ function VOIX(h) {
   const okNum = (x, a, b, d) => (typeof x === "number" && isFinite(x) && x >= a && x <= b ? x : d);
   const idChoix = (uri, p, k) => (uri || "defaut") + "|" + p + "|" + k;
   const cleVoix = (v) => String(v.voiceURI || v.name || "").replace(/-(?:local|network)$/i, "").toLowerCase();
-  const nomBrut = (v) => (v.nat || /^fr-[a-z]{2}-x-/i.test(v.name || "") ? "voix du téléphone, code " + String(v.voiceURI || v.name || "").replace(/^fr-[a-z]{2}-x-/i, "").replace(/-(?:local|network|language)$/i, "") : String(v.name || "")).trim();
-  const detVoix = (v, plus) => [nomBrut(v), plus || "", v.localService === false ? "a besoin d’internet" : ""].filter(Boolean).join(" · ");
+  /* Nom affiché : jamais de nom technique anglais. Les voix du moteur Android (fr-fr-x-frd-network…) n'ont pas de vrai nom ;
+     les voix des navigateurs gardent leur prénom (« Denise », « Henri »), sans « Microsoft », « Google », « Online »… */
+  const PAYS = { ca: "accent du Canada", be: "accent de Belgique", ch: "accent de Suisse", lu: "accent du Luxembourg" };
+  const pays = (v) => { const m = /^fr[-_]([a-z]{2})/i.exec(v.lang || ""); return (m && PAYS[m[1].toLowerCase()]) || ""; };
+  const nomFr = (v) => {
+    if (v.nat || /^fr-[a-z]{2}-(?:x-|language)/i.test(v.name || "")) return "";
+    const n = String(v.name || "").replace(/\b(?:Microsoft|Google|Apple|Samsung|Android|Online|Natural|Neural|Premium|Enhanced|Compact|Desktop|Network|Voice|French|France|Canada|Belgium|Switzerland|Français|Francais|Canadien|Belgique|Suisse)\b/gi, " ").replace(/[()\-–—_]+/g, " ").replace(/\s{2,}/g, " ").trim();
+    return /^[A-Za-zÀ-ÿ' ]{2,24}$/.test(n) && !/\b(?:fr|x|local|network|language)\b/i.test(n) ? n : "";
+  };
+  const etiq = (v) => (reseau(v) ? "très naturelle · avec connexion" : "voix du téléphone · sans connexion");
+  const detVoix = (v, plus) => (v ? [nomFr(v), etiq(v), pays(v), plus || ""] : [plus || ""]).filter(Boolean).join(" · ");
   const listeFr = () => (NAT ? natV : frVoices());
   /* Le choix enregistré (y compris une voix choisie avec l'ancien réglage, qui ne gardait que la voix). */
   const gardee = () => (prefs.choix && prefs.choix.id ? prefs.choix : prefs.uri ? { id: idChoix(prefs.uri, 1, 1), uri: prefs.uri, pitch: 1, k: 1, nom: "" } : null);
   function choix() {
     const c = gardee(), garde = c ? c.uri : "";
-    const off = navigator.onLine === false;
-    const sc = (v) => (garde && v.voiceURI === garde ? 100 : 0) + (/^fr[-_]fr/i.test(v.lang) ? 4 : /^fr[-_](?:be|ch|lu)/i.test(v.lang) ? 2 : 1) + (v.localService ? 3 : 0) + (v.default ? 1 : 0) - (off && !v.localService ? 20 : 0);
-    const vus = new Set(), L = [];
-    listeFr().slice().sort((a, b) => sc(b) - sc(a)).forEach((v) => { const c = cleVoix(v); if (!v.voiceURI || vus.has(c)) return; vus.add(c); L.push(v); });
+    /* Les voix les plus naturelles d'abord ; une voix réseau et sa version du téléphone ne comptent qu'une fois (la meilleure utilisable). */
+    const sc = (v) => (garde && v.voiceURI === garde && utilisable(v) ? 100 : 0) + scoreV(v);
+    const vus = new Set(), L = [], tout = listeFr().slice().sort((a, b) => sc(b) - sc(a));
+    /* Sans connexion : on ne propose que les voix qui marchent sans internet (s'il y en a). */
+    const dispo = tout.some(utilisable) ? tout.filter(utilisable) : tout;
+    dispo.forEach((v) => { const c = cleVoix(v); if (!v.voiceURI || vus.has(c)) return; vus.add(c); L.push(v); });
     const M = L.filter((v) => genre(v) === "m").slice(0, 2), F = L.filter((v) => genre(v) === "f").slice(0, 2), N = L.filter((v) => !genre(v));
     const out = [];
     const mk = (v, vr, nom, plus, g) => ({ id: idChoix(v ? v.voiceURI : "", vr.p, vr.k), uri: v ? v.voiceURI : "", pitch: vr.p, k: vr.k, nom, det: v ? detVoix(v, plus) : plus || "Voix du téléphone", g: g || "" });
@@ -25317,20 +25354,30 @@ function VOIX(h) {
     const base = out.length ? L.find((v) => v.voiceURI === out[0].uri) || null : null;
     [["grave", "Voix grave posée", "plus grave, un peu plus lente"], ["medium", "Voix médium", "réglage normal"], ["claire", "Voix claire", "plus aiguë"], ["vive", "Voix claire rapide", "plus aiguë, un peu plus rapide"], ["graveSeul", "Voix grave", "plus grave"], ["pose", "Voix médium posée", "un peu plus lente"]]
       .forEach(([c, nom, plus]) => a(mk(base, VAR[c], nom, base ? "même voix, " + plus : plus)));
-    /* Un choix déjà enregistré reste toujours dans la liste. */
-    if (c && !out.some((x) => x.id === c.id) && (!c.uri || L.some((v) => v.voiceURI === c.uri))) out[out.length - 1] = { id: c.id, uri: c.uri, pitch: c.pitch, k: c.k, nom: c.nom || "Voix enregistrée", det: c.uri ? detVoix(L.find((v) => v.voiceURI === c.uri), "votre choix enregistré") : "votre choix enregistré", g: "" };
+    /* Avec connexion, on propose en plus la meilleure voix d'homme et de femme qui marche sans connexion. */
+    if (out.some((x) => reseau(L.find((v) => v.voiceURI === x.uri)))) {
+      ["m", "f"].forEach((g) => {
+        const v = tout.find((x) => x.voiceURI && !reseau(x) && genre(x) === g && !out.some((o) => o.uri === x.voiceURI));
+        if (v) { const o = mk(v, VAR.medium, (g === "m" ? "Voix d’homme" : "Voix de femme") + " sans connexion", "", g); if (!out.some((x) => x.id === o.id)) out.push(o); }
+      });
+    }
+    /* Un choix déjà enregistré reste toujours dans la liste (sauf si sa version utilisable y est déjà, avec les mêmes réglages). */
+    const meme = (x) => c && x.pitch === c.pitch && x.k === c.k && cleUri(x.uri) === cleUri(c.uri);
+    if (c && !out.some((x) => x.id === c.id || meme(x)) && (!c.uri || listeFr().some((v) => v.voiceURI === c.uri))) { const v = trouve(c.uri, ""); out[out.length - 1] = { id: c.id, uri: c.uri, pitch: c.pitch, k: c.k, nom: c.nom || "Voix enregistrée", det: c.uri ? detVoix(v, "votre choix enregistré") : "votre choix enregistré", g: v ? genre(v) : "" }; }
     return out;
   }
-  /* Voix en service : celle qui a été gardée ; sinon une voix d'homme reconnue ; sinon, quand le téléphone ne dit pas le genre, le réglage grave et posé. */
+  /* Voix en service : celle qui a été gardée (ou sa version utilisable) ; sinon la meilleure voix d'homme, à hauteur normale
+     (une hauteur modifiée déforme le son) ; sinon la meilleure voix. */
   function choixCourant() {
     const l = choix(), c = gardee();
-    if (c) { const o = l.find((x) => x.id === c.id); if (o) return o; if (prefs.choix) return { id: c.id, uri: c.uri, pitch: c.pitch, k: c.k, nom: c.nom || "Voix enregistrée", det: "", g: "" }; }
-    return l.find((x) => x.g === "m" && x.pitch === 1) || l.find((x) => x.pitch === VAR.grave.p && x.k === VAR.grave.k && !x.g) || l[0];
+    if (c) { const o = l.find((x) => x.id === c.id) || l.find((x) => x.pitch === c.pitch && x.k === c.k && cleUri(x.uri) === cleUri(c.uri)); if (o) return o; if (prefs.choix) return { id: c.id, uri: c.uri, pitch: c.pitch, k: c.k, nom: c.nom || "Voix enregistrée", det: "", g: "" }; }
+    return l.find((x) => x.g === "m" && x.pitch === 1 && x.k === 1) || l.find((x) => x.pitch === 1 && x.k === 1) || l[0];
   }
-  /* Ce qu'on donne au moteur : la voix, la hauteur et la vitesse (vitesse choisie par l'utilisateur × réglage de la voix). */
+  /* Ce qu'on donne au moteur : la voix, la hauteur et la vitesse (vitesse choisie par l'utilisateur × réglage de la voix).
+     Voix indisponible (réseau sans connexion) : sa version du téléphone, ou la meilleure voix du même genre. */
   function reglage(o) {
-    const c = o || choixCourant(), l = listeFr();
-    const v = (c.uri && l.find((x) => x.voiceURI === c.uri)) || (NAT ? null : pick(l.filter((x) => !c.uri || x.voiceURI === c.uri)) || pick(l));
+    const c = o || choixCourant();
+    const v = trouve(c.uri || "", c.g || (c.uri ? "" : "m"));
     return { v: v || null, pitch: okNum(c.pitch, 0.5, 2, 1), k: okNum(c.k, 0.5, 2, 1) };
   }
   const debit = (r, k) => Math.round(Math.min(RATE_MAX, Math.max(RATE_MIN, r * k)) * 100) / 100;
@@ -25343,50 +25390,91 @@ function VOIX(h) {
   }
 
   /* ---------- Texte prononçable ---------- */
-  const KEEP = new Set(["SAMU", "SMUR", "AFNOR", "APSAD", "CNAPS", "SDIS", "CODIS", "CERFA", "OTAN", "ONU", "MAC", "NON", "OUI", "FEU", "STOP", "GAZ", "EAU", "TOUT", "PAS", "LES", "DES", "UNE"]);
+  /* Sigles : lus lettre par lettre (« S S I A P »), sauf ceux qui se disent comme un mot, et les mots courants écrits en capitales. */
+  const KEEP = new Set(["SAMU", "SMUR", "AFNOR", "APSAD", "CNAPS", "SDIS", "CODIS", "CERFA", "OTAN", "ONU", "MAC", "NON", "OUI", "FEU", "STOP", "GAZ", "EAU", "TOUT", "PAS", "LES", "DES", "UNE", "ATEX", "FICHE", "FICHES", "TYPE", "TYPES", "NOTE", "VOIR", "AVANT", "APPEL", "ALERTE", "DANGER", "SORTIE", "SON", "LEDS", "LED", "TOUS", "AVEC", "SANS", "POUR", "DANS", "VOUS", "RIEN", "JAMAIS", "AUCUN", "SEUL", "BIEN", "SUR", "QUE", "QUI", "EST", "SONT", "ET", "OU", "AUX", "MON", "ZONE", "ZONES", "ETAGE", "PORTE", "PORTES", "AIDE", "SECOURS", "URGENCE", "SALLE", "PLAN", "RONDE", "FUMEE", "GARDE", "POSTE", "VIGILE", "AGENT", "CHEF", "FIN", "DEBUT", "ICI"]);
   const ORD = ["", "premier", "deuxième", "troisième", "quatrième", "cinquième", "sixième", "septième", "huitième", "neuvième", "dixième", "onzième", "douzième", "treizième", "quatorzième", "quinzième", "seizième", "dix-septième", "dix-huitième", "dix-neuvième", "vingtième"];
   const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  const ROM = { II: "2", III: "3", IV: "4", VI: "6", VII: "7", VIII: "8", IX: "9", XI: "11", XII: "12" };
   const hh = (H, M) => `${+H} heure${+H > 1 ? "s" : ""}${+M ? " " + (+M < 10 ? "0" + +M : +M) : ""}`;
+  let PICTO = null;
+  try { PICTO = new RegExp("[\\p{Extended_Pictographic}\\u{FE0F}\\u{200D}\\u{20E3}]", "gu"); } catch (e) { PICTO = /[☀-➿️‍]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDD00-\uDFFF]/g; }
   function say(s) {
-    let t = String(s || "").replace(/[   ]/g, " ");
+    let t = String(s || "").replace(/<[^>]{1,200}>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/[    ]/g, " ");
     t = t.replace(/\*\*/g, "").replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, "$2");
+    t = t.replace(PICTO, " ").replace(/[✓✔✗✕☐☑★☆●○◆◇■□▶►◀◄▸▹]/g, " ");
+    /* Puces et tirets en début de ligne */
+    t = t.replace(/(^|\n)\s*[-–—•·▪*+]\s+/g, "$1");
     t = t.replace(/--:--/g, "heure non notée");
     t = t.replace(/\b([01]?\d|2[0-3]):([0-5]\d)\b/g, (m, H, M) => hh(H, M));
     t = t.replace(/\b(\d{1,2}) ?h ?\/ ?24\b/g, "$1 heures sur 24").replace(/\b(\d) ?j ?\/ ?7\b/g, "$1 jours sur 7");
     t = t.replace(/\b([01]?\d|2[0-3]) ?h ?([0-5]\d)\b/g, (m, H, M) => hh(H, M));
-    t = t.replace(/\b(\d{1,4}) ?h\b(?![\w'])/g, (m, H) => `${H} heure${+H > 1 ? "s" : ""}`);
+    t = t.replace(/\b(\d{1,4}) ?h\b(?![\w'’])/g, (m, H) => `${H} heure${+H > 1 ? "s" : ""}`);
     t = t.replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g, (m, d, mo, y) => (+mo >= 1 && +mo <= 12 ? `${+d === 1 ? "1er" : +d} ${MOIS[+mo - 1]} ${y}` : m));
     t = t.replace(/\b1(?:ère|re)(?=\s|$|[,.;:!?)])/g, "première").replace(/\b1er\b/g, "premier");
     t = t.replace(/\b(\d{1,2})(?:e|è|ème|eme)\b/g, (m, n) => ORD[+n] || m);
     t = t.replace(/(\d) (?=\d{3}\b)/g, "$1");
-    t = t.replace(/(\d)-(?=\d)/g, "$1 tiret ");
-    t = t.replace(/\bn° ?/gi, "numéro ").replace(/\bart\. ?/gi, "article ");
+    /* Abréviations */
+    t = t.replace(/\bn° ?/gi, "numéro ").replace(/\bN° ?/g, "numéro ").replace(/\bart\. ?/gi, "article ").replace(/§ ?/g, " paragraphe ").replace(/\bal\. ?(?=\d)/g, "alinéa ");
+    t = t.replace(/\bcf\. ?/gi, "voir ").replace(/\bex\. ?/gi, "par exemple ").replace(/\benv\. ?/gi, "environ ").replace(/\bmax\. ?/gi, "maximum ").replace(/\bmini?\. ?/gi, "minimum ").replace(/\bMme\b/g, "madame").replace(/\bet\/ou\b/gi, "et, ou");
+    /* Références du règlement : R4544-9, R. 4227-28, MS 60, J 37, NF S 61-938 */
+    t = t.replace(/\b([A-Z])\. ?(?=\d)/g, "$1 ");
+    t = t.replace(/\b([A-Z]{1,3} ?\d+)-(\d+)\b/g, "$1 tiret $2");
+    t = t.replace(/(\d) ?[-–] ?(?=\d)/g, "$1 à ");
     const NL = "(?![A-Za-zÀ-ÿ0-9²³'’])";
     const unit = (u, w) => { t = t.replace(new RegExp(`(\\d) ?${u}${NL}`, "g"), `$1 ${w}`); };
-    unit("m²", "mètres carrés"); unit("m³", "mètres cubes"); unit("m2", "mètres carrés"); unit("°C", "degrés"); unit("km", "kilomètres"); unit("cm", "centimètres"); unit("mm", "millimètres");
-    unit("m", "mètres"); unit("kg", "kilos"); unit("L", "litres"); unit("min", "minutes"); unit("V", "volts");
+    unit("km/h", "kilomètres heure"); unit("m/s", "mètres par seconde");
+    unit("m²", "mètres carrés"); unit("m³", "mètres cubes"); unit("m2", "mètres carrés"); unit("m3", "mètres cubes"); unit("°C", "degrés"); unit("°", "degrés"); unit("km", "kilomètres"); unit("cm", "centimètres"); unit("mm", "millimètres");
+    unit("kVA", "kilovoltampères"); unit("kV", "kilovolts"); unit("kW", "kilowatts"); unit("mA", "milliampères"); unit("dB", "décibels"); unit("Hz", "hertz"); unit("bars?", "bars"); unit("lux", "lux");
+    unit("m", "mètres"); unit("kg", "kilos"); unit("g", "grammes"); unit("L", "litres"); unit("l", "litres"); unit("min", "minutes"); unit("mn", "minutes"); unit("s", "secondes"); unit("V", "volts"); unit("W", "watts"); unit("A", "ampères");
     t = t.replace(/\bm²/g, "mètres carrés").replace(/(\d) ?€/g, "$1 euros").replace(/(\d) ?%/g, "$1 pour cent").replace(/([A-Za-z])-(\d)/g, "$1 $2");
-    t = t.replace(/→|⇒|➜/g, ", ").replace(/≥/g, " au moins ").replace(/≤/g, " au plus ").replace(/×/g, " fois ").replace(/≈/g, " environ ").replace(/·|•|▪/g, ", ").replace(/ \/ /g, " ou ").replace(/&/g, " et ").replace(/[«»"“”*#_]/g, " ").replace(/✓|✔|✗|✕/g, "");
-    t = t.replace(/(^|[^A-Za-zÀ-ÿ0-9])([A-Z]{2,5})(\d*)(?=$|[^A-Za-zÀ-ÿ])/g, (m, a, w, d) => (KEEP.has(w) ? m : a + w.split("").join(" ") + (d ? " " + d : "")));
+    t = t.replace(/\s*(?:→|⇒|➜|➔|⟶|↦|->|=>|←|⇐|<-|↔|⇔)\s*/g, ", ").replace(/\s[–—-]\s/g, ", ").replace(/[–—]/g, ", ");
+    t = t.replace(/(\d) ?\+ ?(?=\d)/g, "$1 plus ").replace(/ ?= ?/g, " égal ").replace(/±/g, " plus ou moins ").replace(/ < ?(?=\d)/g, " moins de ").replace(/ > ?(?=\d)/g, " plus de ");
+    /* Flèches, tirets, parenthèses : de petites pauses */
+    t = t.replace(/\s*[([{]\s*/g, ", ").replace(/\s*[)\]}]\s*(?=[.,;:!?…]|$)/g, "").replace(/\s*[)\]}]\s*/g, ", ");
+    t = t.replace(/≥/g, " au moins ").replace(/≤/g, " au plus ").replace(/×/g, " fois ").replace(/≈/g, " environ ").replace(/[·•▪|]/g, ", ").replace(/ \/ /g, " ou ").replace(/([A-Za-zÀ-ÿ])\/([A-Za-zÀ-ÿ])/g, "$1 ou $2").replace(/&/g, " et ").replace(/[«»"“”*#_~^`\\]/g, " ");
+    /* Chiffres romains (SSIAP II, catégorie IV) puis sigles */
+    t = t.replace(/(^|[^A-Za-zÀ-ÿ0-9])(II|III|IV|VI|VII|VIII|IX|XI|XII)(?=$|[^A-Za-zÀ-ÿ0-9])/g, (m, a, r) => a + ROM[r]);
+    t = t.replace(/(^|[^A-Za-zÀ-ÿ0-9])([A-Z]{2,6})(\d*)(?=$|[^A-Za-zÀ-ÿ])/g, (m, a, w, d) => a + (KEEP.has(w) ? w.toLowerCase() : w.split("").join(" ")) + (d ? " " + d : ""));
     t = t.replace(/(^|[^A-Za-zÀ-ÿ])([A-Z])(\d+)\b/g, "$1$2 $3");
-    return t.replace(/\s{2,}/g, " ").replace(/\s+([,.])/g, "$1").trim();
+    t = t.replace(/\s*\n+\s*/g, ". ").replace(/\s{2,}/g, " ").replace(/\s+([,.;:!?…])/g, "$1").replace(/,(?:\s*,)+/g, ",").replace(/([.;:!?…])\s*,/g, "$1").replace(/(^|[.;:!?…]\s*),\s*/g, "$1").replace(/\.\s*\./g, ".");
+    return t.replace(/\s{2,}/g, " ").replace(/^[\s,]+|[\s,]+$/g, "").trim();
   }
-  /* Phrases de 180 caractères au plus (certains navigateurs coupent les longues lectures) */
+  /* Découpage pour la lecture : par phrases, regroupées en morceaux de 160 à 220 caractères environ (certains moteurs coupent
+     les longues lectures, et trop de petits morceaux font des silences). On ne coupe jamais un mot ni un sigle épelé. */
+  const CH_MAX = 220;
+  function couperMots(x, MAX) {
+    /* Les lettres d'un sigle épelé (« S S I A P ») et le nombre qui suit restent ensemble */
+    const g = [];
+    x.split(" ").forEach((m) => { const p = g[g.length - 1]; if (p && /(?:^| )[A-Za-zÀ-ÿ]$/.test(p) && (/^[A-Za-zÀ-ÿ]$/.test(m) || (/^\d/.test(m) && /(?:^| )[A-Z] [A-Z]$|^[A-Z]$/.test(p)))) g[g.length - 1] = p + " " + m; else g.push(m); });
+    const out = [];
+    let cur = "";
+    g.forEach((m) => { if (cur && (cur + " " + m).length > MAX) { out.push(cur); cur = m; } else cur = cur ? cur + " " + m : m; });
+    if (cur) out.push(cur);
+    return out;
+  }
   function chunks(s) {
-    const out = [], MAX = 180;
-    const sent = String(s).match(/[^.!?;:…]+[.!?;:…]*\s*/g) || [];
-    sent.forEach((x) => {
+    const MAX = CH_MAX;
+    const txt = String(s || "").replace(/\s+/g, " ").trim();
+    if (!txt) return [];
+    const parts = [];
+    txt.replace(/([.!?…;:]+)\s+/g, "$1\u0001").split("\u0001").forEach((x) => {
       x = x.trim();
       if (!x) return;
-      if (x.length <= MAX) { out.push(x); return; }
+      if (x.length <= MAX) { parts.push(x); return; }
       let cur = "";
-      x.replace(/,\s*/g, ",\u0001").replace(/\s+(?=(?:et|ou|mais|puis) )/g, "\u0001").split("\u0001").forEach((p) => {
-        if ((cur + " " + p).trim().length > MAX && cur) { out.push(cur.trim()); cur = ""; }
-        if (p.length > MAX) { p.split(" ").forEach((w) => { if ((cur + " " + w).length > MAX && cur) { out.push(cur.trim()); cur = ""; } cur += " " + w; }); }
-        else cur += " " + p;
+      x.replace(/,\s+/g, ",\u0001").replace(/\s+(?=(?:et|ou|mais|puis|donc|car|alors|sauf|lorsque|quand|si) )/g, "\u0001").split("\u0001").forEach((p) => {
+        p = p.trim();
+        if (!p) return;
+        if (cur && (cur + " " + p).length > MAX) { parts.push(cur); cur = ""; }
+        if (p.length > MAX) { const m = couperMots(p, MAX); m.slice(0, -1).forEach((y) => parts.push(y)); cur = m[m.length - 1]; }
+        else cur = cur ? cur + " " + p : p;
       });
-      if (cur.trim()) out.push(cur.trim());
+      if (cur) parts.push(cur);
     });
+    const out = [];
+    let cur = "";
+    parts.forEach((p) => { if (!cur) cur = p; else if ((cur + " " + p).length <= MAX) cur += " " + p; else { out.push(cur); cur = p; } });
+    if (cur) out.push(cur);
     return out;
   }
 
@@ -25439,7 +25527,14 @@ function VOIX(h) {
   }
 
   /* ---------- Lecteur ---------- */
-  let Q = [], qi = 0, active = false, paused = false, label = "", gen = 0, timer = null, errs = 0, opt = {}, hl = null;
+  let Q = [], qi = 0, active = false, paused = false, label = "", gen = 0, timer = null, errs = 0, opt = {}, hl = null, rgL = null, garde = null;
+  /* Une seule voix pour tout le texte : fixée au début de la lecture. Si une voix réseau échoue (plus de connexion),
+     on passe pour la suite sur la version du téléphone ou la meilleure voix du même genre. */
+  const rgLecture = () => { if (!rgL) rgL = reglage(); return rgL; };
+  const secours = () => { if (rgL && rgL.v && reseau(rgL.v)) { const g = genre(rgL.v), l = listeFr().filter((x) => !reseau(x)).sort(parScore); const v = l.find((x) => cleVoix(x) === cleVoix(rgL.v)) || (g && l.find((x) => genre(x) === g)) || l[0]; if (v) { rgL = Object.assign({}, rgL, { v }); return true; } } return false; };
+  const isAndroidUA = /Android/i.test(navigator.userAgent || "");
+  /* Chrome sur ordinateur coupe les voix en ligne après 15 secondes environ : petite relance pause/reprise (pas sur Android, où « pause » arrête la voix). */
+  const relance = () => { clearInterval(garde); garde = null; if (NAT || isAndroidUA || !SS) return; garde = setInterval(() => { try { if (!active || paused) { clearInterval(garde); garde = null; return; } if (SS.speaking && !SS.paused) { SS.pause(); SS.resume(); } } catch (e) { /* rien */ } }, 10000); };
   const keep = [];
   function flatten(items) {
     const out = [];
@@ -25482,7 +25577,7 @@ function VOIX(h) {
     if (NAT) {
       /* Voix du téléphone. Une phrase « lue » en un clin d'œil, sans erreur, veut dire que le moteur n'a rien dit : après 3 fois, on prévient. */
       const t0 = Date.now();
-      const rg = reglage();
+      const rg = rgLecture();
       natCall("speak", Object.assign({ text: c.t, lang: "fr-FR", rate: debit(prefs.rate, rg.k), pitch: rg.pitch, volume: 1, queueStrategy: 0 }, rg.v && rg.v.nat ? { voice: rg.v.i } : {}))
         .then(() => {
           if (my !== gen) return;
@@ -25491,6 +25586,8 @@ function VOIX(h) {
         })
         .catch((e) => {
           if (my !== gen) return;
+          /* Voix réseau en échec : on relit le même morceau avec la voix du téléphone */
+          if (secours()) { speakCur(); return; }
           errs++;
           if (errs >= 3) { stop(); helpToast(codeOf(e)); return; }
           qi++; speakCur();
@@ -25499,17 +25596,26 @@ function VOIX(h) {
     }
     let u;
     try { u = new SpeechSynthesisUtterance(c.t); } catch (e) { stop(); helpToast(); return; }
-    const rg = reglage(), v = rg.v;
+    const rg = rgLecture(), v = rg.v;
     if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "fr-FR";
     u.rate = debit(prefs.rate, rg.k);
     u.pitch = rg.pitch;
-    let started = false;
+    u.volume = 1;
+    let started = false, fini = false;
+    /* Garde-fou : si la fin n'arrive jamais (bogue connu de certains navigateurs), on passe au morceau suivant après la durée prévue. */
+    const duree = Math.round((c.t.length / (15 * Math.max(0.5, u.rate))) * 1000 * 1.8) + 4000;
+    let tGarde = null;
+    const suite = () => { if (fini || my !== gen) return; fini = true; clearTimeout(tGarde); errs = 0; qi++; speakCur(); };
+    const surveille = () => { tGarde = setTimeout(() => { if (fini || my !== gen) return; if (SS.speaking && !SS.paused && Date.now() - t1 < duree * 3) { surveille(); return; } suite(); }, duree); };
+    const t1 = Date.now();
     u.onstart = () => { started = true; };
-    u.onend = () => { if (my !== gen) return; errs = 0; qi++; speakCur(); };
+    u.onend = suite;
     u.onerror = (e) => {
-      if (my !== gen) return;
+      if (my !== gen || fini) return;
       const er = e && e.error;
       if (er === "interrupted" || er === "canceled") return;
+      fini = true; clearTimeout(tGarde);
+      if ((er === "network" || er === "synthesis-unavailable" || er === "synthesis-failed" || er === "voice-unavailable") && secours()) { speakCur(); return; }
       errs++;
       if (errs >= 3) { stop(); helpToast(er); return; }
       qi++; speakCur();
@@ -25517,7 +25623,8 @@ function VOIX(h) {
     keep.push(u);
     if (keep.length > 6) keep.shift();
     try { if (SS.paused) SS.resume(); SS.speak(u); } catch (e) { stop(); helpToast(); return; }
-    timer = setTimeout(() => { if (my === gen && !started && !SS.speaking) { stop(); helpToast("silence"); } }, 8000);
+    surveille();
+    timer = setTimeout(() => { if (my === gen && !started && !SS.speaking && !fini) { if (secours()) { fini = true; clearTimeout(tGarde); speakCur(); return; } fini = true; clearTimeout(tGarde); stop(); helpToast("silence"); } }, 8000);
   }
   function play(items, o = {}) {
     if (!ttsOk) { helpToast("absent"); return false; }
@@ -25525,13 +25632,14 @@ function VOIX(h) {
     cancelNow();
     Q = flatten(items.filter((x) => x && x.t));
     if (!Q.length) { toast("Rien à lire ici."); return false; }
-    opt = o; label = o.label || ""; qi = 0; active = true; paused = false; errs = 0;
+    opt = o; label = o.label || ""; qi = 0; active = true; paused = false; errs = 0; rgL = reglage();
     bar();
+    relance();
     speakCur();
     return true;
   }
   const cancelNow = () => {
-    gen++; clearTimeout(timer);
+    gen++; clearTimeout(timer); clearInterval(garde); garde = null;
     try { SS && SS.cancel(); } catch (e) { /* rien */ }
     if (NAT) { try { natCall("stop").catch(() => {}); } catch (e) { /* rien */ } }
   };
@@ -25543,10 +25651,10 @@ function VOIX(h) {
   function stop() { cancelNow(); const was = active; active = false; paused = false; Q = []; highlight(null); bar(); return was; }
   function toggle() {
     if (!active) return;
-    if (paused) { paused = false; speakCur(); }
+    if (paused) { paused = false; relance(); speakCur(); }
     else { paused = true; cancelNow(); bar(); }
   }
-  const restart = () => { cancelNow(); if (!paused) setTimeout(() => { if (active && !paused) speakCur(); }, 60); else bar(); };
+  const restart = () => { cancelNow(); if (!paused) setTimeout(() => { if (active && !paused) { relance(); speakCur(); } }, 60); else bar(); };
   function next() { if (!active) return; const k = Q[qi] ? Q[qi].k : -1; let i = qi; while (i < Q.length && Q[i].k === k) i++; if (i >= Q.length) { stop(); return; } qi = i; restart(); }
   function prev() {
     if (!active) return;
@@ -25580,7 +25688,7 @@ function VOIX(h) {
     if (r === prefs.rate && !rateDirty) { updSpeed(); return; }
     prefs.rate = r; rateDirty = false;
     savePrefs();
-    if (active) restart();
+    if (active) { rgL = reglage(); restart(); }
     bar(); updSpeed();
   }
   const stepRate = (d) => setRate(Math.round((prefs.rate + d * 0.1) * 10) / 10);
@@ -25654,7 +25762,7 @@ function VOIX(h) {
     const list = frVoices(), v = reglage().v;
     return { ok: ttsOk, n: list.length, v, local: v ? !!v.localService : false, list };
   }
-  const voiceLabel = (v) => { const g = genre(v), code = v.nat ? String(v.voiceURI || "").replace(/^fr-[a-z]{2}-x-/i, "").replace(/-(?:local|network|language)$/i, "") : ""; return `${v.nat ? (g === "m" ? "Voix d’homme" : g === "f" ? "Voix de femme" : "Voix") + (code ? " " + code : "") : v.name}${v.lang ? ` (${v.lang.replace("_", "-")})` : ""}${!v.nat && g ? (g === "m" ? " · voix d’homme" : " · voix de femme") : ""}${v.localService ? "" : " · en ligne"}`; };
+  const voiceLabel = (v) => { const g = genre(v), code = v.nat ? String(v.voiceURI || "").replace(/^fr-[a-z]{2}-x-/i, "").replace(/-(?:local|network|language)$/i, "") : ""; return `${v.nat ? (g === "m" ? "Voix d’homme" : g === "f" ? "Voix de femme" : "Voix") + (code ? " " + code : "") : v.name}${v.lang ? ` (${v.lang.replace("_", "-")})` : ""}${!v.nat && g ? (g === "m" ? " · voix d’homme" : " · voix de femme") : ""}${reseau(v) ? " · avec connexion" : " · sans connexion"}`; };
   function setVoice(uri) { prefs.uri = uri || ""; delete prefs.choix; savePrefs(); }
   function setQuiz(on) { prefs.quiz = !!on; savePrefs(); }
 
@@ -34397,7 +34505,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     c.innerHTML = `<button class="close" data-act="voix-fermer" aria-label="Fermer">${icon("fermer")}</button><h2 id="voix-t">Choisir la voix</h2>
       <div class="son-scroll"><p>Touchez une voix pour l’entendre, puis touchez « Garder cette voix ».</p>
         <div class="vx-liste" role="radiogroup" aria-label="Voix proposées">${l.map((o, i) => `<button type="button" class="vx-opt${o.id === VCH.sel ? " on" : ""}" role="radio" aria-checked="${o.id === VCH.sel ? "true" : "false"}" data-act="voix-essai" data-i="${i}"><span class="ico">${icon(o.id === VCH.sel ? "check" : "hautparleur")}</span><span class="t"><b>${tx(o.nom)}</b><span>${tx(o.det)}${o.id === cur.id ? " · voix actuelle" : ""}</span></span></button>`).join("")}</div>
-        <p class="signal-mini">${note} La voix gardée sert partout dans l’appli.</p></div>
+        <p class="signal-mini">${note} Les voix « très naturelles » ont besoin d’internet ; sans connexion, l’appli prend toute seule la voix du téléphone la plus proche. La voix gardée sert partout dans l’appli.</p></div>
       <div class="signal-b"><button type="button" class="btn" data-act="voix-garder">${icon("check")}Garder cette voix</button><button type="button" class="btn ghost" data-act="voix-fermer">Annuler</button></div>`;
   }
   function voixOuvrir() {
