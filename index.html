@@ -25247,7 +25247,7 @@ function VOIX(h) {
   const nat = { sonde: false, moteur: true, fr: false };
   const ttsOk = NAT || webOk;
   /* Vitesse de la voix : de 0,5 à 2, réglable au dixième près, avec quelques raccourcis. */
-  const RATE_MIN = 0.5, RATE_MAX = 2, PRESETS = [0.75, 1, 1.25, 1.5, 2];
+  const RATE_MIN = 0.5, RATE_MAX = 2, PRESETS = [0.75, 1, 1.15, 1.25, 1.5, 2];
   const okRate = (r) => typeof r === "number" && isFinite(r) && r >= RATE_MIN && r <= RATE_MAX;
   const roundRate = (r) => Math.round(Math.min(RATE_MAX, Math.max(RATE_MIN, Number(r) || 1)) * 100) / 100;
   const rateTxt = (r) => { r = roundRate(r); return "×" + (Math.round(r * 10) === r * 10 ? r.toFixed(1) : String(r)).replace(".", ","); };
@@ -25672,7 +25672,7 @@ function VOIX(h) {
   function speedHTML() {
     const r = prefs.rate;
     return `<div class="spd tts-skip" data-tts="skip"><div class="spd-row"><span class="spd-l">Vitesse de la voix</span><output class="spd-v" aria-live="polite">${rateTxt(r)}</output></div>
-      <div class="spd-row"><button type="button" class="spd-step" data-act="vx-step" data-d="-1" aria-label="Moins vite"${r <= RATE_MIN ? " disabled" : ""}>−</button><input type="range" min="${RATE_MIN}" max="${RATE_MAX}" step="0.1" value="${r}" data-vx-range aria-label="Vitesse de la voix" aria-valuetext="${rateTxt(r)}"><button type="button" class="spd-step" data-act="vx-step" data-d="1" aria-label="Plus vite"${r >= RATE_MAX ? " disabled" : ""}>+</button></div>
+      <div class="spd-row"><button type="button" class="spd-step" data-act="vx-step" data-d="-1" aria-label="Moins vite"${r <= RATE_MIN ? " disabled" : ""}>−</button><input type="range" min="${RATE_MIN}" max="${RATE_MAX}" step="0.05" value="${r}" data-vx-range aria-label="Vitesse de la voix" aria-valuetext="${rateTxt(r)}"><button type="button" class="spd-step" data-act="vx-step" data-d="1" aria-label="Plus vite"${r >= RATE_MAX ? " disabled" : ""}>+</button></div>
       <div class="spd-pre" role="group" aria-label="Vitesses rapides">${PRESETS.map((x) => `<button type="button" data-act="vx-rate" data-v="${x}" aria-pressed="${x === r}">${rateShort(x)}</button>`).join("")}</div></div>`;
   }
   function updSpeed() {
@@ -25694,7 +25694,7 @@ function VOIX(h) {
     if (active) { rgL = reglage(); restart(); }
     bar(); updSpeed();
   }
-  const stepRate = (d) => setRate(Math.round((prefs.rate + d * 0.1) * 10) / 10);
+  const stepRate = (d) => setRate(Math.round((prefs.rate + d * 0.05) * 20) / 20);
   const popOpen = () => { const p = $("#tts-pop"); return !!(p && !p.hidden); };
   function ratePop(open) {
     const p = $("#tts-pop"), b = $("#tts-rate");

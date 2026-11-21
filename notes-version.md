@@ -1,3 +1,4 @@
+- Vitesse de la voix : nouveau bouton ×1,15, et la jauge se règle plus finement (pas de 0,05)
 - Fiches de matériel : nouvel encadré avant les sources, « Dans le schéma du SSI » (sa place dans la chaîne, avec le bouton « Voir dans le schéma ») ou « Pas dans le SSI » (pourquoi, avec l’article du règlement)
 - Le bouton ouvre la section SSI, choisit un bâtiment où l’élément existe, le cadre et montre ses fils de liaison en jaune
 - Blocs autonomes : les BAES (éclairage) sont expliqués hors du SSI, avec un lien vers les BAAS (alarme sonore), qui sont dans le schéma
