@@ -1,3 +1,7 @@
+- Contrôle complet du contenu : 371 fiches, 2 087 questions de quiz et de jeu, modules d’apprentissage, 1 717 règles de « Mon bâtiment », conduites d’urgence, lexique, calculs et simulateur SSI
+- Environ 380 corrections et précisions, sans rien retirer : textes mis à jour (ASNR, DREETS, arrêtés 2024-2026), conditions oubliées ajoutées (équivalences pompiers, palpation, habilitation BS), quiz corrigés (une seule bonne réponse), fautes et sigles expliqués
+- « Mon bâtiment » en 5e catégorie : seules les règles des petits établissements (PE) s’affichent ; extincteurs : 1 pour 300 m² (PE 26)
+- Saignement abondant : ajout du garrot quand l’appui ne suffit pas ; « La personne respire ? » : basculer la tête avant de regarder
 - Nouveau : « Mon lieu de travail » (Outils, et dans la recherche) : 25 lieux (tribunal, mairie, préfecture, banque, bureaux, école, crèche, internat, hôpital, maison de retraite, hôtel, restaurant, magasin, cinéma, discothèque, bibliothèque, salon, lieu de culte, gymnase, musée, stade, chapiteau, parking, gare, tour IGH)
 - Pour chaque lieu : son type d’établissement, le SSI et l’alarme exigés selon la catégorie, avec ou sans temporisation, toutes les règles pour votre poste (SSIAP 1, 2 ou 3) et un bouton qui ouvre le simulateur SSI réglé sur ce lieu
 - Liens « choisir par lieu » ajoutés dans « Mon bâtiment » et dans la section SSI
