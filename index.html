@@ -1615,7 +1615,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "2.5.6",
+    version: "2.5.7",
     verifie: "5 novembre 2026",
     verifieCourt: "05/11/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -2079,7 +2079,7 @@ D.fiches.push(
     { t: "h", x: "Les catégories de SSI" },
     { t: "p", x: "Les SSI sont classés en 5 catégories, de **A** (la plus complète) à **E** (la plus simple). Ce sont les dispositions propres à chaque type d’établissement qui disent quelle catégorie est exigée (MS 53)." },
     { t: "tab", h: ["Catégorie", "À retenir"], r: [
-      ["A", "La plus complète : une détection automatique (SDI) commande la mise en sécurité, sans temporisation (MS 60). Contrat d’entretien obligatoire (MS 68)."],
+      ["A", "La plus complète : une détection automatique (SDI) commande la mise en sécurité, sans temporisation (MS 60). L’alarme générale (l’évacuation), elle, peut être avec ou sans temporisation selon le site : 5 minutes au maximum (MS 66). Contrat d’entretien obligatoire (MS 68)."],
       ["B", "Mise en sécurité commandée par un centralisateur de mise en sécurité (CMSI). Contrat d’entretien obligatoire (MS 68)."],
       ["C, D et E", "Configurations de plus en plus simples. En catégories D et E, seuls les portes résistant au feu à fermeture automatique et le déverrouillage des issues de secours peuvent être commandés à distance (MS 60)."],
     ] },
@@ -2104,6 +2104,7 @@ D.fiches.push(
       ["Alarme restreinte", "Signal sonore et visuel au poste de sécurité ou auprès du personnel désigné. Elle sert à vérifier s’il y a vraiment un sinistre : c’est la levée de doute (MS 61)."],
       ["Alarme générale", "Signal sonore qui ordonne l’évacuation. Elle est immédiate ou temporisée (MS 61)."],
       ["Temporisation", "Délai entre l’alarme restreinte et l’alarme générale : **5 minutes au maximum**. Elle n’est admise que si du personnel qualifié peut exploiter l’alarme restreinte immédiatement. Une commande manuelle permet toujours de lancer l’alarme générale tout de suite (MS 66)."],
+      ["Avec ou sans temporisation", "La temporisation est **possible, jamais obligatoire** : chaque site est réglé **avec** ou **sans** (MS 61 a, MS 66 § 3). Elle est **interdite** dans certains établissements : 5e catégorie avec locaux à sommeil (PE 32), type J (J 37), type U avec sommeil en cas de détection (U 45). Exemple réel : un tribunal judiciaire équipé d’un SSI de catégorie A, alarme de type 1, réglé **sans temporisation**. Le réglage de votre site est dans le dossier du SSI et les consignes du poste de sécurité."],
       ["Alarme générale sélective", "Alarme destinée au seul personnel désigné, quand l’évacuation demande des précautions particulières (MS 63)."],
     ] },
     { t: "warn", x: "Si la levée de doute confirme un feu : **alarme générale immédiatement**, sans attendre la fin de la temporisation (MS 61)." },
@@ -2119,7 +2120,7 @@ D.fiches.push(
     ] },
     { t: "p", x: "Le signal d’alarme générale ne doit pas pouvoir être confondu avec un autre signal. Il est audible de tout point du bâtiment pendant le temps de l’évacuation, avec une autonomie d’au moins **5 minutes** (Code du travail R4227-36). Il est complété par un dispositif adapté aux personnes en situation de handicap, par exemple un flash lumineux (MS 64)." },
   ],
-  retenir: ["Restreinte = on vérifie. Générale = on évacue.", "Temporisation : 5 minutes au maximum."],
+  retenir: ["Restreinte = on vérifie. Générale = on évacue.", "Temporisation : 5 minutes au maximum.", "Avec ou sans temporisation : ça dépend du site, regardez ses consignes."],
   src: ["batissMS", "ct4227_36", "legrandSSI", "nomadSSI"],
 },
 {
@@ -8317,7 +8318,7 @@ Object.assign(D.apprendre, {
        "A."
       ],
       "a": 3,
-      "e": "A est la plus complète (détection automatique sans temporisation), E la plus simple."
+      "e": "A est la plus complète (la détection commande la mise en sécurité sans temporisation ; l’alarme générale peut être avec ou sans temporisation selon le site), E la plus simple."
      },
      {
       "q": "Quelle est la fréquence minimale de vérification de tous les SSI ?",
@@ -23297,7 +23298,7 @@ F({
     { t: "ol", x: [
       "Un détecteur ou un déclencheur manuel réagit : l’**alarme restreinte** part **immédiatement** au tableau (MS 66 § 2).",
       "L’alarme restreinte est un signal sonore et visuel, distinct de l’alarme générale, qui prévient le poste de sécurité et indique **où** (MS 61 b).",
-      "Avec un équipement d’alarme de type 1, 2a ou 2b, une **temporisation** démarre : l’alarme générale part toute seule au bout de **5 minutes au plus** (MS 66 § 3). Elle n’est admise que si un personnel qualifié peut exploiter tout de suite l’alarme restreinte (MS 66 § 5).",
+      "Avec un équipement d’alarme de type 1, 2a ou 2b, une **temporisation** démarre : l’alarme générale part toute seule au bout de **5 minutes au plus** (MS 66 § 3). Elle n’est admise que si un personnel qualifié peut exploiter tout de suite l’alarme restreinte (MS 66 § 5). Si le site est réglé **sans temporisation**, l’alarme générale part en même temps que l’alarme restreinte : regardez les consignes du site.",
       "L’agent **exploite l’alarme restreinte** : il vérifie si c’est un déclenchement intempestif ou un sinistre (MS 61 c). C’est la levée de doute.",
       "Feu confirmé : **alarme générale immédiatement** (MS 61 c), avec la commande manuelle du tableau (MS 66 § 4).",
       "Les sapeurs-pompiers sont alertés **sans retard** (MS 70 § 1).",
@@ -23424,7 +23425,7 @@ F({
       ["T : expositions", "1re avec service de sécurité exigé (T 48) : SSI B. Autres 1re et 2e : SSI C, D ou E avec alarme 2b. 3e : type 3. 4e : type 4. SSI A possible après avis motivé", "T 49"],
       ["U : établissements de soins", "Avec locaux à sommeil : SSI A et alarme type 1 avec alarme générale sélective. Sans locaux à sommeil : alarme type 3", "U 44, U 45"],
       ["V : lieux de culte", "Tous : alarme type 4", "V 12"],
-      ["W : bureaux, administrations", "1re et 2e : SSI C, D ou E avec alarme 2b. 3e : type 3. 4e : type 4", "W 14"],
+      ["W : bureaux, administrations (dont tribunaux, souvent W avec des salles L)", "1re et 2e : SSI C, D ou E avec alarme 2b. 3e : type 3. 4e : type 4. C’est un minimum : un site peut être mieux équipé (exemple : tribunal de 3e catégorie avec SSI A, alarme de type 1, sans temporisation)", "W 14"],
       ["X : établissements sportifs couverts", "1re et 2e : alarme type 3. Autres : type 4", "X 26"],
       ["Y : musées", "1re : alarme 2a et sonorisation. Autres : type 4", "Y 21"],
       ["OA : hôtels-restaurants d’altitude", "Tous : SSI A", "OA 25"],
@@ -32683,6 +32684,7 @@ function jChar(o = {}) {
     if (els.includes("spk") || els.includes("pc")) SIM.ev = SIM.want = "sprink";
     const fit = () => { const c = simCfg(); if (g.tab && !simTab(c)) return ""; const h = twHas(c); return els.find((x) => h[x] === "on") || ""; };
     let el = els.length ? fit() : "", ex = "";
+    if (els.length && !el && SIM.inst) { const i0 = SIM.inst; SIM.inst = ""; el = fit(); if (!el) SIM.inst = i0; }
     if (els.length && !el && SSF.type) {
       const r = ssiReq(SSF.type, SSF.cat, SSF.som), v0 = SIM.v, d0 = SIM.cde;
       if (Array.isArray(r)) for (let i = 0; i < r.length && !el; i++) for (const k of r[i].ssi === "CDE" ? ["C", "D", "E"] : [d0]) { SIM.v = i; SIM.cde = k; el = fit(); if (el) break; }
@@ -32770,7 +32772,7 @@ function jChar(o = {}) {
     agent: [168, 296, "L’agent SSIAP", "Il surveille le tableau, lève le doute, donne l’alarme, alerte et accueille les secours."],
     pomp: [250, 296, "Sapeurs-pompiers", "Ils doivent être alertés sans retard (MS 70 § 1) : 18 ou 112."],
   };
-  const SIM = { tw: +store.get("ssi-plan") || 1, mots: ["simple", "termes", "metier"].includes(store.get("ssi-mots")) ? store.get("ssi-mots") : store.get("ssi-plan") ? "metier" : "simple", man: "A", v: 0, cde: "C", ev: "feu-auto", want: "", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
+  const SIM = { tw: +store.get("ssi-plan") || 1, mots: ["simple", "termes", "metier"].includes(store.get("ssi-mots")) ? store.get("ssi-mots") : store.get("ssi-plan") ? "metier" : "simple", man: "A", v: 0, cde: "C", inst: "", tempo: "avec", ev: "feu-auto", want: "", mode: "voir", i: -1, steps: [], play: false, pick: null, score: 0, nq: 0, el: "", tm: 0 };
   const SSI_LAB = { A: "SSI de catégorie A", B: "SSI de catégorie B", C: "SSI de catégorie C", D: "SSI de catégorie D", E: "SSI de catégorie E", CDE: "SSI de catégorie C, D ou E", "": "Pas de catégorie de SSI imposée" };
   const AL_LAB = (a) => (a === "libre" ? "alarme au choix de l’exploitant" : "alarme de type " + a);
   const RV = (cond, ssi, al, ref, o) => Object.assign({ cond, ssi, al, ref }, o || {});
@@ -32817,18 +32819,29 @@ function jChar(o = {}) {
     return "non";
   }
   const reqLab = (v) => (SSI_LAB[v.ssi] || SSI_LAB[""]) + " · " + AL_LAB(v.al) + (v.ags ? " avec alarme générale sélective" : "");
-  function simCfg() {
+  /* SIM.inst : SSI réellement installé sur le site quand il est mieux équipé que le minimum du règlement (« » = celui du règlement).
+     SIM.tempo : « avec » ou « sans » temporisation, réglage propre à chaque site (MS 66 § 3 et § 5) ; ignoré quand le règlement l’interdit. */
+  function simCfg0() {
     const f = SSF, r = ssiReq(f.type, f.cat, f.som);
     if (Array.isArray(r)) {
       const v = r[Math.min(SIM.v, r.length - 1)], ssi = v.ssi === "CDE" ? SIM.cde : v.ssi;
-      return { r, v, ssi, al: v.al === "libre" ? "4" : v.al, libre: v.al === "libre", ags: !!v.ags, noT: v.noT || "", dmDas: !!v.dmDas, ref: v.ref };
+      const c = { r, v, ssi, al: v.al === "libre" ? "4" : v.al, libre: v.al === "libre", ags: !!v.ags, noT: v.noT || "", dmDas: !!v.dmDas, ref: v.ref };
+      if (SIM.inst && SIMCAT[SIM.inst]) Object.assign(c, { ssi: SIM.inst, al: SIMCAT[SIM.inst].al, libre: false, inst: SIM.inst });
+      return c;
     }
     return { r, v: null, ssi: SIM.man, al: SIMCAT[SIM.man].al, ex: true, ags: false, noT: "", dmDas: false, ref: "" };
+  }
+  function simCfg() {
+    const c = simCfg0();
+    c.noT0 = c.noT;
+    if (SIM.tempo === "sans" && ["1", "2a", "2b"].includes(c.al) && c.noT !== "all") { c.noT = "all"; c.sansT = true; }
+    return c;
   }
   const simTab = (c) => ["1", "2a", "2b"].includes(c.al);
   const simEvOk = (e, c) => e[2] === "*" || (e[2] === "A" && c.ssi === "A") || (e[2] === "T" && simTab(c));
   function ssiReqOut() {
-    const f = SSF, r = ssiReq(f.type, f.cat, f.som), c = simCfg();
+    const f = SSF, r = ssiReq(f.type, f.cat, f.som);
+    let c = simCfg();
     const man = `<label class="field"><span>${tx("Catégorie de SSI à simuler")}</span><select id="ssim-man">${Object.keys(SIMCAT).map((k) => `<option value="${k}"${SIM.man === k ? " selected" : ""}>${SIMCAT[k].l}</option>`).join("")}</select></label>`;
     if (r === null) return `<p class="small muted">${tx("Choisissez le type et la catégorie du bâtiment : le simulateur montre alors le SSI exigé par le règlement. Sans bâtiment, choisissez une catégorie de SSI :")}</p>${man}`;
     if (r === "non") return `<p class="small">${tx("Ce type n’est pas encore dans le simulateur : ses règles sont dans la liste plus bas et sur Légifrance. Vous pouvez simuler une catégorie au choix :")}</p>${man}`;
@@ -32841,15 +32854,26 @@ function jChar(o = {}) {
       <p class="small">${tx("Le simulateur animé montre un bâtiment de type ERP : il ne reproduit pas encore le scénario d’un IGH. Vous pouvez simuler une catégorie de SSI au choix, à titre d’exemple :")}</p>${man}`;
     let h = "";
     if (r.length > 1) h += `<label class="field"><span>${tx("Votre cas")}</span><select id="ssim-v">${r.map((v, i) => `<option value="${i}"${Math.min(SIM.v, r.length - 1) === i ? " selected" : ""}>${esc(v.cond)}</option>`).join("")}</select></label>`;
-    if (c.v.ssi === "CDE") h += `<label class="field"><span>${tx("Catégorie installée sur votre site (le règlement laisse le choix entre C, D et E)")}</span><select id="ssim-cde">${["C", "D", "E"].map((k) => `<option value="${k}"${SIM.cde === k ? " selected" : ""}>${k}</option>`).join("")}</select></label>`;
+    if (c.v.ssi === "CDE" && !SIM.inst) h += `<label class="field"><span>${tx("Catégorie installée sur votre site (le règlement laisse le choix entre C, D et E)")}</span><select id="ssim-cde">${["C", "D", "E"].map((k) => `<option value="${k}"${SIM.cde === k ? " selected" : ""}>${k}</option>`).join("")}</select></label>`;
     const notes = [];
     if (c.v.alN) notes.push("Le type d’alarme vient de ce que contient la catégorie de SSI (norme NF S 61-931, apprise en formation SSIAP 1) : le règlement du type ne l’écrit pas lui-même.");
-    if (c.noT === "all") notes.push("Toute temporisation est interdite.");
-    if (c.noT === "det") notes.push("En cas de détection, l’alarme est diffusée sans temporisation (U 45 § 3).");
+    if (c.noT0 === "all") notes.push("Toute temporisation est interdite.");
+    if (c.noT0 === "det") notes.push("En cas de détection, l’alarme est diffusée sans temporisation (U 45 § 3).");
     if (c.ags) notes.push("Alarme générale sélective : un signal pour le personnel désigné, qui organise l’évacuation (MS 61, MS 63).");
     if (c.libre) notes.push("L’exploitant choisit son matériel d’alarme, il doit être efficace et audible de tout le bâtiment (PE 27 § 2). Le simulateur montre un exemple de type 4.");
     if (c.v.note) notes.push(c.v.note);
     h += `<div class="call call-ok" role="note">${icon("registre")}<div><p class="lbl">${tx("Ce que le règlement exige pour ce bâtiment")}</p><p><strong>${tx(reqLab(c.v))}</strong> (${tx(c.ref)})</p>${notes.map((x) => `<p class="small">${tx(x)}</p>`).join("")}</div></div>`;
+    /* Ce qui est réellement installé sur le site : le règlement donne un minimum, un site peut être mieux équipé. */
+    /* Seules les catégories plus complètes que le minimum exigé sont proposées. */
+    const RK = { A: 1, B: 2, C: 3, D: 4, E: 5 }, RA = { "1": 1, "2a": 2, "2b": 3, "3": 4, "4": 5, libre: 5 };
+    const vs = c.v.ssi === "CDE" ? SIM.cde : c.v.ssi, rq = vs ? RK[vs] : RA[c.v.al] + 0.5, mieux = Object.keys(SIMCAT).filter((k) => RK[k] < rq);
+    if (SIM.inst && !mieux.includes(SIM.inst)) { SIM.inst = ""; c = simCfg(); }
+    if (mieux.length) h += `<label class="field"><span>${tx("SSI réellement installé sur votre site")}</span><select id="ssim-inst"><option value=""${SIM.inst ? "" : " selected"}>${tx("Celui du règlement (minimum ci-dessus)")}</option>${mieux.map((k) => `<option value="${k}"${SIM.inst === k ? " selected" : ""}>${tx("Mieux équipé : SSI " + k + ", alarme de type " + SIMCAT[k].al)}</option>`).join("")}</select></label>`;
+    if (c.inst) h += `<p class="small" style="margin-bottom:.8em">${tx("Le règlement donne un minimum : un site peut être mieux équipé, par exemple un tribunal classé W de 3e catégorie équipé d’un SSI de catégorie A avec alarme de type 1. On suit alors le SSI réellement installé et les consignes du site. Le simulateur montre maintenant : " + SIMCAT[c.inst].l.replace(" (exemple)", "") + ".")}</p>`;
+    if (["1", "2a", "2b"].includes(c.al) && c.noT0 !== "all") {
+      h += `<label class="field"><span>${tx("Temporisation sur votre site")}</span><select id="ssim-tempo"><option value="avec"${SIM.tempo === "sans" ? "" : " selected"}>${tx("Avec temporisation (5 minutes au maximum)")}</option><option value="sans"${SIM.tempo === "sans" ? " selected" : ""}>${tx("Sans temporisation : l’alarme générale part tout de suite")}</option></select></label>`;
+      h += `<p class="small">${tx("La temporisation n’est jamais obligatoire. Elle est réglée pour chaque site, au maximum 5 minutes après l’alarme restreinte, et seulement si un personnel qualifié peut vérifier tout de suite l’alarme restreinte (MS 66 § 3 et § 5). Beaucoup de sites n’en ont pas : regardez les consignes du poste de sécurité.")}</p>`;
+    } else if (!["1", "2a", "2b"].includes(c.al)) h += `<p class="small">${tx("Sans temporisation : avec une alarme de type " + c.al + ", l’alarme générale part tout de suite (seuls les types 1, 2a et 2b ont une temporisation, MS 62 § 2).")}</p>`;
     if (+f.cat === 5) h += `<p class="small muted">${tx("5e catégorie : règles PE. Certains types ajoutent des règles pour la 5e catégorie : vérifiez le règlement du type.")}</p>`;
     return h;
   }
@@ -32888,7 +32912,7 @@ function jChar(o = {}) {
     const agImm = () => st({ ag: 1, tempo: 0, evac: 1, issue: "unlock" }, ["diff", "issue"], "Pas de temporisation pour ce bâtiment : l’alarme générale part tout de suite. Les diffuseurs sonnent, les flashs clignotent, les issues de secours " + (S.some((x) => x.s.issue === "unlock") ? "sont déjà déverrouillées depuis la détection (MS 60 § 2)." : "se déverrouillent.") + EVAC + AGS, "Alarme générale lancée automatiquement, sans temporisation.", "Il part vérifier sur place et prévient sa hiérarchie.", c.ref);
     const pompiers = () => st({ pomp: 1 }, ["pomp", "agent"], "Les sapeurs-pompiers sont appelés (18 ou 112).", "Pas de changement au tableau.", "Selon les consignes du site : attaque du feu avec un extincteur si c’est sans danger, aide à l’évacuation, accueil et guidage des secours.", "MS 70 § 1");
     const escalier = () => st({ exu: "open" }, ["exu"], "Si c’est nécessaire, le désenfumage de l’escalier est commandé à la main.", "Commande manuelle de désenfumage.", "Il agit selon les consignes du site.", "MS 60 § 1", qEsc);
-    if (c.v) st({}, [], "Votre bâtiment : " + reqLab(c.v) + (c.v.ssi === "CDE" ? " (ici : catégorie " + cat + ")" : "") + ".", "", "Il connaît le SSI de son site et son fonctionnement.", c.ref, { p: "Pour ce bâtiment, que demande le règlement ?", c: [reqLab(c.v)].concat(shuffle(["SSI de catégorie A · alarme de type 1", "SSI de catégorie B · alarme de type 2a", "SSI de catégorie C, D ou E · alarme de type 2b", "Pas de catégorie de SSI imposée · alarme de type 3", "Pas de catégorie de SSI imposée · alarme de type 4"].filter((x) => x !== reqLab(c.v) && x !== reqLab(c.v).replace(" avec alarme générale sélective", ""))).slice(0, 2)), x: "Règle du type d’établissement : " + c.ref + "." });
+    if (c.v) st({}, [], "Votre bâtiment : " + reqLab(c.v) + (c.v.ssi === "CDE" && !c.inst ? " (ici : catégorie " + cat + ")" : "") + "." + (c.inst ? " Sur ce site, le SSI installé va plus loin : " + SIMCAT[c.inst].l.replace(" (exemple)", "") + "." : "") + (c.sansT ? " Ce site est réglé sans temporisation : l’alarme générale part tout de suite." : ""), "", "Il connaît le SSI de son site et son fonctionnement.", c.ref, { p: "Pour ce bâtiment, que demande le règlement ?", c: [reqLab(c.v)].concat(shuffle(["SSI de catégorie A · alarme de type 1", "SSI de catégorie B · alarme de type 2a", "SSI de catégorie C, D ou E · alarme de type 2b", "Pas de catégorie de SSI imposée · alarme de type 3", "Pas de catégorie de SSI imposée · alarme de type 4"].filter((x) => x !== reqLab(c.v) && x !== reqLab(c.v).replace(" avec alarme générale sélective", ""))).slice(0, 2)), x: "Règle du type d’établissement : " + c.ref + "." });
     if (ev === "feu-auto") {
       debutFeu(); restreinte("det");
       if (!tempDet) { generale("cmsi", true, null); st({ bip: 0, agent: "zone" }, ["agent", "ecs"], "L’agent arrête le bip et monte voir la zone 3.", "Le voyant FEU reste allumé.", "Il confirme le feu et guide les secours.", "MS 61 c"); }
@@ -33730,8 +33754,10 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
   function simEl(id) { SIM.el = SIM.el === id ? "" : id; simDraw(); if (SIM.el && VX.ttsOk && store.get("ssim-voix", true) && !SIM.play) { try { const tt = TWS[id] && SIM.mots === "termes" ? twsTitre(id, simCfg()) : null; VX.speak(tt ? tt[0].replace("- ", "-") + ". " + (tt[1] ? tt[1] + ". " : "") + "En mots simples : " + twsMin(SIMEL[id][2]) + ". " + SIMEL[id][3] : SIMEL[id][2] + ". " + (TWS[id] ? "Mot du métier : " + twsTerm(id, simCfg()) + ". " : "") + SIMEL[id][3]); } catch (e) { /* voix */ } } }
   function simSel() {
     let ch = false;
-    const m = $("#ssim-man"), v = $("#ssim-v"), d = $("#ssim-cde"), e = $("#ssim-ev");
+    const m = $("#ssim-man"), v = $("#ssim-v"), d = $("#ssim-cde"), e = $("#ssim-ev"), ins = $("#ssim-inst"), tmp = $("#ssim-tempo");
     if (m && m.value !== SIM.man) { SIM.man = m.value; ch = true; }
+    if (ins && ins.value !== SIM.inst) { SIM.inst = ins.value; ch = true; }
+    if (tmp && tmp.value !== SIM.tempo) { SIM.tempo = tmp.value; ch = true; }
     if (v && +v.value !== SIM.v) { SIM.v = +v.value; ch = true; }
     if (d && d.value !== SIM.cde) { SIM.cde = d.value; ch = true; }
     if (ch) { simReset(); ssiReqDraw(); simDraw(); return; }
@@ -33750,7 +33776,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     /* La section SSI garde ses propres choix : elle ne modifie jamais la fiche de « Mon bâtiment ». Elle reprend le bâtiment trouvé, s’il y en a un. */
     /* Le bâtiment choisi ici est gardé quand on revient dans la section ; il n'est repris de « Mon bâtiment » que si celui-ci a changé depuis. */
     const bk = [BAT.fi.type, BAT.fi.cat, !!BAT.fi.som, !!BAT.fi.sub, BAT.fi.ne].join("|");
-    if (SSK !== bk) { SSK = bk; SSF = Object.assign({}, BAT.fi, { catMan: false }); SIM.v = 0; SSI_BAK = null; simReset(); }
+    if (SSK !== bk) { SSK = bk; SSF = Object.assign({}, BAT.fi, { catMan: false }); SIM.v = 0; SIM.inst = ""; SIM.tempo = "avec"; SSI_BAK = null; simReset(); }
     else if (curTok !== "o-ssi") simReset(); /* on rouvre la section : aucun exercice d'avant ne reste affiché à moitié */
     SSF.job = BAT.fi.job;
     const goSsi = ssiGoPrep();
@@ -33779,7 +33805,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (SSF.type !== t.value) { SSF.type = t.value; ch = true; }
       if (SSF.cat !== c.value) { SSF.cat = c.value; ch = true; }
       if (SSF.som !== m.checked) { SSF.som = m.checked; ch = true; }
-      if (ch) { SSI_BAK = null; SIM.v = 0; simReset(); ssiReqDraw(); simDraw(); ssiDraw(); return; }
+      if (ch) { SSI_BAK = null; SIM.v = 0; SIM.inst = ""; SIM.tempo = "avec"; simReset(); ssiReqDraw(); simDraw(); ssiDraw(); return; }
       simSel();
     };
     return { html, title: TL["o-ssi"].t, tab: "outils", back: "outils", update, after: () => { TW.key = ""; twBind(); synScroll(); if (goSsi) setTimeout(() => ssiGoShow(goSsi), 60); } };

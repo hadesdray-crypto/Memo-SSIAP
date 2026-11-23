@@ -1,3 +1,6 @@
+- Temporisation : la section SSI indique « avec » ou « sans » temporisation ; un nouveau choix « Temporisation sur votre site » change tout le simulateur (l’alarme générale part tout de suite si « sans »)
+- Section SSI : nouveau choix « SSI réellement installé sur votre site » quand le site est mieux équipé que le minimum du règlement (exemple : tribunal avec SSI de catégorie A)
+- Fiches SSI et alarme : précisé que la temporisation est possible mais jamais obligatoire, interdite dans certains établissements (PE 32, J 37, U 45), avec l’exemple d’un tribunal sans temporisation
 - Vitesse de la voix : nouveau bouton ×1,15, et la jauge se règle plus finement (pas de 0,05)
 - Fiches de matériel : nouvel encadré avant les sources, « Dans le schéma du SSI » (sa place dans la chaîne, avec le bouton « Voir dans le schéma ») ou « Pas dans le SSI » (pourquoi, avec l’article du règlement)
 - Le bouton ouvre la section SSI, choisit un bâtiment où l’élément existe, le cadre et montre ses fils de liaison en jaune
