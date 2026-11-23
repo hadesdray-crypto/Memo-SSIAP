@@ -1615,7 +1615,7 @@ const MEMO_PWA = true;
 const D = {
   meta: {
     nom: "Mémo SSIAP",
-    version: "2.5.7",
+    version: "2.6.0",
     verifie: "5 novembre 2026",
     verifieCourt: "05/11/2026",
     /* Statut de l’appli : "soutien" (outil de révision non officiel). Si une reconnaissance officielle est obtenue un jour,
@@ -29001,6 +29001,7 @@ const APP = (() => {
     { id: "jeu", t: "Jeu : préparer mon diplôme", d: "Un profil, une carte à parcourir étape par étape, une jauge de préparation et des battles de 2 à 10 joueurs. Fonctionne sans connexion.", ic: "quiz", co: "red", mc: "jeu jouer battle carte profil diplome questions defi quiz amusant equipe" },
     { id: "o-quel-extincteur", t: "Quel extincteur sur quel feu ?", d: "Choisissez ce qui brûle : l’appli indique les extincteurs adaptés et ce qu’il ne faut jamais faire.", ic: "extincteur", co: "red", mc: "choisir extincteur classe de feu agent extincteur eau poudre co2 mousse" },
     { id: "o-ssi", t: "Section SSI : simulateur, cours et règles", d: "Tout le système de sécurité incendie : simulateur animé avec jeu, schémas, toutes les pièces (détecteurs, tableau, CMSI, DAS, alarme, AES), quel SSI pour quel bâtiment, entretien et quiz.", ic: "cloche", co: "red", mc: "ssi das compartimentage desenfumage alarme detection categorie a b c d e temporisation cmsi uga ecs mise en securite portes coupe feu clapet" },
+    { id: "lieux", t: "Mon lieu de travail : tribunal, mairie, hôpital…", d: "Touchez votre lieu : son type d’établissement, le SSI et l’alarme exigés, avec ou sans temporisation, et toutes les règles pour votre poste.", ic: "immeuble", co: "blue", mc: "lieu de travail site tribunal palais de justice cour d appel prud hommes mairie prefecture banque bureaux ecole college lycee universite creche colonie internat hopital clinique ehpad maison de retraite hotel restaurant bar magasin supermarche centre commercial cinema theatre salle de spectacle salle des fetes discotheque bibliotheque mediatheque exposition salon eglise mosquee synagogue culte gymnase piscine patinoire musee stade chapiteau cirque parking gare igh tour type erp" },
     { id: "o-batiment", t: "Mon bâtiment", d: "Adresse, position ou « je cherche un bâtiment » : fiche du bâtiment, effectif, dégagements, extincteurs et volume 3D.", ic: "immeuble", co: "blue", mc: "batiment immeuble adresse gps position ma position localisation ou je suis ou suis je je cherche un batiment cherche batiment trouver batiment etablissement erp restaurant brasserie bar cafe magasin boutique commerce supermarche centre commercial bureau banque mairie musee eglise gymnase salle de sport theatre cinema salle des fetes salle de spectacle discotheque ecole college lycee hotel hopital clinique bibliotheque recherche autour rayon voisins batiments voisins 3d modele volume maquette plan dossier fiche du batiment hors connexion surface au sol surface de plancher hauteur niveaux etages annee de construction materiaux murs toit parcelle cadastre risques seisme radon argile inondation submersion monument historique ign bdnb cstb base adresse nationale open data calcul automatique effectif degagements unites de passage up categorie probable extincteurs a verifier avant validation" },
     { id: "o-categorie", t: "Catégorie d’un ERP", d: "Activité et effectif : 5e catégorie ou 1er groupe, puis catégorie 1 à 4.", ic: "immeuble", co: "blue", mc: "classement categorie erp effectif seuil 5e groupe" },
     { id: "o-effectif", t: "Calcul de l’effectif", d: "Surface, sièges ou places : nombre de personnes à prendre en compte.", ic: "personnes", co: "blue", mc: "effectif theorique densite surface m2 personnes calcul" },
@@ -29382,6 +29383,7 @@ const APP = (() => {
     D.procedures.forEach((p) => add({ kind: "Conduite à tenir", w: 1.25, ic: p.ic, href: p.id, title: p.titre, mc: "", body: plain([p.clair, ...p.etapes, ...(p.jamais || []), ...(p.apres || [])].join(" · ")) }));
     D.fiches.forEach((f) => add({ kind: RU[f.r].titre, w: 1, ic: RU[f.r].ic, href: "f-" + f.id, title: f.titre, mc: f.mc, body: plain([f.clair, ...f.b.map(blockText), ...(f.retenir || [])].join(" · ")) }));
     TOOLS.forEach((t) => add({ kind: "Outil", w: 1.1, ic: t.ic, href: t.id, title: t.t, mc: t.mc, body: t.d }));
+    LIEUX_T.forEach((l) => add({ kind: "Mon lieu de travail", w: 1.2, ic: "immeuble", href: "lieu-" + l.id, title: l.n, mc: l.al, body: "Type " + l.ty.join(" et ") + ". " + (l.cl || "") }));
     D.glossaire.forEach((g) => add({ kind: "Sigle ou matériel", w: 1.05, ic: "glossaire", href: "f-" + g.f, title: g.s + " : " + g.n, mc: g.s, body: plain(g.d) }));
     D.numeros.forEach((n) => add({ kind: "Numéro d’urgence", w: 1.15, ic: "telephone", href: "tel:" + n.tel, title: n.n + " : " + n.l, mc: n.n.replace(/ /g, "") + " appeler telephone numero urgence", body: n.d }));
     return docs;
@@ -32536,7 +32538,7 @@ function jChar(o = {}) {
       if (!L.length && !as) return;
       out += `<details class="card"><summary>${icon(FICHE_IC[h] || "info")} <strong>${tx(lab)}</strong> <span class="pill">${L.length}</span></summary>`;
       out += `<ul class="small">${L.map(ficheRow).join("")}</ul>`;
-      if (as) out += `<div class="result"><p class="small"><strong>${tx("Version assurance")}</strong> : ${tx(as)}. ${tx("Référentiel édité et vendu par le CNPP : non intégré. À saisir par le SSIAP d’après le contrat.")}</p><label class="field"><span>${tx("Exigence de l’assureur (gardée sur le téléphone)")}</span><input type="text" data-fass="${h}" value="${esc(asS[h] || "")}" autocomplete="off"></label></div>`;
+      if (as && !BAT.noAss) out += `<div class="result"><p class="small"><strong>${tx("Version assurance")}</strong> : ${tx(as)}. ${tx("Référentiel édité et vendu par le CNPP : non intégré. À saisir par le SSIAP d’après le contrat.")}</p><label class="field"><span>${tx("Exigence de l’assureur (gardée sur le téléphone)")}</span><input type="text" data-fass="${h}" value="${esc(asS[h] || "")}" autocomplete="off"></label></div>`;
       out += `</details>`;
     });
     out += disc("Règles issues des textes officiels (arrêtés, code de la construction, code du travail) : le texte officiel, l’avis de la commission de sécurité et le dossier de l’établissement font foi. Dérogation et atténuation possibles : R143-13. Bâtiment existant : adaptations selon R143-47. Aucune estimation de coût : pas de base officielle de prix.");
@@ -33785,6 +33787,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     const html = `${toolHead("o-ssi")}
       <div class="result" id="ssi-intro"><p><strong>${tx("1. Votre bâtiment")}</strong> <span class="small muted">${tx("tout le reste s’adapte : SSI exigé, schéma, scénarios, questions et règles")}</span></p>
       <div id="ssi-job">${ficheJobBar()}</div>
+      <p class="small"><a href="#lieux">${tx("Choisir par lieu : tribunal, mairie, hôpital, école…")}</a></p>
       <div class="form"><label class="field"><span>${tx("Type d’établissement")}</span><select id="ssi-t"><option value="">${tx("Choisir…")}</option>${FICHE_TYPES.map(([k, l]) => `<option value="${k}"${f.type === k ? " selected" : ""}>${esc(l)}</option>`).join("")}<option value="IGH"${f.type === "IGH" ? " selected" : ""}>${tx("IGH : immeuble de grande hauteur")}</option></select></label>
       <label class="field"><span>${tx("Catégorie")}</span><select id="ssi-c"><option value="">${tx("Choisir…")}</option>${["1", "2", "3", "4", "5"].map((k) => `<option value="${k}"${f.cat === k ? " selected" : ""}>${k}${k === "1" ? "re" : "e"}</option>`).join("")}</select></label>
       <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="ssi-m"${f.som ? " checked" : ""}> ${tx("Locaux réservés au sommeil")}</span></label></div>
@@ -33817,6 +33820,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
         <label class="field"><span>Adresse, ville, ou une phrase comme « je cherche un restaurant à Lyon »</span><input id="bat-q" type="text" autocomplete="off" placeholder="Adresse ou « je cherche un bâtiment »" enterkeyhint="search"></label>
         <div class="chips"><button type="button" class="btn" data-act="bat-find">Chercher cette adresse</button><button type="button" class="btn ghost" data-act="bat-gps">Utiliser ma position</button></div>
         <p class="small muted">${tx("« Chercher cette adresse » : écrivez une adresse ou une phrase au-dessus. « Utiliser ma position » : trouve le bâtiment où vous êtes, sans rien écrire.")}</p>
+        <p class="small"><a href="#lieux">${tx("Sans adresse : choisir par lieu (tribunal, mairie, hôpital, école…)")}</a></p>
       </div>
       <div id="bat-msg" aria-live="polite"></div>
       <div id="bat-need" hidden><div class="form">
@@ -33849,6 +33853,110 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       if (BAT.main) ficheDraw(); else if (ficheRead()) ficheOutDraw();
     };
     return { html, title: TL["o-batiment"].t, tab: "outils", back: "outils", after, update };
+  }
+
+  /* ---------- Mon lieu de travail : tribunal, mairie, hôpital… ----------
+     Classement habituel d'après la définition de chaque type (article 1 du règlement du type) ; le classement réel
+     d'un bâtiment est celui du registre de sécurité, fixé après avis de la commission de sécurité. */
+  const LIEUX_T = [
+    { id: "tribunal", n: "Tribunal, palais de justice", al: "tribunal tribunaux palais de justice tribunal judiciaire cour d appel cour d assises prud hommes tribunal administratif justice audience juge", ty: ["W", "L"], ref: "W 1, L 1",
+      cl: "Bureaux et services : type W. Salles d’audience : type L (salles de réunion et d’audition), en activité secondaire.",
+      ex: "Exemples officiels : le tribunal judiciaire de Laval est classé type W avec des activités de type L, en 3e catégorie (arrêté municipal du 15 avril 2024) ; un tribunal décrit par l’agence immobilière du ministère de la Justice est classé W et L, en 3e catégorie. Ce dernier est équipé d’un SSI de catégorie A avec alarme de type 1, réglé sans temporisation : c’est plus que le minimum demandé par W 14.",
+      fi: ["ptq-alarme-conduite", "rx-couleurs", "ptq-principe"] },
+    { id: "mairie", n: "Mairie, hôtel de ville", al: "mairie hotel de ville salle du conseil mariages etat civil", ty: ["W"], ref: "W 1",
+      cl: "Administration : type W. Selon le bâtiment, une grande salle de réunion (conseil, mariages) peut être classée en plus en type L : regardez le registre de sécurité." },
+    { id: "administration", n: "Préfecture, administration, bureau de poste, agence", al: "prefecture sous prefecture administration centre des impots caf france travail pole emploi bureau de poste la poste agence guichet service public", ty: ["W"], ref: "W 1", cl: "Administrations et bureaux qui reçoivent du public : type W." },
+    { id: "banque", n: "Banque, agence bancaire", al: "banque agence bancaire", ty: ["W"], ref: "W 1", cl: "Banques : type W." },
+    { id: "bureaux", n: "Bureaux, siège d’entreprise", al: "bureaux bureau siege entreprise tertiaire open space", ty: ["W"], ref: "W 1",
+      cl: "Bureaux qui reçoivent du public : type W. Des bureaux qui ne reçoivent pas de public ne sont pas un établissement recevant du public : c’est le Code du travail qui s’applique." },
+    { id: "ecole", n: "École, collège, lycée, université, centre de formation", al: "ecole maternelle primaire elementaire college lycee universite faculte fac campus centre de formation enseignement", ty: ["R"], ref: "R 1", cl: "Enseignement et formation : type R." },
+    { id: "creche", n: "Crèche, halte-garderie, centre de loisirs", al: "creche halte garderie micro creche centre de loisirs accueil de loisirs", ty: ["R"], ref: "R 1", cl: "Établissements d’éveil et centres de loisirs sans hébergement : type R." },
+    { id: "internat", n: "Internat, colonie, centre de vacances", al: "internat colonie colonie de vacances centre de vacances hebergement scolaire", ty: ["R"], ref: "R 1", som: true, cl: "Enseignement ou vacances avec hébergement : type R avec locaux à sommeil." },
+    { id: "hopital", n: "Hôpital, clinique", al: "hopital clinique centre hospitalier chu urgences maternite soins", ty: ["U"], ref: "U 1", som: true, cl: "Établissements de soins : type U. Avec hospitalisation, il y a des locaux à sommeil." },
+    { id: "ehpad", n: "Maison de retraite, EHPAD, foyer pour personnes handicapées", al: "ehpad maison de retraite residence personnes agees foyer handicapes mas fam", ty: ["J"], ref: "J 1", som: true, cl: "Structures d’accueil pour personnes âgées ou handicapées : type J. Les résidents y dorment : locaux à sommeil." },
+    { id: "hotel", n: "Hôtel, pension de famille", al: "hotel hotels pension de famille auberge", ty: ["O"], ref: "O 1", som: true, cl: "Hôtels et pensions de famille : type O. Un restaurant ouvert dans l’hôtel peut ajouter le type N." },
+    { id: "restaurant", n: "Restaurant, bar, café", al: "restaurant bar cafe brasserie debit de boissons fast food restauration", ty: ["N"], ref: "N 1", cl: "Restaurants et débits de boissons : type N." },
+    { id: "magasin", n: "Magasin, supermarché, centre commercial", al: "magasin supermarche hypermarche centre commercial galerie marchande boutique commerce grande surface", ty: ["M"], ref: "M 1", cl: "Magasins de vente et centres commerciaux : type M." },
+    { id: "spectacle", n: "Cinéma, théâtre, salle de spectacle, de concert, des fêtes", al: "cinema theatre salle de spectacle salle de concert salle des fetes salle polyvalente salle de conference auditorium amphitheatre opera", ty: ["L"], ref: "L 1", cl: "Salles d’audition, de conférences, de réunions, de spectacles ou à usages multiples : type L." },
+    { id: "discotheque", n: "Discothèque, salle de danse, salle de jeux", al: "discotheque boite de nuit salle de danse salle de jeux", ty: ["P"], ref: "P 1", cl: "Salles de danse et salles de jeux : type P." },
+    { id: "bibliotheque", n: "Bibliothèque, médiathèque, archives", al: "bibliotheque mediatheque archives centre de documentation", ty: ["S"], ref: "S 1", cl: "Bibliothèques et centres de documentation : type S." },
+    { id: "exposition", n: "Salle d’exposition, salon, foire", al: "exposition salle d exposition salon foire parc des expositions", ty: ["T"], ref: "T 1", cl: "Salles d’exposition : type T." },
+    { id: "culte", n: "Lieu de culte : église, mosquée, synagogue, temple", al: "eglise mosquee synagogue temple cathedrale chapelle culte", ty: ["V"], ref: "V 1", cl: "Établissements de culte : type V." },
+    { id: "sport", n: "Gymnase, salle de sport, piscine ou patinoire couverte", al: "gymnase salle de sport piscine couverte patinoire couverte complexe sportif dojo", ty: ["X"], ref: "X 1", cl: "Établissements sportifs couverts : type X." },
+    { id: "musee", n: "Musée", al: "musee", ty: ["Y"], ref: "Y 1", cl: "Musées : type Y." },
+    { id: "pleinair", n: "Stade, piscine ou terrain en plein air", al: "stade piscine plein air terrain de sport hippodrome", ty: ["PA"], ref: "PA 1", cl: "Établissements de plein air : type PA." },
+    { id: "chapiteau", n: "Chapiteau, cirque, tente", al: "chapiteau cirque tente structure", ty: ["CTS"], ref: "CTS 1", cl: "Chapiteaux, tentes et structures : type CTS." },
+    { id: "parking", n: "Parking couvert", al: "parking couvert parc de stationnement souterrain", ty: ["PS"], ref: "PS 1", cl: "Parcs de stationnement couverts : type PS." },
+    { id: "gare", n: "Gare", al: "gare gare routiere station", ty: ["GA"], ref: "GA 1", cl: "Gares accessibles au public : type GA." },
+    { id: "igh", n: "Tour, immeuble de grande hauteur (IGH)", al: "igh tour gratte ciel immeuble de grande hauteur", ty: ["IGH"], ref: "R146-3", cl: "Immeuble de grande hauteur : règles propres aux IGH (classes GHW pour les bureaux, GHO pour les hôtels, GHU pour les soins…). Un IGH peut aussi contenir des établissements recevant du public.", fi: ["igh", "l1-036-igh-classes"] },
+  ];
+  const LX = { cat: "", som: null };
+  const lxType = (t) => (t === "IGH" ? "IGH : immeuble de grande hauteur" : ((FICHE_TYPES.find((x) => x[0] === t) || [t, "Type " + t])[1]));
+  /* Fiche métier du type choisi, sans les données d'un bâtiment cherché par adresse et sans les champs d'assurance (gardés dans « Mon bâtiment »). */
+  function lieuFiche(f) {
+    const m = BAT.main, c = BAT.calc, fi = BAT.fi, sir = BAT.sirType;
+    BAT.main = null; BAT.calc = null; BAT.sirType = ""; BAT.noAss = true; BAT.fi = Object.assign({}, fi, f, { ne: "" });
+    try { return ficheOut(); } finally { BAT.main = m; BAT.calc = c; BAT.sirType = sir; BAT.noAss = false; BAT.fi = fi; }
+  }
+  /* Une ligne claire sur la temporisation pour chaque cas du règlement. */
+  function lieuTempo(v) {
+    if (v.noT === "all") return "Temporisation interdite : l’alarme générale part tout de suite.";
+    if (v.noT === "det") return "En cas de détection : alarme générale sans temporisation (U 45 § 3).";
+    const al = v.al === "libre" ? "" : v.al;
+    if (["1", "2a", "2b"].includes(al)) return "Avec ou sans temporisation selon le site : 5 minutes au maximum, seulement si un personnel qualifié peut vérifier tout de suite l’alarme restreinte (MS 66 § 3 et § 5). Le réglage est écrit dans les consignes du poste de sécurité.";
+    return "Sans temporisation : avec ce matériel, l’alarme générale part tout de suite (seuls les types 1, 2a et 2b ont une temporisation, MS 62 § 2).";
+  }
+  function lieuSSI(t) {
+    const r = ssiReq(t, LX.cat, LX.som);
+    if (r === "igh") return `<p><strong>${tx("SSI de catégorie A, option IGH")}</strong> <span class="small muted">GH 49 § 1</span></p><p class="small">${tx("Dès qu’un détecteur réagit dans une circulation commune, l’alarme générale part sans temporisation, pour le seul compartiment touché (GH 49 § 6).")}</p>`;
+    if (r === "cat") return `<p class="small"><strong>${tx("Choisissez la catégorie plus haut : le SSI exigé en dépend.")}</strong></p>`;
+    if (!Array.isArray(r)) return `<p class="small">${tx("Ce type a ses propres règles d’alarme : elles sont dans la fiche métier ci-dessous et dans le règlement du type.")}</p>`;
+    return r.map((v) => `<p><strong>${tx(reqLab(v))}</strong> <span class="small muted">${tx(v.ref)}</span>${v.cond ? `<br><span class="small">${tx("Cas : " + v.cond)}</span>` : ""}</p><p class="small">${tx(lieuTempo(v))}</p>${v.note ? `<p class="small">${tx(v.note)}</p>` : ""}`).join("")
+      + `<p class="small muted">${tx("C’est un minimum : un site peut être mieux équipé. On suit toujours le SSI réellement installé et les consignes du site.")}</p>`;
+  }
+  /* Ouvre la section SSI réglée sur ce lieu, sans toucher à la fiche de « Mon bâtiment ». */
+  function lieuVersSSI(t) {
+    SSK = [BAT.fi.type, BAT.fi.cat, !!BAT.fi.som, !!BAT.fi.sub, BAT.fi.ne].join("|");
+    SSF = Object.assign({}, BAT.fi, { type: t, cat: t === "IGH" ? "" : LX.cat, som: !!LX.som, sub: false, ne: "", catMan: false });
+    SIM.v = 0; SIM.inst = ""; SIM.tempo = "avec"; SSI_BAK = null; simReset();
+    go("o-ssi");
+  }
+  function pageLieu(t) {
+    const crumb = `<nav class="crumb"><a href="#outils">Outils</a></nav>`;
+    if (t === "lieux") {
+      const html = `${crumb}<div class="fiche-top"><div class="page-h"><h1>${tx(TL.lieux.t)}</h1><p>${tx(TL.lieux.d)}</p></div>${favBtn("lieux")}</div>
+        <div class="form"><label class="field"><span>${tx("Chercher un lieu")}</span><input id="lx-q" type="text" autocomplete="off" placeholder="${tx("tribunal, mairie, hôpital…")}"></label></div>
+        <div class="cards" id="lx-list">${LIEUX_T.map((l) => `<div data-lx="${esc(norm(l.n + " " + l.al))}">${card("lieu-" + l.id, "immeuble", "blue", l.n, "Type " + l.ty.join(" et "))}</div>`).join("")}</div>
+        <p class="small muted" id="lx-none" hidden>${tx("Aucun lieu trouvé : essayez un autre mot, ou choisissez directement le type d’établissement dans « Mon bâtiment ».")}</p>
+        ${disc("Classement habituel d’après la définition de chaque type dans le règlement de sécurité. Le classement réel de votre bâtiment est écrit dans son registre de sécurité : il est fixé par le maire ou le préfet, après avis de la commission de sécurité.")}`;
+      const update = () => { const q = norm(($("#lx-q") || {}).value || ""); let n = 0; $$("#lx-list [data-lx]").forEach((d) => { const ok = !q || q.split(" ").every((w) => d.dataset.lx.includes(w)); d.hidden = !ok; if (ok) n++; }); const z = $("#lx-none"); if (z) z.hidden = n > 0; };
+      return { html, title: TL.lieux.t, tab: "outils", back: "outils", update };
+    }
+    const l = LIEUX_T.find((x) => "lieu-" + x.id === t);
+    if (!l) return null;
+    if (LX.id !== l.id) { LX.id = l.id; LX.som = !!l.som; }
+    const html = `<nav class="crumb"><a href="#outils">Outils</a> › <a href="#lieux">${tx("Mon lieu de travail")}</a></nav>
+      <div class="fiche-top"><div class="page-h"><h1>${tx(l.n)}</h1><p>${tx("Classement habituel : " + l.ty.map((x) => "type " + x).join(" et ") + " (" + l.ref + ").")}</p></div>${favBtn(t)}</div>
+      <div class="result"><p><strong>${icon("immeuble")} ${tx("Quel type d’établissement ?")}</strong></p>
+        <ul class="small">${l.ty.map((x) => `<li>${tx(lxType(x))}</li>`).join("")}</ul>
+        <p class="small">${tx(l.cl)}</p>${l.ex ? `<p class="small">${tx(l.ex)}</p>` : ""}
+        <p class="small muted">${tx("Le classement exact (type et catégorie) est écrit dans le registre de sécurité du site.")}</p></div>
+      <div class="result"><p><strong>${tx("Mon statut")}</strong></p><div>${ficheJobBar()}</div>
+        <div class="form">${l.ty[0] === "IGH" ? "" : `<label class="field"><span>${tx("Catégorie du bâtiment (dans le registre de sécurité)")}</span><select id="lx-c"><option value="">${tx("Choisir…")}</option>${["1", "2", "3", "4", "5"].map((k) => `<option value="${k}"${LX.cat === k ? " selected" : ""}>${k}${k === "1" ? "re" : "e"} ${tx("catégorie")}</option>`).join("")}</select></label>`}
+        <label class="field"><span><input type="checkbox" style="width:auto;min-height:0;display:inline-block;vertical-align:middle" id="lx-s"${LX.som ? " checked" : ""}> ${tx("Locaux réservés au sommeil (le public dort sur place)")}</span></label></div></div>
+      <div id="lx-out"></div>
+      ${l.fi ? `<section class="sec"><h2 class="lbl b">${tx("Pour ce lieu, voir aussi")}</h2><div class="links">${l.fi.filter((id) => FI[id] || TL[id]).map(linkCard).join("")}</div></section>` : ""}
+      <section class="sec"><h2 class="lbl b">${tx("Les bases")}</h2><div class="links">${["erp-classement", "service-securite-erp", "alarme", "evacuation", "o-batiment"].filter((id) => FI[id] || TL[id]).map(linkCard).join("")}</div></section>
+      ${disc("Règles des textes officiels pour le type et la catégorie choisis. Le registre de sécurité, l’avis de la commission de sécurité et les consignes du site font foi.")}`;
+    const update = () => {
+      const c = $("#lx-c"), s = $("#lx-s"), o = $("#lx-out"); if (!o) return;
+      if (c) LX.cat = c.value; if (s) LX.som = s.checked;
+      o.innerHTML = l.ty.map((x, i) => `<section class="sec"><h2 class="lbl${i ? "" : " b"}">${tx(lxType(x) + (l.ty.length > 1 ? (i ? " (activité secondaire)" : " (activité principale)") : ""))}</h2>
+        <div class="call call-ok" role="note">${icon("cloche")}<div><p class="lbl">${tx("SSI, alarme et temporisation")}</p>${lieuSSI(x)}</div></div>
+        ${x !== "IGH" && !Array.isArray(ssiReq(x, LX.cat || "1", LX.som)) ? "" : `<p><button type="button" class="btn" data-act="lx-ssi" data-t="${esc(x)}">${icon("cloche")}${tx("Simulateur SSI réglé sur ce lieu")}</button></p>`}
+        ${x === "IGH" ? `<p class="small">${tx("Les règles détaillées des IGH sont dans les fiches ci-dessous.")}</p>` : `<details class="card"><summary>${icon("liste")} <strong>${tx("Toutes les règles pour mon poste (type " + x + ")")}</strong></summary>${lieuFiche({ type: x, cat: LX.cat, som: !!LX.som, sub: false })}</details>`}</section>`).join("");
+    };
+    return { html, title: l.n, tab: "outils", back: "lieux", update, lieu: true };
   }
 
   const TOOL_PAGES = { "o-batiment": toolBatiment, "o-ssi": toolSSI, "o-categorie": toolCategorie, "o-effectif": toolEffectif, "o-degagements": toolDegagements, "o-extincteurs": toolExtincteurs, "o-commission": toolCommission, "o-recyclage": toolRecyclage, "o-carte": toolCarte, "o-quel-extincteur": toolQuelExt, "o-quiz": toolQuiz };
@@ -33885,6 +33993,7 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
     if (t.startsWith("texte-")) return pageTexte(t.slice(6));
     if (t === "reglages") return pageReglages();
     if (t === "veille") return pageVeille();
+    if (t === "lieux" || t.startsWith("lieu-")) return pageLieu(t);
     if (t.startsWith("f-")) return pageFiche(t.slice(2));
     if (t.startsWith("appr-")) return apRoute(t);
     if (t.startsWith("r-")) return pageRub(t.slice(2));
@@ -34212,7 +34321,8 @@ o += T(39, 24, "Exutoire", "sts", "middle") + T(96, 66, "Ventil.", "sts", "middl
       case "bat-gps": batGps(); break;
       case "bat-nopick": batNoPick(); break;
       case "bat-alt": BAT.cands = BAT.alt || []; BAT.gpsList = 1; BAT.msg = "Touchez votre adresse :"; BAT.ok = false; batDraw(); break;
-      case "fiche-job": { BAT.fi.job = b.dataset.j || "1"; store.set("fi-job", BAT.fi.job); [...$$(".fiche-job")].forEach((el) => (el.innerHTML = ficheJobBar().replace(/^<div[^>]*>|<\/div>$/g, ""))); ficheOutDraw(); if (typeof ssiDraw === "function") ssiDraw(); break; }
+      case "fiche-job": { BAT.fi.job = b.dataset.j || "1"; store.set("fi-job", BAT.fi.job); [...$$(".fiche-job")].forEach((el) => (el.innerHTML = ficheJobBar().replace(/^<div[^>]*>|<\/div>$/g, ""))); ficheOutDraw(); if (typeof ssiDraw === "function") ssiDraw(); if (cur && cur.lieu) cur.update(); break; }
+      case "lx-ssi": lieuVersSSI(b.dataset.t); break;
       case "bat-photo": { const on = !store.get("bat-photo", 0); store.set("bat-photo", on ? 1 : 0); if (on && !PRIV.reseauOk()) { batGate(() => batDraw()); break; } batDraw(); break; }
       case "bat-geo-on": case "bat-geo-off": { store.set("bat-geo", b.dataset.act === "bat-geo-on" ? 1 : 0); if (b.dataset.act === "bat-geo-on" && !PRIV.reseauOk()) { batGate(() => { if (BAT.pt) batLoad(); }); break; } if (BAT.pt && !BAT.busy) batLoad(); else batDraw(); break; }
       case "bat-net": { const f = BAT.gate; BAT.gate = null; PRIV.set("reseau", true); if (f) f(); break; }

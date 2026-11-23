@@ -1,3 +1,6 @@
+- Nouveau : « Mon lieu de travail » (Outils, et dans la recherche) : 25 lieux (tribunal, mairie, préfecture, banque, bureaux, école, crèche, internat, hôpital, maison de retraite, hôtel, restaurant, magasin, cinéma, discothèque, bibliothèque, salon, lieu de culte, gymnase, musée, stade, chapiteau, parking, gare, tour IGH)
+- Pour chaque lieu : son type d’établissement, le SSI et l’alarme exigés selon la catégorie, avec ou sans temporisation, toutes les règles pour votre poste (SSIAP 1, 2 ou 3) et un bouton qui ouvre le simulateur SSI réglé sur ce lieu
+- Liens « choisir par lieu » ajoutés dans « Mon bâtiment » et dans la section SSI
 - Temporisation : la section SSI indique « avec » ou « sans » temporisation ; un nouveau choix « Temporisation sur votre site » change tout le simulateur (l’alarme générale part tout de suite si « sans »)
 - Section SSI : nouveau choix « SSI réellement installé sur votre site » quand le site est mieux équipé que le minimum du règlement (exemple : tribunal avec SSI de catégorie A)
 - Fiches SSI et alarme : précisé que la temporisation est possible mais jamais obligatoire, interdite dans certains établissements (PE 32, J 37, U 45), avec l’exemple d’un tribunal sans temporisation
